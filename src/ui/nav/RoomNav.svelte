@@ -1,5 +1,5 @@
 <script>
-import settingsIcon from "../../assets/settings.svg";
+import settingsIcon from "../../assets/icons/settings.svg";
 import { getAvatar } from "../../util/events.js";
 let rooms = [];
 let focusedRoom = null;

@@ -6,8 +6,6 @@ import { sanitizeMatrixHtml } from "../../../util/sanitize.js";
 import { getDisplayName, getAvatar } from '../../../util/events.js';
 
 export let event, header = false;
-export let timestamp;
-
 let showTimestamp = false;
 
 function getReply(content) {
@@ -80,14 +78,14 @@ function getReply(content) {
     {#if header}
     <img class="avatar" alt="avatar for {getDisplayName(event.getSender())}" src={getAvatar(event.getSender())} />
     {:else}
-    <Timestamp time={timestamp} format="time" display={showTimestamp ? "inline" : "none"} />
+    <Timestamp time={event.getDate()} format="time" display={showTimestamp ? "inline" : "none"} />
     {/if}
   </div>
   <div class="content">
     {#if getReply(event.getContent())}<MessageReply roomid={event.getRoomId()} eventid={getReply(event.getContent())} />{/if}
     {#if header}
     <span class="author">{getDisplayName(event.getSender())}</span>
-    <Timestamp time={timestamp} format="date" />
+    <Timestamp time={event.getDate()} format="date" />
     {/if}
     <MessageContent event={event} />
   </div>
