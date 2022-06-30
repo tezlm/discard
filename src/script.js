@@ -4,7 +4,7 @@ import App from './ui/App.svelte';
 globalThis.state = state;
 globalThis.actions = actions;
 
-actions.client.fetch();
+await actions.client.fetch();
 
 const app = new App({ target: document.body });
 export default app;

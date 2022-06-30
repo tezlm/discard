@@ -2,16 +2,27 @@ const sdk = globalThis.matrixcs;
 
 export default {
   client: {
+    async getStore() {
+      const idbStore = new sdk.IndexedDBStore({
+        indexedDB: indexedDB,
+        localStorage: localStorage,
+        dbName: "web-sync-store",
+      });
+      await idbStore.startup();
+      return idbStore;
+    },
     // try to fetch the current client
-    fetch() {
+    async fetch() {
       const homeserver = localStorage.getItem("homeserver");
       const userId = localStorage.getItem("userid");
       const token = localStorage.getItem("token");
       if (!homeserver || !userId || !token) return null;
+      
       const client = sdk.createClient({
-          baseUrl: "https://" + homeserver,
-          accessToken: token,
-          userId: userId,
+        baseUrl: "https://" + homeserver,
+        accessToken: token,
+        userId: userId,
+        store: await actions.client.getStore(),
       });
       client.startClient();
       state.client = client;
@@ -21,7 +32,7 @@ export default {
     // login to the homeserver ang create a new client
     async login({ localpart, homeserver, password }) {
       const userId = `@${localpart}:${homeserver}`;
-      const client = sdk.createClient("https://" + homeserver);
+      const client = sdk.createClient({ baseUrl: "https://" + homeserver, store: await actions.client.getStore() });
       const data = { identifier: { type: "m.id.user", user: userId }, password };
 
       try {

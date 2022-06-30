@@ -9,7 +9,7 @@ function shouldSplit(ev, prev) {
 	if (prev.getType() !== "m.room.message") return true;
 	if (prev.getSender() !== ev.getSender()) return true;
 	if (ev.getContent()["m.relates_to"]?.["m.in_reply_to"]) return true;
-	if (ev.getDate() - prev.getDate() < 1000 * 60 * 3) return false;
+	if (ev.getDate() - prev.getDate() < 1000 * 60 * 5) return false;
 	return true;
 }
 

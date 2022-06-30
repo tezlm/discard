@@ -1,5 +1,6 @@
 <script>
 export let placeholder;
+let textarea;
 let rows = 1;
 
 function handleInput(e) {
@@ -11,6 +12,8 @@ function handleInput(e) {
     e.target.value = "";
   }
 }
+
+state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus()));
 </script>
 <style>
 .input {
@@ -32,5 +35,5 @@ function handleInput(e) {
 }
 </style>
 <div class="input">
-  <textarea rows={rows} on:keydown={e => setTimeout(() => handleInput(e), 1)} placeholder={placeholder}></textarea>
+  <textarea rows={rows} on:keydown={e => setTimeout(() => handleInput(e), 1)} placeholder={placeholder} bind:this={textarea}></textarea>
 </div>
