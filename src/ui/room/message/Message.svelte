@@ -8,6 +8,8 @@ import { getDisplayName, getAvatar } from '../../../util/events.js';
 export let event, header = false;
 export let timestamp;
 
+let showTimestamp = false;
+
 function getReply(content) {
   return content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
 }
@@ -15,18 +17,19 @@ function getReply(content) {
 <style>
 .message {
   display: flex;
-  padding: 2px 72px;
+  padding: .125rem 72px;
   margin-top: 0;
   position: relative;
   color: var(--fg-content);
 }
 
 .message:hover {
-    background: rgba(4,4,5,0.07);
+  background: rgba(4,4,5,0.07);
 }
 
 .header {
   margin-top: 1em;
+  padding-top: .25rem;
 }
 
 .content {
@@ -37,6 +40,7 @@ function getReply(content) {
 	font-weight: bold;
 	cursor: pointer;
   margin-right: 0.25rem;
+  margin-bottom: 1em;
 }
 
 .author:hover {
@@ -53,6 +57,8 @@ function getReply(content) {
 .avatar {
   border-radius: 50%;
   height: 40px;
+  width: 40px;
+  filter: drop-shadow(0, 4px, 4px, #00000022);
 }
 
 .message:hover .timestamp, .timestamp.inline {
@@ -68,13 +74,13 @@ function getReply(content) {
   text-decoration: underline;
 }
 </style>
-<div class="message {header ? 'header' : ''}">
+<div class="message {header ? 'header' : ''}" on:mouseover={() => showTimestamp = true} on:mouseleave={() => showTimestamp = false}>
   <div class="side">
     {#if getReply(event.getContent())}<br>{/if}
     {#if header}
     <img class="avatar" alt="avatar for {getDisplayName(event.getSender())}" src={getAvatar(event.getSender())} />
     {:else}
-    <Timestamp time={timestamp} format="time" display="none"/>
+    <Timestamp time={timestamp} format="time" display={showTimestamp ? "inline" : "none"} />
     {/if}
   </div>
   <div class="content">

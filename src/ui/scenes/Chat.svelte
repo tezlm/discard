@@ -6,4 +6,3 @@ import SpaceNav from '../nav/SpaceNav.svelte';
 <SpaceNav/>
 <RoomNav/>
 <Room/>
-
