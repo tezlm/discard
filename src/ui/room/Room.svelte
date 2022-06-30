@@ -14,6 +14,10 @@ let room = state.focusedRoom;
 </style>
 
 <div class="room">
+  {#if $room}
   <RoomContent />
   <RoomInput placeholder={"Message " + ($room ?? {}).name} />
+  {:else}
+  <p style="padding: 1em">select a room</p>
+  {/if}
 </div>

@@ -26,4 +26,5 @@
 body {
   font-family: var(--font-primary);
   color: var(--fg-content);
+  background: var(--bg-spaces);
 }
