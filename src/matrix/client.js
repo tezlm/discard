@@ -1,2 +1,2 @@
-import * as sdk from "./sdk.min.js";
-export default {};
+import * as sdk from "./browser-matrix.js";
+export default { sdk };

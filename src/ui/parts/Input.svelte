@@ -2,6 +2,10 @@
 export let type = "text";
 export let value = "";
 export let placeholder = "";
+
+function handleInput(e) {
+  value = e.target.value;
+}
 </script>
 <style>
 input {
@@ -11,9 +15,10 @@ input {
   width: 100%;
   height: 40px;
   border: none;
+  border-radius: 3px;
   color: inherit;
   background: #202225;
   outline: none;
 }
 </style>
-<input type={type} value={value} placeholder={placeholder} />
+<input {type} on:input={handleInput} placeholder={placeholder} />

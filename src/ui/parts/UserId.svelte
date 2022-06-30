@@ -1,6 +1,6 @@
 <script>
-let localpart = "";
-let homeserver = "";
+export let localpart = "";
+export let homeserver = "";
 
 function update() {
   if (homeserver.startsWith("@")) {
