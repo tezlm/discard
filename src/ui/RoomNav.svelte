@@ -1,3 +1,6 @@
+<script>
+let rooms = client.getRooms();
+</script>
 <style>
 .nav {
   background: var(--bg-rooms-members);
@@ -23,7 +26,10 @@
 	background: rgba(79,84,92,0.6);
 }
 </style>
-<div class="nav">
+<div class="nav"><!-- TODO
+	{#each rooms as room}
+  <div class="room">{room.name}</div>
+	{/each}-->
   <div class="room selected">foo</div>
   <div class="room">bar</div>
   <div class="room">baz</div>
