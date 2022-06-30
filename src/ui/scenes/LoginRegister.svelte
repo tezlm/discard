@@ -15,27 +15,8 @@ async function handleSubmit(e) {
     if (!input.value) return input.focus();
   }
 
-  const userId = `@${localpart}:${homeserver}`;
-  const client = sdk.createClient("https://" + homeserver);
-  const data = { identifier: { type: "m.id.user", user: userId }, password };
-
-  try {
-    const { access_token: token } = await client.login("m.login.password", data);
-    localStorage.setItem("homeserver", homeserver);
-    localStorage.setItem("userid", userId);
-    localStorage.setItem("token", token);
-    location.reload(); // TODO: get rid of this ugly hack
-  } catch(err) {
-    if (err.name === "M_FORBIDDEN") {
-      error = "Incorrect username or password";
-    } else if (err.name === "M_USER_DEACTIVATED") {
-      error = "User was deactivated";
-    } else if (err.name === "ConnectionError") {
-      error = "Invalid homeserver";
-    } else {
-      error = `Unknown error (${err.name}})`;
-    }
-  }
+  actions.client.login({ localpart, homeserver, password })
+    .catch(err => error = err);
 }
 </script>
 <style>

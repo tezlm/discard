@@ -1,5 +1,12 @@
 <script>
 import Message from './Message.svelte';
+let timeline = state.timeline;
+
+const defaultAvatar = "mxc://celery.eu.org/Wm9T9Nnch8IUQsVaJAInkaoVsgCJlmGx";
+
+const getUser = (event) => state.client.getUser(event.getSender());
+const getDisplayName = (event) => getUser(event).displayName;
+const getAvatar = (event) => state.client.mxcUrlToHttp(getUser(event).avatarUrl ?? defaultAvatar, 40, 40);
 </script>
 <style>
 .content {
@@ -7,12 +14,19 @@ import Message from './Message.svelte';
 	display: flex;
 	flex-direction: column;
   padding-bottom: 1em;
+	overflow: auto;
 }
 </style>
 <div class="content">
-  <Message author="tezlm" timestamp={new Date(2)} content="hello world" avatarurl="https://celery.eu.org/_matrix/media/r0/thumbnail/celery.eu.org/h7g7YzhWoMJXVaOBT0vpOheqaOEQBhxY?width=80&height=80&method=crop" header />
-  <Message author="tezlm" timestamp={new Date(2)} content="this is a test" />
-  <Message author="tezlm" timestamp={new Date(2)} content="yes hello" />
-  <Message author="tezlm" timestamp={new Date()} content="this is very sus" avatarurl="https://celery.eu.org/_matrix/media/r0/thumbnail/celery.eu.org/h7g7YzhWoMJXVaOBT0vpOheqaOEQBhxY?width=80&height=80&method=crop" header />
+	{#each $timeline as event}
+		{#if event.getType() === "m.room.message"}
+		  <Message
+				author={getUser(event).displayName}
+				timestamp={event.getDate()}
+				content={event.getContent().body}
+				avatarurl={getAvatar(event)}
+				header
+			/>
+		{/if}
+	{/each}
 </div>
-
