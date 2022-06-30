@@ -48,14 +48,20 @@ export default {
       client.once("sync", updateRooms);
       client.on("Room.myMembership", updateRooms);
       client.on("Room.name", updateRooms);
+      client.on("Room.timeline", actions.rooms.updateTimeline);
     }
   },
   rooms: {
-    switch(id) {
-      const room = state.client.getRoom(id);
-      if (!room) return;
-    	state.focusedRoom.set(id);
+    switch(room) {
+    	state.focusedRoomId = room.roomId;
+    	state.focusedRoom.set(room);
     	state.timeline.set(room.timeline);
     },
+    updateTimeline(event) {
+      if (!state.focusedRoomId) return;
+      if (event.getRoomId() !== state.focusedRoomId) return;
+      console.log("update timeline")
+      state.timeline.set(state.client.getRoom(state.focusedRoomId).timeline);
+    }
   }
 };
