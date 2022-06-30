@@ -2,7 +2,7 @@
 import { sanitizeMatrixHtml } from "../../../util/sanitize.js";
 import fileIcon from "../../../assets/file.svg";
 export let event;
-let content = event.getContent();
+$: content = event.getContent();
 
 function formatSize(size) {
   if (!size) return "??? kb";

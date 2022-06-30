@@ -1,6 +1,7 @@
 <script>
 import RoomContent from './RoomContent.svelte';
 import RoomInput from './RoomInput.svelte';
+import RoomHeader from './RoomHeader.svelte';
 let room = state.focusedRoom;
 </script>
 <style>
@@ -15,6 +16,7 @@ let room = state.focusedRoom;
 
 <div class="room">
   {#if $room}
+  <RoomHeader />
   <RoomContent />
   <RoomInput placeholder={"Message " + ($room ?? {}).name} />
   {:else}

@@ -63,7 +63,6 @@ state.focusedRoom.subscribe(() => {
 			{#if event.getType() === "m.room.message"}
 			  <Message
 					event={event}
-					timestamp={event.getDate()}
 					header={shouldSplit(event, $timeline[i - 1]) ? true : null}
 				/>
 			{/if}
