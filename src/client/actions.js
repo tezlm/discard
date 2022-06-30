@@ -52,7 +52,7 @@ export default {
     }
   },
   rooms: {
-    switch(room) {
+    focus(room) {
     	state.focusedRoomId = room.roomId;
     	state.focusedRoom.set(room);
     	state.timeline.set(room.timeline);
