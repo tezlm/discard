@@ -1,5 +1,5 @@
 <script>
-import * as sanitizeHtml from "sanitize-html";
+import { sanitizeMatrixHtml } from "../../util/sanitize.js";
 export let content, author, avatarurl, timestamp;
 export let header = false;
 $: timediff = Date.now() - timestamp;
@@ -93,6 +93,10 @@ function formatDate(d) {
 .message:hover .timestamp, .timestamp.inline {
   display: inline;
 }
+
+:global(a) {
+  color: #00aff4;
+}
 </style>
 
 <div class="message {header ? 'header' : ''}">
@@ -108,6 +112,10 @@ function formatDate(d) {
     <span class="author">{author}</span>
     <time datetime={time.iso} class="timestamp inline">{time.human}</time>
     {/if}
+    {#if content.format === "org.matrix.custom.html"}
+    <div>{@html sanitizeMatrixHtml(content.formatted_body)}</div>
+    {:else}
     <div>{content.body}</div>
+    {/if}
   </div>
 </div>
