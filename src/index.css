@@ -1,0 +1,26 @@
+@font-face {
+  font-family: Whitney;
+  src: url(assets/whitneybook.otf) format("opentype");
+}
+
+:root {
+  --bg-content: #36393f;
+  --bg-rooms-members: #2f3136;
+  --bg-spaces: #202225;
+  --fg-content: #fbfbfb;
+  --fg-dim: #9f9f9f;
+  --fg-muted: #b6b6b6;
+  --font-primary: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "ABC Ginto Normal", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  color: var(--fg-content);
+}
