@@ -3,21 +3,39 @@ import Input from "../parts/Input.svelte";
 import Button from "../parts/Button.svelte";
 import UserId from "../parts/UserId.svelte";
 let type = "login";
-let localpart, homeserver, password;
+let localpart, homeserver, password, error;
 
 function submit() {
   document.forms[0].submit();
 }
 
-function handleSubmit(e) {
+async function handleSubmit(e) {
   e.preventDefault();
   for (let input of document.querySelectorAll("input")) {
     if (!input.value) return input.focus();
   }
-  console.log(localpart)
-  console.log(homeserver)
-  console.log(password)
-  console.log("submit")
+
+  const userId = `@${localpart}:${homeserver}`;
+  const client = sdk.createClient("https://" + homeserver);
+  const data = { identifier: { type: "m.id.user", user: userId }, password };
+
+  try {
+    const { access_token: token } = await client.login("m.login.password", data);
+    localStorage.setItem("homeserver", homeserver);
+    localStorage.setItem("userid", userId);
+    localStorage.setItem("token", token);
+    location.reload(); // TODO: get rid of this ugly hack
+  } catch(err) {
+    if (err.name === "M_FORBIDDEN") {
+      error = "Incorrect username or password";
+    } else if (err.name === "M_USER_DEACTIVATED") {
+      error = "User was deactivated";
+    } else if (err.name === "ConnectionError") {
+      error = "Invalid homeserver";
+    } else {
+      error = `Unknown error (${err.name}})`;
+    }
+  }
 }
 </script>
 <style>
@@ -54,6 +72,11 @@ h5 {
 h5, .spacer {
   margin-top: 1em;
 }
+
+.error {
+  margin-top: 1em;
+  color: #ED4245;
+}
 </style>
 
 <div class="wrapper">
@@ -69,6 +92,9 @@ h5, .spacer {
       <Input type="password" bind:value={password} />
       <div class="spacer"></div>
       <Button type="primary" on:click={submit} label={type === "login" ? "Login" : "Register"} />
+      {#if error}
+      <div class="error">{error}</div>
+      {/if}
     </form>
   </div>
 </div>
