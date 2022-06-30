@@ -1,0 +1,16 @@
+{
+	"name": "not-discord",
+	"version": "0.1.0",
+	"description": "this is 100%, definitely, without a doubt *not* discord",
+	"author": "tezlm",
+	"license": "ISC",
+	"scripts": {
+		"dev": "parcel src/index.html",
+		"build": "parcel build src/index.html"
+	},
+	"dependencies": {
+		"parcel-bundler": "^1.12.5",
+		"parcel-plugin-svelte": "^4.0.9",
+		"svelte": "^3.48.0"
+	}
+}
