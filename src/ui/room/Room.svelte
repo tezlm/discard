@@ -1,6 +1,7 @@
 <script>
 import RoomContent from './RoomContent.svelte';
 import RoomInput from './RoomInput.svelte';
+let room = state.focusedRoom;
 </script>
 <style>
 .room {
@@ -14,5 +15,5 @@ import RoomInput from './RoomInput.svelte';
 
 <div class="room">
   <RoomContent />
-  <RoomInput />
+  <RoomInput placeholder={"Message " + ($room ?? {}).name} />
 </div>

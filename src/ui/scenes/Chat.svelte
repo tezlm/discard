@@ -1,7 +1,7 @@
 <script>
-import Room from '../Room.svelte';
-import RoomNav from '../RoomNav.svelte';
-import SpaceNav from '../SpaceNav.svelte';
+import Room from '../room/Room.svelte';
+import RoomNav from '../nav/RoomNav.svelte';
+import SpaceNav from '../nav/SpaceNav.svelte';
 </script>
 <SpaceNav/>
 <RoomNav/>

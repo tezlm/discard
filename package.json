@@ -1,16 +1,23 @@
 {
-	"name": "not-discord",
+	"name": "discard",
+	"description": "not discord",
 	"version": "0.1.0",
-	"description": "this is 100%, definitely, without a doubt *not* discord",
 	"author": "tezlm",
 	"license": "ISC",
+	"type": "module",
 	"scripts": {
-		"dev": "parcel src/index.html",
-		"build": "parcel build src/index.html"
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"devDependencies": {
+		"@sveltejs/vite-plugin-svelte": "next",
+		"svelte": "^3.48.0",
+		"vite": "^2.9.13"
 	},
 	"dependencies": {
-		"parcel-bundler": "^1.12.5",
-		"parcel-plugin-svelte": "^4.0.9",
-		"svelte": "^3.48.0"
+		"browserify": "^17.0.0",
+		"matrix-js-sdk": "^18.1.0",
+		"sanitize-html": "^2.7.0"
 	}
 }

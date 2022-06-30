@@ -36,6 +36,6 @@ state.focusedRoom.subscribe((newRoom) => focusedRoom = newRoom);
 </style>
 <div class="nav">
 	{#each rooms as room}
-  <div class={focusedRoom?.roomId === room.roomId ? "room selected" : "room"} on:click={actions.rooms.switch(room)}>{room.name}</div>
+  <div class={focusedRoom?.roomId === room.roomId ? "room selected" : "room"} on:click={actions.rooms.focus(room)}>{room.name}</div>
 	{/each}
 </div>

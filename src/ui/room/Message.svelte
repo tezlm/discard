@@ -1,4 +1,5 @@
 <script>
+import * as sanitizeHtml from "sanitize-html";
 export let content, author, avatarurl, timestamp;
 export let header = false;
 $: timediff = Date.now() - timestamp;
@@ -97,7 +98,7 @@ function formatDate(d) {
 <div class="message {header ? 'header' : ''}">
   <div class="side">
     {#if header}
-    <img class="avatar" src="{avatarurl}" />
+    <img class="avatar" alt="avatar for {author}" src="{avatarurl}" />
     {:else}
     <time datetime={time.iso} class="timestamp">{time.day}</time>
     {/if}
@@ -107,6 +108,6 @@ function formatDate(d) {
     <span class="author">{author}</span>
     <time datetime={time.iso} class="timestamp inline">{time.human}</time>
     {/if}
-    <div>{content}</div>
+    <div>{content.body}</div>
   </div>
 </div>
