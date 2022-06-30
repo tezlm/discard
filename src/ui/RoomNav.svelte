@@ -1,5 +1,8 @@
 <script>
-let rooms = client.getRooms();
+let rooms = [];
+let focusedRoom = null;
+state.rooms.subscribe((newRooms) => rooms = newRooms);
+state.focusedRoom.subscribe((newRoom) => focusedRoom = newRoom);
 </script>
 <style>
 .nav {
@@ -25,12 +28,14 @@ let rooms = client.getRooms();
 	color: var(--fg-content); 
 	background: rgba(79,84,92,0.6);
 }
+
+.room:before {
+	content: "# ";
+	font-weight: bold;
+}
 </style>
-<div class="nav"><!-- TODO
+<div class="nav">
 	{#each rooms as room}
-  <div class="room">{room.name}</div>
-	{/each}-->
-  <div class="room selected">foo</div>
-  <div class="room">bar</div>
-  <div class="room">baz</div>
+  <div class={focusedRoom === room.roomId ? "room selected" : "room"} on:click={actions.rooms.switch(room.roomId)}>{room.name}</div>
+	{/each}
 </div>

@@ -1,8 +1,7 @@
 <script>
 import Chat from './scenes/Chat.svelte';
 import LoginRegister from './scenes/LoginRegister.svelte';
-let flow = "chat";
-if (!localStorage.getItem("token")) flow = "auth";
+let scene = state.scene;
 </script>
 <style>
 main {
@@ -12,7 +11,7 @@ main {
 </style>
 
 <main>
-  {#if flow === "chat"}
+  {#if $scene === "chat"}
   <Chat />
   {:else}
   <LoginRegister />

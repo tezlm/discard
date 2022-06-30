@@ -22,8 +22,10 @@
 }
 </style>
 <div class="nav">
+  <!-- TODO
   <img class="space selected" src="https://celery.eu.org/_matrix/media/r0/thumbnail/freedombox.emorrp1.name/qWgqqdAHUoTlRArjkTfuOofU?width=80&height=80&method=crop">
   <img class="space" src="https://celery.eu.org/_matrix/media/r0/thumbnail/freedombox.emorrp1.name/qWgqqdAHUoTlRArjkTfuOofU?width=80&height=80&method=crop">
   <img class="space" src="https://celery.eu.org/_matrix/media/r0/thumbnail/freedombox.emorrp1.name/qWgqqdAHUoTlRArjkTfuOofU?width=80&height=80&method=crop">
+  -->
 </div>
 
