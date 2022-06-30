@@ -50,13 +50,21 @@ state.focusedRoom.subscribe((newRoom) => focusedRoom = newRoom);
 }
 
 .user .icon {
-	height: 24px;
-	width: 24px;
+	height: 28px;
+	width: 28px;
+	cursor: pointer;
+	padding: 6px;
+	border-radius: 3px;
+}
+
+.user .icon:not(.avatar):hover {
+	filter: brightness(2);
+	background: #ffffff33;
 }
 
 .user .avatar {
-	height: 36px;
-	width: 36px;
+	height: 48px;
+	width: 48px;
 	border-radius: 50%;
 	margin-right: auto;
 }

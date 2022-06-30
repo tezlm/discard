@@ -1,4 +1,5 @@
 <script>
+// TODO: this whole file is a mess and needs to be refactored
 import RoomNav from '../nav/RoomNav.svelte';
 import SpaceNav from '../nav/SpaceNav.svelte';
 import { getAvatar, getDisplayName } from '../../util/events.js';
@@ -21,12 +22,22 @@ function formatSize(size) {
   }
   return "very big";
 }
+
+function handleKeyDown(e) {
+  if (e.key === "Escape") exitSettings();
+}
+
+function exitSettings() {
+  document.removeEventListener("keydown", handleKeyDown);
+  state.scene.set("chat");
+}
+
+document.addEventListener("keydown", handleKeyDown);
 </script>
 <style>
 .settings {
   background: var(--bg-content);
   flex: 1;
-
   display: flex;
 }
 
@@ -107,6 +118,7 @@ nav {
   position: absolute;
   top: 0;
   right: -4em;
+  cursor: pointer;
 }
 
 h2 {
@@ -123,7 +135,7 @@ h2 {
   </div>
   <div class="main">
     <div class="wrapper">
-      <div class="exit" on:click={() => state.scene.set("chat")}>ESC</div>
+      <div class="exit" on:click={exitSettings}>ESC</div>
       {#if focusedView === "account"}
         <h2>My Account</h2>
         <div class="account">
@@ -135,7 +147,7 @@ h2 {
         </div>
       {:else if focusedView === "privsec"}
         <h2>Privacy and Security</h2>
-        <p>todo</p>
+        <p>todo: show sessions?</p>
       {:else if focusedView === "homeserver"}
         <h2>Homeserver</h2>
         <div class="homeserver">
@@ -157,7 +169,7 @@ h2 {
         {/await}
       {:else if focusedView === "notifications"}
         <h2>Notifications</h2>
-        <p>todo</p>
+        <p>todo: show a way to edit notifications similar to element</p>
       {/if}
     </div>
   </div>
