@@ -18,11 +18,12 @@ function opacity(node) {
 }
 
 function handleKeyDown(e) {
-  if (e.key === "Escape") closePopup();
+  if (e.key === "Escape") closePopup(e);
 }
 
-function closePopup() {
+function closePopup(e) {
   show = false;
+  e.stopPropagation();
   document.removeEventListener("keydown", handleKeyDown);
 }
 
@@ -40,7 +41,7 @@ document.addEventListener("keydown", handleKeyDown);
   width: 100%;
   height: 100%;
   background: #000000bb;
-  z-index: 1234;
+  z-index: 99998;
 }
 
 .card {
@@ -51,7 +52,7 @@ document.addEventListener("keydown", handleKeyDown);
   background: var(--bg-content);
   color: var(--fg-content);
   box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
-  z-index: 5678;
+  z-index: 99999;
 }
 
 .header {
