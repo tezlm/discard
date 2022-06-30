@@ -5,6 +5,7 @@ export let clicked = () => {};
 </script>
 <style>
 button {
+  font: inherit;
   font-size: 16px;
   padding: 10px;
   width: 100%;
@@ -12,8 +13,15 @@ button {
   border-radius: 3px;
   border: none;
   color: inherit;
-  background: #202225;
   cursor: pointer;
 }
+
+.normal {
+  background: #202225;
+}
+
+.primary {
+  background: #7289da;
+}
 </style>
-<button type={type} on:click={clicked}>{label}</button>
+<button type={type} class={type} on:click={clicked}>{label}</button>
