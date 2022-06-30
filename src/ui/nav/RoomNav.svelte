@@ -1,7 +1,9 @@
 <script>
+import settingsIcon from "../../assets/settings.svg";
+import { getAvatar } from "../../util/events.js";
 let rooms = [];
 let focusedRoom = null;
-state.rooms.subscribe((newRooms) => rooms = newRooms);
+state.rooms.subscribe((newRooms) => rooms = newRooms.filter(i => !i.isSpaceRoom()));
 state.focusedRoom.subscribe((newRoom) => focusedRoom = newRoom);
 </script>
 <style>
@@ -9,11 +11,13 @@ state.focusedRoom.subscribe((newRoom) => focusedRoom = newRoom);
   background: var(--bg-rooms-members);
   color: var(--fg-content);
 	width: 240px;
+	display: flex;
+	flex-direction: column;
 }
 
 .room {
-	margin: 4px 8px;
-	padding: 4px 8px;
+	margin: 2px 8px;
+	padding: 6px 10px;
 	color: var(--fg-dim);
 	border-radius: 4px;
 	font-size: 16px;
@@ -22,6 +26,7 @@ state.focusedRoom.subscribe((newRoom) => focusedRoom = newRoom);
 
 .room:hover {
 	background: rgba(79,84,92,0.4);
+  color: var(--fg-light);
 }
 
 .room.selected {
@@ -33,9 +38,35 @@ state.focusedRoom.subscribe((newRoom) => focusedRoom = newRoom);
 	content: "# ";
 	font-weight: bold;
 }
+
+.user {
+	display: flex;
+	align-items: center;
+	margin-top: auto;
+	background: var(--bg-spaces);
+	width: 100%;
+	height: 52px;
+	padding: 8px;
+}
+
+.user .icon {
+	height: 24px;
+	width: 24px;
+}
+
+.user .avatar {
+	height: 36px;
+	width: 36px;
+	border-radius: 50%;
+	margin-right: auto;
+}
 </style>
 <div class="nav">
 	{#each rooms as room}
   <div class={focusedRoom?.roomId === room.roomId ? "room selected" : "room"} on:click={actions.rooms.focus(room)}>{room.name}</div>
 	{/each}
+	<div class="user">
+		<img class="icon avatar" src={getAvatar(state.client.getUserId())} />
+		<img class="icon" src={settingsIcon} on:click={() => state.scene.set("settings")} />
+	</div>
 </div>

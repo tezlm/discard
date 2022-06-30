@@ -1,6 +1,7 @@
 <script>
 import Chat from './scenes/Chat.svelte';
 import LoginRegister from './scenes/LoginRegister.svelte';
+import Settings from './scenes/Settings.svelte';
 let scene = state.scene;
 </script>
 <style>
@@ -13,6 +14,8 @@ main {
 <main>
   {#if $scene === "chat"}
   <Chat />
+  {:else if $scene === "settings"}
+  <Settings />
   {:else}
   <LoginRegister />
   {/if}

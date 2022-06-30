@@ -21,7 +21,7 @@ async function handleSubmit(e) {
 </script>
 <style>
 .wrapper {
-  background-color: #7289da;
+  background-color: var(--color-accent);
   width: 100%;
 }
 
@@ -33,7 +33,7 @@ async function handleSubmit(e) {
 
   padding: 32px;
   border-radius: 5px;
-  background: #36393f;
+  background: var(--bg-content);
   color: var(--fg-content);
   box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
 }
@@ -46,7 +46,7 @@ async function handleSubmit(e) {
 h5 {
   font-family: var(--font-display);
   font-weight: 500;
-  color: #b9bbbe;
+  color: var(--fg-muted);
   text-transform: uppercase;
 }
 
@@ -56,7 +56,7 @@ h5, .spacer {
 
 .error {
   margin-top: 1em;
-  color: #ED4245;
+  color: var(--color-error);
 }
 </style>
 

@@ -54,7 +54,7 @@ state.focusedRoom.subscribe(() => {
 }
 
 .spacer {
-	height: 1em;
+	height: 1.5rem;
 }
 </style>
 <div class="content" bind:this={container}>

@@ -13,6 +13,8 @@
   --fg-muted: #b6b6b6;
   --font-primary: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-display: "ABC Ginto Normal", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --color-accent: #7289da;
+  --color-error: #ed4245;
 }
 
 * {

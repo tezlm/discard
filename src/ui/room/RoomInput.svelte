@@ -7,7 +7,7 @@ function handleInput(e) {
   if (e.key === "Backspace" || e.key === "Delete" || (e.key === "Enter" && e.shiftKey)) {
     rows = Math.min(value.split("\n").length, 10);
   } else if (e.key === "Enter" && value.trim()) {
-    state.client.sendEvent(state.focusedRoomId, null, "m.room.message", { body: value.trim() });
+    state.client.sendEvent(state.focusedRoomId, null, "m.room.message", { body: value.trim(), msgtype: "m.text" });
     e.target.value = "";
   }
 }

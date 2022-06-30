@@ -10,6 +10,7 @@ let eventPromise = state.client.fetchRoomEvent(roomid, eventid);
   align-items: center;
   position: relative;
   bottom: 4px;
+  font-size: 14px;
   text-overflow: elipsis;
   color: var(--fg-light);
 }
