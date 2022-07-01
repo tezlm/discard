@@ -6,6 +6,7 @@ export default {
   focusedRoom: writable(null),
   focusedRoomId: null,
   focusedSpace: writable(null),
+  invitedRooms: writable([]),
   timeline: writable([]),
   scene: writable(null),
   client: null,
