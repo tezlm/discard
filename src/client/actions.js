@@ -66,9 +66,9 @@ export default {
   },
   rooms: {
     focus(room) {
-    	state.focusedRoomId = room.roomId;
+    	state.focusedRoomId = room?.roomId ?? null;
     	state.focusedRoom.set(room);
-    	state.timeline.set(room.timeline);
+    	if (room) state.timeline.set(room.timeline);
     },
     updateTimeline(event) {
       if (!state.focusedRoomId) return;

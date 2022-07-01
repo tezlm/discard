@@ -59,10 +59,6 @@ function getReply(content) {
   filter: drop-shadow(0, 4px, 4px, #00000022);
 }
 
-.message:hover .timestamp, .timestamp.inline {
-  display: inline;
-}
-
 :global(a) {
   color: #00aff4;
   text-decoration: none;
