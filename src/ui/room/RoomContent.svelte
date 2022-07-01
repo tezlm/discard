@@ -34,7 +34,7 @@ timeline.subscribe(() => {
 });
 
 state.focusedRoom.subscribe(() => {
-	if (scroller) {
+	if (scroller && state.focusedRoomId) {
 		scroller.scrollTo(0, scroller.scrollTopMax);
 		maybePaginate();
 	}

@@ -55,11 +55,14 @@ export default {
       }
     },
     listen(client) {
-      const updateRooms = () => state.rooms.set(client.getRooms());
+      function updateRooms() {
+        state.rooms.set(client.getRooms().filter(i => i.getMyMembership() === "join"));
+        state.invitedRooms.set(client.getRooms().filter(i => i.getMyMembership() === "invite"));
+        actions.spaces.recalculate();
+      }
+  
       client.once("sync", updateRooms);
-      client.on("sync", actions.spaces.recalculate);
       client.on("Room.myMembership", updateRooms);
-      client.on("Room.myMembership", actions.spaces.recalculate);
       client.on("Room.name", updateRooms);
       client.on("Room.timeline", actions.rooms.updateTimeline);
     },
