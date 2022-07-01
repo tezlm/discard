@@ -1,5 +1,7 @@
 <script>
 import Popup from "../atoms/Popup.svelte";
+let focusedSpace = state.focusedSpace;
+let spaceMap = state.spaceMap;
 let rooms = state.rooms;
 let showPopup = false;
 
@@ -63,10 +65,10 @@ function getClasses(room) {
 </style>
 <div class="nav">
 	<div class="header" on:click={() => showPopup = true}>
-	  <span>Todo</span>
+	  <span>{$focusedSpace ? state.client.getRoom($focusedSpace).name : "Home"}</span>
 	  <Popup bind:show={showPopup} title="todo">nothing here right now</Popup>
 	</div>
-	{#each $rooms as room}
+	{#each $rooms.filter(i => $spaceMap.get($focusedSpace ?? "orphanRooms").includes(i.roomId)) as room}
 	  <div
 			class={getClasses(room).join(" ")}
 			on:click={actions.rooms.focus(room)}>

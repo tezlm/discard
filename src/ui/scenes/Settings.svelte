@@ -1,5 +1,6 @@
 <script>
 // TODO: this whole file is a mess and needs to be refactored
+import { onMount, onDestroy } from 'svelte';
 import RoomNav from '../nav/RoomNav.svelte';
 import SpaceNav from '../nav/SpaceNav.svelte';
 import { getAvatar, getDisplayName } from '../../util/events.js';
@@ -24,15 +25,11 @@ function formatSize(size) {
 }
 
 function handleKeyDown(e) {
-  if (e.key === "Escape") exitSettings();
+  if (e.key === "Escape") state.scene.set("chat");
 }
 
-function exitSettings() {
-  document.removeEventListener("keydown", handleKeyDown);
-  state.scene.set("chat");
-}
-
-document.addEventListener("keydown", handleKeyDown);
+onDestroy(() => document.removeEventListener("keydown", handleKeyDown));
+onMount(() => document.addEventListener("keydown", handleKeyDown));
 </script>
 <style>
 .settings {
@@ -135,7 +132,7 @@ h2 {
   </div>
   <div class="main">
     <div class="wrapper">
-      <div class="exit" on:click={exitSettings}>ESC</div>
+      <div class="exit" on:click={() => state.scene.set("chat")}>ESC</div>
       {#if focusedView === "account"}
         <h2>My Account</h2>
         <div class="account">
