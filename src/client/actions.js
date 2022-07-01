@@ -93,7 +93,7 @@ export default {
         inSpaces.push(...rooms);
         spaceMap.set(space.roomId, rooms);
       }
-      const orphans = state.client.getRooms().filter(i => !inSpaces.includes(i));
+      const orphans = state.client.getRooms().filter(i => !inSpaces.includes(i.roomId));
       spaceMap.set("orphanRooms",  orphans.filter(i => !i.isSpaceRoom()).map(i => i.roomId));
       spaceMap.set("orphanSpaces", orphans.filter(i =>  i.isSpaceRoom()).map(i => i.roomId));
       state.spaceMap.set(spaceMap);
