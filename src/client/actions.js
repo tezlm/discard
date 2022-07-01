@@ -57,10 +57,12 @@ export default {
     listen(client) {
       const updateRooms = () => state.rooms.set(client.getRooms());
       client.once("sync", updateRooms);
+      client.on("sync", actions.spaces.recalculate);
       client.on("Room.myMembership", updateRooms);
+      client.on("Room.myMembership", actions.spaces.recalculate);
       client.on("Room.name", updateRooms);
       client.on("Room.timeline", actions.rooms.updateTimeline);
-    }
+    },
   },
   rooms: {
     focus(room) {
@@ -71,8 +73,27 @@ export default {
     updateTimeline(event) {
       if (!state.focusedRoomId) return;
       if (event.getRoomId() !== state.focusedRoomId) return;
-      console.log("update timeline")
       state.timeline.set(state.client.getRoom(state.focusedRoomId).timeline);
-    }
-  }
+    },
+  },
+  spaces: {
+    focus(space) {
+    	state.focusedSpaceId = space?.roomId ?? null;
+    	state.focusedSpace.set(space);
+    },
+    recalculate() {
+      const spaceMap = new Map();
+      const inSpaces = [];
+      const spaces = state.client.getRooms().filter(i => i.isSpaceRoom());
+      for (let space of spaces) {
+        const rooms = space.currentState.getStateEvents("m.space.child").map(i => i.getStateKey());
+        inSpaces.push(...rooms);
+        spaceMap.set(space.roomId, rooms);
+      }
+      const orphans = state.client.getRooms().filter(i => !inSpaces.includes(i));
+      spaceMap.set("orphanRooms",  orphans.filter(i => !i.isSpaceRoom()).map(i => i.roomId));
+      spaceMap.set("orphanSpaces", orphans.filter(i =>  i.isSpaceRoom()).map(i => i.roomId));
+      state.spaceMap.set(spaceMap);
+    },
+  },
 };

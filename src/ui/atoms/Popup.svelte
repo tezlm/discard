@@ -1,4 +1,5 @@
 <script>
+import { onMount, onDestroy } from 'svelte';
 import { quadOut } from 'svelte/easing';
 export let show = false, title = "";
 
@@ -24,10 +25,10 @@ function handleKeyDown(e) {
 function closePopup(e) {
   show = false;
   e.stopPropagation();
-  document.removeEventListener("keydown", handleKeyDown);
 }
 
-document.addEventListener("keydown", handleKeyDown);
+onDestroy(() => document.removeEventListener("keydown", handleKeyDown));
+onMount(() => document.addEventListener("keydown", handleKeyDown));
 </script>
 <style>
 .background {

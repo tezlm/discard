@@ -1,10 +1,16 @@
 <script>
-let spaces = [];
-state.rooms.subscribe((newRooms) => spaces = newRooms.filter(i => i.isSpaceRoom()));
-// TODO: focused space
-// <div class={focusedRoom?.roomId === room.roomId ? "space selected" : "space"} on:click={actions.rooms.focus(room)}>{room.name}</div>
-// let focusedRoom = null;
-// state.focusedRoom.subscribe((newRoom) => focusedRoom = newRoom);
+let focusedSpace = state.focusedSpace;
+let spaceMap = state.spaceMap;
+
+state.focusedSpace.subscribe(() => {
+	spaceMap = state.spaceMap; // hacky svelte ;)
+});
+
+function getClasses(space) {
+	const classes = ["space"];
+	if ($focusedSpace === space) classes.push("selected");
+	return classes;
+}
 </script>
 <style>
 .nav {
@@ -22,11 +28,17 @@ state.rooms.subscribe((newRooms) => spaces = newRooms.filter(i => i.isSpaceRoom(
   border-radius: 50%;
   margin-top: 8px;
   cursor: pointer;
-  transition: all 0.2s;
+  border: solid var(--bg-rooms-members) 0;
+  transition: border-radius 0.2s, border 0.05s;
 }
 
 .space:hover {
   border-radius: 35%;
+}
+
+.space.selected {
+  border-radius: 35%;
+  border: solid var(--bg-rooms-members) 3px;
 }
 
 .separator {
@@ -36,10 +48,18 @@ state.rooms.subscribe((newRooms) => spaces = newRooms.filter(i => i.isSpaceRoom(
 }
 </style>
 <div class="nav">
-  <img class="space selected" src={state.client.mxcUrlToHttp("mxc://celery.eu.org/Wm9T9Nnch8IUQsVaJAInkaoVsgCJlmGx")}>
+  <img
+    class={$focusedSpace ? "space" : "space selected"}
+    src={state.client.mxcUrlToHttp("mxc://celery.eu.org/Wm9T9Nnch8IUQsVaJAInkaoVsgCJlmGx")}
+    on:click={() => actions.spaces.focus(null)}
+  />
   <div class="separator"></div>
-	{#each spaces as space}
-  <img class="space" src={space.getAvatarUrl(state.client.baseUrl)}>
+	{#each $spaceMap.get("orphanSpaces") ?? [] as space}
+  <img
+    class={getClasses(space).join(" ")}
+    src={state.client.getRoom(space).getAvatarUrl(state.client.baseUrl)}
+    on:click={() => actions.spaces.focus(space)}
+  />
 	{/each}
 </div>
 
