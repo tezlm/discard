@@ -12,7 +12,15 @@ function getCopyText() {
 		case 1: return "Copied!";
 		case 2: return "Double Copy!";
 		case 3: return "Triple Copy!";
-		default: return "Dominating!!";
+		case 4: return "Dominating!!";
+		case 5: return "Rampage!!";
+		case 6: return "Mega Copy!!";
+		case 7: return "Unstoppable!!";
+		case 8: return "Wicked Sick!!";
+		case 9: return "Monster Copy!!!";
+//		case 10: return "GODLIKE!!!";
+//		default: return "BEYOND GODLIKE!!!";
+		default: return "good jbo you copied it";
 	}
 }
 
@@ -22,7 +30,15 @@ function handleCopyClick() {
 	copyText = getCopyText();
 }
 
-// onMount(() => )
+function resetCopy() {
+	setTimeout(() => {
+		copyCount = 0;
+		copyText = getCopyText();
+	}, 50);
+}
+
+onMount(() => copyEl.addEventListener("mouseleave", resetCopy));
+onDestroy(() => copyEl.removeEventListener("mouseleave", resetCopy));
 </script>
 <style>
 .user {
@@ -98,7 +114,7 @@ function handleCopyClick() {
 			<div class="userid">{client.getUserId()}</div>
 		</Tooltip>
 	</div>
-	<Tooltip tip="User Settings">
+	<Tooltip tip="User Settings" style="height: 30px">
 		<img class="icon" src={settingsIcon} on:click={() => state.scene.set("settings")} />
 	</Tooltip>
 </div>

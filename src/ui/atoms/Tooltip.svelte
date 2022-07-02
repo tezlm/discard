@@ -1,5 +1,5 @@
 <script>
-export let tip = "", position = "up", color;
+export let tip = "", position = "up", style = "", color;
 let x = 0, y = 0, visible = false;
 
 function show() {
@@ -76,7 +76,7 @@ function hide() {
 .tooltip.left::after  { border-left: solid var(--bg-tooltip) 6px;   transform: translate(0, -50%); top: 50%; left: 100% }
 .tooltip.right::after { border-right: solid var(--bg-tooltip) 6px;  transform: translate(-100%, -50%); top: 50%; left: 0 }
 </style>
-<div class="wrapper" style={color ? `--bg-tooltip: ${color}` : ""}>
+<div class="wrapper" style={color ? `--bg-tooltip: ${color}; ${style}` : style}>
   <div class="tooltip-wrapper">
     <div class="tooltip {position}">
       {#if $$slots.tip}
