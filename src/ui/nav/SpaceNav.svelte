@@ -1,4 +1,6 @@
 <script>
+import Tooltip from "../atoms/Tooltip.svelte";
+
 let focusedSpace = state.focusedSpace;
 let spaceMap = state.spaceMap;
 
@@ -55,11 +57,14 @@ function getClasses(space) {
   />
   <div class="separator"></div>
 	{#each $spaceMap.get("orphanSpaces") ?? [] as space}
-  <img
-    class={getClasses(space).join(" ")}
-    src={state.client.getRoom(space).getAvatarUrl(state.client.baseUrl)}
-    on:click={() => actions.spaces.focus(space)}
-  />
+  <Tooltip position="right">
+    <img
+      class={getClasses(space).join(" ")}
+      src={state.client.getRoom(space).getAvatarUrl(state.client.baseUrl)}
+      on:click={() => actions.spaces.focus(space)}
+    />
+    <b slot="tip">{state.client.getRoom(space).name}</b>
+  </Tooltip>
 	{/each}
 </div>
 

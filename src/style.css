@@ -7,12 +7,15 @@
   --bg-content: #36393f;
   --bg-rooms-members: #2f3136;
   --bg-spaces: #202225;
+  --bg-misc: #292b2f;
+  --bg-tooltip: #111215;
   --fg-content: #fbfbfb;
   --fg-light: #c9c9c9;
   --fg-dim: #9f9f9f;
   --fg-muted: #b6b6b6;
   --font-primary: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-display: "ABC Ginto Normal", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-monospace: Consolas, Andale Mono, Lucida Console, DejaVu Sans Mono, monospace;
   --color-accent: #7289da;
   --color-error: #ed4245;
   --color-gray: #414548;
@@ -21,7 +24,7 @@
 * {
   padding: 0;
   margin: 0;
-  box-sizing: border-box;
+  box-sizing: border-box !important;
 }
 
 body {
@@ -29,3 +32,22 @@ body {
   color: var(--fg-content);
   background: var(--bg-spaces);
 }
+
+a {
+  color: #00aff4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+pre {
+  padding: .5em;
+  background: var(--bg-rooms-members);
+  border: solid var(--bg-spaces) 1px;
+  border-radius: 4px;
+  font-family: var(--font-monospace);
+  font-size: 0.75rem;
+}
+

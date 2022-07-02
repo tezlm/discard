@@ -66,6 +66,7 @@ function getClasses(room) {
     0 2px 0 rgba(4, 4, 5, 0.05);
   z-index: 1;
 	margin-bottom: 1em;
+	font-weight: bold;
 }
 </style>
 <div class="nav">

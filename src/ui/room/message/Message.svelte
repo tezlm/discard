@@ -3,7 +3,7 @@ import Timestamp from "../../atoms/Timestamp.svelte";
 import MessageReply from "./MessageReply.svelte";
 import MessageContent from "./MessageContent.svelte";
 import { sanitizeMatrixHtml } from "../../../util/sanitize.js";
-import { getDisplayName, getAvatar } from '../../../util/events.js';
+import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.js';
 
 export let event, header = false;
 let showTimestamp = false;
@@ -58,21 +58,12 @@ function getReply(content) {
   width: 40px;
   filter: drop-shadow(0, 4px, 4px, #00000022);
 }
-
-:global(a) {
-  color: #00aff4;
-  text-decoration: none;
-}
-
-:global(a:hover) {
-  text-decoration: underline;
-}
 </style>
 <div class="message {header ? 'header' : ''}" on:mouseover={() => showTimestamp = true} on:mouseleave={() => showTimestamp = false}>
   <div class="side">
     {#if getReply(event.getContent())}<br>{/if}
     {#if header}
-    <img class="avatar" alt="avatar for {getDisplayName(event.getSender())}" src={getAvatar(event.getSender())} />
+    <img class="avatar" alt="avatar for {getDisplayName(event.getSender())}" src={getAvatar(event.getSender())} onerror="this.src='{defaultAvatar}'" />
     {:else}
     <Timestamp time={event.getDate()} format="time" display={showTimestamp ? "inline" : "none"} />
     {/if}

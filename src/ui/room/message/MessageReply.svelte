@@ -27,6 +27,11 @@ let eventPromise = state.client.fetchRoomEvent(roomid, eventid);
   width: 30px;
 }
 
+.reply::after {
+  content: "a";
+  visibility: hidden;
+}
+
 .reply .author {
   font-weight: bold;
   margin-right: .25rem;

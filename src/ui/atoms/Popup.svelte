@@ -42,7 +42,7 @@ onMount(() => document.addEventListener("keydown", handleKeyDown));
   width: 100%;
   height: 100%;
   background: #000000bb;
-  z-index: 99998;
+  z-index: 99999;
 }
 
 .card {
