@@ -15,12 +15,13 @@ let showTopicPopup = false;
   box-shadow: 0 1px 0 rgba(4, 4, 5, 0.2),
     0 1.5px 0 rgba(6, 6, 7, 0.05),
     0 2px 0 rgba(4, 4, 5, 0.05);
+  z-index: 1;
 }
 
-.big {
+.name {
   font-weight: bold;
-  font-size: 18px;
   font-family: var(--font-display);
+  margin-top: 3px;
 }
 
 .spacer {
@@ -32,6 +33,7 @@ let showTopicPopup = false;
 
 .topic {
   cursor: pointer;
+  font-size: 14px;
 }
 
 .icon {
@@ -45,7 +47,7 @@ let showTopicPopup = false;
   {#if $room}
   <span class="icon" style="mask-image: url({roomNormalIcon})" />
   {/if}
-  <span class="big">{$room ? $room.name : "Home"}</span>
+  <span class="name">{$room ? $room.name : "Home"}</span>
   {#if topic}
   <div class="spacer"></div>
   <div class="topic" on:click={() => showTopicPopup = true}>{topic}</div>

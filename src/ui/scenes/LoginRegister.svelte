@@ -72,7 +72,7 @@ h5, .spacer {
       <h5>Password</h5>
       <Input type="password" bind:value={password} />
       <div class="spacer"></div>
-      <Button type="primary" on:click={submit} label={type === "login" ? "Login" : "Register"} />
+      <Button type="primary big" on:click={submit} label={type === "login" ? "Login" : "Register"} />
       {#if error}
       <div class="error">{error}</div>
       {/if}

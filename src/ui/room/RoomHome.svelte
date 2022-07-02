@@ -1,4 +1,5 @@
 <script>
+import Tooltip from "../atoms/Tooltip.svelte";
 let invited = state.invitedRooms;
 </script>
 <style>
@@ -54,6 +55,13 @@ let invited = state.invitedRooms;
 }
 </style>
 <div class="rooms">
+  <div>
+    <Tooltip tip="yes" position="up">up<br />yes</Tooltip>
+    <Tooltip tip="yes" position="down">down<br />yes</Tooltip>
+    <Tooltip tip="yes" position="left">left<br />yes</Tooltip>
+    <Tooltip tip="yes" position="right">right<br />yes</Tooltip>
+  </div>
+<br><br><br><br>
   <b>invites - {$invited.length}</b>
   {#each $invited as room}
   <div class="room">

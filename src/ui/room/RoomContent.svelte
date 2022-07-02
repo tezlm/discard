@@ -18,13 +18,16 @@ function handleScroll() {
 	maybePaginate();
 }
 
+// TODO: this is really broken, fix it
 async function maybePaginate() {
 	if (scroller.scrollTop > 200) return;
-	const lastScrollHeight = scroller.scrollHeight;
+	const oldHeight = scroller.scrollTopMax;
+	const oldScroll = scroller.scrollTop;
 	const liveTimeline = state.client.getRoom(state.focusedRoomId).getLiveTimeline();
-	await state.client.paginateEventTimeline(liveTimeline, { backwards: true, limit: 50 });
-	const scrollDiff = scroller.scrollHeight - lastScrollHeight;
-	scroller.scrollTop += scrollDiff;
+	await state.client.paginateEventTimeline(liveTimeline, { backwards: true, limit: 100 });
+	const heightChange = scroller.scrollTopMax - oldHeight;
+	scroller.scrollTop = oldScroll + heightChange;
+	maybePaginate();
 }
 
 timeline.subscribe(() => {
@@ -34,9 +37,11 @@ timeline.subscribe(() => {
 });
 
 state.focusedRoom.subscribe(() => {
-	if (scroller && state.focusedRoomId) {
-		scroller.scrollTo(0, scroller.scrollTopMax);
-		maybePaginate();
+	if (state.focusedRoomId) {
+		queueMicrotask(() => {
+			scroller.scrollTo(0, scroller.scrollTopMax);
+			maybePaginate();
+		});
 	}
 });
 </script>
@@ -60,7 +65,7 @@ state.focusedRoom.subscribe(() => {
 <div class="content" bind:this={container}>
 	<div class="scroller" on:scroll={handleScroll} bind:this={scroller}>
 		{#each $timeline as event, i}
-			{#if event.getType() === "m.room.message"}
+			{#if event.getType() === "m.room.message" && !event.isRedacted()}
 			  <Message
 					event={event}
 					header={shouldSplit(event, $timeline[i - 1]) ? true : null}

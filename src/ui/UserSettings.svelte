@@ -1,39 +1,104 @@
 <script>
+import { onMount, onDestroy } from 'svelte';
+import Tooltip from "./atoms/Tooltip.svelte";
 import settingsIcon from "../assets/icons/settings.svg";
-import { getAvatar } from "../util/events.js";
+import { getDisplayName, getAvatar } from "../util/events.js";
+let client = state.client;
+let copyCount = 0, copyText = getCopyText(), copyEl;
+
+function getCopyText() {
+	switch(copyCount) {
+		case 0: return "Click to copy user id";
+		case 1: return "Copied!";
+		case 2: return "Double Copy!";
+		case 3: return "Triple Copy!";
+		default: return "Dominating!!";
+	}
+}
+
+function handleCopyClick() {
+	navigator.clipboard.writeText(client.getUserId());
+	copyCount++;
+	copyText = getCopyText();
+}
+
+// onMount(() => )
 </script>
 <style>
 .user {
 	display: flex;
 	align-items: center;
 	margin-top: auto;
-	background: var(--bg-spaces);
+	background: var(--bg-misc);
 	width: 100%;
 	height: 52px;
 	padding: 8px;
 }
 
 .user .icon {
-	height: 28px;
-	width: 28px;
+	height: 30px;
+	width: 30px;
 	cursor: pointer;
 	padding: 6px;
-	border-radius: 3px;
+	border-radius: 4px;
 }
 
-.user .icon:not(.avatar):hover {
+.user .icon:hover {
 	filter: brightness(2);
 	background: #ffffff33;
 }
 
 .user .avatar {
-	height: 48px;
-	width: 48px;
+	height: 32px;
+	width: 32px;
+	cursor: pointer;
 	border-radius: 50%;
-	margin-right: auto;
+	margin-right: 8px;
+}
+
+.offline {
+	background: var(--bg-misc);
+	color: var(--color-error);
+	border-bottom: solid var(--bg-spaces) 1px;
+	padding: 8px;
+	text-align: center;
+	font-weight: bold;
+}
+
+.info {
+	flex: 1;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+}
+
+.displayname {
+	font-weight: 600;
+	line-height: 1;
+	font-family: var(--font-display);
+	font-size: 0.9em;
+	text-overflow: ellipsis;
+}
+
+.userid {
+	color: var(--fg-light);
+	font-size: 0.8em;
+	line-height: 1;
+	text-overflow: ellipsis;
 }
 </style>
+{#if !navigator.onLine}
+<div class="offline">Offline!</div>
+{/if}
 <div class="user">
-	<img class="icon avatar" src={getAvatar(state.client.getUserId())} />
-	<img class="icon" src={settingsIcon} on:click={() => state.scene.set("settings")} />
+	<img class="avatar" src={getAvatar(state.client.getUserId())} />
+	<div class="info" on:click={handleCopyClick} bind:this={copyEl}>
+		<Tooltip tip={copyText} color={copyCount > 0 ? "#3ba55d" : null}>
+			<div class="displayname">{getDisplayName(client.getUserId())}</div>
+			<div class="userid">{client.getUserId()}</div>
+		</Tooltip>
+	</div>
+	<Tooltip tip="User Settings">
+		<img class="icon" src={settingsIcon} on:click={() => state.scene.set("settings")} />
+	</Tooltip>
 </div>

@@ -6,14 +6,19 @@ export let clicked = () => {};
 <style>
 button {
   font: inherit;
-  font-size: 16px;
-  padding: 10px;
-  width: 100%;
-  height: 40px;
   border-radius: 3px;
   border: none;
   color: inherit;
   cursor: pointer;
+  padding: 4px;
+  font-size: 14px;
+}
+
+.big {
+  font-size: 16px;
+  padding: 10px;
+  width: 100%;
+  height: 40px;
 }
 
 .normal {
@@ -24,4 +29,4 @@ button {
   background: #7289da;
 }
 </style>
-<button type={type} class={type} on:click={clicked}>{label}</button>
+<button class={type} on:click={clicked}>{label}</button>
