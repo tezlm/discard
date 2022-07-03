@@ -28,7 +28,7 @@ function getClasses(room) {
 }
 
 .room {
-	margin: 2px 8px;
+	margin: 1px 8px;
 	padding: 6px 10px;
 	color: var(--fg-dim);
 	border-radius: 4px;
@@ -62,7 +62,7 @@ function getClasses(room) {
 }
 
 .spacer {
-	margin: 4px;
+	margin-top: 16px;
 }
 </style>
 <div class="nav">

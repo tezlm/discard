@@ -7,7 +7,6 @@ import { sanitizeMatrixHtml } from "../../../util/sanitize.js";
 import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.js';
 
 export let event, header = false;
-let time = event.getDate();
 
 function getReply(content) {
   return content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
@@ -57,13 +56,14 @@ function getReply(content) {
   position: absolute;
   display: block;
   left: 16px;
-  margin-right: 8px;
+  top: 2px;
 }
 
 .avatar {
   border-radius: 50%;
   height: 40px;
   width: 40px;
+  margin-top: 4px;
   filter: drop-shadow(0, 4px, 4px, #00000022);
 }
 
@@ -82,21 +82,21 @@ time {
 </style>
 <div class="message {header ? 'header' : ''}">
   <div class="side">
-    {#if getReply(event.getContent())}<br>{/if}
+    {#if getReply(event.content)}<br>{/if}
     {#if header}
-    <img class="avatar" alt="avatar for {getDisplayName(event.getSender())}" src={getAvatar(event.getSender())} onerror="this.src='{defaultAvatar}'" />
+    <img class="avatar" alt="avatar for {getDisplayName(event.sender)}" src={getAvatar(event.sender)} onerror="this.src='{defaultAvatar}'" />
     {:else}
-    <time datetime={time.toISOString()}>{formatTime(time)}</time>
+    <time datetime={event.date.toISOString()}>{formatTime(event.date)}</time>
     {/if}
   </div>
   <div class="content">
-    {#if getReply(event.getContent())}<MessageReply roomid={event.getRoomId()} eventid={getReply(event.getContent())} />{/if}
+    {#if getReply(event.content)}<MessageReply roomid={event.roomId} eventid={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
-      <span class="author">{getDisplayName(event.getSender())}</span>
-      <time datetime={time.toISOString()} style="display: inline">{formatDate(time)}</time>
+      <span class="author">{getDisplayName(event.sender)}</span>
+      <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
     </div>
     {/if}
-    <MessageContent event={event} />
+    <MessageContent content={event.content} edited={event.original?.date} />
   </div>
 </div>

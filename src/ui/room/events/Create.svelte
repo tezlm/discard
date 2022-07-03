@@ -1,6 +1,6 @@
 <script>
 export let event;
-$: room = state.client.getRoom(event.getRoomId());
+$: room = state.client.getRoom(event.roomId);
 $: name = room?.name;
 $: topic = room?.currentState.getStateEvents("m.room.topic")[0]?.getContent().topic;
 </script>

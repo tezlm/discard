@@ -40,11 +40,6 @@ state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus()));
   border-radius: 50%;
 }
 
-.textarea {
-  flex: 1;
-  padding: 11px 0;
-}
-
 textarea {
   font: inherit;
   color: inherit;
@@ -52,13 +47,14 @@ textarea {
   border: none;
   outline: none;
   resize: none;
+
+  flex: 1;
+  padding: 11px 0;
 }
 </style>
 <div class="input">
   <div class="upload">
     <div class="upload-button"></div>
   </div>
-  <div class="textarea">
-    <textarea rows={rows} on:keydown={e => setTimeout(() => handleInput(e), 1)} placeholder={placeholder} bind:this={textarea}></textarea>
-  </div>
+  <textarea rows={rows} on:keydown={e => setTimeout(() => handleInput(e), 1)} placeholder={placeholder} bind:this={textarea}></textarea>
 </div>

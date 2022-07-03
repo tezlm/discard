@@ -1,8 +1,7 @@
 <script>
 import { sanitizeMatrixHtml } from "../../../util/sanitize.js";
 import fileIcon from "../../../assets/file.svg";
-export let event;
-$: content = event.getContent();
+export let content, edited;
 
 function formatSize(size) {
   if (!size) return "??? kb";
@@ -45,6 +44,12 @@ img, video, audio {
 .text {
   word-break: break-word;
 }
+
+.edited {
+  font-size: .625rem;
+  color: var(--fg-muted);
+  margin-left: 4px;
+}
 </style>
 {#if content.msgtype === "m.image"}
 <img src={state.client.mxcUrlToHttp(content.url)} alt={content.body} />
@@ -61,7 +66,7 @@ img, video, audio {
   </div>
 </div>
 {:else if content.format === "org.matrix.custom.html"}
-<div class="text">{@html sanitizeMatrixHtml(content.formatted_body)}</div>
+<div class="text">{@html sanitizeMatrixHtml(content.formatted_body)}{#if edited}<span class="edited">(edited)</span>{/if}</div>
 {:else}
-<div class="text">{content.body}</div>
+<div class="text">{content.body}{#if edited} <span class="edited">(edited)</span>{/if}</div>
 {/if}

@@ -7,15 +7,15 @@ let container, scroller, atBottom = true, atTop = false;
 
 function shouldSplit(ev, prev) {
 	if (!prev) return true;
-	if (prev.getType() !== "m.room.message") return true;
-	if (prev.getSender() !== ev.getSender()) return true;
-	if (ev.getContent()["m.relates_to"]?.["m.in_reply_to"]) return true;
-	if (ev.getDate() - prev.getDate() < 1000 * 60 * 5) return false;
-	return true;
+	if (prev.type !== "m.room.message") return true;
+	if (prev.sender !== ev.sender) return true;
+	if (ev.content["m.relates_to"]?.["m.in_reply_to"]) return true;
+	if (ev.date - prev.date > 1000 * 60 * 5) return true;
+	return false;
 }
 
 function handleScroll() {
-	atBottom = scroller.scrollTop > scroller.scrollTopMax - 20;
+	atBottom = scroller.scrollTop > scroller.scrollTopMax - 50;
 	maybePaginate();
 }
 
@@ -27,7 +27,7 @@ async function maybePaginate() {
 	await state.client.paginateEventTimeline(liveTimeline, { backwards: true, limit: 100 });
 	const heightChange = scroller.scrollTopMax - oldHeight;
 	scroller.scrollTop = oldScroll + heightChange;
-	if ($timeline[0]?.getType() === "m.room.create") atTop = true;
+	if ($timeline[0]?.type === "m.room.create") atTop = true;
 	maybePaginate();
 }
 
@@ -65,10 +65,10 @@ state.focusedRoom.subscribe(() => {
 </style>
 <div class="content" bind:this={container}>
 	<div class="scroller" on:scroll={handleScroll} bind:this={scroller}>
-		{#each $timeline.filter(i => !i.isRedacted()) as event, i}
-			{#if event.getType() === "m.room.create"}
+		{#each $timeline as event, i}
+			{#if event.type === "m.room.create"}
 				<EvCreate event={event} />
-			{:else if event.getType() === "m.room.message"}
+			{:else if event.type === "m.room.message"}
 			  <Message
 					event={event}
 					header={shouldSplit(event, $timeline[i - 1]) ? true : null}
