@@ -46,9 +46,14 @@ function getClasses(room) {
 	background: rgba(79,84,92,0.6);
 }
 
+.room.unread {
+	color: var(--fg-content); 
+}
+
 .room::before {
 	content: "# ";
 	font-weight: bold;
+	color: var(--fg-dim); 
 }
 
 .home::before {

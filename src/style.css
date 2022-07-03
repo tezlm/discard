@@ -1,13 +1,3 @@
-@font-face {
-  font-family: Whitney;
-  src: url(/assets/fonts/whitneybook.otf) format("opentype");
-}
-
-@font-face {
-  font-family: "ABC Ginto";
-  src: url(/assets/fonts/abcginto.woff2) format("woff2");
-}
-
 :root {
   --bg-content: #36393f;
   --bg-rooms-members: #2f3136;
@@ -18,6 +8,7 @@
   --fg-light: #c9c9c9;
   --fg-dim: #9f9f9f;
   --fg-muted: #b6b6b6;
+  --fg-interactive: #b9bbbe;
   --font-primary: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-display: "ABC Ginto", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-monospace: Consolas, Andale Mono, Lucida Console, DejaVu Sans Mono, monospace;

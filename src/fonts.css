@@ -1,0 +1,41 @@
+@font-face {
+  font-family: Whitney;
+  src: url(/assets/fonts/whitney-book.otf) format("opentype");
+}
+
+@font-face {
+  font-family: Whitney;
+  font-style: italic;
+  src: url(/assets/fonts/whitney-book-italic.otf) format("opentype");
+}
+
+@font-face {
+  font-family: Whitney;
+  font-weight: 500;
+  src: url(/assets/fonts/whitney-medium.otf) format("opentype");
+}
+
+@font-face {
+  font-family: Whitney;
+  font-weight: 500;
+  font-style: italic;
+  src: url(/assets/fonts/whitney-medium-italic.otf) format("opentype");
+}
+
+@font-face {
+  font-family: Whitney;
+  font-weight: 700;
+  src: url(/assets/fonts/whitney-semibold.otf) format("opentype");
+}
+
+@font-face {
+  font-family: Whitney;
+  font-weight: 700;
+  font-style: italic;
+  src: url(/assets/fonts/whitney-semibold-italic.otf) format("opentype");
+}
+
+@font-face {
+  font-family: "ABC Ginto";
+  src: url(/assets/fonts/abcginto.woff2) format("woff2");
+}

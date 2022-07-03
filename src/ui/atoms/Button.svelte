@@ -27,7 +27,7 @@ button {
 }
 
 .primary {
-  background: var(--color-brand);
+  background: var(--color-accent);
 }
 
 .hollow {

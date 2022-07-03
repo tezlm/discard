@@ -1,4 +1,5 @@
 <script>
+import Loading from './scenes/Loading.svelte';
 import Chat from './scenes/Chat.svelte';
 import LoginRegister from './scenes/LoginRegister.svelte';
 import UserSettings from './scenes/UserSettings.svelte';
@@ -35,7 +36,6 @@ main > div {
   height: 100%;
 }
 </style>
-
 <main>
   {#if $scene === "chat"}
   <div transition:easeInv><Chat /></div>
@@ -45,7 +45,10 @@ main > div {
   <div transition:ease><SpaceSettings /></div>
   {:else if $scene === "room-settings"}
   <!-- TODO -->
-  {:else if $scene !== "chat"}
-  <div transition:ease><LoginRegister /></div>
+  {:else if $scene === "auth"}
+  <LoginRegister />
+  {:else}
+  <!-- TODO: fadein/out wont work with this fsr, find a solution later? -->
+  <Loading />
   {/if}
 </main>

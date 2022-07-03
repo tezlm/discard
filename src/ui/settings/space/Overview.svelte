@@ -29,9 +29,14 @@ $: topic = space.currentState.getStateEvents("m.room.topic")[0]?.getContent().to
 .uploader > .remove {
   text-align: center;
   margin-top: 10px;
-  color: var(--fg-dim);
+  color: var(--fg-muted);
   font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
+}
+
+.uploader > .remove:hover {
+  color: var(--fg-light);
 }
 
 .side {
@@ -43,7 +48,6 @@ $: topic = space.currentState.getStateEvents("m.room.topic")[0]?.getContent().to
 .side > .note {
   color: var(--fg-light);
   font-size: 14px;
-  font-weight: 400;
   margin-bottom: 10px;
 }
 
@@ -93,7 +97,7 @@ $: topic = space.currentState.getStateEvents("m.room.topic")[0]?.getContent().to
     <div class="avatar">
       <div class="uploader">
         <img src={space.getAvatarUrl(state.client.baseUrl)} />
-        <div class="info remove">Remove</div>
+        <div class="remove">Remove</div>
       </div>
       <div class="side">
         <div class="note">todo: add some helpful text.</div>

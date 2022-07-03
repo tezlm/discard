@@ -32,13 +32,13 @@ function getReply(content) {
 
 .content {
   color: var(--fg-content);
+  width: 100%;
 }
 
 .author {
 	font-weight: bold;
 	cursor: pointer;
   margin-right: 0.25rem;
-  margin-bottom: 1em;
 }
 
 .author:hover {

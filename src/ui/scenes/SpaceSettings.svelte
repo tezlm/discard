@@ -50,11 +50,11 @@ nav {
 .item {
 	margin: 2px 8px 0;
 	padding: 6px 10px;
-	color: var(--fg-dim);
+	color: var(--fg-muted);
 	border-radius: 4px;
 	font-size: 16px;
 	cursor: pointer;
-  font-weight: bold;
+  font-weight: semibold;
 }
 
 .item:hover {

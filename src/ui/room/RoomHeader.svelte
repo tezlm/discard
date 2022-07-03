@@ -21,7 +21,6 @@ let showTopicPopup = false;
 .name {
   font-weight: bold;
   font-family: var(--font-display);
-  margin-top: 3px;
 }
 
 .spacer {

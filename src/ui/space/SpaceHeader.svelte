@@ -22,7 +22,6 @@ function zoomIn(node) {
   padding: 8px 1rem;
   height: 48px;
   box-shadow: var(--shadow-header);
-	font-weight: bold;
   z-index: 1;
   cursor: pointer;
 }
@@ -47,18 +46,20 @@ function zoomIn(node) {
   padding: 6px 8px;
   border-radius: 2px;
   cursor: pointer;
-  color: var(--fg-light);
+  color: var(--fg-interactive);
   font-size: 14px;
+  font-weight: 500;
   min-height: 32px;
   margin: 2px 0;
 }
 
 .menu .item:hover {
-  background: var(--color-accent);
+  background: hsl(235,51.4%,52.4%);
+  color: #fff;
 }
 
 .menu .item:hover > span {
-  color: var(--fg-content);
+  color: #fff;
 }
 
 .menu .spacer {
