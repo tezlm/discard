@@ -1,5 +1,16 @@
 const sdk = globalThis.matrixcs;
 
+function formatEvent(ev) {
+  return {
+    sender:  ev.getSender(),
+    type:    ev.getType(),
+    date:    ev.getDate(),
+    roomId:  ev.getRoomId(),
+    eventId: ev.getId(),
+    content: ev.getContent(),
+  };  
+}
+
 export default {
   client: {
     async getStore() {
@@ -32,7 +43,7 @@ export default {
       state.scene.set("loading");
       actions.client.listen(client);
     },
-    // login to the homeserver ang create a new client
+    // login to the homeserver and create a new client
     async login({ localpart, homeserver, password }) {
       const userId = `@${localpart}:${homeserver}`;
       const client = sdk.createClient({ baseUrl: "https://" + homeserver, store: await actions.client.getStore() });
@@ -68,19 +79,14 @@ export default {
       client.once("sync", updateRooms);
       client.on("Room.myMembership", updateRooms);
       client.on("Room.name", updateRooms);
-      client.on("Room.timeline", actions.rooms.updateTimeline);
+      client.on("Room.timeline", actions.timeline.add);
     },
   },
   rooms: {
     focus(room) {
     	state.focusedRoomId = room?.roomId ?? null;
     	state.focusedRoom.set(room);
-    	if (room) state.timeline.set(room.timeline);
-    },
-    updateTimeline(event) {
-      if (!state.focusedRoomId) return;
-      if (event.getRoomId() !== state.focusedRoomId) return;
-      state.timeline.set(state.client.getRoom(state.focusedRoomId).timeline);
+    	if (room) actions.timeline.set(room);
     },
   },
   spaces: {
@@ -104,6 +110,39 @@ export default {
         ? pinnedSpaces.filter(i => state.client.getRoom(i)?.getMyMembership() === "join")
         : orphans.filter(i =>  i.isSpaceRoom()).map(i => i.roomId));
       state.spaceMap.set(spaceMap);
+    },
+  },
+  timeline: {
+    set(room) {
+      state.timelineRef = [];
+      for(let event of room.timeline) actions.timeline.add(event);
+      state.timeline.set(state.timelineRef);
+    },
+    insert(event, toBeginning) {
+      if (!["m.room.create", "m.room.message"].includes(event.getType())) return;
+      if (event.isRedacted()) return;
+      
+      const timeline = state.timelineRef;
+      if (event.getRelation()?.rel_type === "m.replace") {
+        const id = event.getRelation()?.event_id;
+        for (let i = timeline.length - 1; i >= 0; i--) {
+          if (timeline[i].eventId === id) {
+            timeline[i] = {
+              ...formatEvent(event),
+              content: event.getContent()["m.new_content"] ?? {},
+              original: timeline[i],
+            };
+          }
+        }
+      } else {
+        timeline[toBeginning ? "unshift" : "push"](formatEvent(event));      
+      }
+    },
+    add(event, _, toBeginning) {
+      if (!state.focusedRoomId) return;
+      if (event.getRoomId() !== state.focusedRoomId) return;
+      actions.timeline.insert(event, toBeginning);
+      state.timeline.set(state.timelineRef);
     },
   },
 };

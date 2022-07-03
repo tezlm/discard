@@ -8,6 +8,7 @@ export default {
   focusedSpace: writable(null),
   invitedRooms: writable([]),
   timeline: writable([]),
+  timelineRef: [],
   scene: writable(null),
   client: null,
 };

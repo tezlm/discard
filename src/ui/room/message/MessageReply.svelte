@@ -37,6 +37,11 @@ let eventPromise = state.client.fetchRoomEvent(roomid, eventid);
 .reply .author {
   font-weight: bold;
   margin-right: .25rem;
+  cursor: pointer;
+}
+
+.reply .author:hover {
+  text-decoration: underline;
 }
 
 .reply .avatar {
@@ -51,15 +56,27 @@ let eventPromise = state.client.fetchRoomEvent(roomid, eventid);
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.reply :global(h1),
+.reply :global(h2),
+.reply :global(h3),
+.reply :global(h4),
+.reply :global(h5),
+.reply :global(h6) {
+  font-size: 1em;
+}
 </style>
 {#await eventPromise}
-<div class="reply">
-</div>
+<div class="reply"></div>
 {:then event}
 <div class="reply">
   <img class="avatar" src={getAvatar(event.sender)} /><span class="author">{getDisplayName(event.sender)}</span>
   <div class="content">
-    {#if event.content.format === "org.matrix.custom.html"}{@html sanitizeMatrixHtml(event.content.formatted_body)}{:else}{event.content.body}{/if}
+    {#if event.content.format === "org.matrix.custom.html"}
+      {@html sanitizeMatrixHtml(event.content.formatted_body).split(/<br|\r?\n/)[0]}
+    {:else}
+      {event.content.body.split(/\r?\n/)[0]}
+    {/if}
   </div>
 </div>
 {/await}
