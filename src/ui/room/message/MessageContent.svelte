@@ -43,6 +43,10 @@ img, video, audio {
   color: var(--fg-muted);
   font-size: .8rem;
 }
+
+.text {
+  word-break: break-word;
+}
 </style>
 {#if content.msgtype === "m.image"}
 <img src={state.client.mxcUrlToHttp(content.url)} alt={content.body} />
@@ -59,7 +63,7 @@ img, video, audio {
   </div>
 </div>
 {:else if content.format === "org.matrix.custom.html"}
-<div>{@html sanitizeMatrixHtml(content.formatted_body)}</div>
+<div class="text">{@html sanitizeMatrixHtml(content.formatted_body)}</div>
 {:else}
-<div>{content.body}</div>
+<div class="text">{content.body}</div>
 {/if}

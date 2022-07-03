@@ -7,10 +7,11 @@ let room = state.focusedRoom;
 </script>
 <style>
 .room {
-  background: var(--bg-content);
 	flex: 1;
 	display: flex;
 	flex-direction: column;
+  width: 100%;
+  background: var(--bg-content);
   padding-bottom: 1em;
 }
 </style>

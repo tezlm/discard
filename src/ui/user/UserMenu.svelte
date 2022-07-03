@@ -1,8 +1,8 @@
 <script>
 import { onMount, onDestroy } from 'svelte';
-import Tooltip from "./atoms/Tooltip.svelte";
-import settingsIcon from "../assets/icons/settings.svg";
-import { getDisplayName, getAvatar } from "../util/events.js";
+import Tooltip from "../atoms/Tooltip.svelte";
+import settingsIcon from "../../assets/icons/settings.svg";
+import { getDisplayName, getAvatar } from "../../util/events.js";
 let client = state.client;
 let copyCount = 0, copyText = getCopyText(), copyEl;
 

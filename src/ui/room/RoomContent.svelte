@@ -2,7 +2,7 @@
 import Message from './message/Message.svelte';
 import { getDisplayName, getAvatar } from '../../util/events.js';
 let timeline = state.timeline;
-let container, scroller, atBottom = true;
+let container, scroller, atBottom = true, atTop = false;
 
 function shouldSplit(ev, prev) {
 	if (!prev) return true;
@@ -18,15 +18,15 @@ function handleScroll() {
 	maybePaginate();
 }
 
-// TODO: this is really broken, fix it
 async function maybePaginate() {
-	if (scroller.scrollTop > 200) return;
+	if (!scroller || scroller.scrollTop > 2000 || atTop) return;
 	const oldHeight = scroller.scrollTopMax;
 	const oldScroll = scroller.scrollTop;
 	const liveTimeline = state.client.getRoom(state.focusedRoomId).getLiveTimeline();
 	await state.client.paginateEventTimeline(liveTimeline, { backwards: true, limit: 100 });
 	const heightChange = scroller.scrollTopMax - oldHeight;
 	scroller.scrollTop = oldScroll + heightChange;
+	if ($timeline[0]?.getType() === "m.room.create") atTop = true;
 	maybePaginate();
 }
 
@@ -37,12 +37,12 @@ timeline.subscribe(() => {
 });
 
 state.focusedRoom.subscribe(() => {
-	if (state.focusedRoomId) {
-		queueMicrotask(() => {
+	queueMicrotask(() => {
+		if (state.focusedRoomId && scroller) {
 			scroller.scrollTo(0, scroller.scrollTopMax);
 			maybePaginate();
-		});
-	}
+		}
+	});
 });
 </script>
 <style>

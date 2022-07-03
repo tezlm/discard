@@ -16,7 +16,10 @@ export default {
       const homeserver = localStorage.getItem("homeserver");
       const userId = localStorage.getItem("userid");
       const token = localStorage.getItem("token");
-      if (!homeserver || !userId || !token) return null;
+      if (!homeserver || !userId || !token) {
+        state.scene.set("auth");
+        return null;
+      }
       
       const client = sdk.createClient({
         baseUrl: "https://" + homeserver,
@@ -26,7 +29,7 @@ export default {
       });
       client.startClient();
       state.client = client;
-      state.scene.set("chat");
+      state.scene.set("loading");
       actions.client.listen(client);
     },
     // login to the homeserver ang create a new client
@@ -42,7 +45,7 @@ export default {
         localStorage.setItem("token", token);
         client.startClient();
         state.client = client;
-        state.scene.set("chat");
+        state.scene.set("loading");
         actions.client.listen(client);
       } catch(err) {
         console.error(err);
@@ -61,6 +64,7 @@ export default {
         actions.spaces.recalculate();
       }
   
+      client.once("sync", () => state.scene.set("chat"));
       client.once("sync", updateRooms);
       client.on("Room.myMembership", updateRooms);
       client.on("Room.name", updateRooms);
@@ -94,8 +98,11 @@ export default {
         spaceMap.set(space.roomId, rooms);
       }
       const orphans = state.client.getRooms().filter(i => !inSpaces.includes(i.roomId));
+      const pinnedSpaces = state.client.getAccountData("in.cinny.spaces")?.getContent().shortcut;
       spaceMap.set("orphanRooms",  orphans.filter(i => !i.isSpaceRoom()).map(i => i.roomId));
-      spaceMap.set("orphanSpaces", orphans.filter(i =>  i.isSpaceRoom()).map(i => i.roomId));
+      spaceMap.set("orphanSpaces", pinnedSpaces
+        ? pinnedSpaces.filter(i => state.client.getRoom(i)?.getMyMembership() === "join")
+        : orphans.filter(i =>  i.isSpaceRoom()).map(i => i.roomId));
       state.spaceMap.set(spaceMap);
     },
   },

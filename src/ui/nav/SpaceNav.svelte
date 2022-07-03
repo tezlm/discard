@@ -20,8 +20,9 @@ function getClasses(space) {
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 72px;
+  padding: 12px;
   padding-top: 4px;
-  width: 72px;
 }
 
 .space {
@@ -50,11 +51,13 @@ function getClasses(space) {
 }
 </style>
 <div class="nav">
-  <img
-    class={$focusedSpace ? "space" : "space selected"}
-    src={state.client.mxcUrlToHttp("mxc://celery.eu.org/Wm9T9Nnch8IUQsVaJAInkaoVsgCJlmGx")}
-    on:click={() => actions.spaces.focus(null)}
-  />
+  <Tooltip position="right" tip="Home">
+    <img
+      class={$focusedSpace ? "space" : "space selected"}
+      src={state.client.mxcUrlToHttp("mxc://celery.eu.org/Wm9T9Nnch8IUQsVaJAInkaoVsgCJlmGx")}
+      on:click={() => actions.spaces.focus(null)}
+    />
+  </Tooltip>
   <div class="separator"></div>
 	{#each $spaceMap.get("orphanSpaces") ?? [] as space}
   <Tooltip position="right">

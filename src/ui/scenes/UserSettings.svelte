@@ -51,7 +51,7 @@ nav {
 	border-radius: 4px;
 	font-size: 16px;
 	cursor: pointer;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .item:hover {

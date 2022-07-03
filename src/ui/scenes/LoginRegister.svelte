@@ -3,7 +3,7 @@ import Input from "../atoms/Input.svelte";
 import Button from "../atoms/Button.svelte";
 import UserId from "../atoms/UserId.svelte";
 let type = "login";
-let localpart, homeserver, password, error;
+let localpart, homeserver = localStorage.getItem("homeserver") ?? "", password, error;
 
 function submit() {
   document.forms[0].submit();
