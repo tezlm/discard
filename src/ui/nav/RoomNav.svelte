@@ -12,7 +12,7 @@ state.focusedRoom.subscribe(() => {
 function getClasses(room) {
 	const classes = ["room"];
 	if (state.focusedRoomId === room.roomId) classes.push("selected");
-	if (room.hasUserReadEvent(state.client.getUserId())) classes.push("unread");
+	if (!room.hasUserReadEvent(state.client.getUserId())) classes.push("unread");
 	return classes;
 }
 </script>
@@ -33,6 +33,7 @@ function getClasses(room) {
 	color: var(--fg-dim);
 	border-radius: 4px;
 	font-size: 16px;
+	font-weight: 500;
 	cursor: pointer;
 }
 
@@ -52,7 +53,7 @@ function getClasses(room) {
 
 .room::before {
 	content: "# ";
-	font-weight: bold;
+	font-weight: 700;
 	color: var(--fg-dim); 
 }
 

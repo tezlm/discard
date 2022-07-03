@@ -7,7 +7,7 @@
   --fg-content: #fbfbfb;
   --fg-light: #c9c9c9;
   --fg-dim: #9f9f9f;
-  --fg-muted: #b6b6b6;
+  --fg-muted: #a3a6aa;
   --fg-interactive: #b9bbbe;
   --font-primary: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-display: "ABC Ginto", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -34,6 +34,7 @@ body {
   font-family: var(--font-primary);
   color: var(--fg-content);
   background: var(--bg-spaces);
+  text-rendering: optimizelegibility;
 }
 
 a {
@@ -46,11 +47,17 @@ a:hover {
 }
 
 pre {
-  padding: .5em;
+  padding: 7px;
   background: var(--bg-rooms-members);
   border: solid var(--bg-spaces) 1px;
   border-radius: 4px;
-  font-family: var(--font-monospace);
-  font-size: 0.75rem;
+  font: 14px/1.125rem var(--font-monospace);
+  margin-top: 6px;
+  color: var(--fg-dim);
 }
 
+code {
+  background: var(--bg-rooms-members);
+  padding: 2px 2px;
+  font: 14px/1.125rem var(--font-monospace);
+}

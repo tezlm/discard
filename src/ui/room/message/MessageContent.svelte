@@ -20,7 +20,6 @@ img, video, audio {
   max-height: 30vh;
   max-width: 400px;
   border-radius: 3px;
-  margin-top: 4px;
 }
 
 .file {
@@ -29,7 +28,6 @@ img, video, audio {
   border-radius: 3px;
   display: flex;
   padding: .5rem;
-  margin-top: 4px;
   height: 60px;
 }
 

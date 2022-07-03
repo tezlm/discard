@@ -1,12 +1,13 @@
 <script>
-import Timestamp from "../../atoms/Timestamp.svelte";
+// TODO: fix timestamp vertical alignment
 import MessageReply from "./MessageReply.svelte";
 import MessageContent from "./MessageContent.svelte";
+import { formatDate, formatTime } from "../../../util/format.js";
 import { sanitizeMatrixHtml } from "../../../util/sanitize.js";
 import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.js';
 
 export let event, header = false;
-let showTimestamp = false;
+let time = event.getDate();
 
 function getReply(content) {
   return content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
@@ -15,7 +16,7 @@ function getReply(content) {
 <style>
 .message {
   display: flex;
-  padding: .125rem 72px;
+  padding: 2px 72px;
   margin-top: 0;
   position: relative;
   color: var(--fg-content);
@@ -26,19 +27,26 @@ function getReply(content) {
 }
 
 .header {
-  margin-top: 1em;
-  padding-top: .25rem;
+  margin-top: 1rem;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .content {
   color: var(--fg-content);
   width: 100%;
+  padding: 2px 0;
+}
+
+.top {
+  margin: .125rem 0;
 }
 
 .author {
-	font-weight: bold;
+	font-weight: 500;
 	cursor: pointer;
   margin-right: 0.25rem;
+  min-height: 22px;
 }
 
 .author:hover {
@@ -47,7 +55,7 @@ function getReply(content) {
 
 .side {
   position: absolute;
-  display: inline-block;
+  display: block;
   left: 16px;
   margin-right: 8px;
 }
@@ -58,21 +66,36 @@ function getReply(content) {
   width: 40px;
   filter: drop-shadow(0, 4px, 4px, #00000022);
 }
+
+time {
+  color: var(--fg-muted);
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--font-display);
+  text-align: right;
+  display: none;
+}
+
+.message:hover time {
+  display: inline-block;
+}
 </style>
-<div class="message {header ? 'header' : ''}" on:mouseover={() => showTimestamp = true} on:mouseleave={() => showTimestamp = false}>
+<div class="message {header ? 'header' : ''}">
   <div class="side">
     {#if getReply(event.getContent())}<br>{/if}
     {#if header}
     <img class="avatar" alt="avatar for {getDisplayName(event.getSender())}" src={getAvatar(event.getSender())} onerror="this.src='{defaultAvatar}'" />
     {:else}
-    <Timestamp time={event.getDate()} format="time" display={showTimestamp ? "inline" : "none"} />
+    <time datetime={time.toISOString()}>{formatTime(time)}</time>
     {/if}
   </div>
   <div class="content">
     {#if getReply(event.getContent())}<MessageReply roomid={event.getRoomId()} eventid={getReply(event.getContent())} />{/if}
     {#if header}
-    <span class="author">{getDisplayName(event.getSender())}</span>
-    <Timestamp time={event.getDate()} format="date" />
+    <div class="top">
+      <span class="author">{getDisplayName(event.getSender())}</span>
+      <time datetime={time.toISOString()} style="display: inline">{formatDate(time)}</time>
+    </div>
     {/if}
     <MessageContent event={event} />
   </div>
