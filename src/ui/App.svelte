@@ -1,7 +1,8 @@
 <script>
 import Chat from './scenes/Chat.svelte';
 import LoginRegister from './scenes/LoginRegister.svelte';
-import Settings from './scenes/Settings.svelte';
+import UserSettings from './scenes/UserSettings.svelte';
+import SpaceSettings from './scenes/SpaceSettings.svelte';
 import { quadOut } from 'svelte/easing';
 let scene = state.scene;
 
@@ -38,8 +39,12 @@ main > div {
 <main>
   {#if $scene === "chat"}
   <div transition:easeInv><Chat /></div>
-  {:else if $scene === "settings"}
-  <div transition:ease style="z-index: 999"><Settings /></div>
+  {:else if $scene === "user-settings"}
+  <div transition:ease><UserSettings /></div>
+  {:else if $scene === "space-settings"}
+  <div transition:ease><SpaceSettings /></div>
+  {:else if $scene === "room-settings"}
+  <!-- TODO -->
   {:else if $scene !== "chat"}
   <div transition:ease><LoginRegister /></div>
   {/if}

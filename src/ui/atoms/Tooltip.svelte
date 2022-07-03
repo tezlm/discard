@@ -1,5 +1,5 @@
 <script>
-export let tip = "", position = "up", style = "", color;
+export let tip, position = "up", style = "", color = null;
 let x = 0, y = 0, visible = false;
 
 function show() {

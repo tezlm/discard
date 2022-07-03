@@ -56,7 +56,7 @@ h5, .spacer {
 
 .error {
   margin-top: 1em;
-  color: var(--color-error);
+  color: var(--color-red);
 }
 </style>
 

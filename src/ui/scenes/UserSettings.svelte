@@ -1,11 +1,9 @@
 <script>
-// TODO: this whole file is a mess and needs to be refactored
+// TODO: merge code with SpaceSettings
 import { onMount, onDestroy } from 'svelte';
-import RoomNav from '../nav/RoomNav.svelte';
-import SpaceNav from '../nav/SpaceNav.svelte';
-import Homeserver from '../settings/Homeserver.svelte';
-import Account from '../settings/Account.svelte';
-import PrivacySecurity from '../settings/PrivacySecurity.svelte';
+import Homeserver from '../settings/user/Homeserver.svelte';
+import Account from '../settings/user/Account.svelte';
+import PrivacySecurity from '../settings/user/PrivacySecurity.svelte';
 
 let userid = state.client.getUserId();
 let focusedView = "account";
@@ -38,17 +36,16 @@ onMount(() => document.addEventListener("keydown", handleKeyDown));
 
 .main {
   position: relative;
-  flex: 1;
 }
 
 nav {
-  width: 240px;
+  width: 218px;
   margin: 4em 0;
   margin-left: auto;
 }
 
 .item {
-	margin: 2px 8px;
+	margin: 2px 8px 0;
 	padding: 6px 10px;
 	color: var(--fg-dim);
 	border-radius: 4px;
@@ -70,7 +67,7 @@ nav {
 .wrapper {
   margin: 0 2em;
   padding: 4em 0;
-  width: 600px;
+  width: 660px;
   height: 100vh;
   overflow-y: auto;
   -ms-overflow-style: none;
@@ -83,14 +80,22 @@ nav {
 }
 
 .exit {
-  position: absolute;
-  top: 2em;
-  left: 660px;
   cursor: pointer;
+  margin-top: 2em;
+  margin-right: auto;
 }
 
-h2 {
+h1 {
   margin-bottom: 1em;
+  font: 20px var(--font-display);
+  font-weight: 500;
+}
+
+.separator {
+  width: 202px;
+  height: 1px;
+  margin: 8px auto;
+  background: #4F545C7b;
 }
 </style>
 <div class="settings">
@@ -102,21 +107,18 @@ h2 {
     </nav>
   </div>
   <div class="main">
-    <div class="exit" on:click={() => state.scene.set("chat")}>ESC</div>
     <div class="wrapper">
+      <h1>{views.find(i => i?.id === focusedView).name}</h1>
       {#if focusedView === "account"}
-        <h2>My Account</h2>
         <Account />
       {:else if focusedView === "privsec"}
-        <h2>Privacy and Security</h2>
         <PrivacySecurity />
       {:else if focusedView === "homeserver"}
-        <h2>Homeserver</h2>
         <Homeserver />
       {:else if focusedView === "notifications"}
-        <h2>Notifications</h2>
         <p>todo: show a way to edit notifications similar to element</p>
       {/if}
     </div>
   </div>
+  <div class="exit" on:click={() => state.scene.set("chat")}>ESC</div>
 </div>
