@@ -17,23 +17,48 @@ state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus()));
 </script>
 <style>
 .input {
-  padding: 12px;
-  margin: 0 16px 0;
+  display: flex;
+  padding: 0 16px;
+  margin: 0 16px 8px;
   border-radius: 8px;
   background: #40444b;
 }
 
-.input textarea {
+.upload {
+  padding: 10px 0;
+  padding-right: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.upload-button {
+  height: 24px;
+  width: 24px;
+
+  /* TODO actual upload icon */
+  background: var(--fg-dim);
+  border-radius: 50%;
+}
+
+.textarea {
+  flex: 1;
+  padding: 11px 0;
+}
+
+textarea {
   font: inherit;
+  color: inherit;
   background: none;
-  color: var(--fg-content);
   border: none;
   outline: none;
-  width: 100%;
-  height: 100%;
   resize: none;
 }
 </style>
 <div class="input">
-  <textarea rows={rows} on:keydown={e => setTimeout(() => handleInput(e), 1)} placeholder={placeholder} bind:this={textarea}></textarea>
+  <div class="upload">
+    <div class="upload-button"></div>
+  </div>
+  <div class="textarea">
+    <textarea rows={rows} on:keydown={e => setTimeout(() => handleInput(e), 1)} placeholder={placeholder} bind:this={textarea}></textarea>
+  </div>
 </div>

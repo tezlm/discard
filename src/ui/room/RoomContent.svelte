@@ -1,4 +1,5 @@
 <script>
+import EvCreate from './events/Create.svelte';
 import Message from './message/Message.svelte';
 import { getDisplayName, getAvatar } from '../../util/events.js';
 let timeline = state.timeline;
@@ -64,8 +65,10 @@ state.focusedRoom.subscribe(() => {
 </style>
 <div class="content" bind:this={container}>
 	<div class="scroller" on:scroll={handleScroll} bind:this={scroller}>
-		{#each $timeline as event, i}
-			{#if event.getType() === "m.room.message" && !event.isRedacted()}
+		{#each $timeline.filter(i => !i.isRedacted()) as event, i}
+			{#if event.getType() === "m.room.create"}
+				<EvCreate event={event} />
+			{:else if event.getType() === "m.room.message"}
 			  <Message
 					event={event}
 					header={shouldSplit(event, $timeline[i - 1]) ? true : null}
