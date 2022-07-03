@@ -1,5 +1,5 @@
 <script>
-import { formatSize } from "../../util/format.js";
+import { formatSize } from "../../../util/format.js";
 let client = state.client;
 </script>
 <style>
@@ -16,7 +16,7 @@ let client = state.client;
 }
 
 .ohno {
-  color: var(--color-error);
+  color: var(--color-red);
 }
 
 h3 {

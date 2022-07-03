@@ -1,5 +1,5 @@
 <script>
-import { formatDate } from "../../util/format.js";
+import { formatDate } from "../../../util/format.js";
 let client = state.client;
 </script>
 <style>

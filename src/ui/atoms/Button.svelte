@@ -10,8 +10,9 @@ button {
   border: none;
   color: inherit;
   cursor: pointer;
-  padding: 4px;
+  padding: 10px 16px;
   font-size: 14px;
+  font-weight: bold;
 }
 
 .big {
@@ -22,11 +23,21 @@ button {
 }
 
 .normal {
-  background: #202225;
+  background: var(--bg-misc);
 }
 
 .primary {
-  background: #7289da;
+  background: var(--color-brand);
+}
+
+.hollow {
+  background: transparent;
+  border: solid var(--button-outline) 1px;
+  transition: all 170ms;
+}
+
+.hollow:hover {
+  background: var(--button-outline);
 }
 </style>
 <button class={type} on:click={clicked}>{label}</button>

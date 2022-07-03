@@ -115,6 +115,6 @@ onDestroy(() => copyEl.removeEventListener("mouseleave", resetCopy));
 		</Tooltip>
 	</div>
 	<Tooltip tip="User Settings" style="height: 30px">
-		<img class="icon" src={settingsIcon} on:click={() => state.scene.set("settings")} />
+		<img class="icon" src={settingsIcon} on:click={() => state.scene.set("user-settings")} />
 	</Tooltip>
 </div>

@@ -1,6 +1,6 @@
 <script>
-import Button from '../atoms/Button.svelte';
-import { getAvatar, getDisplayName } from '../../util/events.js';
+import Button from '../../atoms/Button.svelte';
+import { getAvatar, getDisplayName } from '../../../util/events.js';
 let userid = state.client.getUserId();
 </script>
 <style>

@@ -1,5 +1,4 @@
 <script>
-export let type = "text";
 export let value = "";
 export let placeholder = "";
 
@@ -8,17 +7,17 @@ function handleInput(e) {
 }
 </script>
 <style>
-input {
+textarea {
   font-family: var(--font-primary);
   font-size: 16px;
   padding: 10px;
   width: 100%;
-  height: 40px;
   border: none;
   border-radius: 3px;
   color: inherit;
   background: #202225;
   outline: none;
+  resize: none;
 }
 </style>
-<input {type} {value} on:input={handleInput} placeholder={placeholder} />
+<textarea {value} on:input={handleInput} placeholder={placeholder} rows=6 />

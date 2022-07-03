@@ -3,7 +3,7 @@ import Room from '../room/Room.svelte';
 import RoomNav from '../nav/RoomNav.svelte';
 import SpaceNav from '../nav/SpaceNav.svelte';
 import SpaceHeader from '../space/SpaceHeader.svelte';
-import UserSettings from '../UserSettings.svelte';
+import UserMenu from '../UserMenu.svelte';
 </script>
 <style>
 .nav {
@@ -11,10 +11,10 @@ import UserSettings from '../UserSettings.svelte';
   flex-direction: column;
 }
 </style>
-<SpaceNav/>
+<SpaceNav />
 <div class="nav">
-  <SpaceHeader/>
-  <RoomNav/>
-  <UserSettings/>
+  <SpaceHeader />
+  <RoomNav />
+  <UserMenu />
 </div>
-<Room/>
+<Room />
