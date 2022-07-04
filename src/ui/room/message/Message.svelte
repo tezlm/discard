@@ -1,10 +1,26 @@
 <script>
 import MessageReply from "./MessageReply.svelte";
 import MessageContent from "./MessageContent.svelte";
+import MessageToolbar from "./MessageToolbar.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
 import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.js';
 
 export let event, header = false;
+
+let toolbar = getToolbar(event);
+
+// TODO: shift key toolbar
+function getToolbar(event) {
+  let toolbar = [];
+  toolbar.push({ name: "Add Reaction", icon: "+", clicked: todo });
+  if (event.type === "m.room.message") {
+    toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => state.replyEvent.set(ev) });
+  } else {
+    toolbar.push({ name: "Edit", icon: "_", clicked: (ev) => state.editingEvent.set(ev) });
+  }
+  toolbar.push({ name: "More", icon: "\u22ee", clicked: todo });
+  return toolbar;
+}
 
 function getReply(content) {
   return content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
@@ -63,6 +79,7 @@ function getReply(content) {
   width: 40px;
   margin-top: 4px;
   filter: drop-shadow(0, 4px, 4px, #00000022);
+  user-select: none;
 }
 
 time {
@@ -74,8 +91,16 @@ time {
   display: none;
 }
 
+.toolbar {
+  display: none;
+}
+
 .message:hover time {
   display: inline-block;
+}
+
+.message:hover .toolbar {
+  display: block;
 }
 </style>
 <div class="message {header ? 'header' : ''}">
@@ -96,5 +121,8 @@ time {
     </div>
     {/if}
     <MessageContent {event} />
+  </div>
+  <div class="toolbar">
+    <MessageToolbar items={toolbar} {event} />
   </div>
 </div>
