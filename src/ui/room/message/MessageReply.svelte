@@ -1,4 +1,5 @@
 <script>
+// TODO: make edits apply
 import { sanitizeMatrixHtml } from "../../../util/sanitize.js";
 import { getDisplayName, getAvatar } from '../../../util/events.js';
 export let roomid, eventid;

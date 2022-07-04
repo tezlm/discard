@@ -6,7 +6,7 @@
   --bg-tooltip: #111215;
   --fg-notice: #fefefe;
   --fg-content: #dcddde;
-  --fg-light: #c9c9c9;
+  --fg-light: #c9c9c9; /* naming is confusing, maybe TODO change? */
   --fg-dim: #9f9f9f;
   --fg-muted: #a3a6aa;
   --fg-interactive: #b9bbbe;

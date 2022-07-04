@@ -2,11 +2,16 @@
 // TODO: optimize! (and/or refactor)
 // the entire timeline is rendered, which isnt good for performance
 // render just a small "view" of it at a time?
+
+// TODO: fix message scrollback (see MessageContent.svelte)
+// the timeline can shift around as images and other message attachments are loaded
+// luckily, width and height are sent along with that so it shouldn't be *too* hard to fix?
 import Unread from './timeline/Unread.svelte';
 import Create from './timeline/Create.svelte';
 import Message from './message/Message.svelte';
 let timeline = state.timeline;
-let  scroller, atBottom = true, atTop = false;
+let reply = state.replyEvent;
+let scroller, atBottom = true, atTop = false;
 
 function shouldSplit(ev, prev) {
 	if (!prev) return true;
@@ -39,11 +44,14 @@ async function maybePaginate() {
 	maybePaginate();
 }
 
-timeline.subscribe(() => {
+function refocus() {
 	if (scroller && atBottom) {
 		queueMicrotask(() => scroller.scrollTo(0, scroller.scrollTopMax));
 	}
-});
+}
+
+timeline.subscribe(refocus);
+reply.subscribe(refocus);
 
 state.focusedRoom.subscribe(() => {
 	queueMicrotask(() => {

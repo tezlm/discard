@@ -5,6 +5,7 @@ const [{ state, actions }, { default: App }] = await imports;
 
 global.state = state;
 global.actions = actions;
+global.todo = () => state.popup.set({ id: "todo" });
 
 await actions.client.fetch();
 
