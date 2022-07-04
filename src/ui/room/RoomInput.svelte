@@ -8,8 +8,9 @@ async function handleInput(e) {
   if (e.key === "Backspace" || e.key === "Delete" || (e.key === "Enter" && e.shiftKey)) {
     rows = Math.min(value.split("\n").length, 10);
   } else if (e.key === "Enter" && value.trim()) {
-    await state.client.sendEvent(state.focusedRoomId, null, "m.room.message", { body: value.trim(), msgtype: "m.text" });
+    e.preventDefault();
     e.target.value = "";
+    state.client.sendEvent(state.focusedRoomId, null, "m.room.message", { body: value.trim(), msgtype: "m.text" });
     // TODO: send read recipts
     // const { event_id } = await state.client.sendEvent(state.focusedRoomId, null, "m.room.message", { body: value.trim(), msgtype: "m.text" });
     // await state.client.sendReadReceipt(state.client.getEventMapper()({ event_id }), "m.fully_read");
@@ -60,5 +61,5 @@ textarea {
   <div class="upload">
     <div class="upload-button"></div>
   </div>
-  <textarea rows={rows} on:keydown={e => setTimeout(() => handleInput(e), 1)} placeholder={placeholder} bind:this={textarea}></textarea>
+  <textarea {rows} {placeholder} on:keydown={handleInput} bind:this={textarea}></textarea>
 </div>

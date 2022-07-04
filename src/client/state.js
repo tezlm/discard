@@ -10,5 +10,6 @@ export default {
   timeline: writable([]),
   timelineRef: [],
   scene: writable(null),
+  popup: writable({}),
   client: null,
 };

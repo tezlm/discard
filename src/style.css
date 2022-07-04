@@ -4,7 +4,8 @@
   --bg-spaces: #202225;
   --bg-misc: #292b2f;
   --bg-tooltip: #111215;
-  --fg-content: #fbfbfb;
+  --fg-notice: #fefefe;
+  --fg-content: #dcddde;
   --fg-light: #c9c9c9;
   --fg-dim: #9f9f9f;
   --fg-muted: #a3a6aa;
@@ -44,20 +45,4 @@ a {
 
 a:hover {
   text-decoration: underline;
-}
-
-pre {
-  padding: 7px;
-  background: var(--bg-rooms-members);
-  border: solid var(--bg-spaces) 1px;
-  border-radius: 4px;
-  font: 14px/1.125rem var(--font-monospace);
-  margin-top: 6px;
-  color: var(--fg-dim);
-}
-
-code {
-  background: var(--bg-rooms-members);
-  padding: 2px 2px;
-  font: 14px/1.125rem var(--font-monospace);
 }

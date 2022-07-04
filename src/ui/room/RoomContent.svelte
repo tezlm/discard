@@ -2,9 +2,8 @@
 import Unread from './timeline/Unread.svelte';
 import Create from './timeline/Create.svelte';
 import Message from './message/Message.svelte';
-import { getDisplayName, getAvatar } from '../../util/events.js';
 let timeline = state.timeline;
-let container, scroller, atBottom = true, atTop = false;
+let  scroller, atBottom = true, atTop = false;
 
 function shouldSplit(ev, prev) {
 	if (!prev) return true;
@@ -15,8 +14,7 @@ function shouldSplit(ev, prev) {
 	return false;
 }
 
-function shouldUnread(ev, prev) {
-	if (!prev) return false;
+function shouldUnread(ev) {
 	const room = state.client.getRoom(ev.roomId);
 	return room.getAccountData("m.fully_read")?.getContent().event_id === ev.eventId;
 }
@@ -71,15 +69,15 @@ state.focusedRoom.subscribe(() => {
 	height: 1.5rem;
 }
 </style>
-<div class="content" bind:this={container}>
+<div class="content">
 	<div class="scroller" on:scroll={handleScroll} bind:this={scroller}>
 		{#each $timeline as event, i}
-			{#if shouldUnread(event, $timeline[i - 1])}
+			{#if shouldUnread(event)}
 				<Unread unpad={shouldSplit(event, $timeline[i - 1])} />
 			{/if}
 			{#if event.type === "m.room.create"}
 				<Create event={event} />
-			{:else if event.type === "m.room.message"}
+			{:else if event.type === "m.room.message" && !event.redacted}
 			  <Message
 					event={event}
 					header={shouldSplit(event, $timeline[i - 1]) ? true : null}

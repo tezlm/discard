@@ -1,5 +1,5 @@
 <script>
-export let text = "loading...";
+export let text = "syncing...";
 $: chars = text.split("");
 </script>
 <style>
@@ -9,7 +9,7 @@ $: chars = text.split("");
   align-items: center;
 
   width: 100%;
-  background: var(--bg-space);
+  background: var(--bg-spaces);
 }
 
 .text {

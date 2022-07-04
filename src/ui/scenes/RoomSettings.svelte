@@ -53,9 +53,8 @@ nav {
 	color: var(--fg-interactive);
 	border-radius: 4px;
 	font-size: 16px;
-	font-weight: 500;
+  font-weight: 500;
 	cursor: pointer;
-  font-weight: semibold;
 }
 
 .item:hover {
@@ -96,7 +95,7 @@ h1 {
 }
 
 .separator {
-  width: 202px;
+  width: 180px;
   height: 1px;
   margin: 8px auto;
   background: #4F545C7b;

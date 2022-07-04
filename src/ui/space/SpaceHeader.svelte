@@ -1,15 +1,18 @@
 <script>
-import Popup from "../atoms/Popup.svelte";
 import { quadOut } from 'svelte/easing';
 let focusedSpace = state.focusedSpace;
 let showMenu = false;
 
-function zoomIn(node) {
+function zoomIn() {
   return {
     duration: 100,
     easing: quadOut,
     css: t => `transform: scale(${t})`,
   }
+}
+
+function showPopup(id) {
+  state.popup.set({ id, type: "space", room: $focusedSpace }); 
 }
 </script>
 <style>
@@ -81,15 +84,15 @@ function zoomIn(node) {
   <span>{$focusedSpace ? state.client.getRoom($focusedSpace).name : "Home"}</span>
   {#if $focusedSpace && showMenu}
   <div class="menu" transition:zoomIn>
-      <div class="item"><span class="color-accent">Invite People</span></div>
+      <div class="item" on:click={() => showPopup("todo")}><span class="color-accent">Invite People</span></div>
       <div class="spacer"></div>
       <div class="item" on:click={() => state.scene.set("space-settings")}>Space Settings</div>
       <div class="spacer"></div>
-      <div class="item">Create Room</div>
-      <div class="item">Create Subspace</div>
-      <div class="item">Add Existing Room</div>
+      <div class="item" on:click={() => showPopup("todo")}>Create Room</div>
+      <div class="item" on:click={() => showPopup("todo")}>Create Subspace</div>
+      <div class="item" on:click={() => showPopup("todo")}>Add Existing Room</div>
       <div class="spacer"></div>
-      <div class="item"><span class="color-red">Leave Space</span></div>
+      <div class="item" on:click={() => showPopup("leave")}><span class="color-red">Leave Space</span></div>
   </div>
   {/if}
 </div>
