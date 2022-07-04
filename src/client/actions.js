@@ -70,14 +70,9 @@ export default {
       }
     },
     listen(client) {
-      function updateRooms() {
-        state.rooms.set(client.getRooms().filter(i => i.getMyMembership() === "join"));
-        state.invitedRooms.set(client.getRooms().filter(i => i.getMyMembership() === "invite"));        
-      }
-      
       function updateAll() {
-        updateRooms();
-        actions.spaces.recalculate();
+        actions.rooms.update();
+        actions.spaces.update();
       }
       
       function shouldHandle(event) {
@@ -89,18 +84,18 @@ export default {
       client.on("Room.myMembership", updateAll);
       client.on("Room.name", updateAll);
       client.on("Room.timeline", (event, _, toBeginning) => {
-        updateRooms();
+        actions.rooms.update();
         if (!shouldHandle(event)) return;
         actions.timeline.add(event, toBeginning);
         state.timeline.set(state.timelineRef);
       });
       client.on("Room.redaction", (event) => {
-        updateRooms();
+        actions.rooms.update();
         if (!shouldHandle(event)) return;
         actions.timeline.remove(event);
         state.timeline.set(state.timelineRef);
       });
-      client.on("Room.localEchoUpdated", (event, _, id, _2) => {
+      client.on("Room.localEchoUpdated", (event, _, id) => {
         if (!shouldHandle(event)) return;
         if (!id) return;
         actions.timeline.update(id, event);
@@ -114,13 +109,18 @@ export default {
     	state.focusedRoom.set(room);
     	if (room) actions.timeline.set(room);
     },
+    update() {
+      const client = state.client;
+      state.rooms.set(client.getRooms().filter(i => i.getMyMembership() === "join"));
+      state.invitedRooms.set(client.getRooms().filter(i => i.getMyMembership() === "invite"));        
+    },
   },
   spaces: {
     focus(space) {
     	state.focusedSpaceId = space?.roomId ?? null;
     	state.focusedSpace.set(space);
     },
-    recalculate() {
+    update() {
       const spaceMap = new Map();
       const inSpaces = [];
       const spaces = state.client.getRooms().filter(i => i.isSpaceRoom());

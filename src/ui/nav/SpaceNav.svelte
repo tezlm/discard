@@ -8,9 +8,18 @@ state.focusedSpace.subscribe(() => {
 	spaceMap = state.spaceMap; // hacky svelte ;)
 });
 
+
+function getLastMessage(timeline) {
+	for (let i = timeline.length - 1; i >= 0; i--) {
+		if (timeline[i].getType() === "m.room.message" && !timeline[i].isRedacted()) return timeline[i];
+	}
+	return null;
+}
+
 function isRead(room) {
 	const userId = state.client.getUserId();
-	const eventId = room.timeline[room.timeline.length - 1].getId();
+	const eventId = getLastMessage(room.timeline)?.getId();
+	if (!eventId) return true;
 	return room.hasUserReadEvent(userId, eventId);
 }
 
@@ -45,15 +54,6 @@ function getClasses(space) {
   position: relative;
 }
 
-.space.unread::before {
-	content: "\2b24";
-	position: absolute;
-	color: var(--fg-content);
-	font-size: 8px;
-	left: -16px;
-	top: 28px;
-}
-
 .space img {
   width: 48px;
   height: 48px;
@@ -71,6 +71,39 @@ function getClasses(space) {
   border-radius: 35%;
 }
 
+.space::before {
+	content: "";
+	position: absolute;
+  width: 8px;
+  height: 0;
+	left: -24px;
+	top: 32px;
+	background: var(--fg-notice);
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 200ms;
+}
+
+.space.unread::before, .space:hover::before, .space.selected::before {
+  opacity: 1;
+	left: -16px;
+}
+
+.space.unread::before {
+  height: 8px;
+	top: 28px;
+}
+
+.space:hover::before {
+  height: 18px;
+	top: 22px;
+}
+
+.space.selected::before {
+  height: 36px;
+	top: 14px;
+}
+
 .separator {
   border: solid #ffffff10 1px;
   width: 45%;
@@ -78,7 +111,7 @@ function getClasses(space) {
 }
 </style>
 <div class="nav">
-  <div class="space">
+  <div class="space" class:selected={$focusedSpace === null}>
     <Tooltip position="right" tip="Home">
       <img
         class={$focusedSpace ? "space" : "space selected"}

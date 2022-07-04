@@ -2,6 +2,8 @@
 export let type = "normal";
 export let label = "button";
 export let clicked = () => {};
+export let disabled = false;
+$: standard = ["normal", "primary", "danger"].some(i => type.split(" ").includes(i));
 </script>
 <style>
 button {
@@ -17,35 +19,7 @@ button {
   transition: all 170ms;
 }
 
-.big {
-  font-size: 16px;
-  padding: 10px;
-  width: 100%;
-  height: 40px;
-}
-
-.normal {
-  background: var(--bg-misc);
-}
-
-.primary {
-  background: var(--color-accent);
-}
-
-.danger {
-  background: var(--color-red);
-}
-
-.link {
-  background: transparent;
-}
-
-.hollow {
-  background: transparent;
-  border: solid var(--button-outline) 1px;
-}
-
-button::after {
+.standard::after {
   content: "";
   position: absolute;
   top: 0;
@@ -57,20 +31,31 @@ button::after {
   transition: all 170ms;
 }
 
-button:hover::after {
-  background: #00000033;
+.big {
+  font-size: 16px;
+  padding: 10px;
+  width: 100%;
+  height: 40px;
 }
 
-.hollow:hover::after, .link:hover::after {
-  background: none;
+.normal { background: var(--bg-misc) }
+.primary { background: var(--color-accent) }
+.danger { background: var(--color-red) }
+
+.link {
+  background: transparent;
 }
 
-.link:hover {
-  text-decoration: underline;
+.hollow {
+  background: transparent;
+  border: solid var(--button-outline) 1px;
 }
 
-.hollow:hover {
-  background: var(--button-outline);
-}
+.standard:hover::after { background: #00000033 }
+.link:hover { text-decoration: underline }
+.hollow:hover { background: var(--button-outline) }
+
+.disabled { cursor: not-allowed }
+.standard.disabled::after { background: #00000055 }
 </style>
-<button class={type} on:click={clicked}>{label}</button>
+<button class:standard class:disabled class={type} on:click={clicked} {disabled}>{label}</button>

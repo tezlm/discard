@@ -17,15 +17,6 @@ function opacity() {
     css: t => `opacity: ${t}`,
   }
 }
-
-function handleKeyDown(e) {
-  if (e.key === "Escape") closePopup(e);
-}
-
-function closePopup(e) {
-  state.popup.set({});
-  e.stopPropagation();
-}
 </script>
 <style>
 .background {
@@ -75,8 +66,7 @@ function closePopup(e) {
   padding: 16px;
 }
 </style>
-<svelte:window on:keydown={handleKeyDown} />
-<div class="background" class:nopad on:click={closePopup} transition:opacity>
+<div class="background" class:nopad on:click={() => state.popup.set({})} transition:opacity>
   <div class="card" on:click={e => e.stopPropagation()} transition:card>
     <div class="header">
       <slot name="header"></slot>

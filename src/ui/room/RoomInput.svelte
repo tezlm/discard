@@ -2,6 +2,7 @@
 export let placeholder;
 let textarea;
 let rows = 1;
+let room = state.focusedRoom;
 
 async function handleInput(e) {
   const value = e.target.value;
@@ -15,6 +16,8 @@ async function handleInput(e) {
     // const { event_id } = await state.client.sendEvent(state.focusedRoomId, null, "m.room.message", { body: value.trim(), msgtype: "m.text" });
     // await state.client.sendReadReceipt(state.client.getEventMapper()({ event_id }), "m.fully_read");
     // state.rooms.set(client.getRooms().filter(i => i.getMyMembership() === "join"));
+  } else if (e.key === "Escape") {
+    state.client.sendReadReceipt($room.timeline[$room.timeline.length - 1], "m.fully_read");
   }
 }
 
