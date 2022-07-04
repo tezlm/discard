@@ -11,8 +11,8 @@ function zoomIn() {
   }
 }
 
-function showPopup(id) {
-  state.popup.set({ id, type: "space", room: $focusedSpace }); 
+function showPopup(id, opts) {
+  state.popup.set({ id, type: "space", room: $focusedSpace, ...opts }); 
 }
 </script>
 <style>
@@ -84,12 +84,12 @@ function showPopup(id) {
   <span>{$focusedSpace ? state.client.getRoom($focusedSpace).name : "Home"}</span>
   {#if $focusedSpace && showMenu}
   <div class="menu" transition:zoomIn>
-      <div class="item" on:click={() => showPopup("todo")}><span class="color-accent">Invite People</span></div>
+      <div class="item" on:click={() => showPopup("invite")}><span class="color-accent">Invite People</span></div>
       <div class="spacer"></div>
       <div class="item" on:click={() => state.scene.set("space-settings")}>Space Settings</div>
       <div class="spacer"></div>
-      <div class="item" on:click={() => showPopup("todo")}>Create Room</div>
-      <div class="item" on:click={() => showPopup("todo")}>Create Subspace</div>
+      <div class="item" on:click={() => showPopup("create", { type: "room" })}>Create Room</div>
+      <div class="item" on:click={() => showPopup("create")}>Create Subspace</div>
       <div class="item" on:click={() => showPopup("todo")}>Add Existing Room</div>
       <div class="spacer"></div>
       <div class="item" on:click={() => showPopup("leave")}><span class="color-red">Leave Space</span></div>

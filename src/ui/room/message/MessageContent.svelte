@@ -11,10 +11,6 @@ $: redacted = event.redacted;
 $: sending = event.sending;
 $: dimensions = { width: content.info?.w, height: content.info?.h };
 
-function getDimensions(info) {
-  
-}
-
 function formatSize(size) {
   if (!size) return "??? kb";
   let max = 1024;

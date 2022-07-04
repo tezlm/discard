@@ -56,12 +56,6 @@ $: topic = space.currentState.getStateEvents("m.room.topic")[0]?.getContent().to
   margin-left: 10px;
 }
 
-.info {
-  color: var(--fg-light);
-  font: 0.7em var(--font-display);
-  font-weight: bold;
-}
-
 .title {
   color: var(--fg-light);
   font-family: var(--font-display);

@@ -1,4 +1,7 @@
 <script>
+// TODO: optimize! (and/or refactor)
+// the entire timeline is rendered, which isnt good for performance
+// render just a small "view" of it at a time?
 import Unread from './timeline/Unread.svelte';
 import Create from './timeline/Create.svelte';
 import Message from './message/Message.svelte';

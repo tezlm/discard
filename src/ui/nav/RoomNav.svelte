@@ -85,7 +85,6 @@ function getClasses(room) {
 
 .home::before {
 	content: "";
-	margin-right: 22px;
 }
 
 .spacer {

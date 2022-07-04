@@ -2,9 +2,15 @@
 export let type = "text";
 export let value = "";
 export let placeholder = "";
+export let small = false;
+export let submitted = () => {};
 
 function handleInput(e) {
   value = e.target.value;
+}
+
+function handleKeyDown(e) {
+  if (e.key === "Enter") submitted();
 }
 </script>
 <style>
@@ -20,5 +26,11 @@ input {
   background: #202225;
   outline: none;
 }
+
+.small {
+  height: 20px;
+  font-size: 14px;
+  padding: 16px 8px;
+}
 </style>
-<input {type} {value} on:input={handleInput} placeholder={placeholder} />
+<input {type} {placeholder} {value} class:small on:input={handleInput} on:keydown={handleKeyDown} />
