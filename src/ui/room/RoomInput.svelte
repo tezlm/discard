@@ -3,13 +3,17 @@ export let placeholder;
 let textarea;
 let rows = 1;
 
-function handleInput(e) {
+async function handleInput(e) {
   const value = e.target.value;
   if (e.key === "Backspace" || e.key === "Delete" || (e.key === "Enter" && e.shiftKey)) {
     rows = Math.min(value.split("\n").length, 10);
   } else if (e.key === "Enter" && value.trim()) {
-    state.client.sendEvent(state.focusedRoomId, null, "m.room.message", { body: value.trim(), msgtype: "m.text" });
+    await state.client.sendEvent(state.focusedRoomId, null, "m.room.message", { body: value.trim(), msgtype: "m.text" });
     e.target.value = "";
+    // TODO: send read recipts
+    // const { event_id } = await state.client.sendEvent(state.focusedRoomId, null, "m.room.message", { body: value.trim(), msgtype: "m.text" });
+    // await state.client.sendReadReceipt(state.client.getEventMapper()({ event_id }), "m.fully_read");
+    // state.rooms.set(client.getRooms().filter(i => i.getMyMembership() === "join"));
   }
 }
 

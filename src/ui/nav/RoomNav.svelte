@@ -1,5 +1,5 @@
 <script>
-import Popup from "../atoms/Popup.svelte";
+import Tooltip from "../atoms/Tooltip.svelte";
 let focusedRoom = state.focusedRoom;
 let focusedSpace = state.focusedSpace;
 let spaceMap = state.spaceMap;
@@ -9,10 +9,24 @@ state.focusedRoom.subscribe(() => {
 	rooms = state.rooms; // hacky svelte ;)
 });
 
+function getLastMessage(timeline) {
+	for (let i = timeline.length - 1; i >= 0; i--) {
+		if (timeline[i].getType() === "m.room.message" && !timeline[i].isRedacted()) return timeline[i];
+	}
+	return null;
+}
+
+function isRead(room) {
+	const userId = state.client.getUserId();
+	const eventId = getLastMessage(room.timeline)?.getId();
+	if (!eventId) return true;
+	return room.hasUserReadEvent(userId, eventId);
+}
+
 function getClasses(room) {
 	const classes = ["room"];
 	if (state.focusedRoomId === room.roomId) classes.push("selected");
-	if (!room.hasUserReadEvent(state.client.getUserId())) classes.push("unread");
+	if (!isRead(room)) classes.push("unread");
 	return classes;
 }
 </script>
@@ -28,8 +42,17 @@ function getClasses(room) {
 }
 
 .room {
+	flex: 0;
+	position: relative;
+	white-space: nowrap;
+}
+
+.wrapper {
+	display: flex;
+	align-items: center;
 	margin: 1px 8px;
 	padding: 6px 10px;
+
 	color: var(--fg-dim);
 	border-radius: 4px;
 	font-size: 16px;
@@ -37,32 +60,55 @@ function getClasses(room) {
 	cursor: pointer;
 }
 
-.room:hover {
+.room:hover .wrapper {
 	background: rgba(79,84,92,0.4);
   color: var(--fg-light);
 }
 
-.room.selected {
+.room.selected .wrapper {
 	color: var(--fg-content); 
 	background: rgba(79,84,92,0.6);
 }
 
-.room.unread {
+.room.unread .wrapper {
 	color: var(--fg-content); 
 }
 
-.room::before {
-	content: "# ";
-	font-weight: 700;
-	color: var(--fg-dim); 
+.room.unread:not(.selected)::before {
+	content: "\2b24";
+	position: absolute;
+	color: var(--fg-content);
+	font-size: 8px;
+	left: -4px;
+	top: 12px;
 }
 
 .home::before {
 	content: "";
+	margin-right: 22px;
 }
 
 .spacer {
 	margin-top: 16px;
+}
+
+.icon {
+	position: absolute;
+	color: var(--fg-dim); 
+	font-size: 22px;
+}
+
+.name {
+	margin-left: 1.5em;
+}
+
+.settings {
+	display: none;
+	margin-left: auto;
+}
+
+.room.selected .settings, .room:hover .settings {
+	display: block;
 }
 </style>
 <div class="nav">
@@ -78,7 +124,13 @@ function getClasses(room) {
 	  <div
 			class={getClasses(room).join(" ")}
 			on:click={() => actions.rooms.focus(room)}>
-			{room.name}
+			<div class="wrapper">
+				<div class="icon">#</div>
+				<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
+				<div class="settings" on:click={() => state.scene.set("room-settings")}>
+					<Tooltip tip="Edit Room">&#x2699;</Tooltip>
+				</div>
+			</div>
 		</div>
 	{/each}
 	<div class="spacer"></div>

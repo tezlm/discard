@@ -26,6 +26,7 @@ function hide() {
 
 .tooltip-wrapper {
   position: absolute;
+  display: inline-block;
   top: 50%;
   left: 50%;
   height: 100%;
@@ -33,14 +34,14 @@ function hide() {
   transform: translate(-50%, -50%) scale(0.9);
   pointer-events: none;
   opacity: 0;
-  z-index: 10;
   transition: all 50ms;
-}
+  }
 
 .tooltip {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
+  z-index: 9999;
   
   font-size: .9rem;
   font-weight: 500;
@@ -51,7 +52,6 @@ function hide() {
   box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
 
   opacity: 1;
-  z-index: 10;
   transition: all 50ms;
 }
 
