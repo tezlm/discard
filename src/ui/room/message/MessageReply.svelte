@@ -19,8 +19,8 @@ let eventPromise = state.client.fetchRoomEvent(roomid, eventid);
 
 .reply::before {
   content: "";
-  border-top: solid gray 2px;
-  border-left: solid gray 2px;
+  border-top: solid var(--color-gray) 2px;
+  border-left: solid var(--color-gray) 2px;
   border-top-left-radius: 6px;
   position: absolute;
   left: -38px;

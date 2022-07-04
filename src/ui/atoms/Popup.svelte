@@ -1,17 +1,17 @@
 <script>
-import { onMount, onDestroy } from 'svelte';
+// should only be used in src/Popups.svelte
 import { quadOut } from 'svelte/easing';
-export let show = false, title = "";
+export let nopad = true;
 
-function card(node) {
+function card() {
   return {
-    duration: 150,
+    duration: 200,
     easing: quadOut,
-    css: t => `opacity: ${t}; transform: scale(${Math.min(t * 1.3, 1.01)})`,
+    css: t => `opacity: ${t}; transform: scale(${Math.min(t * 1.1, 1.01)})`,
   }
 }
 
-function opacity(node) {
+function opacity() {
   return {
     duration: 300,
     css: t => `opacity: ${t}`,
@@ -23,12 +23,9 @@ function handleKeyDown(e) {
 }
 
 function closePopup(e) {
-  show = false;
+  state.popup.set({});
   e.stopPropagation();
 }
-
-onDestroy(() => document.removeEventListener("keydown", handleKeyDown));
-onMount(() => document.addEventListener("keydown", handleKeyDown));
 </script>
 <style>
 .background {
@@ -46,9 +43,12 @@ onMount(() => document.addEventListener("keydown", handleKeyDown));
 }
 
 .card {
-  width: 480px;
-  min-height: 240px;
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+  width: 440px;
+  min-height: 200px;
   border-radius: 5px;
   background: var(--bg-content);
   color: var(--fg-content);
@@ -57,26 +57,37 @@ onMount(() => document.addEventListener("keydown", handleKeyDown));
 }
 
 .header {
-  display: flex;
-  margin-bottom: 1em;
-  justify-content: space-between;
+  padding: 16px;
 }
 
-.header > div {
-  font-size: 24px;
-  cursor: pointer;
+.content {
+  padding: 4px 16px 16px;
+  flex: 1;
+}
+
+.footer {
+  display: flex;
+  justify-content: end;
+
+  background: var(--bg-misc);
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 16px;
 }
 </style>
-{#if show}
-<div class="background" on:click={closePopup} transition:opacity>
+<svelte:window on:keydown={handleKeyDown} />
+<div class="background" class:nopad on:click={closePopup} transition:opacity>
   <div class="card" on:click={e => e.stopPropagation()} transition:card>
-    {#if title}
     <div class="header">
-      <h2><b>{title}</b></h2>
-      <div on:click={closePopup}>x</div>
+      <slot name="header"></slot>
+    </div>
+    <div class="content">
+      <slot name="content"></slot>
+    </div>
+    {#if $$slots.footer}
+    <div class="footer">
+      <slot name="footer"></slot>
     </div>
     {/if}
-    <slot></slot>
   </div>
 </div>
-{/if}

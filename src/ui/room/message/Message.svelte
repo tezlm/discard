@@ -1,9 +1,7 @@
 <script>
-// TODO: fix timestamp vertical alignment
 import MessageReply from "./MessageReply.svelte";
 import MessageContent from "./MessageContent.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
-import { sanitizeMatrixHtml } from "../../../util/sanitize.js";
 import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.js';
 
 export let event, header = false;
@@ -26,7 +24,7 @@ function getReply(content) {
 }
 
 .header {
-  margin-top: 1rem;
+  margin-top: 14px;
   padding-top: 2px;
   padding-bottom: 2px;
 }
@@ -97,6 +95,6 @@ time {
       <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
     </div>
     {/if}
-    <MessageContent content={event.content} edited={event.original?.date} />
+    <MessageContent {event} />
   </div>
 </div>

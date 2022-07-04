@@ -31,7 +31,7 @@ export let unpad;
   border-radius: 2px;
 }
 </style>
-<div class="unread {unpad ? 'unpad' : ''}">
+<div class="unread" class:unpad>
   <div class="line"></div>
   <span class="text">new</span>
 </div>

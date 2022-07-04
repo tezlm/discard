@@ -5,9 +5,10 @@ function formatEvent(ev) {
     sender:  ev.getSender(),
     type:    ev.getType(),
     date:    ev.getDate(),
+    sending: ev.isSending(),
     roomId:  ev.getRoomId(),
     eventId: ev.getId(),
-    content: ev.getContent(),
+    content: { ...ev.getContent() },
   };  
 }
 
@@ -71,19 +72,38 @@ export default {
     listen(client) {
       function updateRooms() {
         state.rooms.set(client.getRooms().filter(i => i.getMyMembership() === "join"));
-        state.invitedRooms.set(client.getRooms().filter(i => i.getMyMembership() === "invite"));
+        state.invitedRooms.set(client.getRooms().filter(i => i.getMyMembership() === "invite"));        
+      }
+      
+      function updateAll() {
+        updateRooms();
         actions.spaces.recalculate();
       }
-  
+      
+      function shouldHandle(event) {
+        return state.focusedRoomId && (event.getRoomId() === state.focusedRoomId);
+      }
+              
       client.once("sync", () => state.scene.set("chat"));
-      client.once("sync", updateRooms);
-      client.on("Room.myMembership", updateRooms);
-      client.on("Room.name", updateRooms);
+      client.once("sync", updateAll);
+      client.on("Room.myMembership", updateAll);
+      client.on("Room.name", updateAll);
       client.on("Room.timeline", (event, _, toBeginning) => {
-        state.rooms.set(client.getRooms().filter(i => i.getMyMembership() === "join")); // to refresh unreads
-        if (!state.focusedRoomId) return;
-        if (event.getRoomId() !== state.focusedRoomId) return;
+        updateRooms();
+        if (!shouldHandle(event)) return;
         actions.timeline.add(event, toBeginning);
+        state.timeline.set(state.timelineRef);
+      });
+      client.on("Room.redaction", (event) => {
+        updateRooms();
+        if (!shouldHandle(event)) return;
+        actions.timeline.remove(event);
+        state.timeline.set(state.timelineRef);
+      });
+      client.on("Room.localEchoUpdated", (event, _, id, _2) => {
+        if (!shouldHandle(event)) return;
+        if (!id) return;
+        actions.timeline.update(id, event);
         state.timeline.set(state.timelineRef);
       });
     },
@@ -127,22 +147,35 @@ export default {
     add(event, toBeginning) {
       if (!["m.room.create", "m.room.message"].includes(event.getType())) return;
       if (event.isRedacted()) return;
-      
       const timeline = state.timelineRef;
       if (event.getRelation()?.rel_type === "m.replace") {
         const id = event.getRelation()?.event_id;
-        for (let i = timeline.length - 1; i >= 0; i--) {
-          if (timeline[i].eventId === id) {
-            timeline[i] = {
-              ...formatEvent(event),
-              content: event.getContent()["m.new_content"] ?? {},
-              original: timeline[i],
-            };
-          }
-        }
+        const original = actions.timeline.get(id);
+        if (!original) return;
+        Object.assign(original, {
+          ...formatEvent(event),
+          content: { ...event.getContent()["m.new_content"] } ?? {},
+          original,
+        });
       } else {
         timeline[toBeginning ? "unshift" : "push"](formatEvent(event));      
       }
     },
+    update(id, event) {
+      const original = actions.timeline.get(id);
+      Object.assign(original, formatEvent(event));
+    },
+    remove(event) {
+      const original = actions.timeline.get(event.event.redacts);
+      original.redacted = true;
+    },
+    get(id) {
+      const timeline = state.timelineRef;
+      for (let i = timeline.length - 1; i >= 0; i--) {
+        if (timeline[i].eventId === id) {
+          return timeline[i];
+        }
+      }
+    }
   },
 };

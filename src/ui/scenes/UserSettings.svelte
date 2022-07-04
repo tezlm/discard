@@ -12,6 +12,8 @@ const views = [
   { id: "account",       name: "My Account" },
   { id: "privsec",       name: "Privacy and Security" },
   { id: "homeserver",    name: "Homeserver" },
+  null,
+  { id: "appearance",    name: "Appearance" },
   { id: "notifications", name: "Notifications" },
 ];
 
@@ -47,11 +49,11 @@ nav {
 .item {
 	margin: 2px 8px 0;
 	padding: 6px 10px;
-	color: var(--fg-dim);
+	color: var(--fg-interactive);
 	border-radius: 4px;
 	font-size: 16px;
-	cursor: pointer;
   font-weight: 500;
+	cursor: pointer;
 }
 
 .item:hover {
@@ -92,7 +94,7 @@ h1 {
 }
 
 .separator {
-  width: 202px;
+  width: 180px;
   height: 1px;
   margin: 8px auto;
   background: #4F545C7b;
@@ -102,7 +104,11 @@ h1 {
   <div class="sidebar">
     <nav>
       {#each views as view}
-      <div on:click={() => focusedView = view.id} class={focusedView === view.id ? "item selected" : "item"}>{view.name}</div>
+        {#if view}
+        <div on:click={() => focusedView = view.id} class={focusedView === view.id ? "item selected" : "item"}>{view.name}</div>
+        {:else}
+        <div class="separator"></div>
+        {/if}
       {/each}
     </nav>
   </div>
@@ -115,6 +121,8 @@ h1 {
         <PrivacySecurity />
       {:else if focusedView === "homeserver"}
         <Homeserver />
+      {:else if focusedView === "appearance"}
+        <p>todo, low priority: show/hide join, leave, invite, nick/avatar change, room name/topic change</p>
       {:else if focusedView === "notifications"}
         <p>todo: show a way to edit notifications similar to element</p>
       {/if}

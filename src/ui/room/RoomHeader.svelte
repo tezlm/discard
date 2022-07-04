@@ -1,10 +1,7 @@
 <script>
-import Popup from "../atoms/Popup.svelte";
 import roomNormalIcon from "../../assets/icons/room-normal.svg";
 let room = state.focusedRoom;
 $: topic = $room?.currentState.getStateEvents("m.room.topic")[0]?.getContent().topic;
-
-let showTopicPopup = false;
 </script>
 <style>
 .header {
@@ -53,7 +50,6 @@ let showTopicPopup = false;
   <span class="name">{$room ? $room.name : "Home"}</span>
   {#if topic}
   <div class="spacer"></div>
-  <div class="topic" on:click={() => showTopicPopup = true}>{topic}</div>
-  <Popup bind:show={showTopicPopup} title={$room.name}>{topic}</Popup>
+  <div class="topic" on:click={() => state.popup.set({ id: "info", head: $room.name, body: topic })}>{topic}</div>
   {/if}
 </div>

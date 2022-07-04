@@ -38,7 +38,7 @@ function getClasses(room) {
 	width: 240px;
 	display: flex;
 	flex-direction: column;
-	overflow-y: auto;
+	overflow: hidden auto;
 }
 
 .room {
@@ -117,7 +117,7 @@ function getClasses(room) {
   <div
 		class={$focusedRoom ? "room home" : "room home selected"}
 		on:click={() => actions.rooms.focus(null)}>
-		Home
+		<div class="wrapper">Home</div>
 	</div>
 	{/if}
 	{#each $rooms.filter(i => $spaceMap.get($focusedSpace ?? "orphanRooms").includes(i.roomId)) as room}

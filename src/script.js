@@ -1,8 +1,10 @@
-import { state, actions } from "./client/index.js";
-import App from './ui/App.svelte';
+globalThis.global = globalThis; // fixes matrix-js-sdk
 
-globalThis.state = state;
-globalThis.actions = actions;
+const imports = Promise.all([import("./client/index.js"), import('./ui/App.svelte')]);
+const [{ state, actions }, { default: App }] = await imports;
+
+global.state = state;
+global.actions = actions;
 
 await actions.client.fetch();
 
