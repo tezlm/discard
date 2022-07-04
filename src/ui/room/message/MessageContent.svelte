@@ -28,6 +28,7 @@ img, video, audio {
   display: flex;
   padding: .5rem;
   height: 60px;
+  width: fit-content;
 }
 
 .info {

@@ -20,4 +20,4 @@ textarea {
   resize: none;
 }
 </style>
-<textarea {value} on:input={handleInput} placeholder={placeholder} rows=6 />
+<textarea {value} on:input={handleInput} placeholder={placeholder} rows=3 />

@@ -33,6 +33,10 @@ let showTopicPopup = false;
 .topic {
   cursor: pointer;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
 }
 
 .icon {

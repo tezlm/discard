@@ -79,7 +79,13 @@ export default {
       client.once("sync", updateRooms);
       client.on("Room.myMembership", updateRooms);
       client.on("Room.name", updateRooms);
-      client.on("Room.timeline", actions.timeline.add);
+      client.on("Room.timeline", (event, _, toBeginning) => {
+        state.rooms.set(client.getRooms().filter(i => i.getMyMembership() === "join")); // to refresh unreads
+        if (!state.focusedRoomId) return;
+        if (event.getRoomId() !== state.focusedRoomId) return;
+        actions.timeline.add(event, toBeginning);
+        state.timeline.set(state.timelineRef);
+      });
     },
   },
   rooms: {
@@ -118,7 +124,7 @@ export default {
       for(let event of room.timeline) actions.timeline.add(event);
       state.timeline.set(state.timelineRef);
     },
-    insert(event, toBeginning) {
+    add(event, toBeginning) {
       if (!["m.room.create", "m.room.message"].includes(event.getType())) return;
       if (event.isRedacted()) return;
       
@@ -137,12 +143,6 @@ export default {
       } else {
         timeline[toBeginning ? "unshift" : "push"](formatEvent(event));      
       }
-    },
-    add(event, _, toBeginning) {
-      if (!state.focusedRoomId) return;
-      if (event.getRoomId() !== state.focusedRoomId) return;
-      actions.timeline.insert(event, toBeginning);
-      state.timeline.set(state.timelineRef);
     },
   },
 };

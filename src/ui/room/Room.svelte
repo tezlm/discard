@@ -13,6 +13,7 @@ let room = state.focusedRoom;
   width: 100%;
   background: var(--bg-content);
   padding-bottom: 1em;
+  z-index: 1;
 }
 </style>
 

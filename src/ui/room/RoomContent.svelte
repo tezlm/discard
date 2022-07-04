@@ -1,5 +1,6 @@
 <script>
-import EvCreate from './events/Create.svelte';
+import Unread from './timeline/Unread.svelte';
+import Create from './timeline/Create.svelte';
 import Message from './message/Message.svelte';
 import { getDisplayName, getAvatar } from '../../util/events.js';
 let timeline = state.timeline;
@@ -12,6 +13,12 @@ function shouldSplit(ev, prev) {
 	if (ev.content["m.relates_to"]?.["m.in_reply_to"]) return true;
 	if (ev.date - prev.date > 1000 * 60 * 5) return true;
 	return false;
+}
+
+function shouldUnread(ev, prev) {
+	if (!prev) return false;
+	const room = state.client.getRoom(ev.roomId);
+	return room.getAccountData("m.fully_read")?.getContent().event_id === ev.eventId;
 }
 
 function handleScroll() {
@@ -39,6 +46,7 @@ timeline.subscribe(() => {
 
 state.focusedRoom.subscribe(() => {
 	queueMicrotask(() => {
+		atTop = false;
 		if (state.focusedRoomId && scroller) {
 			scroller.scrollTo(0, scroller.scrollTopMax);
 			maybePaginate();
@@ -66,8 +74,11 @@ state.focusedRoom.subscribe(() => {
 <div class="content" bind:this={container}>
 	<div class="scroller" on:scroll={handleScroll} bind:this={scroller}>
 		{#each $timeline as event, i}
+			{#if shouldUnread(event, $timeline[i - 1])}
+				<Unread unpad={shouldSplit(event, $timeline[i - 1])} />
+			{/if}
 			{#if event.type === "m.room.create"}
-				<EvCreate event={event} />
+				<Create event={event} />
 			{:else if event.type === "m.room.message"}
 			  <Message
 					event={event}

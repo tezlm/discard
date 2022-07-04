@@ -21,8 +21,9 @@ function zoomIn(node) {
   position: relative;
   padding: 8px 1rem;
   height: 48px;
+  font-weight: 700;
   box-shadow: var(--shadow-header);
-  z-index: 1;
+  z-index: 5;
   cursor: pointer;
 }
 
@@ -39,7 +40,6 @@ function zoomIn(node) {
   background: var(--bg-tooltip);
   border-radius: 4px;
   box-shadow: var(--shadow-popup);
-  z-index: 9999;
 }
 
 .menu .item {
