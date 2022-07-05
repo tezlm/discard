@@ -7,11 +7,11 @@ export default {
   
   // rooms/nav
   rooms: writable([]),
+  dms: new Map(),
   spaceMap: writable(new Map()),
   focusedRoom: writable(null),
   focusedRoomId: null,
   focusedSpace: writable(null),
-  invitedRooms: writable([]),
   
   // messages
   replyEvent: writable(null),

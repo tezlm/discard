@@ -4,8 +4,7 @@ import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
 
 let focusedSpace = state.focusedSpace;
-let space = state.client.getRoom($focusedSpace);
-$: topic = space.currentState.getStateEvents("m.room.topic")[0]?.getContent().topic;
+let space = actions.rooms.get($focusedSpace);
 </script>
 <style>
 .avatar {
@@ -78,19 +77,12 @@ $: topic = space.currentState.getStateEvents("m.room.topic")[0]?.getContent().to
   margin-bottom: none;
   border-bottom: none;
 }
-
-.separator {
-  width: 202px;
-  height: 1px;
-  margin: 8px auto;
-  background: #4F545C7b;
-}
 </style>
 <div>
   <div class="section">
     <div class="avatar">
       <div class="uploader">
-        <img src={space.getAvatarUrl(state.client.baseUrl)} />
+        <img src={space.avatar} />
         <div class="remove">Remove</div>
       </div>
       <div class="side">
@@ -105,6 +97,6 @@ $: topic = space.currentState.getStateEvents("m.room.topic")[0]?.getContent().to
   </div>
   <div class="section" style="flex-direction: column">
     <div class="title">Space Topic</div>
-    <Textarea placeholder="what an excellent space" value={topic} />
+    <Textarea placeholder="what an excellent space" value={space.topic ?? ""} />
   </div>
 </div>

@@ -1,4 +1,5 @@
 // a lot (but not all) of this was copied from cinny
+import linkifyHtml from "linkifyjs/html";
 import sanitizeHtml from "sanitize-html";
 
 const permittedHtmlTags = [
@@ -42,33 +43,38 @@ function transformImgTag(tagName, attribs) {
 	};
 }
 
-export function sanitizeMatrixHtml(body) {
-	return sanitizeHtml(body, {
-		allowedTags: permittedHtmlTags,
-		allowedAttributes: permittedTagToAttributes,
-		disallowedTagsMode: "discard",
-		allowedSchemes: urlSchemes,
-		allowedSchemesByTag: {
-			a: urlSchemes,
+const sanitizeOpts = {
+	allowedTags: permittedHtmlTags,
+	allowedAttributes: permittedTagToAttributes,
+	disallowedTagsMode: "discard",
+	allowedSchemes: urlSchemes,
+	allowedSchemesByTag: {
+		a: urlSchemes,
+	},
+	allowedSchemesAppliedToAttributes: ["href"],
+	allowProtocolRelative: false,
+	allowedClasses: {
+		code: ["language-*"],
+	},
+	allowedStyles: {
+		"*": {
+			color: [/^#(?:[0-9a-fA-F]{3}){1,2}$/],
+			"background-color": [/^#(?:[0-9a-fA-F]{3}){1,2}$/],
 		},
-		allowedSchemesAppliedToAttributes: ["href"],
-		allowProtocolRelative: false,
-		allowedClasses: {
-			code: ["language-*"],
-		},
-		allowedStyles: {
-			"*": {
-				color: [/^#(?:[0-9a-fA-F]{3}){1,2}$/],
-				"background-color": [/^#(?:[0-9a-fA-F]{3}){1,2}$/],
-			},
-		},
-		transformTags: {
-			font: transformFontSpanTags,
-			span: transformFontSpanTags,
-			// a: transformATag,
-			img: transformImgTag,
-		},
-		nonTextTags: ["style", "script", "textarea", "option", "noscript", "mx-reply"],
-		nestingLimit: 100,
-	});
+	},
+	transformTags: {
+		font: transformFontSpanTags,
+		span: transformFontSpanTags,
+		// a: transformATag,
+		img: transformImgTag,
+	},
+	nonTextTags: ["style", "script", "textarea", "option", "noscript", "mx-reply"],
+	nestingLimit: 100,
+}
+
+
+export function parseHtml(html, opts = { linkify: true, sanitize: true }) {
+	if (opts.sanitize) html = sanitizeHtml(html, sanitizeOpts);
+	if (opts.linkify)  html = linkifyHtml(html);
+	return html;
 }

@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@sveltejs/vite-plugin-svelte': next
   browserify: ^17.0.0
+  linkifyjs: ^3.0.5
   matrix-js-sdk: ^18.1.0
   sanitize-html: ^2.7.0
   svelte: ^3.48.0
@@ -10,6 +11,7 @@ specifiers:
 
 dependencies:
   browserify: 17.0.0
+  linkifyjs: 3.0.5
   matrix-js-sdk: 18.1.0
   sanitize-html: 2.7.0
 
@@ -1286,6 +1288,10 @@ packages:
     dependencies:
       inherits: 2.0.4
       stream-splicer: 2.0.1
+    dev: false
+
+  /linkifyjs/3.0.5:
+    resolution: {integrity: sha512-1Y9XQH65eQKA9p2xtk+zxvnTeQBG7rdAXSkUG97DmuI/Xhji9uaUzaWxRj6rf9YC0v8KKHkxav7tnLX82Sz5Fg==}
     dev: false
 
   /lodash.memoize/3.0.4:

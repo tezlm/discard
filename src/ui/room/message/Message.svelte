@@ -78,6 +78,8 @@ function getReply(content) {
   height: 40px;
   width: 40px;
   margin-top: 4px;
+  color: transparent;
+  background: var(--bg-spaces);
   filter: drop-shadow(0, 4px, 4px, #00000022);
   user-select: none;
 }
@@ -85,7 +87,6 @@ function getReply(content) {
 time {
   color: var(--fg-muted);
   font-size: 11px;
-  font-weight: 500;
   font-family: var(--font-display);
   text-align: right;
   display: none;

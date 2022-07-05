@@ -54,11 +54,12 @@ let invited = state.invitedRooms;
   background: #00000033;
 }
 </style>
+<!-- TODO
 <div class="rooms">
   <b>invites - {$invited.length}</b>
   {#each $invited as room}
   <div class="room">
-  <img src={room.getAvatarUrl(state.client.baseUrl)} />
+  <img src={room.avatar} />
   <span class="name">{room.name}</span>
   <div class="options">
     <div class="button" on:click={state.client.joinRoom(room.roomId)}><div>✅</div></div>
@@ -67,3 +68,4 @@ let invited = state.invitedRooms;
   </div>
   {/each}
 </div>
+-->

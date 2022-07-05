@@ -21,7 +21,7 @@ async function handleKeyDown(e) {
       msgtype: "m.text",
     };
 
-    if (reply) {
+    if ($reply) {
       message["m.relates_to"] = {};
       message["m.relates_to"]["m.in_reply_to"] = {};
       message["m.relates_to"]["m.in_reply_to"]["event_id"] = $reply.eventId;
@@ -35,7 +35,7 @@ async function handleKeyDown(e) {
     // await state.client.sendReadReceipt(state.client.getEventMapper()({ event_id }), "m.fully_read");
     // state.rooms.set(client.getRooms().filter(i => i.getMyMembership() === "join"));
   } else if (e.key === "Escape") {
-    state.client.sendReadReceipt($room.timeline[$room.timeline.length - 1], "m.fully_read");
+    state.client.sendReadReceipt($room.timeline[$room.timeline.length - 1]);
   }
 }
 
@@ -45,6 +45,7 @@ function handleInput(e) {
 }
 
 state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus()));
+state.replyEvent.subscribe(() => queueMicrotask(() => textarea?.focus()));
 </script>
 <style>
 .input {
