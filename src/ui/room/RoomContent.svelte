@@ -10,9 +10,9 @@ import Unread from './timeline/Unread.svelte';
 import Create from './timeline/Create.svelte';
 import Message from './message/Message.svelte';
 import Loading from '../atoms/Loading.svelte';
-let timeline = state.timeline;
+let slice = state.slice;
 let reply = state.replyEvent;
-let scroller, firstRender = false, atBottom = true, atTop = false;
+let scroller, atBottom = true, atTop = false;
 
 function shouldSplit(ev, prev) {
 	if (!prev) return true;
@@ -40,13 +40,11 @@ async function maybePaginate() {
 	const oldScroll = scroller.scrollTop;
 	const liveTimeline = state.client.getRoom(state.focusedRoomId).getLiveTimeline();
 	await state.client.paginateEventTimeline(liveTimeline, { backwards: true, limit: 30 });
-	const heightChange = scroller.scrollTopMax - oldHeight;
-	scroller.scrollTop = oldScroll + heightChange;
-	if ($timeline[0]?.type === "m.room.create") atTop = true;
-	if (firstRender) {
-		refocus();
-		firstRender = false;
+	if (scroller) {
+		const heightChange = scroller.scrollTopMax - oldHeight;
+		scroller.scrollTop = oldScroll + heightChange;
 	}
+	if ($slice[0]?.type === "m.room.create") atTop = true;
 	maybePaginate();
 }
 
@@ -56,11 +54,10 @@ function refocus() {
 	}
 }
 
-timeline.subscribe(refocus);
+slice.subscribe(refocus);
 reply.subscribe(refocus);
 
 state.focusedRoom.subscribe(() => {
-	firstRender = true;
 	queueMicrotask(() => {
 		atTop = false;
 		if (state.focusedRoomId && scroller) {
@@ -92,17 +89,17 @@ state.focusedRoom.subscribe(() => {
 		{#if !atTop}
 		<span style:text-align="center"><Loading /></span>
 		{/if}
-		{#each firstRender ? [] : $timeline as event, i}
+		{#each $slice as event, i}
+			{#if i < $slice.length - 1 && shouldUnread(event)}
+				<Unread unpad={shouldSplit(event, $slice[i - 1]) ? true : null} />
+			{/if}
 			{#if event.type === "m.room.create"}
 				<Create event={event} />
 			{:else if event.type === "m.room.message" && !event.redacted}
 			  <Message
 					event={event}
-					header={shouldSplit(event, $timeline[i - 1]) ? true : null}
+					header={shouldSplit(event, $slice[i - 1]) ? true : null}
 				/>
-			{/if}
-			{#if i < $timeline.length - 1 && shouldUnread(event)}
-				<Unread unpad={shouldSplit(event, $timeline[i - 1]) ? true : null} />
 			{/if}
 		{/each}
 		<div class="spacer"></div>

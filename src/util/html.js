@@ -14,7 +14,7 @@ const urlSchemes = ["https", "http", "ftp", "mailto", "magnet"];
 
 const permittedTagToAttributes = {
   font: ["style", "data-mx-bg-color", "data-mx-color", "color"],
-  span: ["style", "data-mx-bg-color", "data-mx-color", "data-mx-spoiler", "data-mx-maths", "data-mx-pill", "data-mx-ping"],
+  span: ["style", "data-mx-bg-color", "data-mx-color", "data-mx-spoiler", "data-mx-maths", "data-mx-ping"],
   div: ["data-mx-maths"],
   a: ["name", "target", "href", "rel"],
   img: ["width", "height", "alt", "title", "src", "data-mx-emoticon"],
@@ -30,6 +30,21 @@ function transformFontSpanTags(tagName, attribs) {
 			style: `background-color: ${attribs["data-mx-bg-color"]}; color: ${attribs["data-mx-color"]}`,
 		},
 	};
+}
+
+function transformATag(tagName, attribs) {
+  const link = decodeURIComponent(attribs.href).match(/^https?:\/\/matrix.to\/#\/(@.+:.+)/);
+  if (!link) return { tagName, attribs };
+  const [_, userId] = link;
+  const pill = {
+    tagName: "span",
+		// text: name ? ("@" + name) : userId,
+    attribs: {
+			...attribs,
+			"data-mx-ping": userId,
+    },
+  };
+  return pill;
 }
 
 function transformImgTag(tagName, attribs) {
@@ -65,7 +80,7 @@ const sanitizeOpts = {
 	transformTags: {
 		font: transformFontSpanTags,
 		span: transformFontSpanTags,
-		// a: transformATag,
+		a: transformATag,
 		img: transformImgTag,
 	},
 	nonTextTags: ["style", "script", "textarea", "option", "noscript", "mx-reply"],
@@ -75,6 +90,6 @@ const sanitizeOpts = {
 
 export function parseHtml(html, opts = { linkify: true, sanitize: true }) {
 	if (opts.sanitize) html = sanitizeHtml(html, sanitizeOpts);
-	if (opts.linkify)  html = linkifyHtml(html);
+	if (opts.linkify)  html = linkifyHtml(html, { ignoreTags: ["pre", "code"] });
 	return html;
 }

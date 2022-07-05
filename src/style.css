@@ -4,6 +4,7 @@
   --bg-spaces: #202225;
   --bg-misc: #292b2f;
   --bg-tooltip: #111215;
+  --bg-context: #18191c;
   --fg-notice: #fefefe;
   --fg-content: #dcddde;
   --fg-light: #c9c9c9; /* naming is confusing, maybe TODO change? */
@@ -14,10 +15,12 @@
   --font-display: "ABC Ginto", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-monospace: Consolas, Andale Mono, Lucida Console, DejaVu Sans Mono, monospace;
   --color-accent: #7289da;
-  --color-error: #ed4245;
+  --color-blue: #4651c3;
   --color-red: #ed4245;
   --color-gray: #414548;
   --button-outline: #4f545c;
+  --ping-bgalpha: #5865f24d;
+  --ping-bg: #5865f2;
   --shadow-popup: 0 2px 10px 0 rgba(0, 0, 0, .2);
   --shadow-high: 0 8px 16px rgba(0, 0, 0, .24);
   --shadow-header:  0 1px 0 rgba(4, 4, 5, .2),

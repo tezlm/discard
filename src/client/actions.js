@@ -1,5 +1,7 @@
 const sdk = globalThis.matrixcs;
 
+// TODO: timeline slice
+
 function formatEvent(ev) {
   return {
     sender:  ev.getSender(),
@@ -109,19 +111,19 @@ export default {
         actions.rooms.update();
         if (!shouldHandle(event)) return;
         actions.timeline.add(event, toBeginning);
-        state.timeline.set(state.timelineRef);
+        state.slice.set(state.timeline);
       });
       client.on("Room.redaction", (event) => {
         actions.rooms.update();
         if (!shouldHandle(event)) return;
         actions.timeline.remove(event);
-        state.timeline.set(state.timelineRef);
+        state.slice.set(state.timeline);
       });
       client.on("Room.localEchoUpdated", (event, _, id) => {
         if (!shouldHandle(event)) return;
         if (!id) return;
         actions.timeline.update(id, event);
-        state.timeline.set(state.timelineRef);
+        state.slice.set(state.timeline);
       });
     },
   },
@@ -175,14 +177,14 @@ export default {
   },
   timeline: {
     set(room) {
-      state.timelineRef = [];
+      state.timeline = [];
       for(let event of room.timeline) actions.timeline.add(event);
-      state.timeline.set(state.timelineRef);
+      state.slice.set(state.timeline);
     },
     add(event, toBeginning) {
       if (!["m.room.create", "m.room.message"].includes(event.getType())) return;
       if (event.isRedacted()) return;
-      const timeline = state.timelineRef;
+      const timeline = state.timeline;
       if (event.getRelation()?.rel_type === "m.replace") {
         const id = event.getRelation()?.event_id;
         const original = actions.timeline.get(id);
@@ -205,7 +207,7 @@ export default {
       original.redacted = true;
     },
     get(id) {
-      const timeline = state.timelineRef;
+      const timeline = state.timeline;
       for (let i = timeline.length - 1; i >= 0; i--) {
         if (timeline[i].eventId === id) {
           return timeline[i];

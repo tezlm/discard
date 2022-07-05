@@ -10,6 +10,9 @@ import Invites from "../settings/room/Invites.svelte";
 
 import Archive from "../settings/room/Archive.svelte";
 
+let origRoom = state.focusedRoom;
+$: room = state.client.getRoom($origRoom?.roomId);
+
 const views = [
   { view: Overview,      name: "Overview" },
   { view: Permissions,   name: "Permissions" },
@@ -21,4 +24,4 @@ const views = [
   { view: Archive,       name: "Archive Room" },
 ];
 </script>
-<Settings {views} />
+<Settings {views} options={{ room }} />

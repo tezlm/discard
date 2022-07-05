@@ -17,13 +17,13 @@ function showPopup(id, opts) {
 </script>
 <style>
 .header {
-  background: var(--bg-rooms-members);
-
   display: flex;
   align-items: center;
   position: relative;
   padding: 8px 1rem;
   height: 48px;
+
+  background: var(--bg-rooms-members);
   font-weight: 700;
   box-shadow: var(--shadow-header);
   cursor: pointer;
@@ -39,7 +39,7 @@ function showPopup(id, opts) {
 
   transform-origin: top center;
 
-  background: var(--bg-tooltip);
+  background: var(--bg-context);
   border-radius: 4px;
   box-shadow: var(--shadow-popup);
   z-index: 10;
@@ -57,7 +57,7 @@ function showPopup(id, opts) {
 }
 
 .menu .item:hover {
-  background: hsl(235,51.4%,52.4%);
+  background: var(--color-blue);
   color: #fff;
 }
 

@@ -22,6 +22,29 @@ function formatSize(size) {
 }
 </script>
 <style>
+.sending {
+  color: var(--fg-muted);
+}
+
+.edited {
+  font-size: .625rem;
+  color: var(--fg-muted);
+  margin-left: 2px;
+}
+
+.redacted {
+  color: var(--color-red);
+}
+
+.redacted *:not(.text) {
+  filter: grayscale(100%);
+  transition: filter 50ms;
+}
+
+.redacted:hover * {
+  filter: grayscale(0);
+}
+
 img, video, audio {
   display: block;
   max-height: 30vh;
@@ -74,27 +97,21 @@ img, video, audio {
   font: 14px/1.125rem var(--font-monospace);
 }
 
-.sending {
-  color: var(--fg-muted);
+.text :global(ul), .text :global(ol) {
+  list-style-position: inside;
 }
 
-.edited {
-  font-size: .625rem;
-  color: var(--fg-muted);
-  margin-left: 2px;
+.text :global([data-mx-ping]) {
+  color: var(--fg-notice);
+  font-weight: 500;
+  background: var(--ping-bgalpha);
+  padding: 0 2px;
+  border-radius: 3px;
+  cursor: pointer;
 }
 
-.redacted {
-  color: var(--color-red);
-}
-
-.redacted *:not(.text) {
-  filter: grayscale(100%);
-  transition: filter 50ms;
-}
-
-.redacted:hover * {
-  filter: grayscale(0);
+.text :global([data-mx-ping]):hover {
+  background: var(--ping-bg);
 }
 </style>
 <!-- <div class:redacted class:sending style:width={dimensions.width + "px"} style:height={dimensions.height + "px"}> -->
