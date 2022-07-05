@@ -13,17 +13,17 @@ export function formatTime(d) {
   return d.toLocaleTimeString(undefined, timeOptions);
 }
 
-export function formatDate(d) {
+export function formatDate(d, lowercase = false) {
   const today = new Date()
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
 
   if (isSameDay(d, today)) {
-    return `Today at ${formatTime(d)}`
+    return `${lowercase ? "today" : "Today"} at ${formatTime(d)}`
   }
 
   if (isSameDay(d, yesterday)) {
-    return `Yesterday at ${formatTime(d)}`
+    return `${lowercase ? "yesterday" : "Yesterday"} at ${formatTime(d)}`
   }
 
   return d.toLocaleDateString()

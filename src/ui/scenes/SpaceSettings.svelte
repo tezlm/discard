@@ -10,6 +10,9 @@ import Members from "../settings/room/Members.svelte";
 import Bans from "../settings/room/Bans.svelte";
 import Invites from "../settings/room/Invites.svelte";
 
+let spaceId = state.focusedSpace;
+$: room = state.client.getRoom($spaceId);
+
 const views = [
   { view: Overview,      name: "Overview", display: "Space Overview" },
   { view: Rooms,         name: "Rooms" },
@@ -21,4 +24,4 @@ const views = [
   { view: Invites,       name: "Invites" },
 ];
 </script>
-<Settings {views} />
+<Settings {views} options={{ room }} />

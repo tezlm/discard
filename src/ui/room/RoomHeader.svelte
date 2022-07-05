@@ -1,4 +1,5 @@
 <script>
+import { parseHtml } from "../../util/html.js";
 import roomNormalIcon from "../../assets/icons/room-normal.svg";
 let room = state.focusedRoom;
 </script>
@@ -49,6 +50,8 @@ let room = state.focusedRoom;
   <span class="name">{$room ? $room.name : "Home"}</span>
   {#if $room?.topic}
   <div class="spacer"></div>
-  <div class="topic" on:click={() => state.popup.set({ id: "info", head: $room.name, body: $room.topic })}>{$room.topic}</div>
+  <div class="topic" on:click={() => state.popup.set({ id: "info", head: $room.name, body: parseHtml($room.topic, { linkify: true }), html: true })}>
+    {@html parseHtml($room.topic, { linkify: true })}
+  </div>
   {/if}
 </div>

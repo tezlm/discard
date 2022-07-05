@@ -74,7 +74,7 @@ onDestroy(() => copyEl.removeEventListener("mouseleave", resetCopy));
 
 .offline {
 	background: var(--bg-misc);
-	color: var(--color-error);
+	color: var(--color-red);
 	border-bottom: solid var(--bg-spaces) 1px;
 	padding: 8px;
 	text-align: center;

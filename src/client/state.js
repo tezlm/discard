@@ -19,4 +19,9 @@ export default {
   editingEvent: writable(null), // coming soon...
   timeline: writable([]),
   timelineRef: [],
+
+  // timeline
+  eventStart: null,
+  eventEnd: null,
+  slice: writable([]),
 };

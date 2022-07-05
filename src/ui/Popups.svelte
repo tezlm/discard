@@ -3,6 +3,7 @@ import UserId from "./atoms/UserId.svelte";
 import Button from "./atoms/Button.svelte";
 import Input from "./atoms/Input.svelte";
 import Popup from "./atoms/Popup.svelte";
+import { formatDate } from "../util/format.js";
 let client = state.client;
 let current = state.popup;
 let data; reset();
@@ -15,9 +16,13 @@ function capitalize(str) {
   return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
 
+function rnd(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 function handleKeyDown(e) {
-  if (e.key !== "Escape") return;
-  e.stopPropagation();
+  if (e.key !== "Escape" || !$current.id) return;
+  e.stopImmediatePropagation();
   closePopup();
 }
 
@@ -58,11 +63,23 @@ current.subscribe(reset);
   text-transform: uppercase;
   margin-bottom: 16px;
 }
+
+hr {
+  margin: 8px 0;
+  height: 0;
+  border: solid var(--color-gray) 1px;
+}
 </style>
 {#if $current.id === "info"}
 <Popup>
   <h2 slot="header">{$current.head} <div class="close" on:click={closePopup}>&#xd7;</div></h2>
-  <p slot="content">{$current.body}</p>
+  <div slot="content">
+    {#if $current.html}
+    {@html $current.body}
+    {:else}
+    {$current.body}
+    {/if}
+  </div>
 </Popup>
 {:else if $current.id === "leave"}
 <Popup>
@@ -106,6 +123,26 @@ current.subscribe(reset);
   <div slot="footer">
     <Button type="link" label="Cancel" clicked={closePopup} />
     <Button type="primary" disabled={!data.name.length} label="Create {capitalize($current.type)}" clicked={() => state.popup.set({ id: "todo" })} />
+  </div>
+</Popup>
+{:else if $current.id === "ban"}
+<Popup>
+  <h2 slot="header">{$current.name}</h2>
+  <div slot="content" style:margin-top="-8px">
+    <div style:color="var(--fg-muted)">
+        {#if $current.powerLevel < 0}{rnd(["violently", "thoroughly", "briskly"])} {/if}
+        {$current.powerLevel > 0 ? "fired" : rnd(["banned", "yeeted", "purged", "banished", "eliminated", "neutralized", "exiled", "expelled", "discontinued", "abolished", "discharged", "vanquished", "ejected"])}
+        <!-- yeeted/yote/yaught/yate/yought? -->
+        {formatDate($current.date, true)}
+    </div>
+    <hr />
+    <div>
+      {#if $current.reason}
+        {$current.reason}
+      {:else}
+        <i>no reason supplied</i>
+      {/if}
+    </div>
   </div>
 </Popup>
 {:else if $current.id === "todo"}

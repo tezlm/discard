@@ -8,7 +8,6 @@ state.focusedSpace.subscribe(() => {
 	spaceMap = state.spaceMap; // hacky svelte ;)
 });
 
-
 function getLastMessage(timeline) {
 	for (let i = timeline.length - 1; i >= 0; i--) {
 		if (timeline[i].getType() === "m.room.message" && !timeline[i].isRedacted()) return timeline[i];

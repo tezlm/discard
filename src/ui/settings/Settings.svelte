@@ -1,11 +1,14 @@
 <script>
-export let views;
+export let views, options;
 let focused = views[0];
+let popup = state.popup;
 
 // TODO: categories
 
 function handleKeyDown(e) {
-  if (e.key === "Escape") state.scene.set("chat");
+  if (e.key === "Escape" && !$popup.id) {
+    state.scene.set("chat");
+  }
 }
 </script>
 <style>
@@ -100,7 +103,7 @@ h1 {
   <div class="main">
     <div class="wrapper">
       <h1>{focused.name}</h1>
-      <svelte:component this={focused.view} />
+      <svelte:component this={focused.view} {...options} />
     </div>
   </div>
   <div class="exit" on:click={() => state.scene.set("chat")}>ESC</div>
