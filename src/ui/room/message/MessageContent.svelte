@@ -1,5 +1,5 @@
 <script>
-import { sanitizeMatrixHtml } from "../../../util/sanitize.js";
+import { parseHtml } from "../../../util/html.js";
 import fileIcon from "../../../assets/file.svg";
 export let event;
 let client = state.client;
@@ -115,14 +115,14 @@ img, video, audio {
   </div>
   {:else if content.format === "org.matrix.custom.html"}
   <div class="text">
-    {@html sanitizeMatrixHtml(content.formatted_body)}
+    {@html parseHtml(content.formatted_body)}
     {#if edited}
     <span class="edited">(edited)</span>
     {/if}
   </div>
   {:else}
   <div class="text">
-    {content.body}
+    {@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"), { linkify: true })}
     {#if edited}
     <span class="edited">(edited)</span>
     {/if}

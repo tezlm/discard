@@ -7,7 +7,7 @@ export let items, event;
   display: flex;
   position: absolute;
   right: 1rem;
-  top: -8px;
+  top: -16px;
 
   border: solid var(--bg-misc) 1px;
   border-radius: 4px;

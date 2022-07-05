@@ -26,7 +26,6 @@ function showPopup(id, opts) {
   height: 48px;
   font-weight: 700;
   box-shadow: var(--shadow-header);
-  z-index: 5;
   cursor: pointer;
 }
 
@@ -43,6 +42,7 @@ function showPopup(id, opts) {
   background: var(--bg-tooltip);
   border-radius: 4px;
   box-shadow: var(--shadow-popup);
+  z-index: 10;
 }
 
 .menu .item {

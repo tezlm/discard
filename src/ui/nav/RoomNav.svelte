@@ -110,27 +110,27 @@ function getClasses(room) {
 	display: block;
 }
 </style>
-<div class="nav">
-	<div class="spacer"></div>
-	{#if !$focusedSpace}
-  <div
-		class={$focusedRoom ? "room home" : "room home selected"}
-		on:click={() => actions.rooms.focus(null)}>
-		<div class="wrapper">Home</div>
-	</div>
-	{/if}
-	{#each $rooms.filter(i => $spaceMap.get($focusedSpace ?? "orphanRooms").includes(i.roomId)) as room}
+	<div class="nav">
+		<div class="spacer"></div>
+		{#if !$focusedSpace}
 	  <div
-			class={getClasses(room).join(" ")}
-			on:click={() => actions.rooms.focus(room)}>
-			<div class="wrapper">
-				<div class="icon">#</div>
-				<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
-				<div class="settings" on:click={() => state.scene.set("room-settings")}>
-					<Tooltip tip="Edit Room">&#x2699;</Tooltip>
+			class={$focusedRoom ? "room home" : "room home selected"}
+			on:click={() => actions.rooms.focus(null)}>
+			<div class="wrapper">Home</div>
+		</div>
+		{/if}
+		{#each $rooms.filter(i => $spaceMap.get($focusedSpace ?? "orphanRooms").includes(i.roomId)) as room}
+		  <div
+				class={getClasses(room).join(" ")}
+				on:click={() => actions.rooms.focus(room)}>
+				<div class="wrapper">
+					<div class="icon">#</div>
+					<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
+					<div class="settings" on:click={() => state.scene.set("room-settings")}>
+						<Tooltip tip="Edit Room">&#x2699;</Tooltip>
+					</div>
 				</div>
 			</div>
-		</div>
-	{/each}
-	<div class="spacer"></div>
-</div>
+		{/each}
+		<div class="spacer"></div>
+	</div>

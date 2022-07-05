@@ -1,6 +1,6 @@
 <script>
 // TODO: make edits apply
-import { sanitizeMatrixHtml } from "../../../util/sanitize.js";
+import { parseHtml } from "../../../util/html.js";
 import { getDisplayName, getAvatar } from '../../../util/events.js';
 export let roomid, eventid;
 let eventPromise = state.client.fetchRoomEvent(roomid, eventid);
@@ -74,7 +74,7 @@ let eventPromise = state.client.fetchRoomEvent(roomid, eventid);
   <img class="avatar" src={getAvatar(event.sender)} /><span class="author">{getDisplayName(event.sender)}</span>
   <div class="content">
     {#if event.content.format === "org.matrix.custom.html"}
-      {@html sanitizeMatrixHtml(event.content.formatted_body).split(/<br|\r?\n/)[0]}
+      {@html parseHtml(event.content.formatted_body).split(/<br|\r?\n/)[0]}
     {:else}
       {event.content.body.split(/\r?\n/)[0]}
     {/if}

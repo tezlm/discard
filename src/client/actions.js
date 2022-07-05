@@ -12,6 +12,28 @@ function formatEvent(ev) {
   };  
 }
 
+// TODO: switch over to custom room type
+function formatRoom(room) {
+  function getType() {
+    if (room.getMyMembership() === "invite") return "invite";
+    if (room.isSpaceRoom()) return "space";
+    // TODO: dm room
+    return "room";    
+  }
+  
+  return {
+    name:       room.name,
+    topic:      room?.currentState.getStateEvents("m.room.topic")[0]?.getContent().topic ?? null,
+    avatar:     room.getAvatarUrl(state.client.baseUrl),
+    type:       getType(),
+    roomId:     room.roomId,
+    
+    // compat for now
+    hasUserReadEvent: (user, ev) => room.hasUserReadEvent(user, ev),
+    timeline: room.timeline,
+  }
+}
+
 export default {
   client: {
     async getStore() {
@@ -111,8 +133,21 @@ export default {
     },
     update() {
       const client = state.client;
-      state.rooms.set(client.getRooms().filter(i => i.getMyMembership() === "join"));
-      state.invitedRooms.set(client.getRooms().filter(i => i.getMyMembership() === "invite"));        
+      const rooms = client.getRooms().filter(i => ["join", "invite"].includes(i.getMyMembership())).map(formatRoom);
+      const dms = [];
+      const dmData = state.client.getAccountData("m.direct").getContent();
+
+      for (let userId in dmData) {
+        for (let roomId in dmData[userId]) {
+          dms.push({ userId, roomId });
+        }
+      }
+
+      state.dms.set(dms);
+      state.rooms.set(rooms);
+    },
+    get(id) {
+      return formatRoom(state.client.getRoom(id));
     },
   },
   spaces: {

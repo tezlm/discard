@@ -1,7 +1,6 @@
 <script>
 import roomNormalIcon from "../../assets/icons/room-normal.svg";
 let room = state.focusedRoom;
-$: topic = $room?.currentState.getStateEvents("m.room.topic")[0]?.getContent().topic;
 </script>
 <style>
 .header {
@@ -48,8 +47,8 @@ $: topic = $room?.currentState.getStateEvents("m.room.topic")[0]?.getContent().t
   <span class="icon" style="mask-image: url({roomNormalIcon})" />
   {/if}
   <span class="name">{$room ? $room.name : "Home"}</span>
-  {#if topic}
+  {#if $room?.topic}
   <div class="spacer"></div>
-  <div class="topic" on:click={() => state.popup.set({ id: "info", head: $room.name, body: topic })}>{topic}</div>
+  <div class="topic" on:click={() => state.popup.set({ id: "info", head: $room.name, body: $room.topic })}>{$room.topic}</div>
   {/if}
 </div>

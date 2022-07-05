@@ -4,7 +4,6 @@ import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
 
 let room = state.focusedRoom;
-$: topic = $room?.currentState.getStateEvents("m.room.topic")[0]?.getContent().topic;
 </script>
 <style>
 .title {
@@ -45,6 +44,6 @@ $: topic = $room?.currentState.getStateEvents("m.room.topic")[0]?.getContent().t
   </div>
   <div class="section">
     <div class="title">Room Topic</div>
-    <Textarea placeholder="what an amazing room" value={topic} />
+    <Textarea placeholder="what an amazing room" value={$room?.topic ?? ""} />
   </div>
 </div>

@@ -17,6 +17,7 @@
 	},
 	"dependencies": {
 		"browserify": "^17.0.0",
+		"linkifyjs": "^3.0.5",
 		"matrix-js-sdk": "^18.1.0",
 		"sanitize-html": "^2.7.0"
 	}
