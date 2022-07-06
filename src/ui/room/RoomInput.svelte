@@ -1,5 +1,6 @@
 <script>
 // TODO: split out editor from input (for edits)
+import { marked } from "marked";
 import { getDisplayName } from "../../util/events.js";
 export let placeholder;
 let textarea;
@@ -13,12 +14,11 @@ async function handleKeyDown(e) {
     e.preventDefault();
     e.target.value = "";
     rows = 1;
-  console.log("submit")
-    queueMicrotask(() => {
+
     const message = {
       body: value.trim(),
       format: "org.matrix.custom.html",
-      formatted_body: value.trim().replace(/\n/g, "<br />"),
+      formatted_body: marked(value.trim()), //.replace(/\n/g, "<br />"),
       msgtype: "m.text",
     };
 
@@ -30,12 +30,6 @@ async function handleKeyDown(e) {
     }
 
     state.client.sendEvent(state.focusedRoomId, null, "m.room.message", message);
-
-    // TODO: send read recipts
-    // const { event_id } = await state.client.sendEvent(state.focusedRoomId, null, "m.room.message", { body: value.trim(), msgtype: "m.text" });
-    // await state.client.sendReadReceipt(state.client.getEventMapper()({ event_id }), "m.fully_read");
-    // state.rooms.set(client.getRooms().filter(i => i.getMyMembership() === "join"));
-    });
   } else if (e.key === "Escape") {
     state.client.sendReadReceipt($room.timeline[$room.timeline.length - 1]);
   }
@@ -44,6 +38,71 @@ async function handleKeyDown(e) {
 function handleInput(e) {
   const value = e.target.value;
   rows = Math.min(value.split("\n").length, 10);
+}
+
+async function handlePaste(e) {
+  const file = e.clipboardData.files[0];
+  if (!file) return;
+  state.popup.set({
+    id: "upload",
+    file,
+    confirm() {
+      upload(file);  
+    },
+  });
+}
+
+async function upload(file) {
+  const upload = { file, progress: 0, cancel: todo };
+  state.fileUpload.set(upload);
+  const url = await state.client.uploadContent(file, {
+    progressHandler({ loaded, total }) {
+      upload.progress = loaded / total;
+      state.fileUpload.set(upload);
+    }
+  });
+
+  state.fileUpload.set(null);
+
+  const message = {
+    url,
+    body: file.name,
+    msgtype: getType(file.type),
+    info: {
+      mimetype: file.type,
+      size: file.size,
+    }
+  };
+
+  if (message.msgtype === "m.image") {
+    message.info = { ...message.info, ...await getSize(file) };
+  }
+
+  if ($reply) {
+    message["m.relates_to"] = {};
+    message["m.relates_to"]["m.in_reply_to"] = {};
+    message["m.relates_to"]["m.in_reply_to"]["event_id"] = $reply.eventId;
+    reply.set(null);
+  }
+
+  state.client.sendEvent(state.focusedRoomId, null, "m.room.message", message);
+
+  function getSize(file) {
+    return new Promise(res => {
+      const img = new Image();
+      img.onload = () => res({ w: img.width, h: img.height });
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  function getType(mime) {
+    switch (mime.split("/")[0]) {
+      case "image": return "m.image";
+      case "video": return "m.video";
+      case "audio": return "m.audio";
+      default: return "m.file";
+    }
+  }
 }
 
 state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus()));
@@ -144,5 +203,5 @@ textarea::placeholder {
   <div class="upload">
     <div class="upload-button"></div>
   </div>
-  <textarea {rows} {placeholder} on:input={handleInput} on:keydown={handleKeyDown} bind:this={textarea}></textarea>
+  <textarea {rows} {placeholder} on:input={handleInput} on:keydown={handleKeyDown} on:paste={handlePaste} bind:this={textarea}></textarea>
 </div>

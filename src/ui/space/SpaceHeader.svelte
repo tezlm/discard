@@ -88,8 +88,8 @@ function showPopup(id, opts) {
       <div class="spacer"></div>
       <div class="item" on:click={() => state.scene.set("space-settings")}>Space Settings</div>
       <div class="spacer"></div>
-      <div class="item" on:click={() => showPopup("create", { type: "room" })}>Create Room</div>
-      <div class="item" on:click={() => showPopup("create")}>Create Subspace</div>
+      <div class="item" on:click={() => showPopup("create", { type: "room", confirm: todo })}>Create Room</div>
+      <div class="item" on:click={() => showPopup("create", { confirm: todo })}>Create Subspace</div>
       <div class="item" on:click={todo}>Add Existing Room</div>
       <div class="spacer"></div>
       <div class="item" on:click={() => showPopup("leave")}><span class="color-red">Leave Space</span></div>
