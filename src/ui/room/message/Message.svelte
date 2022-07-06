@@ -78,8 +78,9 @@ function getReply(content) {
   height: 40px;
   width: 40px;
   margin-top: 4px;
-  color: transparent;
-  background: var(--bg-spaces);
+  background-color: var(--bg-spaces);
+  background-size: cover;
+  background-position: 50% 50%;
   filter: drop-shadow(0, 4px, 4px, #00000022);
   user-select: none;
 }
@@ -104,11 +105,11 @@ time {
   display: block;
 }
 </style>
-<div class="message {header ? 'header' : ''}">
+<div class="message" class:header>
   <div class="side">
     {#if getReply(event.content)}<br>{/if}
     {#if header}
-    <img class="avatar" alt="avatar for {getDisplayName(event.sender)}" src={getAvatar(event.sender)} onerror="this.src='{defaultAvatar}'" />
+    <div class="avatar" style:background-image={`url(${getAvatar(event.sender)})`} />
     {:else}
     <time datetime={event.date.toISOString()}>{formatTime(event.date)}</time>
     {/if}

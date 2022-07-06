@@ -17,11 +17,11 @@ export default {
   replyEvent: writable(null),
   focusedEvent: writable(null), // coming soon...
   editingEvent: writable(null), // coming soon...
-  timeline: writable([]),
-  timelineRef: [],
 
   // timeline
-  eventStart: null,
-  eventEnd: null,
+  timeline: [],
+  sliceStart: null,
+  sliceEnd: null,
   slice: writable([]),
+  sliceRef: [],
 };

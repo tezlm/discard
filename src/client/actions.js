@@ -108,22 +108,29 @@ export default {
       client.on("Room.myMembership", updateAll);
       client.on("Room.name", updateAll);
       client.on("Room.timeline", (event, _, toBeginning) => {
-        actions.rooms.update();
+        if (!toBeginning) actions.rooms.update();
         if (!shouldHandle(event)) return;
+        const atEnd = actions.slice.isAtEnd();
         actions.timeline.add(event, toBeginning);
-        state.slice.set(state.timeline);
+        if (atEnd) {
+          const lastEvent = state.timeline[state.timeline.length - 1];
+          state.sliceEnd = lastEvent.eventId;
+          state.sliceRef.push(lastEvent);
+          state.slice.set(state.sliceRef);
+        }
       });
       client.on("Room.redaction", (event) => {
         actions.rooms.update();
         if (!shouldHandle(event)) return;
         actions.timeline.remove(event);
-        state.slice.set(state.timeline);
       });
       client.on("Room.localEchoUpdated", (event, _, id) => {
         if (!shouldHandle(event)) return;
         if (!id) return;
+        const atEnd = actions.slice.isAtEnd();
         actions.timeline.update(id, event);
-        state.slice.set(state.timeline);
+        if (atEnd) state.sliceEnd = state.timeline[state.timeline.length - 1].eventId;
+        state.slice.set(state.sliceRef);
       });
     },
   },
@@ -179,7 +186,16 @@ export default {
     set(room) {
       state.timeline = [];
       for(let event of room.timeline) actions.timeline.add(event);
-      state.slice.set(state.timeline);
+
+      const newStart = Math.max(state.timeline.length - 51, 0);
+      const newEnd = state.timeline.length - 1;
+      
+      // FIXME: if timeline is [], state.timeline[...] will be undefined
+
+      state.sliceStart = state.timeline[newStart].eventId;
+      state.sliceEnd = state.timeline[newEnd].eventId;
+      state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
+      state.slice.set(state.sliceRef);
     },
     add(event, toBeginning) {
       if (!["m.room.create", "m.room.message"].includes(event.getType())) return;
@@ -207,12 +223,53 @@ export default {
       original.redacted = true;
     },
     get(id) {
-      const timeline = state.timeline;
-      for (let i = timeline.length - 1; i >= 0; i--) {
-        if (timeline[i].eventId === id) {
-          return timeline[i];
-        }
-      }
+      return state.timeline.find(i => i.eventId === id);
     }
+  },
+  slice: {
+    isAtEnd() {
+      const endIndex = state.timeline.findIndex(i => i.eventId === state.sliceEnd);
+      return endIndex === state.timeline.length - 1;
+    },
+    async backwards(limit = 50) {
+      const oldStartIndex = state.timeline.findIndex(i => i.eventId === state.sliceStart);
+      if (oldStartIndex - limit < 0 && state.timeline[0]?.type !== "m.room.create") {
+        console.log("fetching messages");
+      	const liveTimeline = state.client.getRoom(state.focusedRoomId).getLiveTimeline();
+      	await state.client.paginateEventTimeline(liveTimeline, { backwards: true, limit: 200 });
+      }
+
+      const startIndex = state.timeline.findIndex(i => i.eventId === state.sliceStart);
+      const endIndex = state.timeline.findIndex(i => i.eventId === state.sliceEnd);
+      if (startIndex < 0) throw "this shouldn't happen";
+      if (endIndex < 0) throw "this shouldn't happen";
+      
+      const eventCount = 100;
+      const newStart = Math.max(startIndex - limit, 0);
+      const newEnd = Math.min(newStart + eventCount, state.timeline.length - 1);
+       
+      state.sliceStart = state.timeline[newStart].eventId;
+      state.sliceEnd = state.timeline[newEnd].eventId;
+      state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
+      state.slice.set(state.sliceRef);
+    },
+    async forwards(limit = 50) {
+      const startIndex = state.timeline.findIndex(i => i.eventId === state.sliceStart);
+      const endIndex = state.timeline.findIndex(i => i.eventId === state.sliceEnd);
+      if (startIndex < 0) throw "this shouldn't happen";
+      if (endIndex < 0) throw "this shouldn't happen";
+      
+      const eventCount = 100;
+      const newStart = Math.max(startIndex + limit, 0);
+      const newEnd = Math.min(newStart + eventCount, state.timeline.length - 1);
+       
+      state.sliceStart = state.timeline[newStart].eventId;
+      state.sliceEnd = state.timeline[newEnd].eventId;
+      state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
+      state.slice.set(state.sliceRef);
+    },
+    async jump(eventId) {
+      // todo!
+    },
   },
 };

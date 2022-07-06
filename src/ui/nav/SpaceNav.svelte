@@ -4,9 +4,8 @@ import Tooltip from "../atoms/Tooltip.svelte";
 let focusedSpace = state.focusedSpace;
 let spaceMap = state.spaceMap;
 
-state.focusedSpace.subscribe(() => {
-	spaceMap = state.spaceMap; // hacky svelte ;)
-});
+state.focusedSpace.subscribe(() => spaceMap = state.spaceMap);
+state.rooms.subscribe(() => spaceMap = state.spaceMap);
 
 function getLastMessage(timeline) {
 	for (let i = timeline.length - 1; i >= 0; i--) {
