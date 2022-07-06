@@ -115,6 +115,11 @@ img, video, audio {
   list-style-position: inside;
 }
 
+.text :global(blockquote) {
+  border-left: solid var(--color-gray-light) 4px;
+  padding-left: 12px;
+}
+
 .text :global([data-mx-ping]) {
   color: var(--fg-notice);
   font-weight: 500;

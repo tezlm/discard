@@ -132,6 +132,12 @@ export default {
         if (atEnd) state.sliceEnd = state.timeline[state.timeline.length - 1].eventId;
         state.slice.set(state.sliceRef);
       });
+      client.on("Room.receipt", (event) => {
+        const users = Object.values(event.getContent()).map(i => Object.keys(i["m.read"])).flat(); // readable and maintainable code
+        if (!users.includes(state.client.getUserId())) return;
+        actions.rooms.update();
+        state.slice.set(state.sliceRef);
+      });
     },
   },
   rooms: {

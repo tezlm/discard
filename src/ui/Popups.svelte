@@ -8,6 +8,8 @@ let client = state.client;
 let current = state.popup;
 let data; reset();
 
+// TODO: there are quite a lot of popups here, maybe move each of them into a separate file?
+
 function closePopup() {
   state.popup.set({});
 }
@@ -21,7 +23,10 @@ function rnd(arr) {
 }
 
 function handleKeyDown(e) {
-  if (e.key !== "Escape" || !$current.id) return;
+  if (!$current.id) return;
+  if (e.key !== "Escape" && e.key !== "Enter") return;
+  if (e.key === "Enter" && $current.confirm) $current.confirm(data); 
+  e.preventDefault();
   e.stopImmediatePropagation();
   closePopup();
 }
@@ -143,6 +148,21 @@ hr {
         <i>no reason supplied</i>
       {/if}
     </div>
+  </div>
+</Popup>
+{:else if $current.id === "upload"}
+<!-- temporary™ awful code -->
+<Popup>
+  <h2 slot="header">Upload file</h2>
+  <div slot="content">
+    <div style:margin-bottom="1em" style:margin-top="-8px" >do you want to upload this file?</div>
+    {#if $current.file.type.startsWith("image")}
+    <img src={URL.createObjectURL($current.file)} alt={$current.file.name} style="max-width: 100%; max-height: 400px; border-radius: 3px; margin: 0 auto; display: block" />
+    {/if}
+  </div>
+  <div slot="footer">
+    <Button type="link" label="Nevermind" clicked={closePopup} />
+    <Button type="primary" label="Upload!" clicked={() => { $current.confirm(); closePopup() }} />
   </div>
 </Popup>
 {:else if $current.id === "todo"}

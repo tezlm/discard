@@ -1,10 +1,12 @@
 <script>
 import Unread from './timeline/Unread.svelte';
+import Upload from './timeline/Upload.svelte';
 import Create from './timeline/Create.svelte';
 import Message from './message/Message.svelte';
 import Loading from '../atoms/Loading.svelte';
 let slice = state.slice;
 let reply = state.replyEvent;
+let upload = state.fileUpload;
 let scroller, paginating = false, atEnd = true, atBottom = true, atTop = false;
 
 function shouldSplit(ev, prev) {
@@ -39,6 +41,7 @@ async function maybePaginate() {
 	paginating = true;
 
 	if (paginateUp) {
+		console.log("backfill")
 		const oldScroll = scroller.children[1].offsetTop;
 		const topEvent = scroller.children[1].dataset.eventId;
 		await actions.slice.backwards();
@@ -63,7 +66,6 @@ async function maybePaginate() {
 
 function refocus() {
 	if (scroller && atEnd) {
-		console.log("refocus")
 		queueMicrotask(() => scroller.scrollTop = scroller.scrollTopMax);
 	}
 }
@@ -76,6 +78,7 @@ state.focusedRoom.subscribe(() => {
 		atEnd = true;
 		atBottom = true;
 		atTop = false;
+		paginating = false;
 		if (state.focusedRoomId && scroller) {
 			scroller.scrollTop = scroller.scrollTopMax;
 			maybePaginate();
@@ -128,6 +131,9 @@ state.focusedRoom.subscribe(() => {
 			{/if}
 			</div>
 		{/each}
+		{#if $upload}
+	  <Upload upload={$upload} />
+		{/if}
 		<div class="spacer" class:tall={!atBottom} ></div>
 	</div>
 </div>

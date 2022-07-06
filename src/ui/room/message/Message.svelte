@@ -5,6 +5,8 @@ import MessageToolbar from "./MessageToolbar.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
 import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.js';
 
+// FIXME: use default avatar in case of failed load
+
 export let event, header = false;
 
 let toolbar = getToolbar(event);
