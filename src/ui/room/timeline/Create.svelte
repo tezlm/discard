@@ -21,5 +21,5 @@ h1 {
 </style>
 <div class="create">
   <h1>Welcome to {name}!</h1>
-  <div class="info">This is the start of the {name} room. {topic}</div>
+  <div class="info">This is the start of the {name} room. {#if topic}{topic}{/if}</div>
 </div>

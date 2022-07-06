@@ -1,18 +1,11 @@
 <script>
-// TODO: optimize! (and/or refactor)
-// the entire timeline is rendered, which isnt good for performance
-// render just a small "view" of it at a time?
-
-// TODO: fix message scrollback (see MessageContent.svelte)
-// the timeline can shift around as images and other message attachments are loaded
-// luckily, width and height are sent along with that so it shouldn't be *too* hard to fix?
 import Unread from './timeline/Unread.svelte';
 import Create from './timeline/Create.svelte';
 import Message from './message/Message.svelte';
 import Loading from '../atoms/Loading.svelte';
 let slice = state.slice;
 let reply = state.replyEvent;
-let scroller, atBottom = true, atTop = false;
+let scroller, paginating = false, atEnd = true, atBottom = true, atTop = false;
 
 function shouldSplit(ev, prev) {
 	if (!prev) return true;
@@ -30,27 +23,48 @@ function shouldUnread(ev) {
 }
 
 function handleScroll() {
-	atBottom = scroller.scrollTop > scroller.scrollTopMax - 50;
-	maybePaginate();
+	atEnd = scroller.scrollTop > scroller.scrollTopMax - 50;
+	if (!paginating) maybePaginate();
 }
 
+// FIXME: occasionally, you get sent all the way to the top of the content
+// FIXME: forward pagination doesn't work properly
 async function maybePaginate() {
-	if (!scroller || scroller.scrollTop > 2000 || atTop) return;
-	const oldHeight = scroller.scrollTopMax;
-	const oldScroll = scroller.scrollTop;
-	const liveTimeline = state.client.getRoom(state.focusedRoomId).getLiveTimeline();
-	await state.client.paginateEventTimeline(liveTimeline, { backwards: true, limit: 30 });
-	if (scroller) {
-		const heightChange = scroller.scrollTopMax - oldHeight;
-		scroller.scrollTop = oldScroll + heightChange;
+	if (!scroller || paginating) return;
+
+	const paginateUp = !atTop && scroller.scrollTop < 800;
+	const paginateDown =  !atBottom && scroller.scrollTopMax - scroller.scrollTop < 800;
+	if (paginateDown === paginateUp) return; // bootleg xor (both true = entire timeline loaded, both false = dont paginate)
+	
+	paginating = true;
+
+	if (paginateUp) {
+		const oldScroll = scroller.children[1].offsetTop;
+		const topEvent = scroller.children[1].dataset.eventId;
+		await actions.slice.backwards();
+		if ($slice[0]?.type === "m.room.create") atTop = true;
+		if (scroller) {
+			const recreated = scroller.querySelector(`[data-event-id="${topEvent}"]`);
+			if (recreated) scroller.scrollTop += recreated.offsetTop - oldScroll;
+		}
+	} else if (paginateDown) {
+		const oldScroll = scroller.children[1].offsetTop;
+		const bottomEvent = scroller.children[scroller.children.length - 2].dataset.eventId;
+		await actions.slice.forwards();
+		if (scroller) {
+			const recreated = scroller.querySelector(`[data-event-id="${bottomEvent}"]`);
+			if (recreated) scroller.scrollTop -= recreated.offsetTop - oldScroll;
+		}
 	}
-	if ($slice[0]?.type === "m.room.create") atTop = true;
-	maybePaginate();
+
+	atBottom = $slice.at(-1)?.eventId === state.timeline.at(-1)?.eventId;
+	paginating = false;
 }
 
 function refocus() {
-	if (scroller && atBottom) {
-		queueMicrotask(() => scroller.scrollTo(0, 999999));
+	if (scroller && atEnd) {
+		console.log("refocus")
+		queueMicrotask(() => scroller.scrollTop = scroller.scrollTopMax);
 	}
 }
 
@@ -59,9 +73,11 @@ reply.subscribe(refocus);
 
 state.focusedRoom.subscribe(() => {
 	queueMicrotask(() => {
+		atEnd = true;
+		atBottom = true;
 		atTop = false;
 		if (state.focusedRoomId && scroller) {
-			scroller.scrollTo(0, scroller.scrollTopMax);
+			scroller.scrollTop = scroller.scrollTopMax;
 			maybePaginate();
 		}
 	});
@@ -83,13 +99,22 @@ state.focusedRoom.subscribe(() => {
 .spacer {
 	height: 1.5rem;
 }
+
+.loading {
+	text-align: center;
+}
+
+.tall {
+	margin-top: 500px;	
+}
 </style>
 <div class="content">
 	<div class="scroller" on:scroll={handleScroll} bind:this={scroller}>
 		{#if !atTop}
-		<span style:text-align="center"><Loading /></span>
+		<div class="loading tall"><Loading /></div>
 		{/if}
 		{#each $slice as event, i}
+		<div data-event-id={event.eventId}>
 			{#if i < $slice.length - 1 && shouldUnread(event)}
 				<Unread unpad={shouldSplit(event, $slice[i - 1]) ? true : null} />
 			{/if}
@@ -101,8 +126,9 @@ state.focusedRoom.subscribe(() => {
 					header={shouldSplit(event, $slice[i - 1]) ? true : null}
 				/>
 			{/if}
+			</div>
 		{/each}
-		<div class="spacer"></div>
+		<div class="spacer" class:tall={!atBottom} ></div>
 	</div>
 </div>
 <svelte:window on:resize={refocus} />

@@ -9,7 +9,23 @@ $: type = content.msgtype;
 $: edited = event.original;
 $: redacted = event.redacted;
 $: sending = event.sending;
-$: dimensions = { width: content.info?.w, height: content.info?.h };
+$: dimensions = parseDimensions(content.info?.thumbnail_info ?? content.info);
+
+function parseDimensions(info) {
+  if (!info) return null;
+  let width = info.w, height = info.h;
+  if (width > 400) {
+    const scale = 400 / width;
+    width *= scale;
+    height *= scale;
+  }
+  if (height > 300) {
+    const scale = 300 / height;
+    width *= scale;
+    height *= scale;
+  }
+  return `width: ${width}px; height: ${height}px`;
+}
 
 function formatSize(size) {
   if (!size) return "??? kb";
@@ -47,8 +63,6 @@ function formatSize(size) {
 
 img, video, audio {
   display: block;
-  max-height: 30vh;
-  max-width: 400px;
   border-radius: 3px;
 }
 
@@ -114,12 +128,11 @@ img, video, audio {
   background: var(--ping-bg);
 }
 </style>
-<!-- <div class:redacted class:sending style:width={dimensions.width + "px"} style:height={dimensions.height + "px"}> -->
-<div class:redacted class:sending>
+<div class:redacted class:sending style={dimensions}>
   {#if type === "m.image"}
-  <img src={client.mxcUrlToHttp(content.url)} alt={content.body} />
+  <img src={client.mxcUrlToHttp(content.url)} alt={content.body} style={dimensions} />
   {:else if type === "m.video"}
-  <video controls src={client.mxcUrlToHttp(content.url)} alt={content.body} />
+  <video controls src={client.mxcUrlToHttp(content.url)} alt={content.body} style={dimensions} />
   {:else if type === "m.audio"}
   <audio controls src={client.mxcUrlToHttp(content.url)} alt={content.body} />
   {:else if type === "m.file"}

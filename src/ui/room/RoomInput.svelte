@@ -13,7 +13,8 @@ async function handleKeyDown(e) {
     e.preventDefault();
     e.target.value = "";
     rows = 1;
-
+  console.log("submit")
+    queueMicrotask(() => {
     const message = {
       body: value.trim(),
       format: "org.matrix.custom.html",
@@ -34,6 +35,7 @@ async function handleKeyDown(e) {
     // const { event_id } = await state.client.sendEvent(state.focusedRoomId, null, "m.room.message", { body: value.trim(), msgtype: "m.text" });
     // await state.client.sendReadReceipt(state.client.getEventMapper()({ event_id }), "m.fully_read");
     // state.rooms.set(client.getRooms().filter(i => i.getMyMembership() === "join"));
+    });
   } else if (e.key === "Escape") {
     state.client.sendReadReceipt($room.timeline[$room.timeline.length - 1]);
   }
