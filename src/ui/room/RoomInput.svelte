@@ -1,53 +1,54 @@
 <script>
 // TODO: split out editor from input (for edits)
+// TODO: refactor, this code is a mess
 import { marked } from "marked";
 import { getDisplayName } from "../../util/events.js";
-export let placeholder;
 let textarea;
-let rows = 1;
 let room = state.focusedRoom;
-let reply = state.replyEvent;
+let roomState = state.roomState;
+$: reply = $roomState.reply;
+$: value = $roomState.value;
+$: rows = $roomState.rows ?? 1;
 
 async function handleKeyDown(e) {
-  const value = e.target.value;
   if (e.key === "Enter" && !e.shiftKey && value.trim()) {
     e.preventDefault();
-    e.target.value = "";
-    rows = 1;
+    $roomState.value = "";
+    $roomState.rows = 1;
 
-    const message = {
+    sendMessage({
       body: value.trim(),
       format: "org.matrix.custom.html",
-      formatted_body: marked(value.trim()), //.replace(/\n/g, "<br />"),
+      formatted_body: marked(value.trim()),
       msgtype: "m.text",
-    };
-
-    if ($reply) {
-      message["m.relates_to"] = {};
-      message["m.relates_to"]["m.in_reply_to"] = {};
-      message["m.relates_to"]["m.in_reply_to"]["event_id"] = $reply.eventId;
-      reply.set(null);
-    }
-
-    state.client.sendEvent(state.focusedRoomId, null, "m.room.message", message);
+    });
   } else if (e.key === "Escape") {
-    state.client.sendReadReceipt($room.timeline[$room.timeline.length - 1]);
+    if (reply) {
+      $roomState.reply = null;
+    } else {
+      state.client.sendReadReceipt($room.timeline[$room.timeline.length - 1]);  
+    }
   }
 }
 
-function handleInput(e) {
-  const value = e.target.value;
-  rows = Math.min(value.split("\n").length, 10);
+function handleInput() {
+  $roomState.rows = Math.min(value.split("\n").length, 10);
+  $roomState.value = value;
 }
 
 async function handlePaste(e) {
   const file = e.clipboardData.files[0];
   if (!file) return;
+  textarea.blur();
   state.popup.set({
     id: "upload",
     file,
-    confirm() {
-      upload(file);  
+    async confirm() {
+      await upload(file);
+      textarea.focus();
+    },
+    cancel() {
+      textarea.focus();
     },
   });
 }
@@ -64,28 +65,18 @@ async function upload(file) {
 
   state.fileUpload.set(null);
 
-  const message = {
+  const type = getType(file.type);
+
+  sendMessage({
     url,
     body: file.name,
-    msgtype: getType(file.type),
+    msgtype: type,
     info: {
       mimetype: file.type,
       size: file.size,
+      ...(type === "m.image" ? await getSize(file) : {}),
     }
-  };
-
-  if (message.msgtype === "m.image") {
-    message.info = { ...message.info, ...await getSize(file) };
-  }
-
-  if ($reply) {
-    message["m.relates_to"] = {};
-    message["m.relates_to"]["m.in_reply_to"] = {};
-    message["m.relates_to"]["m.in_reply_to"]["event_id"] = $reply.eventId;
-    reply.set(null);
-  }
-
-  state.client.sendEvent(state.focusedRoomId, null, "m.room.message", message);
+  });
 
   function getSize(file) {
     return new Promise(res => {
@@ -105,8 +96,19 @@ async function upload(file) {
   }
 }
 
+async function sendMessage(content) {
+  if (reply) {
+    content["m.relates_to"] = {};
+    content["m.relates_to"]["m.in_reply_to"] = {};
+    content["m.relates_to"]["m.in_reply_to"]["event_id"] = reply.eventId;
+    $roomState.reply = null;
+  }
+
+  return state.client.sendEvent($room.roomId, null, "m.room.message", content);  
+}
+
 state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus()));
-state.replyEvent.subscribe(() => queueMicrotask(() => textarea?.focus()));
+roomState.subscribe(() => queueMicrotask(() => textarea?.focus()));
 </script>
 <style>
 .input {
@@ -159,6 +161,7 @@ textarea::placeholder {
   border-top-right-radius: 5px;
   color: var(--fg-interactive);
   font-size: 14px;
+  cursor: pointer;
 }
 
 .close {
@@ -191,10 +194,10 @@ textarea::placeholder {
   border-top-right-radius: 0;
 }
 </style>
-{#if $reply}
-<div class="reply">
-  <div>Replying to <b>{getDisplayName($reply.sender)}</b></div>
-  <div class="close" on:click={() => state.replyEvent.set(null)}>
+{#if reply}
+<div class="reply" on:click={() => actions.slice.jump(reply.eventId)}>
+  <div>Replying to <b>{getDisplayName(reply.sender)}</b></div>
+  <div class="close" on:click={() => $roomState.reply = null}>
       <div class="icon">&#xd7</div>
   </div>
 </div>
@@ -203,5 +206,13 @@ textarea::placeholder {
   <div class="upload">
     <div class="upload-button"></div>
   </div>
-  <textarea {rows} {placeholder} on:input={handleInput} on:keydown={handleKeyDown} on:paste={handlePaste} bind:this={textarea}></textarea>
+  <textarea
+    {rows}
+    placeholder={`Message ${$room.name}`}
+    bind:this={textarea}
+    bind:value={value}
+    on:input={handleInput}
+    on:keydown={handleKeyDown}
+    on:paste={handlePaste}
+  ></textarea>
 </div>

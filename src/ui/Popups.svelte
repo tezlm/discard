@@ -14,6 +14,17 @@ function closePopup() {
   state.popup.set({});
 }
 
+function cancelPopup() {
+  if ($current.cancel) $current.cancel();
+  closePopup();
+}
+
+function confirmPopup() {
+  if (!$current.confirm) return;
+  $current.confirm(data);
+  closePopup();
+}
+
 function capitalize(str) {
   return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
@@ -25,10 +36,10 @@ function rnd(arr) {
 function handleKeyDown(e) {
   if (!$current.id) return;
   if (e.key !== "Escape" && e.key !== "Enter") return;
-  if (e.key === "Enter" && $current.confirm) $current.confirm(data); 
+  if (e.key === "Enter") confirmPopup();
+  if (e.key === "Escape") cancelPopup();
   e.preventDefault();
   e.stopImmediatePropagation();
-  closePopup();
 }
 
 function reset() {
@@ -69,10 +80,24 @@ current.subscribe(reset);
   margin-bottom: 16px;
 }
 
-hr {
-  margin: 8px 0;
-  height: 0;
-  border: solid var(--color-gray) 1px;
+pre {
+  max-width: 600px;
+}
+
+.original {
+  position: absolute;
+  bottom: calc(-1em - 8px);
+  left: 0;
+
+  color: var(--fg-notice);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: .5;
+  transition: opacity .15s;
+}
+
+.original:hover {
+  opacity: 1;
 }
 </style>
 {#if $current.id === "info"}
@@ -123,7 +148,7 @@ hr {
   <h3 slot="header">Create {capitalize($current.type)} <div class="close" on:click={closePopup}>&#xd7;</div></h3>
   <div slot="content" style="display:flex;flex-direction:column">
     <span class="title">{capitalize($current.type)} Name</span>
-    <Input placeholder="awesome-{$current.type}" bind:value={data.name} submitted={() => state.popup.set({ id: "todo" })} />
+    <Input placeholder="awesome-{$current.type}" bind:value={data.name} submitted={() => data.name && state.popup.set({ id: "todo" })} />
   </div>
   <div slot="footer">
     <Button type="link" label="Cancel" clicked={closePopup} />
@@ -157,12 +182,36 @@ hr {
   <div slot="content">
     <div style:margin-bottom="1em" style:margin-top="-8px" >do you want to upload this file?</div>
     {#if $current.file.type.startsWith("image")}
-    <img src={URL.createObjectURL($current.file)} alt={$current.file.name} style="max-width: 100%; max-height: 400px; border-radius: 3px; margin: 0 auto; display: block" />
+    <img src={URL.createObjectURL($current.file)} alt={$current.file.name} style="max-width: 440px; max-height: 400px; border-radius: 3px; margin: 0 auto; display: block" />
     {/if}
   </div>
   <div slot="footer">
     <Button type="link" label="Nevermind" clicked={closePopup} />
     <Button type="primary" label="Upload!" clicked={() => { $current.confirm(); closePopup() }} />
+  </div>
+</Popup>
+{:else if $current.id === "source"}
+<Popup>
+  <h3 slot="header">View source <div class="close" on:click={closePopup}>&#xd7;</div></h3>
+  <div slot="content">
+    <p>note: this is discard's internal event representation, and not matrix's</p><br />
+    <pre>{JSON.stringify($current.event, null, 2)}</pre>
+  </div>
+</Popup>
+{:else if $current.id === "attachment"}
+<Popup raw>
+  <div slot="content">
+    <img src={$current.url} style="max-height: 70vh; max-width: 70vw"/>
+    <a href={$current.url} class="original">Open original</a>
+  </div>
+</Popup>
+{:else if $current.id === "logout"}
+<Popup>
+  <h2 slot="header">Log Out</h2>
+  <p slot="content">Are you sure you want to logout?</p>
+  <div slot="footer">
+    <Button type="link" label="Actually nah" clicked={closePopup} />
+    <Button type="danger" label="Log Out" clicked={actions.client.logout} />
   </div>
 </Popup>
 {:else if $current.id === "todo"}

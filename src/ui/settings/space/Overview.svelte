@@ -7,6 +7,12 @@ let focusedSpace = state.focusedSpace;
 let space = actions.rooms.get($focusedSpace);
 </script>
 <style>
+h1 {
+  margin-bottom: 1em;
+  font: 20px var(--font-display);
+  font-weight: 500;
+}
+
 .avatar {
   flex: 1;
   display: flex;
@@ -78,6 +84,7 @@ let space = actions.rooms.get($focusedSpace);
   border-bottom: none;
 }
 </style>
+<h1>Space Overview</h1>
 <div>
   <div class="section">
     <div class="avatar">

@@ -21,7 +21,7 @@ let room = state.focusedRoom;
   {#if $room}
   <RoomHeader />
   <RoomContent />
-  <RoomInput placeholder={"Message " + ($room ?? {}).name} />
+  <RoomInput />
   {:else}
   <RoomHeader />
   <RoomHome />

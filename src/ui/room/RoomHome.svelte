@@ -1,4 +1,5 @@
 <script>
+import Button from "../atoms/Button.svelte";
 import Tooltip from "../atoms/Tooltip.svelte";
 let invited = state.invitedRooms;
 </script>
@@ -54,6 +55,10 @@ let invited = state.invitedRooms;
   background: #00000033;
 }
 </style>
+<div style="padding: 20px">
+  <Button type="normal" label="Create Space" clicked={() => state.popup.set({ id: "create", type: "space" })} />
+  <Button type="primary" label="Create Room" clicked={() => state.popup.set({ id: "create", type: "room" })} />
+</div>
 <!-- TODO
 <div class="rooms">
   <b>invites - {$invited.length}</b>

@@ -5,22 +5,21 @@ import MessageToolbar from "./MessageToolbar.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
 import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.js';
 
-// FIXME: use default avatar in case of failed load
-
 export let event, header = false;
 
+let roomState = state.roomState;
 let toolbar = getToolbar(event);
 
 // TODO: shift key toolbar
 function getToolbar(event) {
   let toolbar = [];
   toolbar.push({ name: "Add Reaction", icon: "+", clicked: todo });
-  if (event.type === "m.room.message") {
-    toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => state.replyEvent.set(ev) });
+  if (event.type === "m.room.message") { // purposefully broken, edit doesnt work yet
+    toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => $roomState.reply = ev });
   } else {
     toolbar.push({ name: "Edit", icon: "_", clicked: (ev) => state.editingEvent.set(ev) });
   }
-  toolbar.push({ name: "More", icon: "\u22ee", clicked: todo });
+  toolbar.push({ name: "More", icon: "\u22ee", clicked: (ev) => state.popup.set({ id: "source", event: ev })});
   return toolbar;
 }
 
@@ -81,8 +80,7 @@ function getReply(content) {
   width: 40px;
   margin-top: 4px;
   background-color: var(--bg-spaces);
-  background-size: cover;
-  background-position: 50% 50%;
+  object-fit: cover;
   filter: drop-shadow(0, 4px, 4px, #00000022);
   user-select: none;
 }
@@ -111,13 +109,13 @@ time {
   <div class="side">
     {#if getReply(event.content)}<br>{/if}
     {#if header}
-    <div class="avatar" style:background-image={`url(${getAvatar(event.sender)})`} />
+    <img class="avatar" src={getAvatar(event.sender)} on:error={(e) => e.target.src = defaultAvatar} />
     {:else}
     <time datetime={event.date.toISOString()}>{formatTime(event.date)}</time>
     {/if}
   </div>
   <div class="content">
-    {#if getReply(event.content)}<MessageReply roomid={event.roomId} eventid={getReply(event.content)} />{/if}
+    {#if getReply(event.content)}<MessageReply roomId={event.roomId} eventId={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
       <span class="author">{getDisplayName(event.sender)}</span>

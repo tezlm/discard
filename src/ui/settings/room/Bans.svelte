@@ -2,8 +2,6 @@
 import { getAvatar } from "../../../util/events.js";
 export let room;
 
-console.log(room)
-
 function showPopup(member) {
   const event = member.events.member;
   const reason = event.getContent().reason ?? null;

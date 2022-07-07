@@ -5,8 +5,7 @@ import Create from './timeline/Create.svelte';
 import Message from './message/Message.svelte';
 import Loading from '../atoms/Loading.svelte';
 let slice = state.slice;
-let reply = state.replyEvent;
-let upload = state.fileUpload;
+let { focusedEvent, replyEvent, editingEvent, fileUpload: upload } = state;
 let scroller, paginating = false, atEnd = true, atBottom = true, atTop = false;
 
 function shouldSplit(ev, prev) {
@@ -26,6 +25,7 @@ function shouldUnread(ev) {
 
 function handleScroll() {
 	atEnd = scroller.scrollTop > scroller.scrollTopMax - 50;
+	console.log(paginating);
 	if (!paginating) maybePaginate();
 }
 
@@ -41,7 +41,6 @@ async function maybePaginate() {
 	paginating = true;
 
 	if (paginateUp) {
-		console.log("backfill")
 		const oldScroll = scroller.children[1].offsetTop;
 		const topEvent = scroller.children[1].dataset.eventId;
 		await actions.slice.backwards();
@@ -51,6 +50,7 @@ async function maybePaginate() {
 			if (recreated) scroller.scrollTop += recreated.offsetTop - oldScroll;
 		}
 	} else if (paginateDown) {
+		console.log("yes", atBottom, atEnd, $slice.at(-1))
 		const oldScroll = scroller.children[1].offsetTop;
 		const bottomEvent = scroller.children[scroller.children.length - 2].dataset.eventId;
 		await actions.slice.forwards();
@@ -71,7 +71,7 @@ function refocus() {
 }
 
 slice.subscribe(refocus);
-reply.subscribe(refocus);
+replyEvent.subscribe(refocus);
 
 state.focusedRoom.subscribe(() => {
 	queueMicrotask(() => {
@@ -84,6 +84,16 @@ state.focusedRoom.subscribe(() => {
 			maybePaginate();
 		}
 	});
+});
+
+focusedEvent.subscribe(() => {
+	if (!scroller) return;
+	const id = $focusedEvent;
+	const element = scroller.querySelector(`[data-event-id="${id}"]`);
+	if (element) {
+		element.scrollIntoView({ behavior: "smooth", block: "center" });
+		setTimeout(() => id === $focusedEvent && focusedEvent.set(null), 2000);
+	}
 });
 </script>
 <style>
@@ -108,19 +118,48 @@ state.focusedRoom.subscribe(() => {
 }
 
 .tall {
-	margin-top: 500px;	
+	margin-top: 500px;
+}
+
+.ping {
+	position: relative;
+	background: var(--event-ping-bg);
+}
+
+.focused {
+	position: relative;
+}
+
+.ping::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	height: 100%;
+	width: 2px;
+	background: var(--event-ping);
+}
+
+.focused::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	background: var(--event-focus-bg);
+	animation: unfocus 1s 1s forwards;
+}
+
+@keyframes unfocus {
+	100% { background: none }
 }
 </style>
 <div class="content">
-	<div class="scroller" on:scroll={handleScroll} bind:this={scroller}>
+	<div class="scroller" tabindex=-1 on:scroll={handleScroll} bind:this={scroller}>
 		{#if !atTop}
 		<div class="loading tall"><Loading /></div>
 		{/if}
 		{#each $slice as event, i}
-		<div data-event-id={event.eventId}>
-			{#if i < $slice.length - 1 && shouldUnread(event)}
-				<Unread unpad={shouldSplit(event, $slice[i - 1]) ? true : null} />
-			{/if}
+		<div data-event-id={event.eventId} class:focused={$focusedEvent === event.eventId} class:ping={event.isPing}>
 			{#if event.type === "m.room.create"}
 				<Create event={event} />
 			{:else if event.type === "m.room.message" && !event.redacted}
@@ -130,6 +169,9 @@ state.focusedRoom.subscribe(() => {
 				/>
 			{/if}
 			</div>
+			{#if i < $slice.length - 1 && shouldUnread(event)}
+				<Unread unpad={shouldSplit($slice[i + 1], event) ? true : null} />
+			{/if}
 		{/each}
 		{#if $upload}
 	  <Upload upload={$upload} />

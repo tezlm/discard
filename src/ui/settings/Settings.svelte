@@ -59,6 +59,7 @@ nav {
   width: 660px;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   -ms-overflow-style: none;
   scrollbar-width: none;
   outline: none;
@@ -93,7 +94,7 @@ h1 {
     <nav>
       {#each views as view, i}
         {#if view}
-        <div on:click={() => focused = views[i]} class="item" class:selected={view === focused}>{view.name}</div>
+        <div on:click={() => view.clicked ? view.clicked() : focused = view} class="item" class:selected={view === focused} style:color={view.color}>{view.name}</div>
         {:else}
         <div class="separator"></div>
         {/if}
@@ -102,7 +103,9 @@ h1 {
   </div>
   <div class="main">
     <div class="wrapper">
+      {#if !focused.raw}
       <h1>{focused.name}</h1>
+      {/if}
       <svelte:component this={focused.view} {...options} />
     </div>
   </div>

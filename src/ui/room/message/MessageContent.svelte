@@ -8,7 +8,7 @@ $: content = event.content;
 $: type = content.msgtype;
 $: edited = event.original;
 $: redacted = event.redacted;
-$: sending = event.sending;
+$: sending = event.isSending;
 $: dimensions = parseDimensions(content.info?.thumbnail_info ?? content.info);
 
 function parseDimensions(info) {
@@ -66,6 +66,10 @@ img, video, audio {
   border-radius: 3px;
 }
 
+img {
+  cursor: pointer;
+}
+
 .file {
   background: var(--bg-rooms-members);
   border: solid var(--bg-spaces) 1px;
@@ -94,30 +98,7 @@ img, video, audio {
 }
 
 .text :global(pre) {
-  margin-top: 6px;
-  padding: 7px;
   max-width: 90%;
-
-  border: solid var(--bg-spaces) 1px;
-  border-radius: 4px;
-  font: 14px/1.125rem var(--font-monospace);
-  background: var(--bg-rooms-members);
-  color: var(--fg-light);
-}
-
-.text :global(code) {
-  background: var(--bg-rooms-members);
-  padding: 2px 2px;
-  font: 14px/1.125rem var(--font-monospace);
-}
-
-.text :global(ul), .text :global(ol) {
-  list-style-position: inside;
-}
-
-.text :global(blockquote) {
-  border-left: solid var(--color-gray-light) 4px;
-  padding-left: 12px;
 }
 
 .text :global([data-mx-ping]) {
@@ -135,7 +116,7 @@ img, video, audio {
 </style>
 <div class:redacted class:sending style={dimensions}>
   {#if type === "m.image"}
-  <img src={client.mxcUrlToHttp(content.url)} alt={content.body} style={dimensions} />
+  <img src={client.mxcUrlToHttp(content.url)} alt={content.body} style={dimensions} on:click={() => state.popup.set({ id: "attachment", url: client.mxcUrlToHttp(content.url) })} />
   {:else if type === "m.video"}
   <video controls src={client.mxcUrlToHttp(content.url)} alt={content.body} style={dimensions} />
   {:else if type === "m.audio"}

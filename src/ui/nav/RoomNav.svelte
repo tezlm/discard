@@ -110,7 +110,7 @@ function getClasses(room) {
 	display: block;
 }
 </style>
-	<div class="nav">
+	<div class="nav" tabindex=-1>
 		<div class="spacer"></div>
 		{#if !$focusedSpace}
 	  <div

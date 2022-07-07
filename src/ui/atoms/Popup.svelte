@@ -1,7 +1,7 @@
 <script>
 // should only be used in src/Popups.svelte
 import { quadOut } from 'svelte/easing';
-export let nopad = true;
+export let raw = false;
 
 function card() {
   return {
@@ -29,7 +29,7 @@ function opacity() {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #000000bb;
+  background: #000000d8;
   z-index: 999;
 }
 
@@ -38,13 +38,20 @@ function opacity() {
   flex-direction: column;
 
   position: relative;
-  width: 440px;
+  min-width: 440px;
   min-height: 200px;
   border-radius: 5px;
   background: var(--bg-content);
   color: var(--fg-content);
   box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
   z-index: 999;
+}
+
+.raw {
+  min-width: 0;
+  min-height: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .header {
@@ -66,18 +73,24 @@ function opacity() {
   padding: 16px;
 }
 </style>
-<div class="background" class:nopad on:click={() => state.popup.set({})} transition:opacity>
-  <div class="card" on:click={e => e.stopPropagation()} transition:card>
-    <div class="header">
-      <slot name="header"></slot>
-    </div>
-    <div class="content">
+<div class="background" on:click={() => state.popup.set({})} transition:opacity>
+  <div class="card" on:click={e => e.stopPropagation()} class:raw transition:card>
+    {#if raw}
       <slot name="content"></slot>
-    </div>
-    {#if $$slots.footer}
-    <div class="footer">
-      <slot name="footer"></slot>
-    </div>
+    {:else}
+      {#if $$slots.header}
+      <div class="header">
+        <slot name="header"></slot>
+      </div>
+      {/if}
+      <div class="content">
+        <slot name="content"></slot>
+      </div>
+      {#if $$slots.footer}
+      <div class="footer">
+        <slot name="footer"></slot>
+      </div>
+      {/if}
     {/if}
   </div>
 </div>
