@@ -14,7 +14,7 @@ let spaceId = state.focusedSpace;
 $: room = state.client.getRoom($spaceId);
 
 const views = [
-  { view: Overview,      name: "Overview", display: "Space Overview" },
+  { view: Overview,      name: "Overview", raw: true },
   { view: Rooms,         name: "Rooms" },
   { view: Permissions,   name: "Permissions" },
   { view: Audit,         name: "Audit Log" },

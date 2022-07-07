@@ -1,16 +1,19 @@
+import { writable } from "svelte/store";
+
 const sdk = globalThis.matrixcs;
 
 // TODO: timeline slice
 
 function formatEvent(ev) {
   return {
-    sender:  ev.getSender(),
-    type:    ev.getType(),
-    date:    ev.getDate(),
-    sending: ev.isSending(),
-    roomId:  ev.getRoomId(),
-    eventId: ev.getId(),
-    content: { ...ev.getContent() },
+    sender:    ev.getSender(),
+    type:      ev.getType(),
+    roomId:    ev.getRoomId(),
+    eventId:   ev.getId(),
+    date:      ev.getDate(),
+    isSending: ev.isSending(),
+    isPing:    state.client.getPushActionsForEvent(ev).tweaks?.highlight || false,
+    content:   { ...ev.getContent() },
   };  
 }
 
@@ -62,6 +65,7 @@ export default {
         accessToken: token,
         userId: userId,
         store: await actions.client.getStore(),
+        useAuthorizationHeader: true,
       });
       client.startClient();
       state.client = client;
@@ -71,7 +75,11 @@ export default {
     // login to the homeserver and create a new client
     async login({ localpart, homeserver, password }) {
       const userId = `@${localpart}:${homeserver}`;
-      const client = sdk.createClient({ baseUrl: "https://" + homeserver, store: await actions.client.getStore() });
+      const client = sdk.createClient({
+        baseUrl: "https://" + homeserver,
+        store: await actions.client.getStore(),
+        useAuthorizationHeader: true,
+      });
       const data = { identifier: { type: "m.id.user", user: userId }, password };
 
       try {
@@ -93,6 +101,15 @@ export default {
         }
       }
     },
+    async logout() {
+      state.client.stopClient();
+      if (state.client.isLoggedIn()) state.client.logout();
+      localStorage.removeItem("token");
+      await state.client.clearStores();
+      state.scene.set("auth");
+      state.popup.set({});
+      state.client = null;
+    },
     listen(client) {
       function updateAll() {
         actions.rooms.update();
@@ -111,11 +128,13 @@ export default {
         if (!toBeginning) actions.rooms.update();
         if (!shouldHandle(event)) return;
         const atEnd = actions.slice.isAtEnd();
+        const oldLen = state.timeline.length;
         actions.timeline.add(event, toBeginning);
         if (atEnd) {
           const lastEvent = state.timeline[state.timeline.length - 1];
+          const dirty = oldLen !== state.timeline.length;
           state.sliceEnd = lastEvent.eventId;
-          state.sliceRef.push(lastEvent);
+          if (dirty) state.sliceRef.push(lastEvent);
           state.slice.set(state.sliceRef);
         }
       });
@@ -138,13 +157,28 @@ export default {
         actions.rooms.update();
         state.slice.set(state.sliceRef);
       });
+      client.once("Session.logged_out", () => {
+        state.scene.set("auth");
+        state.popup.set({});
+        state.client = null;
+        localStorage.removeItem("token");
+      });
     },
   },
   rooms: {
     focus(room) {
     	state.focusedRoomId = room?.roomId ?? null;
     	state.focusedRoom.set(room);
-    	if (room) actions.timeline.set(room);
+      
+      if (room) {
+      	if (!state.roomStates.has(room.roomId)) {
+          state.roomStates.set(room.roomId, writable({}));
+        }
+      	state.roomState.set(state.roomStates.get(room.roomId));
+    	  actions.timeline.set(room);
+      } else {
+        state.roomState.set({});
+      }
     },
     update() {
       const client = state.client;
@@ -266,6 +300,7 @@ export default {
       if (endIndex < 0) throw "this shouldn't happen";
       
       const eventCount = 100;
+      console.log(startIndex, endIndex, state.timeline.length)
       const newStart = Math.max(startIndex + limit, 0);
       const newEnd = Math.min(newStart + eventCount, state.timeline.length - 1);
        
@@ -274,8 +309,23 @@ export default {
       state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
       state.slice.set(state.sliceRef);
     },
-    async jump(eventId) {
-      // todo!
+    async jump(roomId, eventId) {
+      state.focusedEvent.set(eventId);
+      // TODO: actually finish this
+      // TODO: optimize
+      if (!state.timeline.find(i => i.eventId === state.sliceEnd)) {
+        // state.sliceStart = eventId;
+        // state.sliceEnd = eventId;
+        // console.log(await state.client.fetchRoomEvent(roomId, eventId));
+
+        // state.sliceRef = [];
+        // state.timeline.slice(newStart, newEnd + 1);
+        // state.slice.set(state.sliceRef);
+        // state.sliceStart = state.timeline[newStart].eventId;
+        // state.sliceEnd = state.timeline[newEnd].eventId;
+        // state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
+        // state.slice.set(state.sliceRef);
+      }
     },
   },
 };

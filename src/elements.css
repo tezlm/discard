@@ -1,0 +1,42 @@
+a {
+  color: #00aff4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+ul, ol {
+  list-style-position: inside;
+}
+
+blockquote {
+  border-left: solid var(--color-gray-light) 4px;
+  padding-left: 12px;
+}
+
+code {
+  background: var(--bg-rooms-members);
+  padding: 2px 2px;
+  font: 14px/1.125rem var(--font-monospace);
+}
+
+pre {
+  margin-top: 6px;
+  padding: 7px;
+
+  border: solid var(--bg-spaces) 1px;
+  border-radius: 4px;
+  font: 14px/1.125rem var(--font-monospace);
+  background: var(--bg-rooms-members);
+  color: var(--fg-light);
+  
+  overflow-x: scroll;
+}
+
+hr {
+  margin: 8px 0;
+  height: 0;
+  border: solid var(--color-gray) 1px;
+}

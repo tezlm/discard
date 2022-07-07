@@ -5,6 +5,10 @@ export let placeholder = "";
 export let small = false;
 export let submitted = () => {};
 
+function handleFocus(e) {
+  // e.target.select();
+}
+
 function handleInput(e) {
   value = e.target.value;
 }
@@ -33,4 +37,12 @@ input {
   padding: 16px 8px;
 }
 </style>
-<input {type} {placeholder} {value} class:small on:input={handleInput} on:keydown={handleKeyDown} />
+<input
+  {type}
+  {placeholder}
+  {value}
+  class:small
+  on:focus={handleFocus}
+  on:input={handleInput}
+  on:keydown={handleKeyDown}
+/>
