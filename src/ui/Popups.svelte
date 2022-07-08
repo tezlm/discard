@@ -3,7 +3,7 @@ import UserId from "./atoms/UserId.svelte";
 import Button from "./atoms/Button.svelte";
 import Input from "./atoms/Input.svelte";
 import Popup from "./atoms/Popup.svelte";
-import { formatDate } from "../util/format.js";
+import { formatDate, formatSize } from "../util/format.js";
 let client = state.client;
 let current = state.popup;
 let data; reset();
@@ -82,11 +82,13 @@ current.subscribe(reset);
 
 pre {
   max-width: 600px;
+  overflow-y: auto;
+  max-height: 50vh;
 }
 
 .original {
   position: absolute;
-  bottom: calc(-1em - 8px);
+  top: 100%;
   left: 0;
 
   color: var(--fg-notice);
@@ -103,7 +105,7 @@ pre {
 {#if $current.id === "info"}
 <Popup>
   <h2 slot="header">{$current.head} <div class="close" on:click={closePopup}>&#xd7;</div></h2>
-  <div slot="content">
+  <div slot="content" style:width="440px">
     {#if $current.html}
     {@html $current.body}
     {:else}
@@ -114,9 +116,9 @@ pre {
 {:else if $current.id === "leave"}
 <Popup>
   <h2 slot="header">Leave {client.getRoom($current.room).name}</h2>
-  <p slot="content">
+  <p slot="content" style="max-width: 440px">
     Are you sure you want to leave <b>{client.getRoom($current.room).name}</b>?
-    {#if state.client.getRoom($current.room).getJoinRule() !== "public"}
+    {#if client.getRoom($current.room).getJoinRule() !== "public"}
     You won't be able to rejoin this {$current.type} unless you're re-invited.
     {:else}
     This {$current.type} is public and can be rejoined at any time. (Unless it gets made private!)
@@ -124,7 +126,7 @@ pre {
   </p>
   <div slot="footer">
     <Button type="link" label="Cancel" clicked={closePopup} />
-    <Button type="danger" label="Leave {capitalize($current.type)}" clicked={() => state.popup.set({ id: "todo" })} />
+    <Button type="danger" label="Leave {capitalize($current.type)}" clicked={$current.confirm} />
   </div>
 </Popup>
 {:else if $current.id === "invite"}
@@ -180,7 +182,7 @@ pre {
 <Popup>
   <h2 slot="header">Upload file</h2>
   <div slot="content">
-    <div style:margin-bottom="1em" style:margin-top="-8px" >do you want to upload this file?</div>
+    <div style:margin-bottom="1em" style:margin-top="-8px" >do you want to upload this file? <span style="color: var(--fg-muted)">({formatSize($current.file.size)})</span></div>
     {#if $current.file.type.startsWith("image")}
     <img src={URL.createObjectURL($current.file)} alt={$current.file.name} style="max-width: 440px; max-height: 400px; border-radius: 3px; margin: 0 auto; display: block" />
     {/if}

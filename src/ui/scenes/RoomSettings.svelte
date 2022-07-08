@@ -21,7 +21,7 @@ const views = [
   { view: Bans,          name: "Bans" },
   { view: Invites,       name: "Invites" },
   null,
-  { view: Archive,       name: "Archive Room" },
+  { clicked: () => state.popup.set({ id: "leave", type: "room", room: state.focusedRoomId, confirm: () => queueMicrotask(todo) }), name: "Leave Room", color: "var(--color-red)" },
 ];
 </script>
 <Settings {views} options={{ room }} />

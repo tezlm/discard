@@ -7,15 +7,21 @@ import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.j
 
 export let event, header = false;
 
+let missingAvs = state.missingAvatars;
 let roomState = state.roomState;
 let toolbar = getToolbar(event);
+
+function unwrapEdits(event) {
+  while (event.original) event = event.original;
+  return event;
+}
 
 // TODO: shift key toolbar
 function getToolbar(event) {
   let toolbar = [];
   toolbar.push({ name: "Add Reaction", icon: "+", clicked: todo });
   if (event.type === "m.room.message") { // purposefully broken, edit doesnt work yet
-    toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => $roomState.reply = ev });
+    toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => $roomState.reply = unwrapEdits(ev) });
   } else {
     toolbar.push({ name: "Edit", icon: "_", clicked: (ev) => state.editingEvent.set(ev) });
   }
@@ -109,7 +115,12 @@ time {
   <div class="side">
     {#if getReply(event.content)}<br>{/if}
     {#if header}
-    <img class="avatar" src={getAvatar(event.sender)} on:error={(e) => e.target.src = defaultAvatar} />
+    <img
+      class="avatar"
+      alt="pfp for {getDisplayName(event.sender)}"
+      src={missingAvs.has(event.sender) ? defaultAvatar : getAvatar(event.sender, event.roomId)}
+      on:error={(e) => { console.log("missing av"); missingAvs.add(event.sender); e.target.src = defaultAvatar }}
+    />
     {:else}
     <time datetime={event.date.toISOString()}>{formatTime(event.date)}</time>
     {/if}
@@ -118,7 +129,7 @@ time {
     {#if getReply(event.content)}<MessageReply roomId={event.roomId} eventId={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
-      <span class="author">{getDisplayName(event.sender)}</span>
+      <span class="author">{getDisplayName(event.sender, event.roomId)}</span>
       <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
     </div>
     {/if}

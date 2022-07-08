@@ -27,4 +27,7 @@ export default {
   sliceEnd: null,
   slice: writable([]),
   sliceRef: [],
+  
+  // cache
+  missingAvatars: new Set(),
 };

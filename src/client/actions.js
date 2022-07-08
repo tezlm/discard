@@ -6,14 +6,15 @@ const sdk = globalThis.matrixcs;
 
 function formatEvent(ev) {
   return {
-    sender:    ev.getSender(),
-    type:      ev.getType(),
-    roomId:    ev.getRoomId(),
-    eventId:   ev.getId(),
-    date:      ev.getDate(),
-    isSending: ev.isSending(),
-    isPing:    state.client.getPushActionsForEvent(ev).tweaks?.highlight || false,
-    content:   { ...ev.getContent() },
+    sender:     ev.getSender(),
+    type:       ev.getType(),
+    roomId:     ev.getRoomId(),
+    eventId:    ev.getId(),
+    date:       ev.getDate(),
+    isSending:  ev.isSending(),
+    isPing:     state.client.getPushActionsForEvent(ev).tweaks?.highlight || false,
+    isRedacted: ev.isRedacted(),
+    content:    { ...ev.getContent() },
   };  
 }
 
@@ -111,6 +112,8 @@ export default {
       state.client = null;
     },
     listen(client) {
+      let synced = false;
+
       function updateAll() {
         actions.rooms.update();
         actions.spaces.update();
@@ -119,22 +122,46 @@ export default {
       function shouldHandle(event) {
         return state.focusedRoomId && (event.getRoomId() === state.focusedRoomId);
       }
-              
-      client.once("sync", () => state.scene.set("chat"));
-      client.once("sync", updateAll);
-      client.on("Room.myMembership", updateAll);
-      client.on("Room.name", updateAll);
+      
+      // update rooms
+      client.once("sync", (syncState) => {
+        if (syncState !== "PREPARED") return;
+        synced = true;
+        updateAll();
+        state.scene.set("chat");
+      });
+      client.on("Room.name", () => synced && updateAll());
+      client.on("Room", () => synced && updateAll());
+      client.on("deleteRoom", () => synced && updateAll());
+      
+      // room timeline
+      // TODO: optimize: when first viewing a room, we refresh the slice a bunch of times
+      // this is because room events are getting added
       client.on("Room.timeline", (event, _, toBeginning) => {
         if (!toBeginning) actions.rooms.update();
         if (!shouldHandle(event)) return;
         const atEnd = actions.slice.isAtEnd();
-        const oldLen = state.timeline.length;
         actions.timeline.add(event, toBeginning);
-        if (atEnd) {
-          const lastEvent = state.timeline[state.timeline.length - 1];
-          const dirty = oldLen !== state.timeline.length;
-          state.sliceEnd = lastEvent.eventId;
-          if (dirty) state.sliceRef.push(lastEvent);
+
+        if (!["m.room.create", "m.room.message"].includes(event.getType())) return; // TODO: merge allowed events lists together
+        console.log("push event to slice")
+        if (atEnd && !toBeginning) {
+          if (event.isRelation()) {
+            console.log("is relation")
+            const id = Math.random();
+            state.sliceRef.push({ type: "dummy", eventId: "dummy" + id, roomId: event.getRoomId() });
+            state.sliceEnd = "dummy" + id;
+          } else {
+            state.sliceRef.push(state.timeline.at(-1));
+            state.sliceEnd = state.timeline.at(-1).eventId;
+          
+            const startIndex = state.timeline.findIndex(i => i.eventId === state.sliceStart);
+            if (startIndex >= 0) {
+              state.sliceStart = state.timeline[startIndex + 1].eventId;
+              state.sliceRef.shift();
+            }          
+          }
+          
           state.slice.set(state.sliceRef);
         }
       });
@@ -146,13 +173,14 @@ export default {
       client.on("Room.localEchoUpdated", (event, _, id) => {
         if (!shouldHandle(event)) return;
         if (!id) return;
-        const atEnd = actions.slice.isAtEnd();
         actions.timeline.update(id, event);
-        if (atEnd) state.sliceEnd = state.timeline[state.timeline.length - 1].eventId;
+        if (state.sliceEnd === id) state.sliceEnd = event.getId();
         state.slice.set(state.sliceRef);
       });
+      
+      // misc
       client.on("Room.receipt", (event) => {
-        const users = Object.values(event.getContent()).map(i => Object.keys(i["m.read"])).flat(); // readable and maintainable code
+        const users = Object.values(event.getContent()).map(i => Object.keys(i["m.read"] ?? {})).flat(); // readable and maintainable code
         if (!users.includes(state.client.getUserId())) return;
         actions.rooms.update();
         state.slice.set(state.sliceRef);
@@ -184,15 +212,15 @@ export default {
       const client = state.client;
       const rooms = client.getRooms().filter(i => ["join", "invite"].includes(i.getMyMembership())).map(formatRoom);
       const dms = [];
-      const dmData = state.client.getAccountData("m.direct").getContent();
+      const dmData = state.client.getAccountData("m.direct")?.getContent();
 
-      for (let userId in dmData) {
-        for (let roomId in dmData[userId]) {
-          dms.push({ userId, roomId });
+      if (dmData) {
+        for (let userId in dmData) {
+          for (let roomId in dmData[userId]) dms.push({ userId, roomId });
         }
+        state.dms.set(dms);
       }
 
-      state.dms.set(dms);
       state.rooms.set(rooms);
     },
     get(id) {
@@ -226,11 +254,12 @@ export default {
     set(room) {
       state.timeline = [];
       for(let event of room.timeline) actions.timeline.add(event);
+      if (state.timeline.length === 0) {
+        state.timeline.push({ type: "dummy", eventId: "dummy", roomId: room.roomId });
+      }
 
       const newStart = Math.max(state.timeline.length - 51, 0);
       const newEnd = state.timeline.length - 1;
-      
-      // FIXME: if timeline is [], state.timeline[...] will be undefined
 
       state.sliceStart = state.timeline[newStart].eventId;
       state.sliceEnd = state.timeline[newEnd].eventId;
@@ -243,24 +272,25 @@ export default {
       const timeline = state.timeline;
       if (event.getRelation()?.rel_type === "m.replace") {
         const id = event.getRelation()?.event_id;
-        const original = actions.timeline.get(id);
-        if (!original) return;
-        Object.assign(original, {
+        const index = state.timeline.findIndex(i => i.eventId === id);
+        if (index < 0) return;
+        state.timeline[index] = {
           ...formatEvent(event),
           content: { ...event.getContent()["m.new_content"] } ?? {},
-          original,
-        });
+          original: state.timeline[index],
+        };
       } else {
         timeline[toBeginning ? "unshift" : "push"](formatEvent(event));      
       }
     },
     update(id, event) {
       const original = actions.timeline.get(id);
+      if (!original) return;
       Object.assign(original, formatEvent(event));
     },
     remove(event) {
       const original = actions.timeline.get(event.event.redacts);
-      original.redacted = true;
+      original.isRedacted = true;
     },
     get(id) {
       return state.timeline.find(i => i.eventId === id);
@@ -271,12 +301,14 @@ export default {
       const endIndex = state.timeline.findIndex(i => i.eventId === state.sliceEnd);
       return endIndex === state.timeline.length - 1;
     },
-    async backwards(limit = 50) {
+    async backwards(limit = 50, lastTop) {
       const oldStartIndex = state.timeline.findIndex(i => i.eventId === state.sliceStart);
       if (oldStartIndex - limit < 0 && state.timeline[0]?.type !== "m.room.create") {
-        console.log("fetching messages");
       	const liveTimeline = state.client.getRoom(state.focusedRoomId).getLiveTimeline();
       	await state.client.paginateEventTimeline(liveTimeline, { backwards: true, limit: 200 });
+        if (state.timeline.length < limit && state.timeline.at(-1)?.eventId !== lastTop) { // lastTop is a hacky solution for now
+          return actions.slice.backwards(limit, state.timeline.at(-1)?.eventId);
+        }
       }
 
       const startIndex = state.timeline.findIndex(i => i.eventId === state.sliceStart);
@@ -300,10 +332,9 @@ export default {
       if (endIndex < 0) throw "this shouldn't happen";
       
       const eventCount = 100;
-      console.log(startIndex, endIndex, state.timeline.length)
       const newStart = Math.max(startIndex + limit, 0);
       const newEnd = Math.min(newStart + eventCount, state.timeline.length - 1);
-       
+      
       state.sliceStart = state.timeline[newStart].eventId;
       state.sliceEnd = state.timeline[newEnd].eventId;
       state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
@@ -312,7 +343,6 @@ export default {
     async jump(roomId, eventId) {
       state.focusedEvent.set(eventId);
       // TODO: actually finish this
-      // TODO: optimize
       if (!state.timeline.find(i => i.eventId === state.sliceEnd)) {
         // state.sliceStart = eventId;
         // state.sliceEnd = eventId;
