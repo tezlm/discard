@@ -92,7 +92,7 @@ function showPopup(id, opts) {
       <div class="item" on:click={() => showPopup("create", { confirm: todo })}>Create Subspace</div>
       <div class="item" on:click={todo}>Add Existing Room</div>
       <div class="spacer"></div>
-      <div class="item" on:click={() => showPopup("leave")}><span class="color-red">Leave Space</span></div>
+      <div class="item" on:click={() => showPopup("leave", { confirm: () => queueMicrotask(todo) })}><span class="color-red">Leave Space</span></div>
   </div>
   {/if}
 </div>

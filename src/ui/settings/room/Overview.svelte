@@ -2,8 +2,7 @@
 import Input from "../../atoms/Input.svelte";
 import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
-
-let room = state.focusedRoom;
+export let room;
 </script>
 <style>
 .title {
@@ -40,10 +39,14 @@ let room = state.focusedRoom;
 <div>
   <div class="section">
     <div class="title">Room Name</div>
-    <Input value={$room?.name ?? "error"} />
+    <Input value={room?.name ?? "error"} />
   </div>
   <div class="section">
     <div class="title">Room Topic</div>
-    <Textarea placeholder="what an amazing room" value={$room?.topic ?? ""} />
+    <Textarea placeholder="what an amazing room" value={room?.topic ?? ""} />
+  </div>
+  <div class="section">
+    <div class="title">Developers</div>
+    <p><b>Room Id:</b> <code style="user-select: all">{room?.roomId}</code></p>
   </div>
 </div>

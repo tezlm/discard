@@ -34,7 +34,7 @@ export let items, event;
 }
 
 .button:active {
-  transform: translateY(1px);
+  padding-top: 7px;
 }
 </style>
 <div class="toolbar">

@@ -99,6 +99,8 @@ function getClasses(room) {
 
 .name {
 	margin-left: 1.5em;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .settings {

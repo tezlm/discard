@@ -3,11 +3,8 @@
 import { parseHtml } from "../../../util/html.js";
 import { getDisplayName, getAvatar } from '../../../util/events.js';
 export let roomId, eventId;
-// let slice = state.slice;
-// let eventPromise = $slice.find(i => i.id === eventid) ?? state.client.fetchRoomEvent(roomid, eventid);
-// they use different event impls
-// let eventPromise = state.client.fetchRoomEvent(roomId, eventId);
-let eventPromise = state.client.fetchRoomEvent(roomId, eventId);
+let eventPromise = state.timeline.find(i => i.id === eventId) ?? state.client.fetchRoomEvent(roomId, eventId);
+// NOTE: this technically works due to properties used, but it would be better to get an actual discard event instead
 </script>
 <style>
 .reply {
@@ -64,7 +61,7 @@ let eventPromise = state.client.fetchRoomEvent(roomId, eventId);
 }
 
 .reply .content:hover {
-  color: var(--fg-content);
+  color: var(--fg-notice);
 }
 
 .reply :global(h1),
@@ -77,17 +74,19 @@ let eventPromise = state.client.fetchRoomEvent(roomId, eventId);
 }
 </style>
 {#await eventPromise}
-<div class="reply"></div>
+<div class="reply">loading</div>
 {:then event}
 <div class="reply">
   <img class="avatar" src={getAvatar(event.sender)} /><span class="author">{getDisplayName(event.sender)}</span>
   <div class="content" on:click={() => actions.slice.jump(roomId, eventId)}>
     {#if event.content.format === "org.matrix.custom.html"}
-      {@html parseHtml(event.content.formatted_body).split(/<br|\r?\n/)[0]}
+      <div style="pointer-events:none">{@html parseHtml(event.content.formatted_body).split(/<br|\r?\n/)[0]}</div>
     {:else}
       {event.content.body.split(/\r?\n/)[0]}
     {/if}
   </div>
 </div>
+{:catch}
+<div class="reply">error!</div>
 {/await}
 

@@ -19,7 +19,7 @@ async function handleKeyDown(e) {
     sendMessage({
       body: value.trim(),
       format: "org.matrix.custom.html",
-      formatted_body: marked(value.trim()),
+      formatted_body: marked(value.trim()).trim(),
       msgtype: "m.text",
     });
   } else if (e.key === "Escape") {
@@ -44,7 +44,7 @@ async function handlePaste(e) {
     id: "upload",
     file,
     async confirm() {
-      await upload(file);
+      upload(file);
       textarea.focus();
     },
     cancel() {
@@ -104,7 +104,10 @@ async function sendMessage(content) {
     $roomState.reply = null;
   }
 
-  return state.client.sendEvent($room.roomId, null, "m.room.message", content);  
+  await state.client.sendEvent($room.roomId, null, "m.room.message", content);
+
+  // const { event_id } = await state.client.sendEvent($room.roomId, null, "m.room.message", content);
+  // state.client.sendReadReceipt($room.timeline.find(i => i.getId() === event_id)); // FIXME: flash of unread on message send
 }
 
 state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus()));

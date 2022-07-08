@@ -93,8 +93,12 @@ img {
 
 .text {
   display: inline-block;
-  word-break: break-word;
   width: 100%;
+  word-break: break-word;
+}
+
+.text > :global(*) {
+  white-space: pre-wrap;
 }
 
 .text :global(pre) {
@@ -131,7 +135,7 @@ img {
   </div>
   {:else if content.format === "org.matrix.custom.html"}
   <div class="text">
-    {@html parseHtml(content.formatted_body)}
+    <div>{@html parseHtml(content.formatted_body.trim()).trim()}</div>
     {#if edited}
     <span class="edited">(edited)</span>
     {/if}

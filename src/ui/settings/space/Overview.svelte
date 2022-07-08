@@ -72,6 +72,7 @@ h1 {
 
 .section {
   display: flex;
+  flex-direction: column;
   width: 100%;
   padding-bottom: 40px;
   margin-bottom: 40px;
@@ -86,7 +87,7 @@ h1 {
 </style>
 <h1>Space Overview</h1>
 <div>
-  <div class="section">
+  <div class="section" style="flex-direction: row">
     <div class="avatar">
       <div class="uploader">
         <img src={space.avatar} />
@@ -102,8 +103,12 @@ h1 {
       <Input value={space.name} />
     </div>
   </div>
-  <div class="section" style="flex-direction: column">
+  <div class="section">
     <div class="title">Space Topic</div>
     <Textarea placeholder="what an excellent space" value={space.topic ?? ""} />
+  </div>
+  <div class="section">
+    <div class="title">Developers</div>
+    <p><b>Room Id:</b> <span style="user-select: all">{space.roomId}</span></p>
   </div>
 </div>

@@ -2,11 +2,11 @@
 import Unread from './timeline/Unread.svelte';
 import Upload from './timeline/Upload.svelte';
 import Create from './timeline/Create.svelte';
+import Placeholder from './timeline/Placeholder.svelte';
 import Message from './message/Message.svelte';
-import Loading from '../atoms/Loading.svelte';
 let slice = state.slice;
 let { focusedEvent, replyEvent, editingEvent, fileUpload: upload } = state;
-let scroller, paginating = false, atEnd = true, atBottom = true, atTop = false;
+let scroller, paginateTimeout = null, atEnd = true, atBottom = true, atTop = false;
 
 function shouldSplit(ev, prev) {
 	if (!prev) return true;
@@ -24,44 +24,41 @@ function shouldUnread(ev) {
 }
 
 function handleScroll() {
-	atEnd = scroller.scrollTop > scroller.scrollTopMax - 50;
-	console.log(paginating);
-	if (!paginating) maybePaginate();
+	atEnd = scroller.scrollTop > scroller.scrollTopMax - 300;
+	clearTimeout(paginateTimeout);
+	paginateTimeout = setTimeout(maybePaginate, 100);
 }
 
-// FIXME: occasionally, you get sent all the way to the top of the content
 // FIXME: forward pagination doesn't work properly
 async function maybePaginate() {
-	if (!scroller || paginating) return;
+	if (!scroller) return;
 
-	const paginateUp = !atTop && scroller.scrollTop < 800;
-	const paginateDown =  !atBottom && scroller.scrollTopMax - scroller.scrollTop < 800;
+	const paginateUp = !atTop && scroller.scrollTop < 1200;
+	const paginateDown =  !atBottom && scroller.scrollTopMax - scroller.scrollTop < 1200;
 	if (paginateDown === paginateUp) return; // bootleg xor (both true = entire timeline loaded, both false = dont paginate)
 	
-	paginating = true;
-
 	if (paginateUp) {
-		const oldScroll = scroller.children[1].offsetTop;
-		const topEvent = scroller.children[1].dataset.eventId;
+		const topChild = scroller.children[1];
+		const topEvent = topChild.dataset.eventId;
+		const oldScroll = topChild.offsetTop;
 		await actions.slice.backwards();
-		if ($slice[0]?.type === "m.room.create") atTop = true;
+		if ($slice[0]?.type === "m.room.create" || $slice[0]?.eventId === topEvent) atTop = true;
 		if (scroller) {
 			const recreated = scroller.querySelector(`[data-event-id="${topEvent}"]`);
 			if (recreated) scroller.scrollTop += recreated.offsetTop - oldScroll;
 		}
 	} else if (paginateDown) {
-		console.log("yes", atBottom, atEnd, $slice.at(-1))
-		const oldScroll = scroller.children[1].offsetTop;
-		const bottomEvent = scroller.children[scroller.children.length - 2].dataset.eventId;
+		const bottomChild = scroller.children[scroller.children.length - 2];
+		const bottomEvent = bottomChild.dataset.eventId;
+		const oldScroll = bottomChild.offsetTop;
 		await actions.slice.forwards();
 		if (scroller) {
 			const recreated = scroller.querySelector(`[data-event-id="${bottomEvent}"]`);
-			if (recreated) scroller.scrollTop -= recreated.offsetTop - oldScroll;
+			if (recreated) scroller.scrollTop -= oldScroll - recreated.offsetTop;
 		}
 	}
 
 	atBottom = $slice.at(-1)?.eventId === state.timeline.at(-1)?.eventId;
-	paginating = false;
 }
 
 function refocus() {
@@ -74,11 +71,11 @@ slice.subscribe(refocus);
 replyEvent.subscribe(refocus);
 
 state.focusedRoom.subscribe(() => {
+	clearTimeout(paginateTimeout);
 	queueMicrotask(() => {
 		atEnd = true;
 		atBottom = true;
 		atTop = false;
-		paginating = false;
 		if (state.focusedRoomId && scroller) {
 			scroller.scrollTop = scroller.scrollTopMax;
 			maybePaginate();
@@ -113,12 +110,11 @@ focusedEvent.subscribe(() => {
 	height: 1.5rem;
 }
 
-.loading {
-	text-align: center;
-}
-
 .tall {
-	margin-top: 500px;
+	display: flex;
+	align-content: end;
+	max-height: 800px;
+	overflow: hidden;
 }
 
 .ping {
@@ -156,13 +152,13 @@ focusedEvent.subscribe(() => {
 <div class="content">
 	<div class="scroller" tabindex=-1 on:scroll={handleScroll} bind:this={scroller}>
 		{#if !atTop}
-		<div class="loading tall"><Loading /></div>
+		<div class="loading tall"><Placeholder /></div>
 		{/if}
 		{#each $slice as event, i}
 		<div data-event-id={event.eventId} class:focused={$focusedEvent === event.eventId} class:ping={event.isPing}>
 			{#if event.type === "m.room.create"}
 				<Create event={event} />
-			{:else if event.type === "m.room.message" && !event.redacted}
+			{:else if event.type === "m.room.message" && !event.isRedacted}
 			  <Message
 					event={event}
 					header={shouldSplit(event, $slice[i - 1]) ? true : null}
@@ -176,7 +172,11 @@ focusedEvent.subscribe(() => {
 		{#if $upload}
 	  <Upload upload={$upload} />
 		{/if}
-		<div class="spacer" class:tall={!atBottom} ></div>
+		{#if atBottom}
+		<div class="spacer" ></div>
+		{:else}
+		<div class="tall"><Placeholder /></div>
+		{/if}
 	</div>
 </div>
 <svelte:window on:resize={refocus} />
