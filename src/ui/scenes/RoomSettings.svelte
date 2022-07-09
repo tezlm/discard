@@ -17,9 +17,9 @@ const views = [
   { view: Overview,      name: "Overview" },
   { view: Permissions,   name: "Permissions" },
   null,
-  { view: Members,       name: "Members" },
-  { view: Bans,          name: "Bans" },
-  { view: Invites,       name: "Invites" },
+  { view: Members,       name: "Members", raw: true },
+  { view: Bans,          name: "Bans", raw: true },
+  { view: Invites,       name: "Invites", raw: true },
   null,
   { clicked: () => state.popup.set({ id: "leave", type: "room", room: state.focusedRoomId, confirm: () => queueMicrotask(todo) }), name: "Leave Room", color: "var(--color-red)" },
 ];

@@ -150,11 +150,38 @@ pre {
   <h3 slot="header">Create {capitalize($current.type)} <div class="close" on:click={closePopup}>&#xd7;</div></h3>
   <div slot="content" style="display:flex;flex-direction:column">
     <span class="title">{capitalize($current.type)} Name</span>
-    <Input placeholder="awesome-{$current.type}" bind:value={data.name} submitted={() => data.name && state.popup.set({ id: "todo" })} />
+    <Input placeholder="awesome-{$current.type}" bind:value={data.name} submitted={() => state.popup.set({ id: "todo" })} autofocus />
   </div>
   <div slot="footer">
     <Button type="link" label="Cancel" clicked={closePopup} />
     <Button type="primary" disabled={!data.name.length} label="Create {capitalize($current.type)}" clicked={() => state.popup.set({ id: "todo" })} />
+  </div>
+</Popup>
+{:else if $current.id === "member-invite"}
+<Popup>
+  <h2 slot="header">{$current.name}</h2>
+  <div slot="content" style:margin-top="-8px">
+    <div style:color="var(--fg-muted)">
+        invited {formatDate($current.date, true)}
+    </div>
+    <hr />
+    <div>
+      {#if $current.reason}
+        {$current.reason}
+      {:else}
+        <i>no reason supplied</i>
+      {/if}
+    </div>
+  </div>
+</Popup>
+{:else if $current.id === "member-joined"}
+<Popup>
+  <h2 slot="header">{$current.name}</h2>
+  <div slot="content" style:margin-top="-8px">
+    <div style:color="var(--fg-muted)">
+        joined {formatDate($current.date, true)}
+    </div>
+    <hr />
   </div>
 </Popup>
 {:else if $current.id === "ban"}

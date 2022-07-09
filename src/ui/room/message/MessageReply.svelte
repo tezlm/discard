@@ -3,8 +3,7 @@
 import { parseHtml } from "../../../util/html.js";
 import { getDisplayName, getAvatar } from '../../../util/events.js';
 export let roomId, eventId;
-let eventPromise = state.timeline.find(i => i.id === eventId) ?? state.client.fetchRoomEvent(roomId, eventId);
-// NOTE: this technically works due to properties used, but it would be better to get an actual discard event instead
+let eventPromise = state.timeline.find(i => i.eventId === eventId) ?? state.client.fetchRoomEvent(roomId, eventId);
 </script>
 <style>
 .reply {

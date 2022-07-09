@@ -5,27 +5,29 @@ import MessageToolbar from "./MessageToolbar.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
 import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.js';
 
-export let event, header = false;
+export let event, header = false, shiftKey = false;
 
 let missingAvs = state.missingAvatars;
-let roomState = state.roomState;
-let toolbar = getToolbar(event);
+$: toolbar = getToolbar(event, shiftKey);
 
 function unwrapEdits(event) {
   while (event.original) event = event.original;
   return event;
 }
 
-// TODO: shift key toolbar
-function getToolbar(event) {
+function getToolbar(event, shift = false) {
+  if (event.isSending) return [{ name: "Cancel", icon: "x", clicked: todo }];
   let toolbar = [];
-  toolbar.push({ name: "Add Reaction", icon: "+", clicked: todo });
-  if (event.type === "m.room.message") { // purposefully broken, edit doesnt work yet
-    toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => $roomState.reply = unwrapEdits(ev) });
+  const fromMe = event.sender === state.client.getUserId();
+  if (!shift) toolbar.push({ name: "Add Reaction", icon: "+", clicked: todo });
+  if (fromMe && !shift) toolbar.push({ name: "Edit", icon: "_", clicked: todo });
+  if (!fromMe || shift) toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => state.roomState.reply.set(unwrapEdits(ev)) });
+  if (shift) {
+    toolbar.push({ name: "View Source", icon: "!", clicked: (ev) => state.popup.set({ id: "source", event: ev }) });
+    toolbar.push({ name: "Delete", icon: "x", clicked: (ev) => { state.client.redactEvent(ev.roomId, ev.eventId) }});
   } else {
-    toolbar.push({ name: "Edit", icon: "_", clicked: (ev) => state.editingEvent.set(ev) });
+    toolbar.push({ name: "More", icon: "\u22ee", todo });
   }
-  toolbar.push({ name: "More", icon: "\u22ee", clicked: (ev) => state.popup.set({ id: "source", event: ev })});
   return toolbar;
 }
 
@@ -40,6 +42,7 @@ function getReply(content) {
   margin-top: 0;
   position: relative;
   color: var(--fg-content);
+  user-select: text;
 }
 
 .message:hover {
@@ -55,7 +58,6 @@ function getReply(content) {
 .content {
   color: var(--fg-content);
   width: 100%;
-  padding: 2px 0;
 }
 
 .top {

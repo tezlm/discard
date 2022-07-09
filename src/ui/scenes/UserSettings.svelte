@@ -8,6 +8,9 @@ import Nitor from '../settings/user/Nitor.svelte';
 import Appearance from '../settings/user/Appearance.svelte';
 import Notifications from '../settings/user/Notifications.svelte';
 
+// temporary
+import Testbed from '../settings/user/Testbed.svelte';
+
 const views = [
   { view: Account,       name: "My Account" },
   { view: PrivSec,       name: "Privacy and Security" },
@@ -16,6 +19,7 @@ const views = [
   null,
   { view: Appearance,    name: "Appearance" },
   { view: Notifications, name: "Notifications" },
+  { view: Testbed,       name: "Testbed" },
   null,
   { name: "Log Out", color: "var(--color-red)", clicked: () => state.popup.set({ id: "logout", confirm: actions.client.logout }) },
 ];

@@ -1,5 +1,7 @@
 import { writable } from "svelte/store";
 
+global.writable = writable
+
 export default {
   client: null,
   scene: writable(null),
@@ -14,12 +16,10 @@ export default {
   focusedSpace: writable(null),
   
   // messages
-  replyEvent: writable(null),
-  focusedEvent: writable(null), // coming soon...
-  editingEvent: writable(null), // coming soon...
-  fileUpload: writable(null), // coming soon...
   roomStates: new Map(),
-  roomState: writable({}),
+  roomState: null,
+  
+  // maybe move timeline stuff into roomState?
 
   // timeline
   timeline: [],

@@ -85,8 +85,7 @@ const sanitizeOpts = {
 	},
 	nonTextTags: ["style", "script", "textarea", "option", "noscript", "mx-reply"],
 	nestingLimit: 100,
-}
-
+};
 
 export function parseHtml(html, opts = { linkify: true, sanitize: true }) {
 	if (opts.sanitize) html = sanitizeHtml(html, sanitizeOpts);

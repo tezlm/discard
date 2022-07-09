@@ -1,12 +1,17 @@
 <script>
+import { onDestroy, onMount } from "svelte";
 import Unread from './timeline/Unread.svelte';
 import Upload from './timeline/Upload.svelte';
 import Create from './timeline/Create.svelte';
 import Placeholder from './timeline/Placeholder.svelte';
 import Message from './message/Message.svelte';
 let slice = state.slice;
-let { focusedEvent, replyEvent, editingEvent, fileUpload: upload } = state;
+let { focused, reply, upload } = state.roomState;
+
+console.clear();
+
 let scroller, paginateTimeout = null, atEnd = true, atBottom = true, atTop = false;
+let shiftKey = false;
 
 function shouldSplit(ev, prev) {
 	if (!prev) return true;
@@ -24,18 +29,20 @@ function shouldUnread(ev) {
 }
 
 function handleScroll() {
-	atEnd = scroller.scrollTop > scroller.scrollTopMax - 300;
+	atEnd = scroller.scrollTop > scroller.scrollTopMax - 50;
 	clearTimeout(paginateTimeout);
 	paginateTimeout = setTimeout(maybePaginate, 100);
 }
 
 // FIXME: forward pagination doesn't work properly
-async function maybePaginate() {
+async function maybePaginate(resetScroll = true) {
 	if (!scroller) return;
 
 	const paginateUp = !atTop && scroller.scrollTop < 1200;
 	const paginateDown =  !atBottom && scroller.scrollTopMax - scroller.scrollTop < 1200;
 	if (paginateDown === paginateUp) return; // bootleg xor (both true = entire timeline loaded, both false = dont paginate)
+
+	console.log("roomcontent paginating", paginateUp ? "up" : "down")
 	
 	if (paginateUp) {
 		const topChild = scroller.children[1];
@@ -43,18 +50,18 @@ async function maybePaginate() {
 		const oldScroll = topChild.offsetTop;
 		await actions.slice.backwards();
 		if ($slice[0]?.type === "m.room.create" || $slice[0]?.eventId === topEvent) atTop = true;
-		if (scroller) {
+		if (resetScroll && scroller) {
 			const recreated = scroller.querySelector(`[data-event-id="${topEvent}"]`);
 			if (recreated) scroller.scrollTop += recreated.offsetTop - oldScroll;
 		}
 	} else if (paginateDown) {
 		const bottomChild = scroller.children[scroller.children.length - 2];
 		const bottomEvent = bottomChild.dataset.eventId;
-		const oldScroll = bottomChild.offsetTop;
+		const oldScroll = scroller.offsetHeight - bottomChild.offsetTop;
 		await actions.slice.forwards();
-		if (scroller) {
+		if (resetScroll && scroller) {
 			const recreated = scroller.querySelector(`[data-event-id="${bottomEvent}"]`);
-			if (recreated) scroller.scrollTop -= oldScroll - recreated.offsetTop;
+			if (recreated) scroller.scrollTop -= oldScroll - (scroller.offsetHeight - recreated.offsetTop);
 		}
 	}
 
@@ -62,36 +69,40 @@ async function maybePaginate() {
 }
 
 function refocus() {
-	if (scroller && atEnd) {
-		queueMicrotask(() => scroller.scrollTop = scroller.scrollTopMax);
-	}
+	console.log("refocus")
+	scroller && atEnd && (scroller.scrollTop = scroller.scrollHeight)
+	queueMicrotask(() => scroller && atEnd && (scroller.scrollTop = scroller.scrollHeight));
 }
 
-slice.subscribe(refocus);
-replyEvent.subscribe(refocus);
-
-state.focusedRoom.subscribe(() => {
+function reset() {
 	clearTimeout(paginateTimeout);
 	queueMicrotask(() => {
 		atEnd = true;
 		atBottom = true;
 		atTop = false;
 		if (state.focusedRoomId && scroller) {
-			scroller.scrollTop = scroller.scrollTopMax;
-			maybePaginate();
+			refocus();
 		}
 	});
-});
+}
 
-focusedEvent.subscribe(() => {
-	if (!scroller) return;
-	const id = $focusedEvent;
+function handleKeyPress(e) {
+  if (e.key === "Shift") shiftKey = e.type === "keydown";
+}
+
+onMount(reset);
+onDestroy(slice.subscribe(refocus));
+onDestroy(state.focusedRoom.subscribe(reset));
+onDestroy(reply.subscribe(refocus));
+onDestroy(focused.subscribe(() => {
+	if (!scroller || !$focused) return;
+	const id = $focused;
 	const element = scroller.querySelector(`[data-event-id="${id}"]`);
 	if (element) {
-		element.scrollIntoView({ behavior: "smooth", block: "center" });
-		setTimeout(() => id === $focusedEvent && focusedEvent.set(null), 2000);
+		queueMicrotask(() => element.scrollIntoView({ behavior: "smooth", block: "center" }));
+		setTimeout(() => id === $focused && focused.set(null), 2000);
 	}
-});
+}));
 </script>
 <style>
 .content {
@@ -112,7 +123,7 @@ focusedEvent.subscribe(() => {
 
 .tall {
 	display: flex;
-	align-content: end;
+	align-items: end;
 	max-height: 800px;
 	overflow: hidden;
 }
@@ -154,13 +165,14 @@ focusedEvent.subscribe(() => {
 		{#if !atTop}
 		<div class="loading tall"><Placeholder /></div>
 		{/if}
-		{#each $slice as event, i}
-		<div data-event-id={event.eventId} class:focused={$focusedEvent === event.eventId} class:ping={event.isPing}>
+		{#each $slice as event, i (event.eventId)}
+		<div data-event-id={event.eventId} class:focused={$focused === event.eventId} class:ping={event.isPing}>
 			{#if event.type === "m.room.create"}
 				<Create event={event} />
 			{:else if event.type === "m.room.message" && !event.isRedacted}
 			  <Message
-					event={event}
+					{event}
+					{shiftKey}
 					header={shouldSplit(event, $slice[i - 1]) ? true : null}
 				/>
 			{/if}
@@ -179,4 +191,4 @@ focusedEvent.subscribe(() => {
 		{/if}
 	</div>
 </div>
-<svelte:window on:resize={refocus} />
+<svelte:window on:resize={refocus} on:keydown={handleKeyPress} on:keyup={handleKeyPress} />

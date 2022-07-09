@@ -3,18 +3,18 @@ export let type = "text";
 export let value = "";
 export let placeholder = "";
 export let small = false;
+export let autofocus = false;
 export let submitted = () => {};
-
-function handleFocus(e) {
-  // e.target.select();
-}
 
 function handleInput(e) {
   value = e.target.value;
 }
 
 function handleKeyDown(e) {
-  if (e.key === "Enter") submitted();
+  if (e.key === "Enter") {
+    e.stopPropagation();
+    if (value) submitted();
+  }
 }
 </script>
 <style>
@@ -41,8 +41,8 @@ input {
   {type}
   {placeholder}
   {value}
+  {autofocus}
   class:small
-  on:focus={handleFocus}
   on:input={handleInput}
   on:keydown={handleKeyDown}
 />

@@ -3,28 +3,27 @@
 // TODO: refactor, this code is a mess
 import { marked } from "marked";
 import { getDisplayName } from "../../util/events.js";
+import { onDestroy } from "svelte";
 let textarea;
 let room = state.focusedRoom;
-let roomState = state.roomState;
-$: reply = $roomState.reply;
-$: value = $roomState.value;
-$: rows = $roomState.rows ?? 1;
+let { reply, input, rows, upload: fileUpload } = state.roomState;
 
 async function handleKeyDown(e) {
-  if (e.key === "Enter" && !e.shiftKey && value.trim()) {
+  if (e.key === "Enter" && !e.shiftKey && $input.trim()) {
     e.preventDefault();
-    $roomState.value = "";
-    $roomState.rows = 1;
 
     sendMessage({
-      body: value.trim(),
+      body: $input.trim(),
       format: "org.matrix.custom.html",
-      formatted_body: marked(value.trim()).trim(),
+      formatted_body: marked($input.trim()).trim(),
       msgtype: "m.text",
     });
+
+    $input = "";
+    $rows = 1;
   } else if (e.key === "Escape") {
-    if (reply) {
-      $roomState.reply = null;
+    if ($reply) {
+      reply.set(null);
     } else {
       state.client.sendReadReceipt($room.timeline[$room.timeline.length - 1]);  
     }
@@ -32,8 +31,7 @@ async function handleKeyDown(e) {
 }
 
 function handleInput() {
-  $roomState.rows = Math.min(value.split("\n").length, 10);
-  $roomState.value = value;
+  $rows = Math.min($input.split("\n").length, 10);
 }
 
 async function handlePaste(e) {
@@ -54,16 +52,16 @@ async function handlePaste(e) {
 }
 
 async function upload(file) {
-  const upload = { file, progress: 0, cancel: todo };
-  state.fileUpload.set(upload);
+  const status = { file, progress: 0, cancel: todo };
+  fileUpload.set(status);
   const url = await state.client.uploadContent(file, {
     progressHandler({ loaded, total }) {
-      upload.progress = loaded / total;
-      state.fileUpload.set(upload);
+      status.progress = loaded / total;
+      fileUpload.set(status);
     }
   });
 
-  state.fileUpload.set(null);
+  fileUpload.set(null);
 
   const type = getType(file.type);
 
@@ -97,11 +95,11 @@ async function upload(file) {
 }
 
 async function sendMessage(content) {
-  if (reply) {
+  if ($reply) {
     content["m.relates_to"] = {};
     content["m.relates_to"]["m.in_reply_to"] = {};
-    content["m.relates_to"]["m.in_reply_to"]["event_id"] = reply.eventId;
-    $roomState.reply = null;
+    content["m.relates_to"]["m.in_reply_to"]["event_id"] = $reply.eventId;
+    reply.set(null);
   }
 
   await state.client.sendEvent($room.roomId, null, "m.room.message", content);
@@ -110,8 +108,8 @@ async function sendMessage(content) {
   // state.client.sendReadReceipt($room.timeline.find(i => i.getId() === event_id)); // FIXME: flash of unread on message send
 }
 
-state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus()));
-roomState.subscribe(() => queueMicrotask(() => textarea?.focus()));
+onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus())));
+onDestroy(reply.subscribe(() => queueMicrotask(() => textarea?.focus())));
 </script>
 <style>
 .input {
@@ -197,10 +195,10 @@ textarea::placeholder {
   border-top-right-radius: 0;
 }
 </style>
-{#if reply}
-<div class="reply" on:click={() => actions.slice.jump(reply.eventId)}>
-  <div>Replying to <b>{getDisplayName(reply.sender)}</b></div>
-  <div class="close" on:click={() => $roomState.reply = null}>
+{#if $reply}
+<div class="reply" on:click={() => actions.slice.jump($reply.roomId, $reply.eventId)}>
+  <div>Replying to <b>{getDisplayName($reply.sender)}</b></div>
+  <div class="close" on:click={e => { e.stopPropagation(); reply.set(null) }}>
       <div class="icon">&#xd7</div>
   </div>
 </div>
@@ -210,10 +208,10 @@ textarea::placeholder {
     <div class="upload-button"></div>
   </div>
   <textarea
-    {rows}
+    rows={$rows}
     placeholder={`Message ${$room.name}`}
     bind:this={textarea}
-    bind:value={value}
+    bind:value={$input}
     on:input={handleInput}
     on:keydown={handleKeyDown}
     on:paste={handlePaste}

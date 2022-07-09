@@ -37,6 +37,7 @@ function easeInv() {
 main {
   display: flex;
   height: 100vh;
+  user-select: none;
 }
 
 main > div {
