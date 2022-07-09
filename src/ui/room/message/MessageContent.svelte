@@ -12,7 +12,7 @@ $: sending = event.isSending;
 $: dimensions = parseDimensions(content.info?.thumbnail_info ?? content.info);
 
 function parseDimensions(info) {
-  if (!info) return null;
+  if (!info || !info.w || !info.h) return `max-width: 400px; height: 300px; object-fit: cover`;
   let width = info.w, height = info.h;
   if (width > 400) {
     const scale = 400 / width;
@@ -64,6 +64,8 @@ function formatSize(size) {
 img, video, audio {
   display: block;
   border-radius: 3px;
+  background: var(--bg-rooms-members);
+  margin: 4px 0;
 }
 
 img {
@@ -97,12 +99,16 @@ img {
   word-break: break-word;
 }
 
-.text > :global(*) {
+.text :global(*) {
   white-space: pre-wrap;
 }
 
 .text :global(pre) {
   max-width: 90%;
+}
+
+.text :global(blockquote), .text :global(ol), .text :global(ul) {
+  white-space: normal;
 }
 
 .text :global([data-mx-ping]) {
@@ -118,7 +124,7 @@ img {
   background: var(--ping-bg);
 }
 </style>
-<div class:redacted class:sending style={dimensions}>
+<div class:redacted class:sending style={type === "m.image" || type === "m.video" ? dimensions : ""}>
   {#if type === "m.image"}
   <img src={client.mxcUrlToHttp(content.url)} alt={content.body} style={dimensions} on:click={() => state.popup.set({ id: "attachment", url: client.mxcUrlToHttp(content.url) })} />
   {:else if type === "m.video"}
@@ -135,7 +141,7 @@ img {
   </div>
   {:else if content.format === "org.matrix.custom.html"}
   <div class="text">
-    <div>{@html parseHtml(content.formatted_body.trim()).trim()}</div>
+    {@html parseHtml(content.formatted_body.trim()).trim()}
     {#if edited}
     <span class="edited">(edited)</span>
     {/if}

@@ -2,6 +2,7 @@
 import { formatSize } from "../../../util/format.js";
 import fileIcon from "../../../assets/file.svg";
 export let upload;
+console.log("upload", upload)
 $: file = upload.file;
 </script>
 <style>

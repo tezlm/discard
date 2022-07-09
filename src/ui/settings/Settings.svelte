@@ -71,9 +71,14 @@ nav {
 
 .exit {
   cursor: pointer;
-  font-weight: 700;
   margin-top: 2em;
   margin-right: auto;
+  color: var(--fg-interactive);
+  font-weight: 700;
+}
+
+.exit:hover {
+  color: var(--fg-notice);
 }
 
 h1 {

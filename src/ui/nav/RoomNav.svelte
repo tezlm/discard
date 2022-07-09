@@ -38,7 +38,7 @@ function getClasses(room) {
 	width: 240px;
 	display: flex;
 	flex-direction: column;
-	overflow: hidden auto;
+	overflow-x: visible;
 }
 
 .room {
@@ -128,7 +128,10 @@ function getClasses(room) {
 				<div class="wrapper">
 					<div class="icon">#</div>
 					<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
-					<div class="settings" on:click={() => state.scene.set("room-settings")}>
+					<div class="settings" on:click={() => state.popup.set({ id: "invite", type: "room", room: $focusedRoom.roomId })}>
+						<Tooltip tip="Send Invite">&#129730;</Tooltip>
+					</div>
+					<div class="settings" style="margin-left: 4px;" on:click={() => state.scene.set("room-settings")}>
 						<Tooltip tip="Edit Room">&#x2699;</Tooltip>
 					</div>
 				</div>

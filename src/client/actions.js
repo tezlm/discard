@@ -1,8 +1,18 @@
-import { writable } from "svelte/store";
+import { writable, get } from "svelte/store";
 
 const sdk = globalThis.matrixcs;
 
 // TODO: timeline slice
+
+function getDefaultRoomState() {
+  return {
+    input: "",
+    rows: 1,
+    reply: null,
+    focused: null,
+    upload: null,
+  };
+}
 
 function formatEvent(ev) {
   return {
@@ -144,13 +154,10 @@ export default {
         actions.timeline.add(event, toBeginning);
 
         if (!["m.room.create", "m.room.message"].includes(event.getType())) return; // TODO: merge allowed events lists together
-        console.log("push event to slice")
         if (atEnd && !toBeginning) {
           if (event.isRelation()) {
-            console.log("is relation")
-            const id = Math.random();
-            state.sliceRef.push({ type: "dummy", eventId: "dummy" + id, roomId: event.getRoomId() });
-            state.sliceEnd = "dummy" + id;
+            state.sliceEnd = state.timeline.at(-1).eventId;
+            state.sliceRef[state.sliceRef.length - 1] = state.timeline.at(-1);
           } else {
             state.sliceRef.push(state.timeline.at(-1));
             state.sliceEnd = state.timeline.at(-1).eventId;
@@ -195,17 +202,38 @@ export default {
   },
   rooms: {
     focus(room) {
+      // TODO: clean up this code
+      // save room state
+      if (!state.roomState) {
+        state.roomState = {};
+        const defaultState = getDefaultRoomState();
+        for (let key in defaultState) {
+        	state.roomState[key] = writable(defaultState[key]);
+        }
+      }
+      
+      const oldState = state.roomStates.get(state.focusedRoomId);
+      if (oldState) {
+        for (let key in state.roomState) {
+        	oldState[key] = get(state.roomState[key]);
+        }
+      } 
+      
     	state.focusedRoomId = room?.roomId ?? null;
     	state.focusedRoom.set(room);
       
       if (room) {
+        // load room state
       	if (!state.roomStates.has(room.roomId)) {
-          state.roomStates.set(room.roomId, writable({}));
+          state.roomStates.set(room.roomId, getDefaultRoomState());
         }
-      	state.roomState.set(state.roomStates.get(room.roomId));
+        
+        const newState = state.roomStates.get(room.roomId);
+        for (let key in newState) {
+        	state.roomState[key].set(newState[key]);
+        }
+        
     	  actions.timeline.set(room);
-      } else {
-        state.roomState.set({});
       }
     },
     update() {
@@ -276,7 +304,7 @@ export default {
         if (index < 0) return;
         state.timeline[index] = {
           ...formatEvent(event),
-          content: { ...event.getContent()["m.new_content"] } ?? {},
+          content: { ...state.timeline[index].content, ...event.getContent()["m.new_content"] } ?? {},
           original: state.timeline[index],
         };
       } else {
@@ -341,9 +369,11 @@ export default {
       state.slice.set(state.sliceRef);
     },
     async jump(roomId, eventId) {
-      state.focusedEvent.set(eventId);
+      state.roomState.focused.set(eventId);
+      console.log("focused event ", eventId, "in room", roomId)
+      
       // TODO: actually finish this
-      if (!state.timeline.find(i => i.eventId === state.sliceEnd)) {
+      // if (!state.timeline.find(i => i.eventId === state.sliceEnd)) {
         // state.sliceStart = eventId;
         // state.sliceEnd = eventId;
         // console.log(await state.client.fetchRoomEvent(roomId, eventId));
@@ -355,7 +385,7 @@ export default {
         // state.sliceEnd = state.timeline[newEnd].eventId;
         // state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
         // state.slice.set(state.sliceRef);
-      }
+      // }
     },
   },
 };

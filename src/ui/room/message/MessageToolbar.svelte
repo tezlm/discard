@@ -12,6 +12,7 @@ export let items, event;
   border: solid var(--bg-misc) 1px;
   border-radius: 4px;
   background: var(--bg-content);
+  user-select: none;
 }
 
 .toolbar:hover {  
