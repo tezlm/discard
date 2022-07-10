@@ -8,10 +8,7 @@ import Members from "../settings/room/Members.svelte";
 import Bans from "../settings/room/Bans.svelte";
 import Invites from "../settings/room/Invites.svelte";
 
-import Archive from "../settings/room/Archive.svelte";
-
-let origRoom = state.focusedRoom;
-$: room = state.client.getRoom($origRoom?.roomId);
+let room = state.focusedRoom;
 
 const views = [
   { view: Overview,      name: "Overview" },

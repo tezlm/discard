@@ -2,12 +2,16 @@
 import linkifyHtml from "linkifyjs/html";
 import sanitizeHtml from "sanitize-html";
 
+const permittedHtmlTagsInline = [
+  "font", "del", "p", "a", "sup", "sub", "b", "i",
+	"u", "strong", "em", "strike", "code", "br", "span",
+];
+
 const permittedHtmlTags = [
-  "font", "del", "h1", "h2", "h3", "h4", "h5", "h6",
-  "blockquote", "p", "a", "ul", "ol", "sup", "sub",
-  "li", "b", "i", "u", "strong", "em", "strike", "code",
-  "hr", "br", "div", "table", "thead", "tbody", "tr", "th",
-  "td", "caption", "pre", "span", "img", "details", "summary",
+	...permittedHtmlTagsInline,
+  "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "ul", "ol",
+  "li", "hr", "div", "table", "thead", "tbody", "tr", "th",
+  "td", "caption", "pre", "img", "details", "summary",
 ];
 
 const urlSchemes = ["https", "http", "ftp", "mailto", "magnet"];
@@ -87,8 +91,18 @@ const sanitizeOpts = {
 	nestingLimit: 100,
 };
 
-export function parseHtml(html, opts = { linkify: true, sanitize: true }) {
-	if (opts.sanitize) html = sanitizeHtml(html, sanitizeOpts);
+const sanitizeOptsInline = {
+	...sanitizeOpts,
+	allowedTags: permittedHtmlTagsInline,
+	transformTags: {
+		font: transformFontSpanTags,
+		span: transformFontSpanTags,
+		a: transformATag,
+	},
+}
+
+export function parseHtml(html, opts = { linkify: true, sanitize: true, inline: false }) {
+	if (opts.sanitize) html = sanitizeHtml(html, opts.inline ? sanitizeOptsInline : sanitizeOpts);
 	if (opts.linkify)  html = linkifyHtml(html, { ignoreTags: ["pre", "code"] });
 	return html;
 }

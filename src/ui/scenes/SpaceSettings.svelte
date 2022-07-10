@@ -1,4 +1,6 @@
 <script>
+import { writable } from "svelte/store";
+
 import Settings from '../settings/Settings.svelte';
 
 import Overview from "../settings/space/Overview.svelte";
@@ -26,4 +28,4 @@ const views = [
   { clicked: () => state.popup.set({ id: "leave", type: "space", room: state.focusedRoomId, confirm: () => queueMicrotask(todo) }), name: "Leave Space", color: "var(--color-red)" },
 ];
 </script>
-<Settings {views} options={{ room }} />
+<Settings {views} options={{ room: writable(room) }} />

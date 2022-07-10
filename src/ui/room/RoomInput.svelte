@@ -15,7 +15,7 @@ async function handleKeyDown(e) {
     sendMessage({
       body: $input.trim(),
       format: "org.matrix.custom.html",
-      formatted_body: marked($input.trim()).trim(),
+      formatted_body: marked($input.trim().replace(/@[a-z0-9-_]+:[a-z0-9.]+/i, (match) => `<a href="https://matrix.to/#/${match}">@${getDisplayName(match, true).replace(/^@/, '')}</a>`)).trim(),
       msgtype: "m.text",
     });
 

@@ -1,14 +1,14 @@
 <script>
 import { getAvatar } from "../../../util/events.js";
 export let room;
-let members = room.getMembersWithMembership("join");
+let members = $room.getMembers("join");
 
 function showPopup(member) {
   const event = member.events.member;
   const reason = event.getContent().reason ?? null;
   state.popup.set({
     id: "member-joined",
-    name: member.name,
+    name: member.rawDisplayName,
     date: event.getDate(),
     reason: reason === "<no reason supplied>" ? null : reason,
     powerLevel: member.powerLevel,
@@ -47,11 +47,11 @@ h1 {
 </style>
 {#if room}
 <h1>{members.length || "No"} Member{members.length !== 1 ? "s" : ""}</h1>
-{#each members.sort((a, b) => a.powerLevel > b.powerLevel ? -1 : 1) as member}
+{#each members as member}
 <div class="member" on:click={() => showPopup(member)}>
-  <img class="avatar" src={getAvatar(member.userId)} alt="avatar for {member.name}"/>
+  <img class="avatar" src={getAvatar(member.userId)} alt="avatar for {member.rawDisplayName}"/>
   <div class="name">
-    {member.name}
+    {member.rawDisplayName}
     <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>
   </div>
   <div style="margin-left: auto;">{member.powerLevel}</div>
