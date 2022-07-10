@@ -1,7 +1,7 @@
 <script>
 import { getAvatar } from "../../../util/events.js";
 export let room;
-let members = room.getMembersWithMembership("ban");
+let members = $room.getMembers("ban");
 
 function showPopup(member) {
   const event = member.events.member;
@@ -45,7 +45,7 @@ h1 {
 </style>
 {#if room}
 <h1>{members.length || "No"} Ban{members.length !== 1 ? "s" : ""}</h1>
-{#each room.getMembersWithMembership("ban") as member}
+{#each members as member}
 <div class="ban" on:click={() => showPopup(member)}>
   <img class="avatar" src={getAvatar(member.userId)} alt="avatar for {member.name}"/>
   <div class="name">{member.name}</div>

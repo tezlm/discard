@@ -132,7 +132,7 @@ function getClasses(room) {
 						<Tooltip tip="Send Invite">&#129730;</Tooltip>
 					</div>
 					<div class="settings" style="margin-left: 4px;" on:click={() => state.scene.set("room-settings")}>
-						<Tooltip tip="Edit Room">&#x2699;</Tooltip>
+						<Tooltip tip="Edit Room">🔧</Tooltip>
 					</div>
 				</div>
 			</div>

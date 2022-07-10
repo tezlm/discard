@@ -1,7 +1,7 @@
 <script>
 import { getAvatar } from "../../../util/events.js";
 export let room;
-let members = room.getMembersWithMembership("invite");
+let members = $room.getMembers("invite");
 
 function showPopup(member) {
   const event = member.events.member;

@@ -24,6 +24,7 @@
   --ping-bgalpha: #5865f24d;
   --event-ping: #faa81a;
   --event-ping-bg: #faa81a1a;
+  --event-focus: #5865f2;
   --event-focus-bg: #5865f232;
   --shadow-popup: 0 2px 10px 0 rgba(0, 0, 0, .2);
   --shadow-high: 0 8px 16px rgba(0, 0, 0, .24);

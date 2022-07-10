@@ -1,5 +1,6 @@
 <script>
 import { onDestroy, onMount } from "svelte";
+import Scroller from '../molecules/Scroller.svelte';
 import Unread from './timeline/Unread.svelte';
 import Upload from './timeline/Upload.svelte';
 import Create from './timeline/Create.svelte';
@@ -7,10 +8,6 @@ import Placeholder from './timeline/Placeholder.svelte';
 import Message from './message/Message.svelte';
 let slice = state.slice;
 let { focused, reply, upload } = state.roomState;
-
-console.clear();
-
-let scroller, paginateTimeout = null, atEnd = true, atBottom = true, atTop = false;
 let shiftKey = false;
 
 function shouldSplit(ev, prev) {
@@ -28,62 +25,28 @@ function shouldUnread(ev) {
 	return room.getEventReadUpTo(user) === ev.eventId;
 }
 
-function handleScroll() {
-	atEnd = scroller.scrollTop > scroller.scrollTopMax - 50;
-	clearTimeout(paginateTimeout);
-	paginateTimeout = setTimeout(maybePaginate, 100);
+const atBottom = () => $slice.at(-1)?.eventId === state.timeline.at(-1)?.eventId;
+
+async function fetchBackwards() {
+	// const topChild = scroller.children[1];
+	// const topEvent = topChild.dataset.eventId;
+	await actions.slice.backwards();
+	// if ($slice[0]?.type === "m.room.create" || $slice[0]?.eventId === topEvent) return true;
+	return [$slice[0]?.type === "m.room.create", atBottom()];
 }
 
-// FIXME: forward pagination doesn't work properly
-async function maybePaginate(resetScroll = true) {
-	if (!scroller) return;
-
-	const paginateUp = !atTop && scroller.scrollTop < 1200;
-	const paginateDown =  !atBottom && scroller.scrollTopMax - scroller.scrollTop < 1200;
-	if (paginateDown === paginateUp) return; // bootleg xor (both true = entire timeline loaded, both false = dont paginate)
-
-	console.log("roomcontent paginating", paginateUp ? "up" : "down")
-	
-	if (paginateUp) {
-		const topChild = scroller.children[1];
-		const topEvent = topChild.dataset.eventId;
-		const oldScroll = topChild.offsetTop;
-		await actions.slice.backwards();
-		if ($slice[0]?.type === "m.room.create" || $slice[0]?.eventId === topEvent) atTop = true;
-		if (resetScroll && scroller) {
-			const recreated = scroller.querySelector(`[data-event-id="${topEvent}"]`);
-			if (recreated) scroller.scrollTop += recreated.offsetTop - oldScroll;
-		}
-	} else if (paginateDown) {
-		const bottomChild = scroller.children[scroller.children.length - 2];
-		const bottomEvent = bottomChild.dataset.eventId;
-		const oldScroll = scroller.offsetHeight - bottomChild.offsetTop;
-		await actions.slice.forwards();
-		if (resetScroll && scroller) {
-			const recreated = scroller.querySelector(`[data-event-id="${bottomEvent}"]`);
-			if (recreated) scroller.scrollTop -= oldScroll - (scroller.offsetHeight - recreated.offsetTop);
-		}
-	}
-
-	atBottom = $slice.at(-1)?.eventId === state.timeline.at(-1)?.eventId;
+async function fetchForwards() {
+	await actions.slice.forwards();
+	return [false, atBottom()];
 }
 
 function refocus() {
 	console.log("refocus")
-	scroller && atEnd && (scroller.scrollTop = scroller.scrollHeight)
-	queueMicrotask(() => scroller && atEnd && (scroller.scrollTop = scroller.scrollHeight));
+	// scroller && atEnd && (scroller.scrollTop = scroller.scrollHeight)
+	// queueMicrotask(() => scroller && atEnd && (scroller.scrollTop = scroller.scrollHeight));
 }
 
 function reset() {
-	clearTimeout(paginateTimeout);
-	queueMicrotask(() => {
-		atEnd = true;
-		atBottom = true;
-		atTop = false;
-		if (state.focusedRoomId && scroller) {
-			refocus();
-		}
-	});
 }
 
 function handleKeyPress(e) {
@@ -95,9 +58,9 @@ onDestroy(slice.subscribe(refocus));
 onDestroy(state.focusedRoom.subscribe(reset));
 onDestroy(reply.subscribe(refocus));
 onDestroy(focused.subscribe(() => {
-	if (!scroller || !$focused) return;
+	if (!$focused) return;
 	const id = $focused;
-	const element = scroller.querySelector(`[data-event-id="${id}"]`);
+	const element = document.querySelector(`[data-event-id="${id}"]`);
 	if (element) {
 		queueMicrotask(() => element.scrollIntoView({ behavior: "smooth", block: "center" }));
 		setTimeout(() => id === $focused && focused.set(null), 2000);
@@ -113,19 +76,18 @@ onDestroy(focused.subscribe(() => {
 	overflow: hidden;
 }
 
-.scroller {
-	overflow-y: auto;
-}
-
 .spacer {
-	height: 1.5rem;
+	margin-top: 20px;
 }
 
 .tall {
 	display: flex;
-	align-items: end;
-	max-height: 800px;
+	min-height: 800px;
 	overflow: hidden;
+}
+
+.header {
+	margin-top: 14px;
 }
 
 .ping {
@@ -133,11 +95,16 @@ onDestroy(focused.subscribe(() => {
 	background: var(--event-ping-bg);
 }
 
+.reply {
+	position: relative;
+	background: var(--event-focus-bg);
+}
+
 .focused {
 	position: relative;
 }
 
-.ping::after {
+.ping::after, .reply::after {
 	content: "";
 	position: absolute;
 	top: 0;
@@ -146,13 +113,17 @@ onDestroy(focused.subscribe(() => {
 	background: var(--event-ping);
 }
 
+.reply::after {
+	background: var(--event-focus);
+}
+
 .focused::before {
 	content: "";
 	position: absolute;
 	top: 0;
 	height: 100%;
 	width: 100%;
-	background: var(--event-focus-bg);
+	background: var(--event-focus-bg);	
 	animation: unfocus 1s 1s forwards;
 }
 
@@ -161,34 +132,43 @@ onDestroy(focused.subscribe(() => {
 }
 </style>
 <div class="content">
-	<div class="scroller" tabindex=-1 on:scroll={handleScroll} bind:this={scroller}>
-		{#if !atTop}
-		<div class="loading tall"><Placeholder /></div>
-		{/if}
-		{#each $slice as event, i (event.eventId)}
-		<div data-event-id={event.eventId} class:focused={$focused === event.eventId} class:ping={event.isPing}>
-			{#if event.type === "m.room.create"}
-				<Create event={event} />
-			{:else if event.type === "m.room.message" && !event.isRedacted}
-			  <Message
-					{event}
-					{shiftKey}
-					header={shouldSplit(event, $slice[i - 1]) ? true : null}
-				/>
-			{/if}
+	<Scroller
+		items={$slice}
+		indexKey="eventId"
+		margin={1000}
+		let:data={event}
+		let:index={index}
+		{fetchBackwards}
+		{fetchForwards}
+	>
+		<div slot="top"></div>
+		<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
+		<div>
+			<div
+				class:header={shouldSplit(event, $slice[index - 1])}
+				class:ping={event.isPing}
+				class:reply={$reply?.eventId === event.eventId}
+				class:focused={$focused === event.eventId}
+				data-event-id={event.eventId}
+			>
+				{#if event.type === "m.room.create"}
+					<Create event={event} />
+				{:else if event.type === "m.room.message" && !event.isRedacted}
+				  <Message
+						{event}
+						{shiftKey}
+						header={shouldSplit(event, $slice[index - 1]) ? true : null}
+					/>
+				{/if}
 			</div>
-			{#if i < $slice.length - 1 && shouldUnread(event)}
-				<Unread unpad={shouldSplit($slice[i + 1], event) ? true : null} />
+			{#if index < $slice.length - 1 && shouldUnread(event)}
+				<Unread unpad={shouldSplit($slice[index + 1], event) ? true : null} />
 			{/if}
-		{/each}
-		{#if $upload}
-	  <Upload upload={$upload} />
-		{/if}
-		{#if atBottom}
-		<div class="spacer" ></div>
-		{:else}
-		<div class="tall"><Placeholder /></div>
-		{/if}
-	</div>
+		</div>
+		<div slot="placeholder-end" class="tall"><Placeholder /></div>
+		<div slot="bottom" class="spacer">
+		{#if $upload}<Upload upload={$upload} />{/if}
+		</div>
+	</Scroller>
 </div>
 <svelte:window on:resize={refocus} on:keydown={handleKeyPress} on:keyup={handleKeyPress} />

@@ -2,7 +2,7 @@
 import Input from "../../atoms/Input.svelte";
 import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
-
+// export let space; // todo
 let focusedSpace = state.focusedSpace;
 let space = actions.rooms.get($focusedSpace);
 </script>

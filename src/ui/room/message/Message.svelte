@@ -15,15 +15,16 @@ function unwrapEdits(event) {
   return event;
 }
 
+// amazing logic
 function getToolbar(event, shift = false) {
   if (event.isSending) return [{ name: "Cancel", icon: "x", clicked: todo }];
   let toolbar = [];
   const fromMe = event.sender === state.client.getUserId();
   if (!shift) toolbar.push({ name: "Add Reaction", icon: "+", clicked: todo });
   if (fromMe && !shift) toolbar.push({ name: "Edit", icon: "_", clicked: todo });
+  if (shift) toolbar.push({ name: "View Source", icon: "!", clicked: (ev) => state.popup.set({ id: "source", event: ev }) });
   if (!fromMe || shift) toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => state.roomState.reply.set(unwrapEdits(ev)) });
   if (shift) {
-    toolbar.push({ name: "View Source", icon: "!", clicked: (ev) => state.popup.set({ id: "source", event: ev }) });
     toolbar.push({ name: "Delete", icon: "x", clicked: (ev) => { state.client.redactEvent(ev.roomId, ev.eventId) }});
   } else {
     toolbar.push({ name: "More", icon: "\u22ee", todo });
@@ -38,8 +39,7 @@ function getReply(content) {
 <style>
 .message {
   display: flex;
-  padding: 2px 72px;
-  margin-top: 0;
+  padding: 2px 72px 4px;
   position: relative;
   color: var(--fg-content);
   user-select: text;
@@ -47,12 +47,6 @@ function getReply(content) {
 
 .message:hover {
   background: rgba(4,4,5,0.07);
-}
-
-.header {
-  margin-top: 14px;
-  padding-top: 2px;
-  padding-bottom: 2px;
 }
 
 .content {
@@ -113,15 +107,15 @@ time {
   display: block;
 }
 </style>
-<div class="message" class:header>
+<div class="message">
   <div class="side">
-    {#if getReply(event.content)}<br>{/if}
+    {#if getReply(event.content)}<div style="height: 14px"></div>{/if}
     {#if header}
     <img
       class="avatar"
       alt="pfp for {getDisplayName(event.sender)}"
       src={missingAvs.has(event.sender) ? defaultAvatar : getAvatar(event.sender, event.roomId)}
-      on:error={(e) => { console.log("missing av"); missingAvs.add(event.sender); e.target.src = defaultAvatar }}
+      on:error={(e) => { missingAvs.add(event.sender); e.target.src = defaultAvatar }}
     />
     {:else}
     <time datetime={event.date.toISOString()}>{formatTime(event.date)}</time>

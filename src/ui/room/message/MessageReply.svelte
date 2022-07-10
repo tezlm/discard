@@ -79,7 +79,7 @@ let eventPromise = state.timeline.find(i => i.eventId === eventId) ?? state.clie
   <img class="avatar" src={getAvatar(event.sender)} /><span class="author">{getDisplayName(event.sender)}</span>
   <div class="content" on:click={() => actions.slice.jump(roomId, eventId)}>
     {#if event.content.format === "org.matrix.custom.html"}
-      <div style="pointer-events:none">{@html parseHtml(event.content.formatted_body).split(/<br|\r?\n/)[0]}</div>
+      <div style="pointer-events:none">{@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).split(/<br|\r?\n/)[0]}</div>
     {:else}
       {event.content.body.split(/\r?\n/)[0]}
     {/if}

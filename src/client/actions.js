@@ -30,19 +30,29 @@ function formatEvent(ev) {
 
 // TODO: switch over to custom room type
 function formatRoom(room) {
+  const getState = (event) => room?.currentState.getStateEvents(event)?.[0]?.getContent();
+  
   function getType() {
     if (room.getMyMembership() === "invite") return "invite";
     if (room.isSpaceRoom()) return "space";
     // TODO: dm room
     return "room";    
   }
-  
+    
   return {
     name:       room.name,
-    topic:      room?.currentState.getStateEvents("m.room.topic")[0]?.getContent().topic ?? null,
+    topic:      getState("m.room.topic")?.topic ?? null,
     avatar:     room.getAvatarUrl(state.client.baseUrl),
     type:       getType(),
     roomId:     room.roomId,
+    power:      getState("m.room.power_levels") ?? null,
+    tombstone:  getState("m.room.tombstone") ?? null,
+
+    getMembers(membership) {
+      return room[membership ? "getMembersWithMembership" : "getMembers"](membership)
+        .sort((a, b) => a.displayName > b.displayName ? -1 : 1)
+        .sort((a, b) => a.powerLevel > b.powerLevel ? -1 : 1);
+    },
     
     // compat for now
     hasUserReadEvent: (user, ev) => room.hasUserReadEvent(user, ev),
@@ -150,6 +160,7 @@ export default {
       client.on("Room.timeline", (event, _, toBeginning) => {
         if (!toBeginning) actions.rooms.update();
         if (!shouldHandle(event)) return;
+        if (event.isState()) state.focusedRoom.set(actions.rooms.get(state.focusedRoomId));
         const atEnd = actions.slice.isAtEnd();
         actions.timeline.add(event, toBeginning);
 
@@ -348,6 +359,8 @@ export default {
       const newStart = Math.max(startIndex - limit, 0);
       const newEnd = Math.min(newStart + eventCount, state.timeline.length - 1);
        
+      console.log(`now viewing [${newStart}..${newEnd}] of ${state.timeline.length}`);
+      
       state.sliceStart = state.timeline[newStart].eventId;
       state.sliceEnd = state.timeline[newEnd].eventId;
       state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
@@ -360,20 +373,33 @@ export default {
       if (endIndex < 0) throw "this shouldn't happen";
       
       const eventCount = 100;
+      // const newStart = Math.min(Math.max(startIndex + limit, 0), state.timeline.length - 1);
       const newStart = Math.max(startIndex + limit, 0);
       const newEnd = Math.min(newStart + eventCount, state.timeline.length - 1);
+      
+      console.log(`now viewing [${newStart}..${newEnd}] of ${state.timeline.length}`);
       
       state.sliceStart = state.timeline[newStart].eventId;
       state.sliceEnd = state.timeline[newEnd].eventId;
       state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
       state.slice.set(state.sliceRef);
     },
-    async jump(roomId, eventId) {
-      state.roomState.focused.set(eventId);
-      console.log("focused event ", eventId, "in room", roomId)
+    async jump(_roomId, eventId) {
+      console.log("jump to ", eventId)
+      const index = state.timeline.findIndex(i => i.eventId === eventId);
       
-      // TODO: actually finish this
-      // if (!state.timeline.find(i => i.eventId === state.sliceEnd)) {
+      if (!state.sliceRef.find(i => i.eventId === eventId)) {
+        if (index === -1) return; // TODO: actually finish this
+        
+        const context = 50;
+        const newStart = Math.max(index - context, 0);
+        const newEnd = Math.min(index + context, state.timeline.length - 1);
+        
+        state.sliceStart = state.timeline[newStart].eventId;
+        state.sliceEnd = state.timeline[newEnd].eventId;
+        state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
+        state.slice.set(state.sliceRef);
+        
         // state.sliceStart = eventId;
         // state.sliceEnd = eventId;
         // console.log(await state.client.fetchRoomEvent(roomId, eventId));
@@ -385,7 +411,9 @@ export default {
         // state.sliceEnd = state.timeline[newEnd].eventId;
         // state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
         // state.slice.set(state.sliceRef);
-      // }
+      }
+      
+      state.roomState.focused.set(eventId);
     },
   },
 };
