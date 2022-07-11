@@ -209,7 +209,7 @@ pre {
 <Popup>
   <h2 slot="header">Upload file</h2>
   <div slot="content">
-    <div style:margin-bottom="1em" style:margin-top="-8px" >do you want to upload this file? <span style="color: var(--fg-muted)">({formatSize($current.file.size)})</span></div>
+    <div style:margin-bottom="1em" style:margin-top="-8px" >do you want to upload {$current.file.name || "this file"}? <span style="color: var(--fg-muted)">({formatSize($current.file.size)})</span></div>
     {#if $current.file.type.startsWith("image")}
     <img src={URL.createObjectURL($current.file)} alt={$current.file.name} style="max-width: 440px; max-height: 400px; border-radius: 3px; margin: 0 auto; display: block" />
     {/if}

@@ -12,6 +12,7 @@ let room = state.focusedRoom;
 	flex-direction: column;
   width: 100%;
   background: var(--bg-content);
+	overflow: hidden;
   z-index: 1;
 }
 </style>

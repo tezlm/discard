@@ -9,6 +9,7 @@ function getDefaultRoomState() {
     input: "",
     rows: 1,
     reply: null,
+    edit: null,
     focused: null,
     upload: null,
     typing: new Set(),
@@ -37,7 +38,18 @@ function formatRoom(room) {
     if (room.getMyMembership() === "invite") return "invite";
     if (room.isSpaceRoom()) return "space";
     // TODO: dm room
-    return "room";    
+    return "room";
+  }
+  
+  function getPower() {
+    const power = getState("m.room.power_levels") ?? { state_default: 0 };
+    power.me = power.users?.[state.client.getUserId()] ?? power.users_default ?? 0;
+    return {
+      ...power,
+      me: power.users?.[state.client.getUserId()] ?? power.users_default ?? 0,
+      getEvent: (name) => power.events?.[name] ?? power.events_default ?? 0,
+      getState: (name) => power.state?.[name] ?? power.state_default ?? 50,
+    }
   }
     
   return {
@@ -46,7 +58,7 @@ function formatRoom(room) {
     avatar:     room.getAvatarUrl(state.client.baseUrl),
     type:       getType(),
     roomId:     room.roomId,
-    power:      getState("m.room.power_levels") ?? null,
+    power:      getPower(),
     tombstone:  getState("m.room.tombstone") ?? null,
 
     getMembers(membership) {
@@ -323,10 +335,12 @@ export default {
         const id = event.getRelation()?.event_id;
         const index = state.timeline.findIndex(i => i.eventId === id);
         if (index < 0) return;
+        const original = state.timeline[index];
         state.timeline[index] = {
           ...formatEvent(event),
-          content: { ...state.timeline[index].content, ...event.getContent()["m.new_content"] } ?? {},
-          original: state.timeline[index],
+          // eventId: original.eventId,
+          content: { ...original.content, ...event.getContent()["m.new_content"] },
+          original,
         };
       } else {
         timeline[toBeginning ? "unshift" : "push"](formatEvent(event));      

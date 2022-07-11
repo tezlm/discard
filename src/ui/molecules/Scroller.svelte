@@ -5,14 +5,21 @@ export let scrollTop, scrollMax;
 export let items, indexKey;
 export let margin = 400;
 export let direction = "down";
+export let scrollEl;
 let debounce;
-let contentEl, scrollEl;
-let atItemsTop = direction === "up";
-let atItemsBottom = direction === "down";
+let contentEl;
+let atItemsTop, atItemsBottom;
+
+export function reset() {
+  atItemsTop = direction === "up";
+  atItemsBottom = direction === "down";
+  if (direction === "down") {
+    queueMicrotask(() => scrollEl.scrollTop = scrollEl.scrollHeight);
+  }
+}
 
 export function scrollTo(pos) {
-  if (!scrollEl) return;
-  scrollEl.scrollTop = pos === -1 ? scrollEl.scrollHeight : pos;
+  if (scrollEl) scrollEl.scrollTop = pos === -1 ? scrollEl.scrollHeight : pos;
 }
 
 function handleScroll() {
@@ -22,7 +29,7 @@ function handleScroll() {
   debounce = setTimeout(paginate, 30);
 }
 
-// TODO: pagination sometimes jumps around
+// FIXME: pagination sometimes jumps around
 async function paginate() {
   console.log("paginate")
 
@@ -45,9 +52,8 @@ async function paginate() {
 }
 
 queueMicrotask(() => {
-  if (direction === "down") {
-    scrollEl.scrollTop = scrollEl.scrollHeight;
-  }
+  reset();
+  queueMicrotask(paginate);
 });
 </script>
 <style>
@@ -71,11 +77,13 @@ queueMicrotask(() => {
   {:else}
   <slot name="placeholder-start" />
   {/if}
+  
   <div class="items" bind:this={contentEl}>
   {#each items as item, i (item[indexKey])}
   <slot data={item} index={i} />
   {/each}
   </div>
+  
   {#if atItemsBottom}
   <slot name="bottom" />
   {:else}

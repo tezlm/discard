@@ -15,12 +15,11 @@ export default {
   focusedRoomId: null,
   focusedSpace: writable(null),
   
-  // messages
+  // events
+  events: new Map(), // coming soon...
   roomStates: new Map(),
   roomState: null,
   
-  // maybe move timeline stuff into roomState?
-
   // timeline
   timeline: [],
   sliceStart: null,

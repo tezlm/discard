@@ -1,6 +1,5 @@
 <script>
-// TODO: split out editor from input (for edits)
-// TODO: refactor, this code is a mess
+// TODO: split out most of this into RoomFooter, make RoomInput just the input
 import Typing from "../atoms/Typing.svelte";
 import { marked } from "marked";
 import { getDisplayName } from "../../util/events.js";
@@ -28,6 +27,8 @@ async function handleKeyDown(e) {
     } else {
       state.client.sendReadReceipt($room.timeline[$room.timeline.length - 1]);  
     }
+  } if (e.key === "ArrowUp") {
+    // TODO: get last event by me from slice, set as edit
   }
 }
 
@@ -54,6 +55,7 @@ async function handlePaste(e) {
 
 async function upload(file) {
   const status = { file, progress: 0, cancel: todo };
+  const roomId = $room.roomId;
   fileUpload.set(status);
   const url = await state.client.uploadContent(file, {
     progressHandler({ loaded, total }) {
@@ -75,7 +77,7 @@ async function upload(file) {
       size: file.size,
       ...(type === "m.image" ? await getSize(file) : {}),
     }
-  });
+  }, roomId);
 
   function getSize(file) {
     return new Promise(res => {
@@ -95,7 +97,7 @@ async function upload(file) {
   }
 }
 
-async function sendMessage(content) {
+async function sendMessage(content, roomId = $room.roomId) {
   if ($reply) {
     content["m.relates_to"] = {};
     content["m.relates_to"]["m.in_reply_to"] = {};
@@ -103,7 +105,7 @@ async function sendMessage(content) {
     reply.set(null);
   }
 
-  await state.client.sendEvent($room.roomId, null, "m.room.message", content);
+  await state.client.sendEvent(roomId, null, "m.room.message", content);
 
   // const { event_id } = await state.client.sendEvent($room.roomId, null, "m.room.message", content);
   // state.client.sendReadReceipt($room.timeline.find(i => i.getId() === event_id)); // FIXME: flash of unread on message send
@@ -119,9 +121,16 @@ onDestroy(reply.subscribe(() => queueMicrotask(() => textarea?.focus())));
 
 .input {
   display: flex;
+  align-items: center;
+  min-height: 44px;
   padding: 0 16px;
   border-radius: 8px;
   background: #40444b;
+}
+
+.input.disabled {
+  background: var(--bg-spaces);
+  cursor: not-allowed;
 }
 
 .upload {
@@ -214,13 +223,18 @@ textarea::placeholder {
     </div>
   </div>
   {/if}
+  {#if $room.tombstone}
+  <div class="input disabled">{$room.tombstone?.body ?? "This room has been replaced"}</div>
+  {:else if $room.power.getEvent("m.room.message") > $room.power.me}
+  <div class="input disabled">You can't send messages here</div>
+  {:else}
   <div class="input">
     <div class="upload">
       <div class="upload-button"></div>
     </div>
     <textarea
-      rows={$rows}
       placeholder={`Message ${$room.name}`}
+      rows={$rows}
       bind:this={textarea}
       bind:value={$input}
       on:input={handleInput}
@@ -228,6 +242,7 @@ textarea::placeholder {
       on:paste={handlePaste}
     ></textarea>
   </div>
+  {/if}
   <div class="typing">
     {#if $typing.size}
     <Typing users={[...$typing.values()].map(i => getDisplayName(i))} />
