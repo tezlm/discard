@@ -61,6 +61,10 @@ function formatSize(size) {
   filter: grayscale(0);
 }
 
+.emote {
+  font-style: italic;
+}
+
 img, video, audio {
   display: block;
   border-radius: 3px;
@@ -126,7 +130,7 @@ img {
 </style>
 <div class:redacted class:sending style={type === "m.image" || type === "m.video" ? dimensions : ""}>
   {#if type === "m.image"}
-  <img src={client.mxcUrlToHttp(content.url)} alt={content.body} style={dimensions} on:click={() => state.popup.set({ id: "attachment", url: client.mxcUrlToHttp(content.url) })} />
+  <img src={client.mxcUrlToHttp(content.url) + "/" + content.body} alt={content.body} style={dimensions} on:click={() => state.popup.set({ id: "attachment", url: client.mxcUrlToHttp(content.url) + "/" + content.body })} />
   {:else if type === "m.video"}
   <video controls src={client.mxcUrlToHttp(content.url)} alt={content.body} style={dimensions} />
   {:else if type === "m.audio"}
@@ -140,14 +144,16 @@ img {
     </div>
   </div>
   {:else if content.format === "org.matrix.custom.html"}
-  <div class="text">
+  <div class="text" class:emote={type === "m.emote"}>
+    {#if type === "m.emote"}*{/if}
     {@html parseHtml(content.formatted_body.trim()).trim()}
     {#if edited}
     <span class="edited">(edited)</span>
     {/if}
   </div>
   {:else}
-  <div class="text">
+  <div class="text" class:emote={type === "m.emote"}>
+    {#if type === "m.emote"}*{/if}
     {@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"), { linkify: true })}
     {#if edited}
     <span class="edited">(edited)</span>

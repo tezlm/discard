@@ -21,13 +21,13 @@ function getToolbar(event, shift = false) {
   let toolbar = [];
   const fromMe = event.sender === state.client.getUserId();
   if (!shift) toolbar.push({ name: "Add Reaction", icon: "+", clicked: todo });
-  if (fromMe && !shift) toolbar.push({ name: "Edit", icon: "_", clicked: todo });
+  if (fromMe && !shift) toolbar.push({ name: "Edit", icon: "_", clicked: (ev) => state.roomState.edit.set(unwrapEdits(ev).eventId) });
   if (shift) toolbar.push({ name: "View Source", icon: "!", clicked: (ev) => state.popup.set({ id: "source", event: ev }) });
   if (!fromMe || shift) toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => state.roomState.reply.set(unwrapEdits(ev)) });
   if (shift) {
     toolbar.push({ name: "Delete", icon: "x", clicked: (ev) => { state.client.redactEvent(ev.roomId, ev.eventId) }});
   } else {
-    toolbar.push({ name: "More", icon: "\u22ee", todo });
+    toolbar.push({ name: "More", icon: "\u22ee", clicked: todo });
   }
   return toolbar;
 }
@@ -62,7 +62,8 @@ function getReply(content) {
 	font-weight: 500;
 	cursor: pointer;
   margin-right: 0.25rem;
-  min-height: 22px;
+  display: inline-block;
+  height: 22px;
 }
 
 .author:hover {
@@ -109,7 +110,7 @@ time {
 </style>
 <div class="message">
   <div class="side">
-    {#if getReply(event.content)}<div style="height: 14px"></div>{/if}
+    {#if getReply(event.content)}<div style="height: 16px"></div>{/if}
     {#if header}
     <img
       class="avatar"

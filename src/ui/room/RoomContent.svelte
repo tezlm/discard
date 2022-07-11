@@ -1,38 +1,42 @@
 <script>
 import { onDestroy } from "svelte";
 import Scroller from '../molecules/Scroller.svelte';
-import Unread from './timeline/Unread.svelte';
+import Divider from './timeline/Divider.svelte';
 import Upload from './timeline/Upload.svelte';
 import Create from './timeline/Create.svelte';
 import Placeholder from './timeline/Placeholder.svelte';
 import Message from './message/Message.svelte';
 let slice = state.slice;
-let { focused, reply, upload } = state.roomState;
+let { focused, reply, edit, upload } = state.roomState;
 let shiftKey = false;
-let scrollTop, scrollMax, scrollTo;
+let scrollTop, scrollMax, scrollTo, reset;
 
-function shouldSplit(ev, prev) {
+function shouldSplit(prev, ev) {
 	if (!prev) return true;
 	if (prev.type !== "m.room.message") return true;
 	if (prev.sender !== ev.sender) return true;
 	if (ev.content["m.relates_to"]?.["m.in_reply_to"]) return true;
-	if (ev.date - prev.date > 1000 * 60 * 5) return true;
+	if (ev.date - prev.date > 1000 * 60 * 10) return true;
+	if (ev.date.getDay() !== prev.date.getDay()) return true;
 	return false;
 }
 
-function shouldUnread(ev) {
+function dividerProps(prev, ev) {
 	const room = state.client.getRoom(ev.roomId);
 	const user = state.client.getUserId();
-	return room.getEventReadUpTo(user) === ev.eventId;
+	return {
+		unpad: shouldSplit(prev, ev),
+		unread: room.getEventReadUpTo(user) === prev.eventId,
+		newdate: prev.date.getDay() !== ev.date.getDay() ? ev.date : null,
+	};
 }
 
-const atBottom = () => $slice.at(-1)?.eventId === state.timeline.at(-1)?.eventId;
+function atBottom() {
+	return $slice.at(-1)?.eventId === state.timeline.at(-1)?.eventId;
+}
 
 async function fetchBackwards() {
-	// const topChild = scroller.children[1];
-	// const topEvent = topChild.dataset.eventId;
 	await actions.slice.backwards();
-	// if ($slice[0]?.type === "m.room.create" || $slice[0]?.eventId === topEvent) return true;
 	return [$slice[0]?.type === "m.room.create", atBottom()];
 }
 
@@ -45,10 +49,13 @@ function refocus() {
 	if (scrollTo && scrollTop === scrollMax) queueMicrotask(() => scrollTo(-1));
 }
 
-function handleKeyPress(e) {
-  if (e.key === "Shift") shiftKey = e.type === "keydown";
+function checkShift(e) {
+	if (e.type === "keydown") return shiftKey = e.key === "Shift";
+	if (e.type === "keyup") return shiftKey = e.key !== "Shift";
+  shiftKey = e.shiftKey;
 }
 
+onDestroy(state.focusedRoom.subscribe(() => reset && reset()));
 onDestroy(slice.subscribe(refocus));
 onDestroy(reply.subscribe(refocus));
 onDestroy(focused.subscribe(() => {
@@ -94,6 +101,13 @@ onDestroy(focused.subscribe(() => {
 	background: var(--event-focus-bg);
 }
 
+/* actually edit *
+.edit {
+	position: relative;
+	background: var(--event-ping-bg);
+}
+*/
+
 .focused {
 	position: relative;
 }
@@ -129,20 +143,21 @@ onDestroy(focused.subscribe(() => {
 	<Scroller
 		items={$slice}
 		indexKey="eventId"
-		margin={1200}
+		margin={800}
 		bind:scrollTop={scrollTop}
 		bind:scrollMax={scrollMax}
 		bind:scrollTo={scrollTo}
+		bind:reset={reset}
 		let:data={event}
 		let:index={index}
 		{fetchBackwards}
 		{fetchForwards}
 	>
-		<div slot="top"></div>
+		<div slot="top" style="margin-top: auto"></div>
 		<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
 		<div>
 			<div
-				class:header={shouldSplit(event, $slice[index - 1])}
+				class:header={shouldSplit($slice[index - 1], event)}
 				class:ping={event.isPing}
 				class:reply={$reply?.eventId === event.eventId}
 				class:focused={$focused === event.eventId}
@@ -154,12 +169,12 @@ onDestroy(focused.subscribe(() => {
 				  <Message
 						{event}
 						{shiftKey}
-						header={shouldSplit(event, $slice[index - 1]) ? true : null}
+						header={shouldSplit($slice[index - 1], event) ? true : null}
 					/>
 				{/if}
 			</div>
-			{#if index < $slice.length - 1 && shouldUnread(event)}
-				<Unread unpad={shouldSplit($slice[index + 1], event) ? true : null} />
+			{#if index < $slice.length - 1}
+				<Divider {...dividerProps(event, $slice[index + 1])} />
 			{/if}
 		</div>
 		<div slot="placeholder-end" class="tall"><Placeholder /></div>
@@ -168,4 +183,4 @@ onDestroy(focused.subscribe(() => {
 		</div>
 	</Scroller>
 </div>
-<svelte:window on:resize={refocus} on:keydown={handleKeyPress} on:keyup={handleKeyPress} />
+<svelte:window on:resize={refocus} on:keydown={checkShift} on:keyup={checkShift} on:mousemove={checkShift} />
