@@ -28,28 +28,6 @@ function fetchForwards() {
 }
 </script>
 <style>
-.typing {
-  display: flex;
-  align-items: center;
-  padding-left: 2px;
-}
-
-.typing > .dot {
-  height: 7px;
-  width: 7px;
-  border-radius: 50%;
-  margin-right: 4px;
-  background: var(--fg-notice);
-  animation: typing 1.5s infinite;
-}
-
-@keyframes typing {
-  0% { transform: scale(1); opacity: .5 }
-  30% { transform: scale(1.2); opacity: 1 }
-  60% { transform: scale(1); opacity: .5 }
-  100% { transform: scale(1); opacity: .5 }
-}
-
 .selector {
   display: grid;
   grid-template-columns: 48px auto;
@@ -120,37 +98,6 @@ function fetchForwards() {
 }
 </style>
 <p>testbed for random stuff</p>
-<br>
-<div class="typing">
-  <div class="dot"></div>
-  <div class="dot" style="animation-delay: 0.2s"></div>
-  <div class="dot" style="animation-delay: 0.4s; margin-right: 9px"></div>
-  <div><b>Foo</b> is typing...</div>
-</div>
-<div class="typing">
-  <div class="dot"></div>
-  <div class="dot" style="animation-delay: 0.2s"></div>
-  <div class="dot" style="animation-delay: 0.4s; margin-right: 9px"></div>
-  <div><b>Foo</b> and <b>Bar</b> are typing...</div>
-</div>
-<div class="typing">
-  <div class="dot"></div>
-  <div class="dot" style="animation-delay: 0.2s"></div>
-  <div class="dot" style="animation-delay: 0.4s; margin-right: 9px"></div>
-  <div><b>Foo</b>, <b>Bar</b>, and <b>Baz</b> are typing...</div>
-</div>
-<div class="typing">
-  <div class="dot"></div>
-  <div class="dot" style="animation-delay: 0.2s"></div>
-  <div class="dot" style="animation-delay: 0.4s; margin-right: 9px"></div>
-  <div>Several people are typing...</div>
-</div>
-<div class="typing">
-  <div class="dot"></div>
-  <div class="dot" style="animation-delay: 0.2s"></div>
-  <div class="dot" style="animation-delay: 0.4s; margin-right: 9px"></div>
-  <div><b>Foo</b>, <b>Bar</b>, <b>Baz</b>, <b>Qux</b>, and 4 more are typing...</div>
-</div>
 <br>
 <div class="selector">
   <div class="header">

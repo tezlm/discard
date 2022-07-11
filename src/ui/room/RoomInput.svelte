@@ -1,12 +1,13 @@
 <script>
 // TODO: split out editor from input (for edits)
 // TODO: refactor, this code is a mess
+import Typing from "../atoms/Typing.svelte";
 import { marked } from "marked";
 import { getDisplayName } from "../../util/events.js";
 import { onDestroy } from "svelte";
 let textarea;
 let room = state.focusedRoom;
-let { reply, input, rows, upload: fileUpload } = state.roomState;
+let { reply, input, rows, upload: fileUpload, typing } = state.roomState;
 
 async function handleKeyDown(e) {
   if (e.key === "Enter" && !e.shiftKey && $input.trim()) {
@@ -112,10 +113,13 @@ onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus
 onDestroy(reply.subscribe(() => queueMicrotask(() => textarea?.focus())));
 </script>
 <style>
+.container {
+  padding: 0 16px;
+}
+
 .input {
   display: flex;
   padding: 0 16px;
-  margin: 0 16px 8px;
   border-radius: 8px;
   background: #40444b;
 }
@@ -157,7 +161,6 @@ textarea::placeholder {
   justify-content: space-between;
   background: var(--bg-rooms-members);
   padding: .5rem 16px;
-  margin: 0 16px;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   color: var(--fg-interactive);
@@ -194,26 +197,40 @@ textarea::placeholder {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.typing {
+  height: 24px;
+  padding-left: 12px;
+  display: flex;
+  align-content: center;
+}
 </style>
-{#if $reply}
-<div class="reply" on:click={() => actions.slice.jump($reply.roomId, $reply.eventId)}>
-  <div>Replying to <b>{getDisplayName($reply.sender)}</b></div>
-  <div class="close" on:click={e => { e.stopPropagation(); reply.set(null) }}>
-      <div class="icon">&#xd7</div>
+<div class="container">
+  {#if $reply}
+  <div class="reply" on:click={() => actions.slice.jump($reply.roomId, $reply.eventId)}>
+    <div>Replying to <b>{getDisplayName($reply.sender)}</b></div>
+    <div class="close" on:click={e => { e.stopPropagation(); reply.set(null) }}>
+        <div class="icon">&#xd7</div>
+    </div>
   </div>
-</div>
-{/if}
-<div class="input">
-  <div class="upload">
-    <div class="upload-button"></div>
+  {/if}
+  <div class="input">
+    <div class="upload">
+      <div class="upload-button"></div>
+    </div>
+    <textarea
+      rows={$rows}
+      placeholder={`Message ${$room.name}`}
+      bind:this={textarea}
+      bind:value={$input}
+      on:input={handleInput}
+      on:keydown={handleKeyDown}
+      on:paste={handlePaste}
+    ></textarea>
   </div>
-  <textarea
-    rows={$rows}
-    placeholder={`Message ${$room.name}`}
-    bind:this={textarea}
-    bind:value={$input}
-    on:input={handleInput}
-    on:keydown={handleKeyDown}
-    on:paste={handlePaste}
-  ></textarea>
+  <div class="typing">
+    {#if $typing.size}
+    <Typing users={[...$typing.values()].map(i => getDisplayName(i))} />
+    {/if}
+  </div>
 </div>
