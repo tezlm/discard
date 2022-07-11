@@ -12,7 +12,6 @@ let room = state.focusedRoom;
 	flex-direction: column;
   width: 100%;
   background: var(--bg-content);
-  padding-bottom: 1em;
   z-index: 1;
 }
 </style>

@@ -1,5 +1,5 @@
 <script>
-import { onDestroy, onMount } from "svelte";
+import { onDestroy } from "svelte";
 import Scroller from '../molecules/Scroller.svelte';
 import Unread from './timeline/Unread.svelte';
 import Upload from './timeline/Upload.svelte';
@@ -9,6 +9,7 @@ import Message from './message/Message.svelte';
 let slice = state.slice;
 let { focused, reply, upload } = state.roomState;
 let shiftKey = false;
+let scrollTop, scrollMax, scrollTo;
 
 function shouldSplit(ev, prev) {
 	if (!prev) return true;
@@ -41,21 +42,14 @@ async function fetchForwards() {
 }
 
 function refocus() {
-	console.log("refocus")
-	// scroller && atEnd && (scroller.scrollTop = scroller.scrollHeight)
-	// queueMicrotask(() => scroller && atEnd && (scroller.scrollTop = scroller.scrollHeight));
-}
-
-function reset() {
+	if (scrollTo && scrollTop === scrollMax) queueMicrotask(() => scrollTo(-1));
 }
 
 function handleKeyPress(e) {
   if (e.key === "Shift") shiftKey = e.type === "keydown";
 }
 
-onMount(reset);
 onDestroy(slice.subscribe(refocus));
-onDestroy(state.focusedRoom.subscribe(reset));
 onDestroy(reply.subscribe(refocus));
 onDestroy(focused.subscribe(() => {
 	if (!$focused) return;
@@ -135,7 +129,10 @@ onDestroy(focused.subscribe(() => {
 	<Scroller
 		items={$slice}
 		indexKey="eventId"
-		margin={1000}
+		margin={1200}
+		bind:scrollTop={scrollTop}
+		bind:scrollMax={scrollMax}
+		bind:scrollTo={scrollTo}
 		let:data={event}
 		let:index={index}
 		{fetchBackwards}

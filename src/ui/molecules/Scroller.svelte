@@ -1,6 +1,7 @@
 <script>
 export let fetchBackwards = async () => {};
 export let fetchForwards = async () => {};
+export let scrollTop, scrollMax;
 export let items, indexKey;
 export let margin = 400;
 export let direction = "down";
@@ -9,12 +10,22 @@ let contentEl, scrollEl;
 let atItemsTop = direction === "up";
 let atItemsBottom = direction === "down";
 
-function handleScroll() {
-  clearTimeout(debounce);
-  debounce = setTimeout(paginate, 100);
+export function scrollTo(pos) {
+  if (!scrollEl) return;
+  scrollEl.scrollTop = pos === -1 ? scrollEl.scrollHeight : pos;
 }
 
+function handleScroll() {
+  scrollTop = scrollEl.scrollTop;
+  scrollMax = scrollEl.scrollHeight - scrollEl.offsetHeight;
+  clearTimeout(debounce);
+  debounce = setTimeout(paginate, 30);
+}
+
+// TODO: pagination sometimes jumps around
 async function paginate() {
+  console.log("paginate")
+
   const scrollTop = scrollEl.scrollTop;
   const scrollBottom = scrollEl.scrollHeight - scrollEl.offsetHeight - scrollTop;
   const atScrollTop = scrollTop < margin + contentEl.offsetTop;
@@ -24,19 +35,13 @@ async function paginate() {
     const childNode = contentEl.children[0];
     const scrollPos = childNode.offsetTop;
     [atItemsTop, atItemsBottom] = (await fetchBackwards() ?? [false, false]);
-    // scrollEl.scrollTop = scrollEl.scrollHeight;
-    scrollTo(scrollEl.scrollTop + childNode.offsetTop - scrollPos);
-    console.log(scrollEl.scrollTop + childNode.offsetTop - scrollPos, scrollEl.scrollTop, scrollEl.scrollHeight)
+    queueMicrotask(() => scrollEl.scrollTop = scrollTop + childNode.offsetTop - scrollPos);
   } else if (atScrollBottom && !atItemsBottom) {
+    const childNode = contentEl.children[contentEl.children.length - 1];
+    const scrollPos = childNode.offsetTop;
     [atItemsTop, atItemsBottom] = (await fetchForwards() ?? [false, false]);
+    scrollEl.scrollTop = scrollTop + childNode.offsetTop - scrollPos;
   }
-}
-
-// TODO: find a fix to underlying problem that makes me need to many queuemicrotasks
-// race condition?
-function scrollTo(pos) {
-  scrollEl?.scrollTo(0, pos);
-  queueMicrotask(() => scrollEl?.scrollTo(0, pos));
 }
 
 queueMicrotask(() => {

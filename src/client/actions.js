@@ -11,6 +11,7 @@ function getDefaultRoomState() {
     reply: null,
     focused: null,
     upload: null,
+    typing: new Set(),
   };
 }
 
@@ -203,6 +204,15 @@ export default {
         actions.rooms.update();
         state.slice.set(state.sliceRef);
       });
+      client.on("RoomMember.typing", (_, member) => {
+        const typing = state.roomStates.get(member.roomId)?.typing;
+        if (!typing) return;
+        typing[member.typing ? "add" : "delete"](member.userId);
+        
+        if (member.roomId === state.focusedRoomId) {
+          state.roomState.typing.set(typing);
+        }
+      });
       client.once("Session.logged_out", () => {
         state.scene.set("auth");
         state.popup.set({});
@@ -385,6 +395,7 @@ export default {
       state.slice.set(state.sliceRef);
     },
     async jump(_roomId, eventId) {
+      // TODO: add better jumping/context support
       console.log("jump to ", eventId)
       const index = state.timeline.findIndex(i => i.eventId === eventId);
       
