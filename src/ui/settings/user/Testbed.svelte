@@ -1,31 +1,5 @@
 <script>
 import Input from "../../atoms/Input.svelte";
-import Scroller from "../../molecules/Scroller.svelte";
-
-const items = [];
-for (let i = 0; i < 300; i++) {
-  items.push({ name: "item " + i, id: i });
-}
-
-let sliceStart = 200;
-let sliceEnd = 300;
-let slice = items.slice(-100);
-
-function fetchBackwards() {
-  if (sliceStart < 50) return;
-  sliceStart -= 50;
-  sliceEnd -= 50;
-  console.log("backwards")
-  slice = items.slice(sliceStart, sliceEnd);
-}
-
-function fetchForwards() {
-  if (sliceEnd > 250) return;
-  console.log("forwards")
-  sliceStart += 50;
-  sliceEnd += 50;
-  slice = items.slice(sliceStart, sliceEnd);
-}
 </script>
 <style>
 .selector {
@@ -120,9 +94,3 @@ function fetchForwards() {
   <div class="id">@username:example.com</div>
 </div>
 <br>
-<div style="height: 200px; background: var(--bg-rooms-members)">
-  <Scroller items={slice} indexKey="id" let:data={data} {fetchBackwards} {fetchForwards}>
-    <div slot="placeholder">loading</div>
-    <div>{data.name}</div>
-  </Scroller>
-</div>

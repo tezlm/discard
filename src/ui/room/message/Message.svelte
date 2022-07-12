@@ -1,6 +1,7 @@
 <script>
 import MessageReply from "./MessageReply.svelte";
 import MessageContent from "./MessageContent.svelte";
+import MessageReactions from "./MessageReactions.svelte";
 import MessageToolbar from "./MessageToolbar.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
 import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.js';
@@ -131,6 +132,7 @@ time {
     </div>
     {/if}
     <MessageContent {event} />
+    {#if event.reactions.size}<MessageReactions {event} />{/if}
   </div>
   <div class="toolbar">
     <MessageToolbar items={toolbar} {event} />

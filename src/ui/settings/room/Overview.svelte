@@ -1,8 +1,8 @@
 <script>
 import Input from "../../atoms/Input.svelte";
-import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
 export let room;
+console.log($room);
 </script>
 <style>
 .title {
@@ -28,22 +28,15 @@ export let room;
   margin-bottom: none;
   border-bottom: none;
 }
-
-.separator {
-  width: 202px;
-  height: 1px;
-  margin: 8px auto;
-  background: #4F545C7b;
-}
 </style>
 <div>
   <div class="section">
     <div class="title">Room Name</div>
-    <Input value={$room?.name ?? "error"} />
+    <Input value={$room?.name ?? "error"} placeholder="amazing-room" readonly={$room.power.me < $room.power.getState("m.room.name")} />
   </div>
   <div class="section">
     <div class="title">Room Topic</div>
-    <Textarea placeholder="what an amazing room" value={$room?.topic ?? ""} />
+    <Textarea value={$room?.topic ?? ""} placeholder="what an amazing room" readonly={$room.power.me < $room.power.getState("m.room.topic")} />
   </div>
   <div class="section">
     <div class="title">Developers</div>

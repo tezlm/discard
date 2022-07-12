@@ -31,6 +31,7 @@ function handleScroll() {
 
 // FIXME: pagination sometimes jumps around
 async function paginate() {
+  if (!contentEl || !contentEl.children[0]) return;
   console.log("paginate")
 
   const scrollTop = scrollEl.scrollTop;
@@ -79,7 +80,7 @@ queueMicrotask(() => {
   {/if}
   
   <div class="items" bind:this={contentEl}>
-  {#each items as item, i (item[indexKey])}
+  {#each items as item, i (item)}
   <slot data={item} index={i} />
   {/each}
   </div>

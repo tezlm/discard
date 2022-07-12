@@ -7,16 +7,14 @@ export let newdate;
 .divider {
   display: flex;
   align-items: center;
+  position: relative;
   margin-bottom: -2px;
   height: 0;
-}
-
-.unread {
-  padding: 8px 16px 8px 8px;
+  padding: 8px;
 }
 
 .newdate {
-  padding: 16px 8px;
+  padding: 24px 8px;
 }
 
 .unpad {
@@ -46,13 +44,15 @@ export let newdate;
 }
 
 .new {
+  position: absolute;
+  right: 8px;
   font-family: var(--font-display);
   font-size: 10px;
   text-transform: uppercase;
   background: var(--color-red);
   color: var(--color-content);
   border-radius: 2px;
-  }
+}
 </style>
 {#if unread || newdate}
 <div class="divider" class:unread class:newdate class:unpad>

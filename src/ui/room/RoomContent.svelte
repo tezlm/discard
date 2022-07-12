@@ -10,6 +10,7 @@ let slice = state.slice;
 let { focused, reply, edit, upload } = state.roomState;
 let shiftKey = false;
 let scrollTop, scrollMax, scrollTo, reset;
+const get = id => state.events.get(id); // TODO: this is just a shim for now to get things working. find a better way soon?
 
 function shouldSplit(prev, ev) {
 	if (!prev) return true;
@@ -32,12 +33,12 @@ function dividerProps(prev, ev) {
 }
 
 function atBottom() {
-	return $slice.at(-1)?.eventId === state.timeline.at(-1)?.eventId;
+	return $slice.at(-1) === state.timeline.at(-1);
 }
 
 async function fetchBackwards() {
 	await actions.slice.backwards();
-	return [$slice[0]?.type === "m.room.create", atBottom()];
+	return [get($slice[0])?.type === "m.room.create", atBottom()];
 }
 
 async function fetchForwards() {
@@ -51,7 +52,7 @@ function refocus() {
 
 function checkShift(e) {
 	if (e.type === "keydown") return shiftKey = e.key === "Shift";
-	if (e.type === "keyup") return shiftKey = e.key !== "Shift";
+	if (e.type === "keyup") return shiftKey = false;
   shiftKey = e.shiftKey;
 }
 
@@ -156,25 +157,27 @@ onDestroy(focused.subscribe(() => {
 		<div slot="top" style="margin-top: auto"></div>
 		<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
 		<div>
+			{#if !get(event).isRedacted}
 			<div
-				class:header={shouldSplit($slice[index - 1], event)}
-				class:ping={event.isPing}
-				class:reply={$reply?.eventId === event.eventId}
-				class:focused={$focused === event.eventId}
-				data-event-id={event.eventId}
+				class:header={shouldSplit(get($slice[index - 1]), get(event))}
+				class:ping={get(event).isPing}
+				class:reply={$reply?.eventId === event}
+				class:focused={$focused === event}
+				data-event-id={event}
 			>
-				{#if event.type === "m.room.create"}
-					<Create event={event} />
-				{:else if event.type === "m.room.message" && !event.isRedacted}
+				{#if get(event).type === "m.room.create"}
+					<Create event={get(event)} />
+				{:else if get(event).type === "m.room.message" && !get(event).isRedacted}
 				  <Message
-						{event}
 						{shiftKey}
-						header={shouldSplit($slice[index - 1], event) ? true : null}
+						event={get(event)}
+						header={shouldSplit(get($slice[index - 1]), get(event)) ? true : null}
 					/>
 				{/if}
 			</div>
 			{#if index < $slice.length - 1}
-				<Divider {...dividerProps(event, $slice[index + 1])} />
+				<Divider {...dividerProps(get(event), get($slice[index + 1]))} />
+			{/if}
 			{/if}
 		</div>
 		<div slot="placeholder-end" class="tall"><Placeholder /></div>
