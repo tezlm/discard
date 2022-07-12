@@ -4,20 +4,18 @@ import { parseHtml } from "../../../util/html.js";
 import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.js';
 export let roomId, eventId;
 let missingAvs = state.missingAvatars;
-let eventPromise = state.timeline.find(i => i.eventId === eventId) ?? state.client.fetchRoomEvent(roomId, eventId);
+let eventPromise = state.events.fetch(roomId, eventId);
 </script>
 <style>
 .reply {
   display: flex;
   align-items: center;
   position: relative;
-  bottom: 4px;
-
-  white-space: nowrap;
 
   font-size: 14px;
   height: 14px;
   color: var(--fg-light);
+  white-space: nowrap;
 }
 
 .reply::before {
@@ -27,7 +25,7 @@ let eventPromise = state.timeline.find(i => i.eventId === eventId) ?? state.clie
   border-top-left-radius: 6px;
   position: absolute;
   left: -38px;
-  top: 10px;
+  top: 6px;
   height: 8px;
   width: 30px;
 }
@@ -55,24 +53,33 @@ let eventPromise = state.timeline.find(i => i.eventId === eventId) ?? state.clie
   background: var(--bg-spaces);
 }
 
-.reply .content {
-  max-width: 600px;
+.content {
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
 }
 
-.reply .content:hover {
+.content:hover {
   color: var(--fg-notice);
 }
 
-.reply :global(h1),
-.reply :global(h2),
-.reply :global(h3),
-.reply :global(h4),
-.reply :global(h5),
-.reply :global(h6) {
+.content :global(a) {
+  pointer-events: none;
+}
+
+.content :global(h1),
+.content :global(h2),
+.content :global(h3),
+.content :global(h4),
+.content :global(h5),
+.content :global(h6) {
   font-size: 1em;
+}
+
+.content > :global(*) {
+  display: inline;
+  margin-left: 4px;
 }
 </style>
 {#await eventPromise}
@@ -88,7 +95,7 @@ let eventPromise = state.timeline.find(i => i.eventId === eventId) ?? state.clie
   <span class="author">{getDisplayName(event.sender)}</span>
   <div class="content" on:click={() => actions.slice.jump(roomId, eventId)}>
     {#if event.content.format === "org.matrix.custom.html"}
-      <div style="pointer-events:none">{@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n/g, " ")}</div>
+      {@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n|<br.*?>/g, " ")}
     {:else}
       {event.content.body.replace(/\n/g, " ")}
     {/if}

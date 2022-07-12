@@ -1,6 +1,7 @@
 <script>
 export let value = "";
 export let placeholder = "";
+export let readonly = false;
 
 function handleInput(e) {
   value = e.target.value;
@@ -15,9 +16,20 @@ textarea {
   border: none;
   border-radius: 3px;
   color: inherit;
-  background: #202225;
+  background: var(--bg-spaces);
   outline: none;
   resize: none;
 }
+
+.readonly {
+  background: var(--bg-rooms-members);
+}
 </style>
-<textarea {value} on:input={handleInput} placeholder={placeholder} rows=3 />
+<textarea
+  {value}
+  {readonly}
+  placeholder={placeholder}
+  rows=3
+  class:readonly
+  on:input={handleInput}
+/>

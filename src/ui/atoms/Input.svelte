@@ -4,6 +4,7 @@ export let value = "";
 export let placeholder = "";
 export let small = false;
 export let autofocus = false;
+export let readonly = false;
 export let submitted = () => {};
 
 function handleInput(e) {
@@ -27,7 +28,7 @@ input {
   border: none;
   border-radius: 3px;
   color: inherit;
-  background: #202225;
+  background: var(--bg-spaces);
   outline: none;
 }
 
@@ -36,13 +37,19 @@ input {
   font-size: 14px;
   padding: 16px 8px;
 }
+
+.readonly {
+  background: var(--bg-rooms-members);
+}
 </style>
 <input
   {type}
   {placeholder}
   {value}
   {autofocus}
+  {readonly}
   class:small
+  class:readonly
   on:input={handleInput}
   on:keydown={handleKeyDown}
 />

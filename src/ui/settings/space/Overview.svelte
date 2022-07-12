@@ -100,12 +100,12 @@ h1 {
     </div>
     <div class="name">
       <div class="title">Space Name</div>
-      <Input value={space.name} />
+      <Input value={space.name} placeholder="excellent-space" readonly={space.power.me < space.power.getState("m.room.name")} />
     </div>
   </div>
   <div class="section">
     <div class="title">Space Topic</div>
-    <Textarea placeholder="what an excellent space" value={space.topic ?? ""} />
+    <Textarea value={space.topic ?? ""} placeholder="what an excellent space" readonly={space.power.me < space.power.getState("m.room.topic")} />
   </div>
   <div class="section">
     <div class="title">Developers</div>

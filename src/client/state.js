@@ -1,6 +1,5 @@
 import { writable } from "svelte/store";
-
-global.writable = writable
+import Events from "./state/events.js";
 
 export default {
   client: null,
@@ -16,7 +15,8 @@ export default {
   focusedSpace: writable(null),
   
   // events
-  events: new Map(), // coming soon...
+  events: new Events(),
+  roomTimelines: new Map(),
   roomStates: new Map(),
   roomState: null,
   

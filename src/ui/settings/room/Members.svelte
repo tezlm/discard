@@ -1,7 +1,8 @@
 <script>
 import { getAvatar } from "../../../util/events.js";
 export let room;
-let members = $room.getMembers("join");
+let members = false;
+setTimeout(() => members = $room.getMembers("join"));
 
 function showPopup(member) {
   const event = member.events.member;
@@ -46,19 +47,21 @@ h1 {
 }
 </style>
 {#if room}
-<h1>{members.length || "No"} Member{members.length !== 1 ? "s" : ""}</h1>
-{#each members as member}
-<div class="member" on:click={() => showPopup(member)}>
-  <img class="avatar" src={getAvatar(member.userId)} alt="avatar for {member.rawDisplayName}"/>
-  <div class="name">
-    {member.rawDisplayName}
-    <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>
-  </div>
-  <div style="margin-left: auto;">{member.powerLevel}</div>
-</div>
-{:else}
-<p>what do i put here</p>
-{/each}
+  <h1>{members ? members.length || "No" : "Loading"} Member{members.length !== 1 ? "s" : ""}</h1>
+  {#if members}
+    {#each members as member}
+    <div class="member" on:click={() => showPopup(member)}>
+      <img class="avatar" src={getAvatar(member.userId)} alt="avatar for {member.rawDisplayName}"/>
+      <div class="name">
+        {member.rawDisplayName}
+        <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>
+      </div>
+      <div style="margin-left: auto;">{member.powerLevel}</div>
+    </div>
+    {:else}
+    <p>nobody's here!</p>
+    {/each}
+  {/if}
 {:else}
 <i>something really wrong happened, try again?</i>
 {/if}
