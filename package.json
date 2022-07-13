@@ -17,9 +17,9 @@
 		"vite": "^2.9.14"
 	},
 	"dependencies": {
+		"idb": "^7.0.2",
 		"linkifyjs": "^3.0.5",
 		"marked": "^4.0.17",
-		"matrix-js-sdk": "^18.1.0",
 		"sanitize-html": "^2.7.0"
 	}
 }
