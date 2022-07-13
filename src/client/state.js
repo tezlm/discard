@@ -2,7 +2,9 @@ import { writable } from "svelte/store";
 import Events from "./state/events.js";
 
 export default {
-  client: null,
+  client: null, // DEPRECATED: WILL NOT WORK
+  api: null,
+  syncer: null,
   scene: writable(null),
   popup: writable({}),
   

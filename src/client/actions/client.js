@@ -1,5 +1,6 @@
-import { Store } from "../matrix/store.js";
-import { Client } from "../matrix/client.js";
+// import { Store } from "../matrix/store.js";
+import Api from "../matrix/api.js";
+import Syncer from "../matrix/syncer.js";
 
 async function getStore() {
   const store = new Store();
@@ -17,19 +18,18 @@ export async function fetch() {
     return null;
   }
   
-  const client = new Client({
-    homeserver: "https://" + homeserver,
-    token: token,
-    userId: userId,
-    store: await getStore(),
-  });
-  client.start();
-  state.client = client;
+  const api = new Api("https://" + homeserver, token);
+  const syncer = new Syncer(api);
+  syncer.start();
+  
+  state.api = api;
+  state.syncer = syncer;
   state.scene.set("loading");
-  actions.client.listen(client);
+  actions.client.listen(syncer);
 }
 
 // login to the homeserver and create a new client
+// TODO: fix
 export async function login({ localpart, homeserver, password }) {
   const userId = `@${localpart}:${homeserver}`;
   const client = new Client({
@@ -59,6 +59,7 @@ export async function login({ localpart, homeserver, password }) {
   }
 }
 
+// TODO: FIX
 export async function logout() {
   state.client.logout();
   localStorage.removeItem("token");
@@ -67,6 +68,7 @@ export async function logout() {
   state.client = null;
 }
 
+// TODO: FIX
 export async function listen(client) {
   let synced = false;
 
