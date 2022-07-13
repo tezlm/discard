@@ -25,7 +25,7 @@ function getCopyText() {
 }
 
 function handleCopyClick() {
-	navigator.clipboard.writeText(client.getUserId());
+	navigator.clipboard.writeText(client.userId);
 	copyCount++;
 	copyText = getCopyText();
 }
@@ -107,14 +107,14 @@ onDestroy(() => copyEl.removeEventListener("mouseleave", resetCopy));
 <div class="offline">Offline!</div>
 {/if}
 <div class="user">
-	<img class="avatar" src={getAvatar(state.client.getUserId())} />
+	<img class="avatar" alt="your avatar" src={getAvatar(client.userId)} />
 	<div class="info" on:click={handleCopyClick} bind:this={copyEl}>
 		<Tooltip tip={copyText} color={copyCount > 0 ? "#3ba55d" : null}>
-			<div class="displayname">{getDisplayName(client.getUserId())}</div>
-			<div class="userid">{client.getUserId()}</div>
+			<div class="displayname">{getDisplayName(client.userId)}</div>
+			<div class="userid">{client.userId}</div>
 		</Tooltip>
 	</div>
 	<Tooltip tip="User Settings" style="height: 30px">
-		<img class="icon" src={settingsIcon} on:click={() => state.scene.set("user-settings")} />
+		<img class="icon" alt="settings icon" src={settingsIcon} on:click={() => state.scene.set("user-settings")} />
 	</Tooltip>
 </div>

@@ -133,6 +133,12 @@ export default {
         state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
         state.slice.set(state.sliceRef);
       }
+      
+      // update recent rooms
+      const recentIndex = state.recentRooms.findIndex(i => i.roomId === room.roomId);
+      if (recentIndex >= 0) state.recentRooms.splice(recentIndex, 1);
+      state.recentRooms.unshift(room);
+      if (state.recentRooms.length > 8) state.recentRooms.pop();
     },
     update() {
       const client = state.client;

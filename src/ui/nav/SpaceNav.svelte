@@ -114,7 +114,7 @@ function getClasses(space) {
     <Tooltip position="right" tip="Home">
       <img
         class={$focusedSpace ? "space" : "space selected"}
-        src={state.client.mxcUrlToHttp("mxc://celery.eu.org/Wm9T9Nnch8IUQsVaJAInkaoVsgCJlmGx")}
+        src={"https://celery.eu.org/_matrix/media/r0/download/celery.eu.org/Wm9T9Nnch8IUQsVaJAInkaoVsgCJlmGx"}
         on:click={() => actions.spaces.focus(null)}
       />
     </Tooltip>

@@ -28,7 +28,7 @@ h3 {
 </style>
 
 <h3>Encryption</h3>
-{#if state.client.isCryptoEnabled()}
+{#if false && state.client.isCryptoEnabled()}
 <p>This session is (verified/not verified) (todo)</p>
 {:else}
 <p>This session doesn't support end-to-end encryption</p>

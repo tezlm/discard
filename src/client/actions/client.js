@@ -1,16 +1,10 @@
-const sdk = globalThis.matrixcs;
+import { Store } from "../matrix/store.js";
+import { Client } from "../matrix/client.js";
 
-console.clear();
-
-export async function getStore() {
-  const idbStore = new sdk.IndexedDBStore({
-    indexedDB: indexedDB,
-    localStorage: localStorage,
-    dbName: "web-sync-store",
-    timelineSupport: true,
-  });
-  await idbStore.startup();
-  return idbStore;
+async function getStore() {
+  const store = new Store();
+  await store.open();
+  return store;
 }
 
 // try to fetch the current client
@@ -23,15 +17,13 @@ export async function fetch() {
     return null;
   }
   
-  const client = sdk.createClient({
-    baseUrl: "https://" + homeserver,
-    accessToken: token,
+  const client = new Client({
+    homeserver: "https://" + homeserver,
+    token: token,
     userId: userId,
-    store: await actions.client.getStore(),
-    useAuthorizationHeader: true,
-    timelineSupport: true,
+    store: await getStore(),
   });
-  client.startClient();
+  client.start();
   state.client = client;
   state.scene.set("loading");
   actions.client.listen(client);
@@ -40,19 +32,19 @@ export async function fetch() {
 // login to the homeserver and create a new client
 export async function login({ localpart, homeserver, password }) {
   const userId = `@${localpart}:${homeserver}`;
-  const client = sdk.createClient({
-    baseUrl: "https://" + homeserver,
-    store: await actions.client.getStore(),
-    useAuthorizationHeader: true,
+  const client = new Client({
+    homeserver: "https://" + homeserver,
+    userId: userId,
+    store: await getStore(),
   });
-  const data = { identifier: { type: "m.id.user", user: userId }, password };
 
   try {
-    const { access_token: token } = await client.login("m.login.password", data);
+    console.log("logging in")
+    const token = await client.login(userId, password);
     localStorage.setItem("homeserver", homeserver);
     localStorage.setItem("userid", userId);
     localStorage.setItem("token", token);
-    client.startClient();
+    client.start();
     state.client = client;
     state.scene.set("loading");
     actions.client.listen(client);
@@ -68,10 +60,8 @@ export async function login({ localpart, homeserver, password }) {
 }
 
 export async function logout() {
-  state.client.stopClient();
-  if (state.client.isLoggedIn()) state.client.logout();
+  state.client.logout();
   localStorage.removeItem("token");
-  await state.client.clearStores();
   state.scene.set("auth");
   state.popup.set({});
   state.client = null;
@@ -89,13 +79,13 @@ export async function listen(client) {
     return state.focusedRoomId && (event.getRoomId() === state.focusedRoomId);
   }
   
-  // update rooms
-  client.once("sync", (syncState) => {
-    if (syncState !== "PREPARED") return;
+  client.once("ready", () => {
     synced = true;
     updateAll();
     state.scene.set("chat");
   });
+  
+  // update rooms
   client.on("Room.name", () => synced && updateAll());
   client.on("Room", () => synced && updateAll());
   client.on("deleteRoom", () => synced && updateAll());
@@ -172,7 +162,7 @@ export async function listen(client) {
       state.roomState.typing.set(typing);
     }
   });
-  client.once("Session.logged_out", () => {
+  client.once("logout", () => {
     state.scene.set("auth");
     state.popup.set({});
     state.client = null;

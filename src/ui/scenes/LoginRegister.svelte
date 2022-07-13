@@ -10,7 +10,7 @@ function submit() {
 }
 
 async function handleSubmit(e) {
-  e.preventDefault();
+  e?.preventDefault();
   for (let input of document.querySelectorAll("input")) {
     if (!input.value) return input.focus();
   }
@@ -70,7 +70,7 @@ h5, .spacer {
       <h5>User Id</h5>
       <UserId bind:localpart={localpart} bind:homeserver={homeserver} />
       <h5>Password</h5>
-      <Input type="password" bind:value={password} />
+      <Input type="password" bind:value={password} submitted={handleSubmit} />
       <div class="spacer"></div>
       <Button type="primary big" on:click={submit} label={type === "login" ? "Login" : "Register"} />
       {#if error}

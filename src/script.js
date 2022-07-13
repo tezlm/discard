@@ -1,11 +1,9 @@
-globalThis.global = globalThis; // fixes matrix-js-sdk
+import { state, actions } from "./client/index.js";
+import App from "./ui/App.svelte";
 
-const imports = Promise.all([import("./client/index.js"), import('./ui/App.svelte')]);
-const [{ state, actions }, { default: App }] = await imports;
-
-global.state = state;
-global.actions = actions;
-global.todo = () => state.popup.set({ id: "todo" });
+globalThis.state = state;
+globalThis.actions = actions;
+globalThis.todo = () => state.popup.set({ id: "todo" });
 
 await actions.client.fetch();
 
