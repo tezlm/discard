@@ -151,7 +151,7 @@ img {
     <span class="edited">(edited)</span>
     {/if}
   </div>
-  {:else}
+  {:else if content.body}
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}
     {@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"), { linkify: true })}

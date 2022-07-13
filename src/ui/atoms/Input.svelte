@@ -5,6 +5,7 @@ export let placeholder = "";
 export let small = false;
 export let autofocus = false;
 export let readonly = false;
+export let optional = false;
 export let submitted = () => {};
 
 function handleInput(e) {
@@ -14,7 +15,8 @@ function handleInput(e) {
 function handleKeyDown(e) {
   if (e.key === "Enter") {
     e.stopPropagation();
-    if (value) submitted();
+    e.preventDefault();
+    if (value || optional) submitted();
   }
 }
 </script>

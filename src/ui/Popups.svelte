@@ -3,6 +3,7 @@ import UserId from "./atoms/UserId.svelte";
 import Button from "./atoms/Button.svelte";
 import Input from "./atoms/Input.svelte";
 import Popup from "./atoms/Popup.svelte";
+import Logout from "./popups/Logout.svelte";
 import { formatDate, formatSize } from "../util/format.js";
 let client = state.client;
 let current = state.popup;
@@ -34,6 +35,15 @@ function rnd(arr) {
 }
 
 function handleKeyDown(e) {
+  if (e.code === "KeyK" && e.ctrlKey) {
+    if ($current.id === "switcher") {
+      closePopup();
+    } else if(!$current.id) {
+      state.popup.set({ id: "switcher" });
+    }
+    return;
+  }
+
   if (!$current.id) return;
   if (e.key !== "Escape" && e.key !== "Enter") return;
   if (e.key === "Enter") confirmPopup();
@@ -235,12 +245,17 @@ pre {
   </div>
 </Popup>
 {:else if $current.id === "logout"}
+<svelte:component this={Logout} />
+{:else if $current.id === "switcher"}
 <Popup>
-  <h2 slot="header">Log Out</h2>
-  <p slot="content">Are you sure you want to logout?</p>
-  <div slot="footer">
-    <Button type="link" label="Actually nah" clicked={closePopup} />
-    <Button type="danger" label="Log Out" clicked={actions.client.logout} />
+  <div slot="content">
+    <div style="height: 16px"></div>
+    <Input placeholder="Where do you want to go" optional autofocus submitted={() => {actions.rooms.focus(state.recentRooms[1]); closePopup()}} />
+    <ul>
+      {#each state.recentRooms.slice(1) as room}
+        <li>{room.name}</li>
+      {/each}
+    </ul>
   </div>
 </Popup>
 {:else if $current.id === "todo"}

@@ -79,7 +79,7 @@ onDestroy(focused.subscribe(() => {
 }
 
 .spacer {
-	margin-top: 20px;
+	margin: 10px 0;
 }
 
 .tall {
@@ -144,7 +144,7 @@ onDestroy(focused.subscribe(() => {
 	<Scroller
 		items={$slice}
 		indexKey="eventId"
-		margin={800}
+		margin={300}
 		bind:scrollTop={scrollTop}
 		bind:scrollMax={scrollMax}
 		bind:scrollTo={scrollTo}

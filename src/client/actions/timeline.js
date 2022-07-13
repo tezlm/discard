@@ -22,6 +22,7 @@ export function get(roomId) {
 export function add(event, toBeginning = false) {
   if (!supportedEvents.includes(event.getType())) return;
   if (event.isRedacted()) return;
+  if (event.getId() === "$2Hp8ue8W6jhBSoPkCSIdYtdG9oqmZSKfb3_to8R75Is") console.log("ayyy it's ", event.isRedacted()); 
   const id = event.getId();
   const timeline = get(event.getRoomId());
   
@@ -41,8 +42,8 @@ export function add(event, toBeginning = false) {
           original,
         });
       } else if (type === "m.annotation") {
-        const count = original.reactions.get(key) ?? 0;
-        original.reactions.set(key, count + 1);
+        const [count, selfReacted] = original.reactions.get(key) ?? [0, false];
+        original.reactions.set(key, [count + 1, selfReacted || event.getSender() === state.client.getUserId()]);
       }
   } else {
     state.events.set(id, Events.format(event));
@@ -57,5 +58,6 @@ export function add(event, toBeginning = false) {
 
 export function redact(event) {
   const original = state.events.get(event.event.redacts);
+  console.log("redact", original.eventId)
   original.isRedacted = true;
 }

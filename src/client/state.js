@@ -13,6 +13,7 @@ export default {
   focusedRoom: writable(null),
   focusedRoomId: null,
   focusedSpace: writable(null),
+  recentRooms: [],
   
   // events
   events: new Events(),
