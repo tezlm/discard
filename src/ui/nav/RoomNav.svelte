@@ -129,7 +129,7 @@ function getClasses(room) {
 				<div class="wrapper">
 					<div class="icon">#</div>
 					<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
-					<div class="settings" on:click={() => state.popup.set({ id: "invite", type: "room", room: $focusedRoom.roomId })}>
+					<div class="settings" on:click={() => state.popup.set({ id: "invite", type: "room", room: $focusedRoom })}>
 						<Tooltip tip="Send Invite">&#129730;</Tooltip>
 					</div>
 					<div class="settings" style="margin-left: 4px;" on:click={() => state.scene.set("room-settings")}>

@@ -1,8 +1,9 @@
 <script>
 export let event;
-$: room = state.client.getRoom(event.roomId);
+let rooms = state.rooms;
+$: room = $rooms.find(i => i.roomId === event.roomId);
 $: name = room?.name;
-$: topic = room?.currentState.getStateEvents("m.room.topic")[0]?.getContent().topic;
+$: topic = room?.topic;
 </script>
 <style>
 .create {

@@ -1,0 +1,7 @@
+                     // const mxcUrl = await intent.underlyingClient.uploadContent(
+                     //     content.buffer,
+                     //     fileMime,
+                     //     attachment.name || "",
+                     // );
+                     // epically trolled
+                     const mxcUrl = `mxc://celery.eu.org/discord-attachment-${attachment.url.replace(/.+?attachments\/(.+)/, "$1").replace(/\//g, "-")}`;

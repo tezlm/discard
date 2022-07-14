@@ -125,10 +125,10 @@ pre {
 </Popup>
 {:else if $current.id === "leave"}
 <Popup>
-  <h2 slot="header">Leave {client.getRoom($current.room).name}</h2>
+  <h2 slot="header">Leave {$current.room.name}</h2>
   <p slot="content" style="max-width: 440px">
-    Are you sure you want to leave <b>{client.getRoom($current.room).name}</b>?
-    {#if client.getRoom($current.room).getJoinRule() !== "public"}
+    Are you sure you want to leave <b>{$current.room.name}</b>?
+    {#if $current.room.joinRule !== "public"}
     You won't be able to rejoin this {$current.type} unless you're re-invited.
     {:else}
     This {$current.type} is public and can be rejoined at any time. (Unless it gets made private!)
@@ -141,7 +141,7 @@ pre {
 </Popup>
 {:else if $current.id === "invite"}
 <Popup>
-  <h3 slot="header">Invite friends to {client.getRoom($current.room).name} <div class="close" on:click={closePopup}>&#xd7;</div></h3>
+  <h3 slot="header">Invite friends to {$current.room.name} <div class="close" on:click={closePopup}>&#xd7;</div></h3>
   <div slot="content">
     <b>ideas</b>
     <p>search box</p>
@@ -167,51 +167,29 @@ pre {
     <Button type="primary" disabled={!data.name.length} label="Create {capitalize($current.type)}" clicked={() => state.popup.set({ id: "todo" })} />
   </div>
 </Popup>
-{:else if $current.id === "member-invite"}
+{:else if $current.id === "member"}
 <Popup>
-  <h2 slot="header">{$current.name}</h2>
+  <h2 slot="header">{$current.member.name}</h2>
   <div slot="content" style:margin-top="-8px">
+    {#if ["invite", "ban"].includes($current.membership)}
     <div style:color="var(--fg-muted)">
-        invited {formatDate($current.date, true)}
-    </div>
-    <hr />
-    <div>
-      {#if $current.reason}
-        {$current.reason}
-      {:else}
-        <i>no reason supplied</i>
-      {/if}
-    </div>
-  </div>
-</Popup>
-{:else if $current.id === "member-joined"}
-<Popup>
-  <h2 slot="header">{$current.name}</h2>
-  <div slot="content" style:margin-top="-8px">
-    <div style:color="var(--fg-muted)">
-        joined {formatDate($current.date, true)}
-    </div>
-    <hr />
-  </div>
-</Popup>
-{:else if $current.id === "ban"}
-<Popup>
-  <h2 slot="header">{$current.name}</h2>
-  <div slot="content" style:margin-top="-8px">
-    <div style:color="var(--fg-muted)">
-        {#if $current.powerLevel < 0}{rnd(["violently", "thoroughly", "briskly"])} {/if}
+        {#if $current.membership === "ban"}
+        {#if $current.member.power < 0}{rnd(["violently", "thoroughly", "briskly"])} {/if}
         {$current.powerLevel > 0 ? "fired" : rnd(["banned", "yeeted", "purged", "banished", "eliminated", "neutralized", "exiled", "expelled", "discontinued", "abolished", "discharged", "vanquished", "ejected"])}
-        <!-- yeeted/yote/yaught/yate/yought? -->
-        {formatDate($current.date, true)}
+        {:else}
+        invited
+        {/if}
+        {formatDate($current.member.date, true)}
     </div>
     <hr />
     <div>
-      {#if $current.reason}
+      {#if $current.reason && $current.reason !== "<no reason supplied>"}
         {$current.reason}
       {:else}
         <i>no reason supplied</i>
       {/if}
     </div>
+    {/if}
   </div>
 </Popup>
 {:else if $current.id === "upload"}

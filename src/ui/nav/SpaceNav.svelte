@@ -49,13 +49,12 @@ function getClasses(space) {
   flex-direction: column;
   align-items: center;
   max-width: 72px;
-  padding: 12px;
-  padding-top: 4px;
+  padding: 4px 12px;
   z-index: 3;
 }
 
 .space {
-  position: relative;
+	position: relative;
 }
 
 .space img {
@@ -64,7 +63,7 @@ function getClasses(space) {
   border-radius: 50%;
   margin-top: 8px;
   cursor: pointer;
-  transition: border-radius 0.2s;
+  transition: border-radius 0.3s;
 }
 
 .space:hover img {
@@ -109,9 +108,10 @@ function getClasses(space) {
 }
 
 .separator {
-  border: solid #ffffff10 1px;
-  width: 45%;
-  margin-top: 8px;
+  background: var(--color-gray);
+  height: 2px;
+  width: 32px;
+  margin: 4px 0 0;
 }
 </style>
 <div class="nav">

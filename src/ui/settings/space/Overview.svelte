@@ -1,10 +1,9 @@
 <script>
+let mxcToHttp = h => h?.replace(/mxc:\/\/([^/]+)\/(.+)/, `https://celery.eu.org/_matrix/media/r0/download/$1/$2`) // TODO: not hardcode this, split into module
 import Input from "../../atoms/Input.svelte";
 import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
-// export let space; // todo
-let focusedSpace = state.focusedSpace;
-let space = actions.rooms.get($focusedSpace);
+export let room;
 </script>
 <style>
 h1 {
@@ -90,7 +89,7 @@ h1 {
   <div class="section" style="flex-direction: row">
     <div class="avatar">
       <div class="uploader">
-        <img src={space.avatar} />
+        <img src={mxcToHttp($room.avatar)} />
         <div class="remove">Remove</div>
       </div>
       <div class="side">
@@ -100,15 +99,15 @@ h1 {
     </div>
     <div class="name">
       <div class="title">Space Name</div>
-      <Input value={space.name} placeholder="excellent-space" readonly={space.power.me < space.power.getState("m.room.name")} />
+      <Input value={$room.name} placeholder="excellent-space" readonly={$room.power.me < $room.power.getState("m.room.name")} />
     </div>
   </div>
   <div class="section">
     <div class="title">Space Topic</div>
-    <Textarea value={space.topic ?? ""} placeholder="what an excellent space" readonly={space.power.me < space.power.getState("m.room.topic")} />
+    <Textarea value={$room.topic ?? ""} placeholder="what an excellent space" readonly={$room.power.me < $room.power.getState("m.room.topic")} />
   </div>
   <div class="section">
     <div class="title">Developers</div>
-    <p><b>Room Id:</b> <span style="user-select: all">{space.roomId}</span></p>
+    <p><b>Room Id:</b> <span style="user-select: all">{$room.roomId}</span></p>
   </div>
 </div>

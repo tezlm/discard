@@ -1,17 +1,19 @@
 <script>
-import { getAvatar } from "../../../util/events.js";
+let mxcToHttp = h => h?.replace(/mxc:\/\/([^/]+)\/(.+)/, `https://celery.eu.org/_matrix/media/r0/download/$1/$2`) // TODO: not hardcode this, split into module
 export let room;
-let members = $room.getMembers("ban");
+let members = false;
+setTimeout(async () => {
+  if (!$room.members.ready) await $room.members.fetch();
+  members = $room.members.get("ban")
+});
 
 function showPopup(member) {
-  const event = member.events.member;
-  const reason = event.getContent().reason ?? null;
   state.popup.set({
-    id: "ban",
+    id: "member-banned",
     name: member.name,
-    date: event.getDate(),
-    reason: reason === "<no reason supplied>" ? null : reason,
-    powerLevel: member.powerLevel,
+    date: member.date,
+    reason: member.reason === "<no reason supplied>" ? null : member.reason,
+    powerLevel: member.power,
   });
 }
 </script>
@@ -44,10 +46,30 @@ h1 {
 }
 </style>
 {#if room}
+  <h1>{members ? members.length || "No" : "Loading"} Member{members.length !== 1 ? "s" : ""}</h1>
+  {#if members}
+    {#each members as member}
+    <div class="member" on:click={() => showPopup(member)}>
+      <img class="avatar" src={mxcToHttp(member.avatar)} alt="avatar for {member.rawDisplayName}"/>
+      <div class="name">
+        {member.name}
+        <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>
+      </div>
+      <div style="margin-left: auto;">{member.power}</div>
+    </div>
+    {:else}
+    <p>nobody's here!</p>
+    {/each}
+  {/if}
+{:else}
+<i>something really wrong happened, try again?</i>
+{/if}
+
+{#if room}
 <h1>{members.length || "No"} Ban{members.length !== 1 ? "s" : ""}</h1>
 {#each members as member}
 <div class="ban" on:click={() => showPopup(member)}>
-  <img class="avatar" src={getAvatar(member.userId)} alt="avatar for {member.name}"/>
+  <img class="avatar" src={mxcToHttp(member.avatar)} alt="avatar for {member.name}"/>
   <div class="name">{member.name}</div>
 </div>
 {:else}

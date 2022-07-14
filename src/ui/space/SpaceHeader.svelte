@@ -13,7 +13,7 @@ function zoomIn() {
 }
 
 function showPopup(id, opts) {
-  state.popup.set({ id, type: "space", room: $focusedSpace, ...opts }); 
+  state.popup.set({ id, type: "space", room: $rooms.find(i => i.roomId === $focusedSpace), ...opts }); 
 }
 </script>
 <style>

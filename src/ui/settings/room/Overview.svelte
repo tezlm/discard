@@ -2,7 +2,6 @@
 import Input from "../../atoms/Input.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
 export let room;
-console.log($room);
 </script>
 <style>
 .title {
