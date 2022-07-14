@@ -3,7 +3,7 @@ import { onMount, onDestroy } from 'svelte';
 import Tooltip from "../atoms/Tooltip.svelte";
 import settingsIcon from "../../assets/icons/settings.svg";
 import { getDisplayName, getAvatar } from "../../util/events.js";
-let client = state.client;
+let { userId }= state;
 let copyCount = 0, copyText = getCopyText(), copyEl;
 
 function getCopyText() {
@@ -25,7 +25,7 @@ function getCopyText() {
 }
 
 function handleCopyClick() {
-	navigator.clipboard.writeText(client.userId);
+	navigator.clipboard.writeText(userId);
 	copyCount++;
 	copyText = getCopyText();
 }
@@ -107,11 +107,11 @@ onDestroy(() => copyEl.removeEventListener("mouseleave", resetCopy));
 <div class="offline">Offline!</div>
 {/if}
 <div class="user">
-	<img class="avatar" alt="your avatar" src={getAvatar(client.userId)} />
+	<img class="avatar" alt="your avatar" src={getAvatar(userId)} />
 	<div class="info" on:click={handleCopyClick} bind:this={copyEl}>
 		<Tooltip tip={copyText} color={copyCount > 0 ? "#3ba55d" : null}>
-			<div class="displayname">{getDisplayName(client.userId)}</div>
-			<div class="userid">{client.userId}</div>
+			<div class="displayname">{getDisplayName(userId)}</div>
+			<div class="userid">{userId}</div>
 		</Tooltip>
 	</div>
 	<Tooltip tip="User Settings" style="height: 30px">

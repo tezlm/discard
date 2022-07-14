@@ -225,7 +225,7 @@ textarea::placeholder {
   {/if}
   {#if $room.tombstone}
   <div class="input disabled">{$room.tombstone?.body ?? "This room has been replaced"}</div>
-  {:else if $room.power.getEvent("m.room.message") > $room.power.me}
+  {:else if $room.power?.getEvent("m.room.message") > $room.power?.me}
   <div class="input disabled">You can't send messages here</div>
   {:else}
   <div class="input">

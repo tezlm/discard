@@ -1,6 +1,6 @@
 <script>
 import { getAvatar, getDisplayName } from '../../../util/events.js';
-let userid = state.client.userId;
+let { userId }= state;
 </script>
 <style>
 .account {
@@ -29,10 +29,10 @@ let userid = state.client.userId;
 }
 </style>
 <div class="account">
-  <img src={getAvatar(state.client.userId)} alt="your avatar" />
+  <img src={getAvatar(userId)} alt="your avatar" />
   <div class="details">
-    <span class="big">{getDisplayName(state.client.userId)}</span>
-    <span>{userid}</span>
+    <span class="big">{getDisplayName(userId)}</span>
+    <span>{userId}</span>
   </div>
 </div>
 <!-- TODO: change password

@@ -1,0 +1,14 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1
+  },
+  "1 error pnpm": {
+    "code": "ERR_PNPM_NO_SCRIPT",
+    "err": {
+      "name": "pnpm",
+      "message": "Missing script: buidl",
+      "code": "ERR_PNPM_NO_SCRIPT",
+      "stack": "pnpm: Missing script: buidl\n    at Object.handler (/usr/lib/node_modules/pnpm/dist/pnpm.cjs:184465:15)\n    at async /usr/lib/node_modules/pnpm/dist/pnpm.cjs:192576:21\n    at async run (/usr/lib/node_modules/pnpm/dist/pnpm.cjs:192550:34)\n    at async runPnpm (/usr/lib/node_modules/pnpm/dist/pnpm.cjs:192768:5)\n    at async /usr/lib/node_modules/pnpm/dist/pnpm.cjs:192760:7"
+    }
+  }
+}

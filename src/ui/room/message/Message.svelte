@@ -20,7 +20,7 @@ function unwrapEdits(event) {
 function getToolbar(event, shift = false) {
   if (event.isSending) return [{ name: "Cancel", icon: "x", clicked: todo }];
   let toolbar = [];
-  const fromMe = event.sender === state.client.getUserId();
+  const fromMe = event.sender === state.userId;
   if (!shift) toolbar.push({ name: "Add Reaction", icon: "+", clicked: todo });
   if (fromMe && !shift) toolbar.push({ name: "Edit", icon: "_", clicked: (ev) => state.roomState.edit.set(unwrapEdits(ev).eventId) });
   if (shift) toolbar.push({ name: "View Source", icon: "!", clicked: (ev) => state.popup.set({ id: "source", event: ev }) });

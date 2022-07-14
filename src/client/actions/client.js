@@ -2,11 +2,14 @@
 import Api from "../matrix/api.js";
 import Syncer from "../matrix/syncer.js";
 
-async function getStore() {
-  const store = new Store();
-  await store.open();
-  return store;
-}
+const defaultFilter = {
+  room: {
+    state: { lazy_load_members: true },
+  },
+  presence: {
+    types: [],
+  },
+};
 
 // try to fetch the current client
 export async function fetch() {
@@ -19,35 +22,35 @@ export async function fetch() {
   }
   
   const api = new Api("https://" + homeserver, token);
+  const filter = await api.postFilter(userId, defaultFilter);
+  api.useFilter(filter);
   const syncer = new Syncer(api);
   syncer.start();
   
   state.api = api;
   state.syncer = syncer;
+  state.userId = userId;
   state.scene.set("loading");
-  actions.client.listen(syncer);
 }
 
 // login to the homeserver and create a new client
-// TODO: fix
 export async function login({ localpart, homeserver, password }) {
   const userId = `@${localpart}:${homeserver}`;
-  const client = new Client({
-    homeserver: "https://" + homeserver,
-    userId: userId,
-    store: await getStore(),
-  });
+  const api = new Api("https://" + homeserver);
 
   try {
-    console.log("logging in")
-    const token = await client.login(userId, password);
+    const token = await api.login(userId, password);
+    const filter = await api.postFilter(userId, defaultFilter);
+    api.useFilter(filter);
     localStorage.setItem("homeserver", homeserver);
     localStorage.setItem("userid", userId);
     localStorage.setItem("token", token);
-    client.start();
-    state.client = client;
+    const syncer = new Syncer(api);
+    syncer.start();
+    state.api = api;
+    state.syncer = syncer;
+    state.userId = userId;
     state.scene.set("loading");
-    actions.client.listen(client);
   } catch(err) {
     console.error(err);
     switch(err.name) {
@@ -59,9 +62,9 @@ export async function login({ localpart, homeserver, password }) {
   }
 }
 
-// TODO: FIX
 export async function logout() {
-  state.client.logout();
+  state.syncer.stop();
+  state.api.logout();
   localStorage.removeItem("token");
   state.scene.set("auth");
   state.popup.set({});
@@ -69,7 +72,18 @@ export async function logout() {
 }
 
 // TODO: FIX
-export async function listen(client) {
+export async function listen(syncer) {
+  state.userId = localStorage.getItem("userid");
+  return; // new meta
+  /*
+   * ui <-----------------
+   *  \                   \
+   *   ----> actions -> state
+   *    /
+   * matrix
+   *
+   */
+  
   let synced = false;
 
   function updateAll() {
@@ -81,19 +95,25 @@ export async function listen(client) {
     return state.focusedRoomId && (event.getRoomId() === state.focusedRoomId);
   }
   
-  client.once("ready", () => {
+  syncer.once("ready", () => {
     synced = true;
-    updateAll();
-    state.scene.set("chat");
+    console.log("ready");
+    // updateAll();
+    // state.scene.set("chat");
   });
   
   // update rooms
-  client.on("Room.name", () => synced && updateAll());
-  client.on("Room", () => synced && updateAll());
-  client.on("deleteRoom", () => synced && updateAll());
+  // syncer.on("state", (roomId, raw) => console.log(a));
+  syncer.on("timeline", (roomId, raw) => {
+    const event = format(roomId, raw);
+    console.log(event)
+  });
+  syncer.on("Room.name", () => synced && updateAll());
+  syncer.on("Room", () => synced && updateAll());
+  syncer.on("deleteRoom", () => synced && updateAll());
   
   // room timeline
-  client.on("Room.timeline", (event, _, toBeginning) => {
+  syncer.on("Room.timeline", (event, _, toBeginning) => {
     if (!toBeginning) actions.rooms.update();
     const atEnd = actions.slice.isAtEnd();
     actions.timeline.add(event, toBeginning);
@@ -124,14 +144,14 @@ export async function listen(client) {
       }
     }
   });
-  client.on("Room.redaction", (event) => {
+  syncer.on("Room.redaction", (event) => {
     actions.rooms.update();
     if (!shouldHandle(event)) return;
     actions.timeline.remove(event);
     state.sliceRef = actions.slice.reslice();
     state.slice.set(state.sliceRef);
   });
-  client.on("Room.localEchoUpdated", (event, _, id) => {
+  syncer.on("Room.localEchoUpdated", (event, _, id) => {
     if (!id) return;
     const original = state.events.get(id);
     if (!original) return;
@@ -148,13 +168,13 @@ export async function listen(client) {
   });
   
   // misc
-  client.on("Room.receipt", (event) => {
+  syncer.on("Room.receipt", (event) => {
     const users = Object.values(event.getContent()).map(i => Object.keys(i["m.read"] ?? {})).flat(); // readable and maintainable code
     if (!users.includes(state.client.getUserId())) return;
     actions.rooms.update();
     state.slice.set(state.sliceRef);
   });
-  client.on("RoomMember.typing", (_, member) => {
+  syncer.on("RoomMember.typing", (_, member) => {
     if (member.userId === client.getUserId()) return;
     const typing = state.roomStates.get(member.roomId)?.typing;
     if (!typing) return;
@@ -164,7 +184,7 @@ export async function listen(client) {
       state.roomState.typing.set(typing);
     }
   });
-  client.once("logout", () => {
+  syncer.once("logout", () => {
     state.scene.set("auth");
     state.popup.set({});
     state.client = null;

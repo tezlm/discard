@@ -23,11 +23,11 @@ function shouldSplit(prev, ev) {
 }
 
 function dividerProps(prev, ev) {
-	const room = state.client.getRoom(ev.roomId);
-	const user = state.client.getUserId();
+	// const room = state.client.getRoom(ev.roomId);
+	// const user = state.userId;
 	return {
 		unpad: shouldSplit(prev, ev),
-		unread: room.getEventReadUpTo(user) === prev.eventId,
+		unread: false, // room.getEventReadUpTo(user) === prev.eventId, // TODO: fix
 		newdate: prev.date.getDay() !== ev.date.getDay() ? ev.date : null,
 	};
 }
