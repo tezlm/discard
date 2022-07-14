@@ -76,8 +76,9 @@ export function handleEvent(event, timeline, toStart) {
   //       original.reactions.set(key, [count + 1, selfReacted || event.getSender() === state.client.getUserId()]);
   //     }
   // } else {
-    state.events.set(id, format(roomId, event));
-    timeline[toStart ? "unshift" : "push"](id);
+  console.og(event.room_id)
+    // state.events.set(id, format(roomId, event));
+    // timeline[toStart ? "unshift" : "push"](id);
     
   //   if (relations.has(id)) {
   //     for (let relation of relations.get(id)) add(relation);

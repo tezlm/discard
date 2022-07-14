@@ -6,7 +6,9 @@ export default class Syncer {
     this._rooms = new Set();
   }
   
-  _error() {
+  // TODO: retry requests handler
+  _error(err) {
+    console.error(err);
     this.status = "stopped";
     return null;
   }
@@ -39,9 +41,10 @@ export default class Syncer {
     }
     
     if (this.status === "starting") {
+      console.log("ready")
       this.status = "syncing";
       state.scene.set("chat");
-      // this.emit("ready");
+      actions.rooms.update();
     }
     this._loop(sync.next_batch);
   }

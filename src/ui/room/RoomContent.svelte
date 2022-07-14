@@ -143,7 +143,6 @@ onDestroy(focused.subscribe(() => {
 <div class="content">
 	<Scroller
 		items={$slice}
-		indexKey="eventId"
 		margin={300}
 		bind:scrollTop={scrollTop}
 		bind:scrollMax={scrollMax}

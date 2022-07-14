@@ -1,11 +1,22 @@
 <script>
+import Input from "../../atoms/Input.svelte";
+import { defaultAvatar } from '../../../util/events.js';
+
 let mxcToHttp = h => h?.replace(/mxc:\/\/([^/]+)\/(.+)/, `https://celery.eu.org/_matrix/media/r0/download/$1/$2`) // TODO: not hardcode this, split into module
+
 export let room, membership;
+let missingAvs = state.missingAvatars;
 let members = false;
+let filter;
+
 $: setTimeout(async () => {
   if (!$room.members.ready) await $room.members.fetch();
   members = $room.members.get(membership)
 });
+
+$: if (members) {
+  console.log(members.filter(i => i.name?.includes(filter)))
+}
 
 function showPopup(member) {
   state.popup.set({
@@ -24,10 +35,19 @@ function getTitle(membership) {
 }
 </script>
 <style>
-h1 {
+.header {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 1em;
+}
+
+h1 {
   font: 20px var(--font-display);
   font-weight: 500;
+}
+
+.input {
+  
 }
 
 .member {
@@ -54,16 +74,25 @@ h1 {
 }
 </style>
 {#if room}
-  <h1>{members ? members.length || "No" : "Loading"} {getTitle(membership)}{members.length !== 1 ? "s" : ""}</h1>
+  <div class="header">
+    <h1>{members ? members.length || "No" : "Loading"} {getTitle(membership)}{members.length !== 1 ? "s" : ""}</h1>
+    <div><Input small placeholder="Search for {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
+  </div>
   {#if members}
-    {#each members as member}
+    {#each filter ? members.filter(i => i.name?.includes(filter)) : members as member}
     <div class="member" on:click={() => showPopup(member)}>
-      <img class="avatar" src={mxcToHttp(member.avatar)} alt="avatar for {member.name}" loading="lazy"/>
+      <img
+          class="avatar"
+          alt="avatar for {member.name}"
+          src={missingAvs.has(member.userId) ? defaultAvatar : mxcToHttp(member.avatar)}
+          on:error={(e) => { missingAvs.add(member.userId); e.target.src = defaultAvatar }}
+          loading="lazy"
+        />
       <div class="name">
         {member.name}
         <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>
       </div>
-      {#if membership === "joined"}
+      {#if membership === "join"}
       <div style="margin-left: auto;">{member.power}</div>
       {/if}
     </div>

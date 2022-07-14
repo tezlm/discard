@@ -57,11 +57,9 @@ async function upload(file) {
   const status = { file, progress: 0, cancel: todo };
   const roomId = $room.roomId;
   fileUpload.set(status);
-  const url = await state.client.uploadContent(file, {
-    progressHandler({ loaded, total }) {
-      status.progress = loaded / total;
-      fileUpload.set(status);
-    }
+  const url = await state.api.uploadFile(file, ({ loaded, total }) => {
+    status.progress = loaded / total;
+    fileUpload.set(status);
   });
 
   fileUpload.set(null);

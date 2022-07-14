@@ -26,7 +26,7 @@ function getToolbar(event, shift = false) {
   if (shift) toolbar.push({ name: "View Source", icon: "!", clicked: (ev) => state.popup.set({ id: "source", event: ev }) });
   if (!fromMe || shift) toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => state.roomState.reply.set(unwrapEdits(ev)) });
   if (shift) {
-    toolbar.push({ name: "Delete", icon: "x", clicked: (ev) => { state.client.redactEvent(ev.roomId, ev.eventId) }});
+    toolbar.push({ name: "Delete", icon: "x", clicked: (ev) => { state.api.redactEvent(ev.roomId, ev.eventId) }});
   } else {
     toolbar.push({ name: "More", icon: "\u22ee", clicked: todo });
   }
