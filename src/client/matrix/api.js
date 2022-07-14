@@ -70,7 +70,8 @@ export default class Api {
   }
   
   fetchMembers(roomId) {
-    return this.fetch("GET", `/rooms/${encode(roomId)}/members`);
+    // TODO: conduit seems to fetch all users anyway?
+    return this.fetch("GET", `/rooms/${encode(roomId)}/members?not_membership=leave`);
   }
   
   // sending content
@@ -89,12 +90,17 @@ export default class Api {
   sendTyping() {
     return this.fetch("PUT", `/rooms/${encode(roomId)}/typing/${encode(eventId)}`, content);
   }
-
+  
   // redact events
   redactEvent(roomId, eventId, content, txnId) {
     return this.fetch("PUT", `/rooms/${encode(roomId)}/redact/${encode(eventId)}/${encode(txnId)}`, content);
   }
-  
+
+  // files
+  uploadFile() {
+    return this.fetch("POST", `/rooms/${encode(roomId)}/typing/${encode(eventId)}`, content);
+  }
+    
   // rooms
   createRoom() { throw "TODO" }
   joinRoom() { throw "TODO" }

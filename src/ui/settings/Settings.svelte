@@ -111,7 +111,7 @@ h1 {
       {#if !focused.raw}
       <h1>{focused.name}</h1>
       {/if}
-      <svelte:component this={focused.view} {...options} />
+      <svelte:component this={focused.view} {...options} {...focused.props} />
     </div>
   </div>
   <div class="exit" on:click={() => state.scene.set("chat")}>ESC</div>

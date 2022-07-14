@@ -21,6 +21,34 @@ function formatRoom(roomId, room) {
     }
   }
   
+  function memberCache() {
+    let members = null;
+    return {
+      ready: false,
+      async fetch() {
+        const { chunk } = await state.api.fetchMembers(roomId);
+        const power = getPower();
+        members = chunk.map(i => ({
+          userId: i.state_key,
+          name: i.content.displayname ?? i.state_key,
+          avatar: i.content.avatar_url ?? null,
+          power: power.users?.[i.state_key] ?? power.users_default ?? 0,
+          membership: i.content.membership,
+          reason: i.content.reason ?? null,
+          date: new Date(i.origin_server_ts),
+        }));
+        this.ready = true;
+      },
+      get(membership) {
+        const cmp = (a, b) => a > b ? -1 : a < b ? 1 : 0;
+        return members
+          .filter(i => i.membership === membership)
+          .sort((a, b) => cmp(a.name, b.name))
+          .sort((a, b) => cmp(a.power, b.power));
+      },
+    };
+  }
+  
   return {
     name:       getState("m.room.name")?.name ?? "unknown room...",
     topic:      getState("m.room.topic")?.topic ?? null,
@@ -29,14 +57,9 @@ function formatRoom(roomId, room) {
     roomId:     roomId,
     power:      getPower(),
     tombstone:  getState("m.room.tombstone") ?? null,
-
-    getMembers(membership) {
-      return []; // TODO: fix
-      return room[membership ? "getMembersWithMembership" : "getMembers"](membership)
-        .sort((a, b) => a.displayName > b.displayName ? -1 : 1)
-        .sort((a, b) => a.powerLevel > b.powerLevel ? -1 : 1);
-    },
-    
+    members:    memberCache(),
+    joinRule:   getState("m.room.join_rules")?.join_rule,
+        
     // compat for now
     // hasUserReadEvent: (user, ev) => room.hasUserReadEvent(user, ev), // TODO: fix
     hasUserReadEvent: () => false,
