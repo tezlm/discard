@@ -2,7 +2,8 @@
 import { parseHtml } from "../../../util/html.js";
 import fileIcon from "../../../assets/file.svg";
 export let event;
-let client = state.client;
+
+let client = { mxcUrlToHttp: foo => foo }; // TODO: fix
 
 $: content = event.content;
 $: type = content.msgtype;

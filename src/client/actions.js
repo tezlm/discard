@@ -2,6 +2,7 @@ import { writable, get } from "svelte/store";
 import * as client from "./actions/client.js";
 import * as events from "./actions/events.js";
 import * as timeline from "./actions/timeline.js";
+import * as rooms from "./actions/rooms.js";
 
 // TODO: timeline slice
 
@@ -76,19 +77,9 @@ function formatRoom(room) {
 export default {
   client,
   events,
-  timeline: {
-    set(room) {
-      state.timeline = [];
-      for(let event of room.timeline) actions.timeline.add(event);
-      if (state.timeline.length === 0) {
-        state.timeline.push(null);
-      }
-    },
-    add: timeline.add,
-    get: timeline.get,
-    remove: timeline.redact,
-  },
-  rooms: {
+  rooms,
+  timeline,
+  _rooms: {
     focus(room) {
       console.log("set focused room");
       
@@ -195,6 +186,7 @@ export default {
     async backwards(limit = 50, lastTop) {
       const oldStartIndex = state.timeline.indexOf(state.sliceStart);
       if (oldStartIndex - limit < 0 && state.events.get(state.timeline[0])?.type !== "m.room.create") {
+        // console.log(state.api.fetchMessages())
       	const liveTimeline = state.client.getRoom(state.focusedRoomId).getLiveTimeline();
       	await state.client.paginateEventTimeline(liveTimeline, { backwards: true, limit: 200 });
         if (state.timeline.length < limit && state.timeline.at(-1) !== lastTop) { // lastTop is a hacky solution for now

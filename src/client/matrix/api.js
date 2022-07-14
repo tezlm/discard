@@ -24,13 +24,13 @@ export default class Api {
   }
   
   // filters and syncing
-  postFilter(userId, filter) {
-    const res = this.fetch("POST", `/user/${encode(userId)}/filter`, filter);
+  async postFilter(userId, filter) {
+    const res = await this.fetch("POST", `/user/${encode(userId)}/filter`, filter);
     return res.filter_id;
   }
   
   useFilter(filterId) {
-    this.filter = filterId;
+    this.filter = encode(filterId);
   }
   
   sync(since, signal) {
@@ -38,9 +38,9 @@ export default class Api {
   }
   
   // login/logout
-  login(userId, password, deviceName) {
-    return this.fetchUnauth("POST", "/login", {
-      type: "m.login.token",
+  async login(userId, password, deviceName = "sussy") {
+    const { access_token: token } = await this.fetchUnauth("POST", "/login", {
+      type: "m.login.password",
       identifier: {
         type: "m.id.user",
         user: userId,
@@ -48,6 +48,8 @@ export default class Api {
       password: password,
       initial_device_display_name: deviceName,
     });
+    this.token = token;
+    return token;
   }
   
   logout() {
@@ -55,14 +57,18 @@ export default class Api {
   }
   
   // fetching content
-  fetchMessages(roomId, eventId, direction) {
-    return this.fetch("GET", `/rooms/${encode(roomId)}/messages?from=${encode(eventId)}&dir=${direction}&limit=50`);
+  fetchMessages(roomId, startId, direction) {
+    return this.fetch("GET", `/rooms/${encode(roomId)}/messages?from=${encode(startId)}&dir=${direction}&limit=50`);
   }
 
   fetchContext(roomId, eventId) {
     return this.fetch("GET", `/rooms/${encode(roomId)}/context/${encode(eventId)}?limit=50`);
   }
 
+  fetchRange(roomId, startId, endId) {
+    return this.fetch("GET", `/rooms/${encode(roomId)}/messages?from=${encode(startId)}&to=${endId}`);
+  }
+  
   fetchEvent(roomId, eventId) {
     return this.fetch("GET", `/rooms/${encode(roomId)}/event/${encode(eventId)}`);
   }

@@ -11,9 +11,9 @@ let scene = state.scene;
 
 function opacity() {
   return {
-    duration: 1000,
+    duration: 500,
     easing: quadOut,
-    css: t => `opacity: ${t * 20}`,
+    css: t => `opacity: ${t * 10}`,
   }
 }
 

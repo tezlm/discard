@@ -17,6 +17,7 @@ function getLastMessage(timeline) {
 }
 
 function isRead(room) {
+	return false; // TODO: fix
 	const userId = state.client.getUserId();
 	const eventId = getLastMessage(room.timeline)?.getId();
 	if (!eventId) return true;
@@ -117,14 +118,15 @@ function getClasses(room) {
 		{#if !$focusedSpace}
 	  <div
 			class={$focusedRoom ? "room home" : "room home selected"}
-			on:click={() => actions.rooms.focus(null)}>
+			on:click={() => actions._rooms.focus(null)}>
 			<div class="wrapper">Home</div>
 		</div>
 		{/if}
-		{#each $rooms.filter(i => $spaceMap.get($focusedSpace ?? "orphanRooms").includes(i.roomId)) as room}
+		<!-- TODO: make this work {#each $rooms.filter(i => $spaceMap.get($focusedSpace ?? "orphanRooms").includes(i.roomId)) as room} -->
+		{#each $rooms as room}
 		  <div
 				class={getClasses(room).join(" ")}
-				on:click={() => actions.rooms.focus(room)}>
+				on:click={() => actions._rooms.focus(room)}>
 				<div class="wrapper">
 					<div class="icon">#</div>
 					<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>

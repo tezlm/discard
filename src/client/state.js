@@ -1,10 +1,16 @@
 import { writable } from "svelte/store";
 import Events from "./state/events.js";
+import Store from "./matrix/store.js";
+
+const store = new Store();
+await store.init();
 
 export default {
   client: null, // DEPRECATED: WILL NOT WORK
   api: null,
   syncer: null,
+  userId: null,
+  store: store,
   scene: writable(null),
   popup: writable({}),
   
@@ -18,7 +24,7 @@ export default {
   recentRooms: [],
   
   // events
-  events: new Events(),
+  events: new Events(), // DEPRECATED: will be removed soon
   roomTimelines: new Map(),
   roomStates: new Map(),
   roomState: null,

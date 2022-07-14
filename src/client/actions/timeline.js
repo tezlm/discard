@@ -1,6 +1,32 @@
-import Events from "../state/events.js";
+// this module handles the recieved events from sync
+
 const supportedEvents = ["m.room.create", "m.room.message", "m.reaction"];
 const relations = new Map();
+
+function format(roomId, raw) {
+  const event = {
+    roomId:     roomId,
+    eventId:    raw.event_id,
+    stateKey:   raw.state_key,
+    content:    raw.content,
+    sender:     raw.sender,
+    type:       raw.type,
+    date:       new Date(raw.origin_server_ts),
+    isSending:  false,
+    // isPing:     state.client.getPushActionsForEvent(ev).tweaks?.highlight || false, // TODO: fix
+    // isRedacted: ev.isRedacted(), // TODO: fix
+    reactions:  new Map(),
+  };
+  return event;
+}
+
+
+function getRelation(event) {
+  const relation = event.content["m.relates_to"];
+  for (let key in relation) {
+    return { rel_type: key, event_id: relation[key].event_id, key: relation[key].key }
+  }
+}
 
 function queueRelation(id, event) {
   if (!relations.has(id)) relations.set(id, []);
@@ -12,52 +38,60 @@ export function get(roomId) {
   if (!tls.has(roomId)) {
     const tl = [];
     tls.set(roomId, tl);
-    for (let event of state.client.getRoom(roomId)?.timeline || []) add(event);
     return tl;
   } else {
     return tls.get(roomId);
   }
 }
 
-export function add(event, toBeginning = false) {
-  if (!supportedEvents.includes(event.getType())) return;
-  if (event.isRedacted()) return;
-  if (event.getId() === "$2Hp8ue8W6jhBSoPkCSIdYtdG9oqmZSKfb3_to8R75Is") console.log("ayyy it's ", event.isRedacted()); 
-  const id = event.getId();
-  const timeline = get(event.getRoomId());
+export function handleEvent(roomId, event) {
+  if (!supportedEvents.includes(event.type)) return;
+  if (!event.content.body) return; // TODO: better way of telling if something's redacted?
+  const id = event.event_id;
+  const timeline = get(roomId);
   
-  if (event.getRelation()) {
-      const { rel_type: type, event_id: relId, key } = event.getRelation();
-      const original = state.events.get(relId);
-      if (!original) return queueRelation(relId, event);
-      if (type === "m.replace") {
-        // TODO: invert current method of edits
-        // instead of replacing with an edit event with `original`
-        // keep the original with `edit` 
-        const index = timeline.lastIndexOf(relId);
-        if (index < 0) return queueRelation(relId, event);
-        state.events.set(id, {
-          ...Events.format(event),
-          content: { ...original.content, ...event.getContent()["m.new_content"] },
-          original,
-        });
-      } else if (type === "m.annotation") {
-        const [count, selfReacted] = original.reactions.get(key) ?? [0, false];
-        original.reactions.set(key, [count + 1, selfReacted || event.getSender() === state.client.getUserId()]);
-      }
-  } else {
-    state.events.set(id, Events.format(event));
-    timeline[toBeginning ? "unshift" : "push"](id);
+  // TODO: get relations to work again
+  // if (getRelation(event.content)) {
+  //     const { rel_type: type, event_id: relId, key } = getRelation(event);
+  //     const original = state.events.get(relId);
+  //     if (!original) return queueRelation(relId, event);
+  //     if (type === "m.replace") {
+  //       // TODO: invert current method of edits
+  //       // instead of replacing with an edit event with `original`
+  //       // keep the original with `edit` 
+  //       const index = timeline.lastIndexOf(relId);
+  //       if (index < 0) return queueRelation(relId, event);
+  //       state.events.set(id, {
+  //         ...Events.format(event),
+  //         content: { ...original.content, ...event.getContent()["m.new_content"] },
+  //         original,
+  //       });
+  //     } else if (type === "m.annotation") {
+  //       const [count, selfReacted] = original.reactions.get(key) ?? [0, false];
+  //       original.reactions.set(key, [count + 1, selfReacted || event.getSender() === state.client.getUserId()]);
+  //     }
+  // } else {
+    state.events.set(id, format(roomId, event));
+    timeline.push(id);
     
-    if (relations.has(id)) {
-      for (let relation of relations.get(id)) add(relation);
-      relations.delete(id);
-    }
-  }
+  //   if (relations.has(id)) {
+  //     for (let relation of relations.get(id)) add(relation);
+  //     relations.delete(id);
+  //   }
+  // }
 }
 
+// TODO: merge into event()
 export function redact(event) {
   const original = state.events.get(event.event.redacts);
   console.log("redact", original.eventId)
   original.isRedacted = true;
+}
+
+export function handleEphermeral(roomId, event) {
+  // TODO
+}
+
+export function handleState(roomId, event) {
+  actions.rooms.handleJoin(roomId, event);
 }
