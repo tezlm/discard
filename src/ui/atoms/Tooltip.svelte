@@ -1,17 +1,8 @@
 <script>
-export let tip, position = "up", style = "", color = null;
-let x = 0, y = 0, visible = false;
-
-function show() {
-  let rect = element.getClientRects()[0];
-  x = rect.x + rect.width / 2;
-  y = rect.y;
-  visible = true;
-}
-
-function hide() {
-  visible = false;
-}
+export let tip;
+export let position = "up";
+export let style = "";
+export let color = null;
 </script>
 <style>
 .wrapper {

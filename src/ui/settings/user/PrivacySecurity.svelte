@@ -1,6 +1,5 @@
 <script>
 import { formatDate } from "../../../util/format.js";
-let client = state.client;
 </script>
 <style>
 h3 {
@@ -26,7 +25,6 @@ h3 {
   color: var(--fg-light);
 }
 </style>
-
 <h3>Encryption</h3>
 {#if false && state.client.isCryptoEnabled()}
 <p>This session is (verified/not verified) (todo)</p>
@@ -35,13 +33,13 @@ h3 {
 {/if}
 <br /><br />
 <h3>Sessions</h3>
-{#await client.getDevices()}
+{#await state.api.fetch("GET", "/devices")}
 <p>Loading sessions...</p>
 {:then res}
 <div class="devices">
 {#each res.devices as device}
 <div class="device">
-  <div><span class="big">{device.display_name}</span> <span class="small dim">({device.device_id})</span></div>
+  <div><span class="big" class:dim={!device.display_name}>{device.display_name}</span> <span class="small dim">({device.device_id})</span></div>
   <span class="small"><span class="dim">Last seen</span> {formatDate(new Date(device.last_seen_ts))} <span class="dim">at</span> {device.last_seen_ip}</span>
 </div>
 {/each}
@@ -53,4 +51,3 @@ h3 {
 <p>Can't load sessions while offline!</p>
 {/if}
 {/await}
-

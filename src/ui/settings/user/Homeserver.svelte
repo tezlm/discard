@@ -1,6 +1,5 @@
 <script>
 import { formatSize } from "../../../util/format.js";
-let client = state.client;
 </script>
 <style>
 .homeserver {
@@ -22,27 +21,23 @@ let client = state.client;
 h3 {
   margin-top: 1em;
 }
-
-ul {
-  list-style: inside;
-}
 </style>
 <div class="homeserver">
   You are {#if navigator.onLine}connected to{:else}<span class="ohno">disconnected</span> from{/if}<br>
-  <span class="big">{client.getDomain()}</span>
+  <span class="big">{localStorage.getItem("homeserver")}</span>
 </div>
 <br />
 
 {#if navigator.onLine}
   <h3>Capabilities</h3>
-  {#await client.getMediaConfig()}
+  {#await state.api.fetchRaw("GET", "/_matrix/media/v3/config")}
   <p>Max file size: loading..</p>
   {:then config}
   <p>Max file size: <b>{formatSize(config["m.upload.size"])}</b></p>
   {/await}
-  {#await client.getCapabilities()}
+  {#await state.api.fetch("GET", "/capabilities")}
   <p>Loading server capabilities</p>
-  {:then cap}
+  {:then { capabilities: cap }}
   <p>You <b>{cap["m.change_password"]?.enabled ? "can" : "cannot"}</b> change your password</p>
   <p>You <b>{cap["m.set_avatar_url"]?.enabled ? "can" : "cannot"}</b> change your avatar</p>
   <p>You <b>{cap["m.set_displayname"]?.enabled ? "can" : "cannot"}</b> change your display name</p>

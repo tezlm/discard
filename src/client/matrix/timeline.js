@@ -1,19 +1,40 @@
 import { handleEvent } from "./events.js";
 
-class Timeline {
-  constructor(events) {
-   this.events = [];
-    this._batchEnd = null;
-    this._batchStart = null;
-  }
-  
-  backwards() {
-    const { end, chunk } = state.api.fetchMessages(this.roomId, this._batchEnd, "b");
+class Timeline extends Array {
+  constructor(start, end) {
+    super();
+    this._batchStart = start;
     this._batchEnd = end;
   }
   
+  backwards() {
+    if (!this._batchEnd) return false;
+    const { end, chunk } = state.api.fetchMessages(this.roomId, this._batchEnd, "b");
+    for (let i of chunk) handleEvent(this, i, true);
+    this._batchEnd = end;
+    return true;
+  }
+  
   forwards() {
-    
+    if (!this._batchStart) return false;
+    const { start, chunk } = state.api.fetchMessages(this.roomId, this._batchEnd, "f");
+    for (let i of chunk) handleEvent(this, i);
+    this._batchStart = start;
+    return true;
+  }
+  
+  merge(other) {
+    const index = this.lastIndexOf(other[0]);
+    if (index >= 0) {
+        return true;
+    } else {
+      const index = this.indexOf(other[other.length - 1]);
+      if (index >= 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 }
 
@@ -22,31 +43,29 @@ export default class TimelineSet {
     this.roomId = roomId;
     this._timelines = new Set();
   }
-    
-  backwards() {
-    const oldStartIndex = state.timeline.indexOf(state.sliceStart);
-    if (oldStartIndex - limit < 0 && state.events.get(state.timeline[0])?.type !== "m.room.create") {
-      const roomId = state.focusedRoomId;
-      if (!timelineBatches.has(roomId)) timelineBatches.set(roomId, (await state.store.rooms.get(state.focusedRoomId)).batch);
-      const batch = timelineBatches.get(roomId);
-      const { end, chunk } = await state.api.fetchMessages(state.focusedRoomId, batch, "b");
-      for (let event of chunk) actions.timeline.handleEvent(state.focusedRoomId, event, true);
-      timelineBatches.set(roomId, end);
-      // if (state.timeline.length < limit && state.timeline.at(-1) !== lastTop) { // lastTop is a hacky solution for now
-      //   return actions.slice.backwards(limit, state.timeline.at(-1));
-      // }
+  
+  async for(eventId) {
+    for (let timeline of this._timelines) {
+      if (timeline.includes(eventId)) return timeline;
     }
-  }
-  
-  forwards() {
     
-  }
-  
-  live() {
+    // couldn't find any timeline for that event, get the event's context
+    const [event, { start, end, events_before, events_after }] = Promise.all([
+      await state.api.fetchEent(this.roomId, eventId),
+      await state.api.fetchContext(this.roomId, eventId),
+    ]);
+    const events = events_before.reverse().concat([event, ...events_after]);
+
+    for (let timeline of this._timelines) {
+      if (timeline.merge(events)) return timeline;
+    }
     
-  }
-  
-  for(eventId) {
-    
+    // no timeline, make a new one    
+    const timeline = new Timeline(start, end);
+    for (let i of events_before.reverse().concat([event, ...events_after])) {
+      handleEvent(i, timeline);
+    }
+    this._timelines.add(timeline);
+    return timeline;
   }
 }

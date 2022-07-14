@@ -8,21 +8,23 @@ export default class Api {
   }
   
   // utility methods for fetching
+  async fetchRaw(method, path, body, opts = {}) {
+    const url = `${this.baseUrl}${path}`;
+  	opts.method = method;
+  	if (body) opts.body = body;
+  	return fetch(url, opts).then(res => res.json());
+  }
+  
   async fetchUnauth(method, path, body) {
-    const url = `${this.baseUrl}/_matrix/client/v3${path}`;
-  	const opts = { method };
-  	if (body) opts.body = JSON.stringify(body);
-  	return fetch(url, opts).then(res => res.json());
+  	return fetchRaw(method, `/_matrix/client/v3${path}`, JSON.stringify(body)).then(res => res.json());
   }
-  
-  async fetch(method, path, body, extraOpts = {}) {
+    
+  async fetch(method, path, body, opts = {}) {
     if (!this.token) throw "token required";
-    const url = `${this.baseUrl}/_matrix/client/v3${path}`;
-  	const opts = { ...extraOpts, method, headers: { authorization: "Bearer " + this.token } };
-  	if (body) opts.body = JSON.stringify(body);
-  	return fetch(url, opts).then(res => res.json());
+  	opts.headers = { authorization: "Bearer " + this.token };
+  	return this.fetchRaw(method, `/_matrix/client/v3${path}`, body && JSON.stringify(body), opts);
   }
-  
+    
   // filters and syncing
   async postFilter(userId, filter) {
     const res = await this.fetch("POST", `/user/${encode(userId)}/filter`, filter);
@@ -97,8 +99,24 @@ export default class Api {
   }
 
   // files
-  uploadFile() {
-    return this.fetch("POST", `/rooms/${encode(roomId)}/typing/${encode(eventId)}`, content);
+  uploadFile(file, progress) {
+    if (!this.token) throw "token required";
+    const xhr = new XMLHttpRequest();
+    const promise = new Promise((res, rej) => {
+      xhr.addEventListener("load", () => {
+        if (xhr.status !== 200) rej(JSON.parse(xhr.response));
+        res(JSON.parse(xhr.response).content_uri);
+      });
+    });
+    xhr.addEventListener("progress", (e) => {
+      progress({ loaded: e.loaded, total: e.total });
+    });
+    xhr.open("POST", `${this.baseUrl}/_matrix/media/v3/upload?filename=${encode(file.name)}`);
+    xhr.setRequestHeader("Authorization", "Bearer " + this.token);
+    xhr.setRequestHeader("Content-Type", file.type);
+    xhr.setRequestHeader("Content-Length", file.size);
+    xhr.send(file);
+    return promise;
   }
     
   // rooms

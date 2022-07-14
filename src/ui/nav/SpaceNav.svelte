@@ -51,6 +51,7 @@ function getClasses(space) {
   max-width: 72px;
   padding: 4px 12px;
   z-index: 3;
+  /* overflow: hidden scroll; */
 }
 
 .space {
@@ -129,10 +130,10 @@ function getClasses(space) {
   <div class={getClasses(space).join(" ")}>
     <Tooltip position="right">
       <img
-        src={mxcToHttp($rooms.find(i => i.roomId === space)?.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"}
+        src={mxcToHttp(space?.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"}
         on:click={() => actions.spaces.focus(space)}
       />
-      <b slot="tip">{$rooms.find(i => i.roomId === space)?.name ?? "unknown..."}</b>
+      <b slot="tip">{space?.name ?? "unknown..."}</b>
     </Tooltip>
   </div>
 	{/each}

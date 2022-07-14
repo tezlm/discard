@@ -1,3 +1,5 @@
+import TimelineSet from "../matrix/timeline.js";
+
 const rooms = new Map();
 
 function formatRoom(roomId, room) {
@@ -40,29 +42,28 @@ function formatRoom(roomId, room) {
         this.ready = true;
       },
       get(membership) {
-        const cmp = (a, b) => a > b ? -1 : a < b ? 1 : 0;
+        const cmp = (a, b) => a > b ? 1 : a < b ? -1 : 0;
         return members
           .filter(i => i.membership === membership)
           .sort((a, b) => cmp(a.name, b.name))
-          .sort((a, b) => cmp(a.power, b.power));
+          .sort((a, b) => cmp(b.power, a.power));
       },
     };
   }
   
   return {
+    roomId:     roomId,
     name:       getState("m.room.name")?.name ?? "unknown room...",
     topic:      getState("m.room.topic")?.topic ?? null,
     avatar:     getState("m.room.avatar")?.url,
-    type:       getType(),
-    roomId:     roomId,
-    power:      getPower(),
     tombstone:  getState("m.room.tombstone") ?? null,
-    members:    memberCache(),
     joinRule:   getState("m.room.join_rules")?.join_rule,
-        
-    // compat for now
-    // hasUserReadEvent: (user, ev) => room.hasUserReadEvent(user, ev), // TODO: fix
-    hasUserReadEvent: () => false,
+    type:       getType(),
+    power:      getPower(),
+    members:    memberCache(),        
+    timelines:  new TimelineSet(),
+    
+    hasUserReadEvent: (user, ev) => false, // TODO: fix
   }
 }
 
@@ -72,15 +73,15 @@ export function save() {
   }
 }
 
-function load() {
-  console.log(state.store.rooms.all(id));
+export function load() {
+  // console.log(state.store.rooms.all(id));
   // .then(state => rooms.set(id, state));
   // state.store
 }
 
-export function handleJoin(roomId, event, batch) {
-  if (!rooms.has(roomId)) rooms.set(roomId, { data: [], batch });
-  const roomState = rooms.get(roomId).data;
+export function handleJoin(roomId, event) {
+  if (!rooms.has(roomId)) rooms.set(roomId, []);
+  const roomState = rooms.get(roomId);
   const index = roomState.findIndex(i => i.type === event.type && i.state_key === event.state_key);
   if (index >= 0) {
     roomState[index] = event;
@@ -97,10 +98,8 @@ export function handleLeave(roomId) {
   rooms.delete(roomId);
 }
 
-setTimeout(update, 3000);
-
 export function update() {
-  const joinedRooms = [...rooms.entries()].map(([id, { data }]) => formatRoom(id, data))
+  const joinedRooms = [...rooms.entries()].map(([id, data]) => formatRoom(id, data))
 
   // TODO: dms
   // const dms = [];
@@ -116,14 +115,17 @@ export function update() {
   const inSpaces = [];
   const spaces = joinedRooms.filter(i => i.type === "space");
   for (let space of spaces) {
-    const spaceRooms = rooms.get(space.roomId).data.filter(i => i.type === "m.space.child").map(i => i.state_key);
+    const spaceRooms = rooms.get(space.roomId)
+      .filter(i => i.type === "m.space.child")
+      .filter(i => rooms.has(i.state_key))
+      .map(i => formatRoom(i.state_key, rooms.get(i.state_key)));
     inSpaces.push(...spaceRooms);
     spaceMap.set(space.roomId, spaceRooms);
   }
   
   const orphans = joinedRooms.filter(i => !inSpaces.includes(i.roomId));
-  spaceMap.set("orphanRooms",  orphans.filter(i => i.type !== "space").map(i => i.roomId));
-  spaceMap.set("orphanSpaces", orphans.filter(i => i.type === "space").map(i => i.roomId));
+  spaceMap.set("orphanRooms",  orphans.filter(i => i.type !== "space"));
+  spaceMap.set("orphanSpaces", orphans.filter(i => i.type === "space"));
   
   state.rooms.set(joinedRooms);
   state.spaceMap.set(spaceMap);

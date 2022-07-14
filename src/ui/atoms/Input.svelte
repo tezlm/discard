@@ -37,7 +37,7 @@ input {
 .small {
   height: 20px;
   font-size: 14px;
-  padding: 16px 8px;
+  padding: 14px 8px;
 }
 
 .readonly {
