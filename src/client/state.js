@@ -6,7 +6,6 @@ const store = new Store();
 await store.init();
 
 export default {
-  client: null, // DEPRECATED: WILL NOT WORK
   api: null,
   syncer: null,
   userId: null,
@@ -24,7 +23,7 @@ export default {
   recentRooms: [],
   
   // events
-  events: new Events(), // DEPRECATED: will be removed soon
+  events: new Events(), // TODO: move to `store` for offline support?
   roomTimelines: new Map(),
   roomStates: new Map(),
   roomState: null,

@@ -38,7 +38,7 @@ export default class Api {
   }
   
   // login/logout
-  async login(userId, password, deviceName = "sussy") {
+  async login(userId, password, deviceName = "discard") {
     const { access_token: token } = await this.fetchUnauth("POST", "/login", {
       type: "m.login.password",
       identifier: {
@@ -58,15 +58,11 @@ export default class Api {
   
   // fetching content
   fetchMessages(roomId, startId, direction) {
-    return this.fetch("GET", `/rooms/${encode(roomId)}/messages?from=${encode(startId)}&dir=${direction}&limit=50`);
+    return this.fetch("GET", `/rooms/${encode(roomId)}/messages?from=${encode(startId)}&dir=${direction}&limit=200`);
   }
 
   fetchContext(roomId, eventId) {
-    return this.fetch("GET", `/rooms/${encode(roomId)}/context/${encode(eventId)}?limit=50`);
-  }
-
-  fetchRange(roomId, startId, endId) {
-    return this.fetch("GET", `/rooms/${encode(roomId)}/messages?from=${encode(startId)}&to=${endId}`);
+    return this.fetch("GET", `/rooms/${encode(roomId)}/context/${encode(eventId)}?limit=200`);
   }
   
   fetchEvent(roomId, eventId) {

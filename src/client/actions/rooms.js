@@ -20,11 +20,11 @@ function formatRoom(roomId, room) {
       getState: (name) => power.state?.[name] ?? power.state_default ?? 50,
     }
   }
-
+  
   return {
     name:       getState("m.room.name")?.name ?? "unknown room...",
     topic:      getState("m.room.topic")?.topic ?? null,
-    avatar:     getState("m.room.avatar"),
+    avatar:     getState("m.room.avatar")?.url,
     type:       getType(),
     roomId:     roomId,
     power:      getPower(),
@@ -55,17 +55,15 @@ function load() {
   // state.store
 }
 
-export function handleJoin(roomId, event) {
-  if (!rooms.has(roomId)) rooms.set(roomId, []);
-  const roomState = rooms.get(roomId);
+export function handleJoin(roomId, event, batch) {
+  if (!rooms.has(roomId)) rooms.set(roomId, { data: [], batch });
+  const roomState = rooms.get(roomId).data;
   const index = roomState.findIndex(i => i.type === event.type && i.state_key === event.state_key);
   if (index >= 0) {
     roomState[index] = event;
   } else {
     roomState.push(event);
   }
-  
-  globalThis.arst = roomState;
 }
 
 export function handleInvite(roomId, event) {
@@ -79,9 +77,11 @@ export function handleLeave(roomId) {
 setTimeout(update, 3000);
 
 export function update() {
+  const joinedRooms = [...rooms.entries()].map(([id, { data }]) => formatRoom(id, data))
+
+  // TODO: dms
   // const dms = [];
   // const dmData = state.client.getAccountData("m.direct")?.getContent();
-
   // if (dmData) {
   //   for (let userId in dmData) {
   //     for (let roomId in dmData[userId]) dms.push({ userId, roomId });
@@ -89,5 +89,19 @@ export function update() {
   //   state.dms.set(dms);
   // }
 
-  state.rooms.set([...rooms.entries()].map(([id, room]) => formatRoom(id, room)));
+  const spaceMap = new Map();
+  const inSpaces = [];
+  const spaces = joinedRooms.filter(i => i.type === "space");
+  for (let space of spaces) {
+    const spaceRooms = rooms.get(space.roomId).data.filter(i => i.type === "m.space.child").map(i => i.state_key);
+    inSpaces.push(...spaceRooms);
+    spaceMap.set(space.roomId, spaceRooms);
+  }
+  
+  const orphans = joinedRooms.filter(i => !inSpaces.includes(i.roomId));
+  spaceMap.set("orphanRooms",  orphans.filter(i => i.type !== "space").map(i => i.roomId));
+  spaceMap.set("orphanSpaces", orphans.filter(i => i.type === "space").map(i => i.roomId));
+  
+  state.rooms.set(joinedRooms);
+  state.spaceMap.set(spaceMap);
 }

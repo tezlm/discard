@@ -25,7 +25,7 @@ async function handleKeyDown(e) {
     if ($reply) {
       reply.set(null);
     } else {
-      state.client.sendReadReceipt($room.timeline[$room.timeline.length - 1]);  
+      // state.client.sendReadReceipt($room.timeline[$room.timeline.length - 1]);  
     }
   } if (e.key === "ArrowUp") {
     // TODO: get last event by me from slice, set as edit
@@ -105,7 +105,7 @@ async function sendMessage(content, roomId = $room.roomId) {
     reply.set(null);
   }
 
-  await state.client.sendEvent(roomId, null, "m.room.message", content);
+  await state.api.sendEvent(roomId, "m.room.message", content, Math.random());
 
   // const { event_id } = await state.client.sendEvent($room.roomId, null, "m.room.message", content);
   // state.client.sendReadReceipt($room.timeline.find(i => i.getId() === event_id)); // FIXME: flash of unread on message send

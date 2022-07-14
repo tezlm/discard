@@ -2,6 +2,7 @@
 import { quadOut } from 'svelte/easing';
 let focusedSpace = state.focusedSpace;
 let showMenu = false;
+let rooms = state.rooms;
 
 function zoomIn() {
   return {
@@ -81,7 +82,7 @@ function showPopup(id, opts) {
 }
 </style>
 <div class="header" on:click={() => showMenu = $focusedSpace && !showMenu}>
-  <span>{$focusedSpace ? state.client.getRoom($focusedSpace).name : "Home"}</span>
+  <span>{$focusedSpace ? $rooms.find(i => i.roomId === $focusedSpace)?.name ?? "unknown" : "Home"}</span>
   {#if $focusedSpace && showMenu}
   <div class="menu" transition:zoomIn>
       <div class="item" on:click={() => showPopup("invite")}><span class="color-accent">Invite People</span></div>
