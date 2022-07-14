@@ -1,7 +1,6 @@
-// this module handles the recieved events from sync
-
+// TODO: relations
 const supportedEvents = ["m.room.create", "m.room.message", "m.reaction"];
-const relations = new Map();
+// const relations = new Map();
 
 function format(roomId, raw) {
   const event = {
@@ -14,24 +13,28 @@ function format(roomId, raw) {
     date:       new Date(raw.origin_server_ts),
     isSending:  false,
     // isPing:     state.client.getPushActionsForEvent(ev).tweaks?.highlight || false, // TODO: fix
-    // isRedacted: ev.isRedacted(), // TODO: fix
+    isRedacted: raw.redacts,
     reactions:  new Map(),
+    
+    // these will be used when state events are shown in the timeline
+    isState:    false,
+    stateKey:   null,
   };
   return event;
 }
 
 
-function getRelation(event) {
-  const relation = event.content["m.relates_to"];
-  for (let key in relation) {
-    return { rel_type: key, event_id: relation[key].event_id, key: relation[key].key }
-  }
-}
+// function getRelation(event) {
+//   const relation = event.content["m.relates_to"];
+//   for (let key in relation) {
+//     return { rel_type: key, event_id: relation[key].event_id, key: relation[key].key }
+//   }
+// }
 
-function queueRelation(id, event) {
-  if (!relations.has(id)) relations.set(id, []);
-  relations.get(id).push(event);
-}
+// function queueRelation(id, event) {
+//   if (!relations.has(id)) relations.set(id, []);
+//   relations.get(id).push(event);
+// }
 
 export function get(roomId) {
   const tls = state.roomTimelines;
@@ -44,13 +47,15 @@ export function get(roomId) {
   }
 }
 
-export function handleEvent(roomId, event, toStart) {
+export function processEvent() {
+  
+}
+
+export function handleEvent(event, timeline, toStart) {
   if (!supportedEvents.includes(event.type)) return;
   if (event.content.redacts) return;
   const id = event.event_id;
-  const timeline = get(roomId);
   
-  // TODO: get relations to work again
   // if (getRelation(event.content)) {
   //     const { rel_type: type, event_id: relId, key } = getRelation(event);
   //     const original = state.events.get(relId);
@@ -86,12 +91,4 @@ export function redact(event) {
   const original = state.events.get(event.event.redacts);
   console.log("redact", original.eventId)
   original.isRedacted = true;
-}
-
-export function handleEphermeral(roomId, event) {
-  // TODO
-}
-
-export function handleState(roomId, event, batch) {
-  actions.rooms.handleJoin(roomId, event, batch);
 }

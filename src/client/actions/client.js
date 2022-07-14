@@ -39,7 +39,7 @@ export async function login({ localpart, homeserver, password }) {
   const api = new Api("https://" + homeserver);
 
   try {
-    const token = await api.login(userId, password);
+    const token = await api.login(userId, password, Math.random() > 0.99 ? "discount" : "discard");
     const filter = await api.postFilter(userId, defaultFilter);
     api.useFilter(filter);
     localStorage.setItem("homeserver", homeserver);

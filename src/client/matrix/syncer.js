@@ -24,9 +24,9 @@ export default class Syncer {
       //   this.rooms.set(roomId, { state: [], accountData: new Map() });
       // }
       
-      for (let event of room.timeline?.events ?? []) actions.timeline.handleEvent(roomId, event, room.timeline.prev_batch);
+      for (let event of room.timeline?.events ?? []) actions.timeline.handleEvent(roomId, event);
       for (let event of room.ephermeral?.events ?? []) actions.timeline.handleEphermeral(roomId, event);
-      for (let event of room.state?.events ?? []) actions.timeline.handleState(roomId, event);
+      for (let event of room.state?.events ?? []) actions.timeline.handleState(roomId, event, room.timeline.prev_batch);
     }
     
     // TODO: invited rooms

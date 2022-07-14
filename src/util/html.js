@@ -57,7 +57,8 @@ function transformImgTag(tagName, attribs) {
 		tagName,
 		attribs: {
 			...attribs,
-			src: src.startsWith("mxc://") ? state.client.mxcUrlToHttp(src) : src,
+			// TODO: fix
+			// src: src.startsWith("mxc://") ? state.client.mxcUrlToHttp(src) : src,
 		},
 	};
 }

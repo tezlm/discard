@@ -4,6 +4,9 @@ import Tooltip from "../atoms/Tooltip.svelte";
 
 let focusedSpace = state.focusedSpace;
 let spaceMap = state.spaceMap;
+let rooms = state.rooms;
+
+let mxcToHttp = h => h?.replace(/mxc:\/\/([^/]+)\/(.+)/, `https://celery.eu.org/_matrix/media/r0/download/$1/$2`) // TODO: not hardcode this, split into module
 
 onDestroy(state.focusedSpace.subscribe(() => spaceMap = state.spaceMap));
 onDestroy(state.rooms.subscribe(() => spaceMap = state.spaceMap));
@@ -15,14 +18,16 @@ function getLastMessage(timeline) {
 	return null;
 }
 
+// TODO: fix unread
 function isRead(room) {
-	const userId = state.client.getUserId();
+	const userId = state.userId;
 	const eventId = getLastMessage(room.timeline)?.getId();
 	if (!eventId) return true;
 	return room.hasUserReadEvent(userId, eventId);
 }
 
 function allRead(spaceId) {
+  return true;
   return $spaceMap.get(spaceId).every(roomId => {
     const room = state.client.getRoom(roomId);
     if (!room || room.getMyMembership() !== "join") return true;
@@ -124,10 +129,10 @@ function getClasses(space) {
   <div class={getClasses(space).join(" ")}>
     <Tooltip position="right">
       <img
-        src={state.client.getRoom(space).getAvatarUrl(state.client.baseUrl)}
+        src={mxcToHttp($rooms.find(i => i.roomId === space)?.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"}
         on:click={() => actions.spaces.focus(space)}
       />
-      <b slot="tip">{state.client.getRoom(space).name}</b>
+      <b slot="tip">{$rooms.find(i => i.roomId === space)?.name ?? "unknown..."}</b>
     </Tooltip>
   </div>
 	{/each}

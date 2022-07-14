@@ -17,7 +17,7 @@ function getLastMessage(timeline) {
 }
 
 function isRead(room) {
-	return false; // TODO: fix
+	return true; // TODO: fix
 	const userId = state.client.getUserId();
 	const eventId = getLastMessage(room.timeline)?.getId();
 	if (!eventId) return true;
@@ -122,9 +122,8 @@ function getClasses(room) {
 			<div class="wrapper">Home</div>
 		</div>
 		{/if}
-		<!-- TODO: make this work {#each $rooms.filter(i => $spaceMap.get($focusedSpace ?? "orphanRooms").includes(i.roomId)) as room} -->
-		{#each $rooms as room}
-		  <div
+		{#each $rooms.filter(i => $spaceMap.get($focusedSpace ?? "orphanRooms").includes(i.roomId)) as room}
+	  <div
 				class={getClasses(room).join(" ")}
 				on:click={() => actions._rooms.focus(room)}>
 				<div class="wrapper">

@@ -2,13 +2,14 @@
 export let fetchBackwards = async () => {};
 export let fetchForwards = async () => {};
 export let scrollTop, scrollMax;
-export let items, indexKey;
+export let items;
 export let margin = 400;
 export let direction = "down";
 export let scrollEl;
 let debounce;
 let contentEl;
 let atItemsTop, atItemsBottom;
+let paginating = false;
 
 export function reset() {
   atItemsTop = direction === "up";
@@ -31,8 +32,8 @@ function handleScroll() {
 
 // FIXME: pagination sometimes jumps around
 async function paginate() {
-  if (!contentEl || !contentEl.children[0]) return;
-  console.log("paginate")
+  if (paginating || !contentEl || !contentEl.children[0]) return;
+  paginating = true;
 
   const scrollTop = scrollEl.scrollTop;
   const scrollBottom = scrollEl.scrollHeight - scrollEl.offsetHeight - scrollTop;
@@ -50,6 +51,8 @@ async function paginate() {
     [atItemsTop, atItemsBottom] = (await fetchForwards() ?? [false, false]);
     scrollEl.scrollTop = scrollTop + childNode.offsetTop - scrollPos;
   }
+
+  paginating = false;
 }
 
 queueMicrotask(() => {

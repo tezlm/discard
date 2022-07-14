@@ -3,7 +3,7 @@ import { parseHtml } from "../../../util/html.js";
 import fileIcon from "../../../assets/file.svg";
 export let event;
 
-let client = { mxcUrlToHttp: foo => foo }; // TODO: fix
+let client = { mxcUrlToHttp: h => h.replace(/mxc:\/\/([^/]+)\/(.+)/, `https://celery.eu.org/_matrix/media/r0/download/$1/$2`) }; // TODO: not hardcode this
 
 $: content = event.content;
 $: type = content.msgtype;
