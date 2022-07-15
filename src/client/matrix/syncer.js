@@ -41,7 +41,7 @@ export default class Syncer {
     }
     
     if (this.status === "starting") {
-      console.log("ready")
+      state.log.matrix("ready");
       this.status = "syncing";
       state.scene.set("chat");
       actions.rooms.update();

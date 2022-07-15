@@ -1,28 +1,32 @@
 <script>
 import Input from "../../atoms/Input.svelte";
-import { defaultAvatar } from '../../../util/events.js';
-
-let mxcToHttp = h => h?.replace(/mxc:\/\/([^/]+)\/(.+)/, `https://celery.eu.org/_matrix/media/r0/download/$1/$2`) // TODO: not hardcode this, split into module
+import { parseMxc, defaultAvatar } from '../../../util/events.js';
 
 export let room, membership;
 let missingAvs = state.missingAvatars;
+
+let allMembers = false;
 let members = false;
 let filter;
 
 $: setTimeout(async () => {
-  if (!$room.members.ready) await $room.members.fetch();
-  members = $room.members.get(membership)
+  await $room.members.fetch();
+  allMembers = $room.members.with(membership);
 });
 
-$: if (members) {
-  console.log(members.filter(i => i.name?.includes(filter)))
+$: if (allMembers) {
+  members = allMembers.filter(i => i.name.includes(filter) || i.userId.includes(filter));
 }
 
 function showPopup(member) {
+  const power = $room.power;
   state.popup.set({
     id: "member",
     membership,
     member,
+    canBan: power.me > power.getUser(member.userId) && power.me >= power.getBase("ban"),
+    canKick: power.me > power.getUser(member.userId) && power.me >= power.getBase("kick"),
+    canInvite: power.me > power.getUser(member.userId) && power.me >= power.getBase("invite"),
   });
 }
 
@@ -75,16 +79,16 @@ h1 {
 </style>
 {#if room}
   <div class="header">
-    <h1>{members ? members.length || "No" : "Loading"} {getTitle(membership)}{members.length !== 1 ? "s" : ""}</h1>
-    <div><Input small placeholder="Search for {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
+    <h1>{members ? members.length || "No" : "Loading"} {filter ? "Filtered " : ""}{getTitle(membership)}{members.length !== 1 ? "s" : ""}</h1>
+    <div><Input small placeholder="Filter {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
   </div>
   {#if members}
-    {#each filter ? members.filter(i => i.name?.includes(filter)) : members as member}
+    {#each members as member}
     <div class="member" on:click={() => showPopup(member)}>
       <img
           class="avatar"
           alt="avatar for {member.name}"
-          src={missingAvs.has(member.userId) ? defaultAvatar : mxcToHttp(member.avatar)}
+          src={missingAvs.has(member.userId) ? defaultAvatar : parseMxc(member.avatar)}
           on:error={(e) => { missingAvs.add(member.userId); e.target.src = defaultAvatar }}
           loading="lazy"
         />

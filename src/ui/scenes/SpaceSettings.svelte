@@ -1,6 +1,4 @@
 <script>
-import { writable } from "svelte/store";
-
 import Settings from '../settings/Settings.svelte';
 
 import Overview from "../settings/space/Overview.svelte";
@@ -10,9 +8,7 @@ import Audit from "../settings/space/Audit.svelte";
 import Emoji from "../settings/room/Emoji.svelte";
 import Members from "../settings/room/Members.svelte";
 
-let rooms = state.rooms;
-let spaceId = state.focusedSpace;
-$: room = $rooms.find(i => i.roomId === $spaceId);
+let room = state.focusedSpace;
 
 const views = [
   { view: Overview,    name: "Overview", raw: true },
@@ -28,4 +24,4 @@ const views = [
   { clicked: () => state.popup.set({ id: "leave", type: "space", room, confirm: () => queueMicrotask(todo) }), name: "Leave Space", color: "var(--color-red)" },
 ];
 </script>
-<Settings {views} options={{ room: writable(room) }} />
+<Settings {views} options={{ room }} />

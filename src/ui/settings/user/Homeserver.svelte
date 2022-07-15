@@ -30,7 +30,7 @@ h3 {
 
 {#if navigator.onLine}
   <h3>Capabilities</h3>
-  {#await state.api.fetchRaw("GET", "/_matrix/media/v3/config")}
+  {#await state.api.fetchAuth("GET", "/_matrix/media/v3/config")}
   <p>Max file size: loading..</p>
   {:then config}
   <p>Max file size: <b>{formatSize(config["m.upload.size"])}</b></p>

@@ -1,5 +1,5 @@
 <script>
-let mxcToHttp = h => h?.replace(/mxc:\/\/([^/]+)\/(.+)/, `https://celery.eu.org/_matrix/media/r0/download/$1/$2`) // TODO: not hardcode this, split into module
+import { parseMxc } from "../../../util/events.js";
 import Input from "../../atoms/Input.svelte";
 import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
@@ -89,7 +89,7 @@ h1 {
   <div class="section" style="flex-direction: row">
     <div class="avatar">
       <div class="uploader">
-        <img src={mxcToHttp($room.avatar)} />
+        <img src={parseMxc($room.avatar)} />
         <div class="remove">Remove</div>
       </div>
       <div class="side">

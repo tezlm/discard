@@ -1,6 +1,8 @@
 // TODO: fix this
 import defaultAv from "../assets/default-avatar.png";
 export const defaultAvatar = defaultAv;
+export const parseMxc = (mxc) => mxc?.replace(/mxc:\/\/([^/]+)\/(.+)/, `${state.api.baseUrl}/_matrix/media/r0/download/$1/$2`);
+
 export const getDisplayName = (userId, roomId, raw = false) => 
   // state.client.getRoom(roomId)?.getMember(userId)?.[raw ? "rawDisplayName" : "name"] ??
   // state.client.getUser(userId)?.[raw ? "rawDisplayName" : "displayName"]??

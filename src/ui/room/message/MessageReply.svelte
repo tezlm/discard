@@ -1,10 +1,24 @@
 <script>
 // TODO: make edits apply
 import { parseHtml } from "../../../util/html.js";
-import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.js';
+import { parseMxc, defaultAvatar } from '../../../util/events.js';
 export let roomId, eventId;
 let missingAvs = state.missingAvatars;
+let room = state.focusedRoom;
 let eventPromise = state.events.fetch(roomId, eventId);
+
+function getName(sender) {
+  const member = $room.members.get(sender);
+  if (!member) return member.userId;
+  return member.name ?? member.userId;
+}
+
+function getAvatar(sender) {
+  if (missingAvs.has(sender)) return defaultAvatar;
+  const member = $room.members.get(sender);
+  if (!member) return defaultAvatar;
+  return member.avatar ? parseMxc(member.avatar) : defaultAvatar;
+}
 </script>
 <style>
 .reply {
@@ -88,11 +102,11 @@ let eventPromise = state.events.fetch(roomId, eventId);
 <div class="reply">
   <img 
     class="avatar"
-    alt="avatar for {getDisplayName(event.sender)}"
-    src={missingAvs.has(event.sender) ? defaultAvatar : getAvatar(event.sender, event.roomId)}
+    alt="avatar for {getName(event.sender)}"
+    src={getAvatar(event.sender)}
     on:error={(e) => { missingAvs.add(event.sender); e.target.src = defaultAvatar }}
   />
-  <span class="author">{getDisplayName(event.sender)}</span>
+  <span class="author">{getName(event.sender)}</span>
   <div class="content" on:click={() => actions.slice.jump(roomId, eventId)}>
     {#if event.content.format === "org.matrix.custom.html"}
       {@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n|<br.*?>/g, " ")}
@@ -101,7 +115,7 @@ let eventPromise = state.events.fetch(roomId, eventId);
     {/if}
   </div>
 </div>
-{:catch}
-<div class="reply">error!</div>
+{:catch err}
+<div class="reply">error: {err}</div>
 {/await}
 

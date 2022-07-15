@@ -1,9 +1,8 @@
 <script>
 import { parseHtml } from "../../../util/html.js";
+import { parseMxc } from "../../../util/events.js";
 import fileIcon from "../../../assets/file.svg";
 export let event;
-
-let client = { mxcUrlToHttp: h => h.replace(/mxc:\/\/([^/]+)\/(.+)/, `https://celery.eu.org/_matrix/media/r0/download/$1/$2`) }; // TODO: not hardcode this
 
 $: content = event.content;
 $: type = content.msgtype;
@@ -131,16 +130,16 @@ img {
 </style>
 <div class:redacted class:sending style={type === "m.image" || type === "m.video" ? dimensions : ""}>
   {#if type === "m.image"}
-  <img src={client.mxcUrlToHttp(content.url) + "/" + content.body} alt={content.body} style={dimensions} on:click={() => state.popup.set({ id: "attachment", url: client.mxcUrlToHttp(content.url) + "/" + content.body })} />
+  <img src={parseMxc(content.url) + "/" + content.body} alt={content.body} style={dimensions} on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + content.body })} />
   {:else if type === "m.video"}
-  <video controls src={client.mxcUrlToHttp(content.url)} alt={content.body} style={dimensions} />
+  <video controls src={parseMxc(content.url)} alt={content.body} style={dimensions} />
   {:else if type === "m.audio"}
-  <audio controls src={client.mxcUrlToHttp(content.url)} alt={content.body} />
+  <audio controls src={parseMxc(content.url)} alt={content.body} />
   {:else if type === "m.file"}
   <div class="file">
     <img src={fileIcon} alt="file icon" />
     <div class="info">
-      <a href={client.mxcUrlToHttp(content.url)}>{content.body}</a><br />
+      <a href={parseMxc(content.url)}>{content.body}</a><br />
       <span class="size">{formatSize(content.info?.size)}</span>
     </div>
   </div>

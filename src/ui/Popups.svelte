@@ -5,11 +5,14 @@ import Input from "./atoms/Input.svelte";
 import Popup from "./atoms/Popup.svelte";
 import Logout from "./popups/Logout.svelte";
 import { formatDate, formatSize } from "../util/format.js";
-let client = state.client;
 let current = state.popup;
 let data; reset();
 
 // TODO: there are quite a lot of popups here, maybe move each of them into a separate file?
+
+$: if ($current.id) {
+  state.log.ui("open popup " + $current.id);
+}
 
 function closePopup() {
   state.popup.set({});
@@ -189,6 +192,19 @@ pre {
         <i>no reason supplied</i>
       {/if}
     </div>
+    {/if}
+  </div>
+  <div slot="footer">
+    <Button type="link" label="Okay" clicked={closePopup} />
+    {#if $current.canKick && $current.membership !== "ban"}
+      <Button type="danger" label={$current.membership === "join" ? "Kick" : "Disinvite"} clicked={() => state.popup.set({ id: "todo" })} />
+    {/if}
+    {#if $current.canBan}
+      {#if $current.membership === "ban"}
+      <Button type="danger" label="Unban" clicked={() => state.popup.set({ id: "todo" })} />
+      {:else}
+      <Button type="danger" label="Ban" clicked={() => state.popup.set({ id: "todo" })} />
+      {/if}
     {/if}
   </div>
 </Popup>

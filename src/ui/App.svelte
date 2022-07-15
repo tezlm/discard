@@ -32,6 +32,10 @@ function easeInv() {
     css: t => `transform: scale(${0.9 + t / 10})`,
   }
 }
+
+scene.subscribe(() => {
+  state.log.ui("switch scene to " + $scene);
+});
 </script>
 <style>
 main {

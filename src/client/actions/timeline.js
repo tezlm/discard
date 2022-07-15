@@ -71,9 +71,31 @@ export function handleEvent(roomId, event, toStart) {
   //       original.reactions.set(key, [count + 1, selfReacted || event.getSender() === state.client.getUserId()]);
   //     }
   // } else {
-    state.events.set(id, format(roomId, event));
-    timeline[toStart ? "unshift" : "push"](id);
-    
+  const atEnd = actions.slice.isAtEnd();
+  state.events.set(id, format(roomId, event));
+  timeline[toStart ? "unshift" : "push"](id);
+  
+  // TODO: update on state events
+  // TODO: clean up
+  if (state.focusedRoomId === roomId && !toStart && atEnd) {
+    // TODO: fix relations
+    // if (event.isRelation()) {
+      // state.sliceEnd = state.timeline.at(-1);
+      // state.sliceRef[state.sliceRef.length - 1] = state.timeline.at(-1);
+    // } else {
+      state.sliceRef.push(timeline.at(-1));
+      state.sliceEnd = timeline.at(-1);
+  
+      const startIndex = timeline.lastIndexOf(state.sliceStart);
+      if (startIndex >= 0) {
+        state.sliceStart = timeline[startIndex + 1];
+        state.sliceRef.shift();
+      }
+    // }
+  
+    state.slice.set(state.sliceRef);        
+  }
+  
   //   if (relations.has(id)) {
   //     for (let relation of relations.get(id)) add(relation);
   //     relations.delete(id);

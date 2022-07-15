@@ -32,49 +32,6 @@ function getDefaultTimeline() {
   }
 }
 
-// TODO: switch over to custom room type
-function formatRoom(room) {
-  const getState = (event) => room?.currentState.getStateEvents(event)?.[0]?.getContent();
-  
-  function getType() {
-    if (room.getMyMembership() === "invite") return "invite";
-    if (room.isSpaceRoom()) return "space";
-    // TODO: dm room
-    return "room";
-  }
-  
-  function getPower() {
-    const power = getState("m.room.power_levels") ?? { state_default: 0 };
-    power.me = power.users?.[state.client.getUserId()] ?? power.users_default ?? 0;
-    return {
-      ...power,
-      me: power.users?.[state.client.getUserId()] ?? power.users_default ?? 0,
-      getEvent: (name) => power.events?.[name] ?? power.events_default ?? 0,
-      getState: (name) => power.state?.[name] ?? power.state_default ?? 50,
-    }
-  }
-    
-  return {
-    name:       room.name,
-    topic:      getState("m.room.topic")?.topic ?? null,
-    avatar:     room.getAvatarUrl(state.client.baseUrl),
-    type:       getType(),
-    roomId:     room.roomId,
-    power:      getPower(),
-    tombstone:  getState("m.room.tombstone") ?? null,
-
-    getMembers(membership) {
-      return room[membership ? "getMembersWithMembership" : "getMembers"](membership)
-        .sort((a, b) => a.displayName > b.displayName ? -1 : 1)
-        .sort((a, b) => a.powerLevel > b.powerLevel ? -1 : 1);
-    },
-    
-    // compat for now
-    hasUserReadEvent: (user, ev) => room.hasUserReadEvent(user, ev),
-    timeline: room.timeline,
-  }
-}
-
 export default {
   client,
   events,
@@ -82,7 +39,7 @@ export default {
   timeline,
   _rooms: {
     focus(room) {
-      console.log("set focused room");
+      state.log.ui("set focused room to " + room?.roomId);
       
       // TODO: clean up this code
       // save room state
@@ -153,7 +110,6 @@ export default {
   },
   spaces: {
     focus(space) {
-    	state.focusedSpaceId = space?.roomId ?? null;
     	state.focusedSpace.set(space);
     },
     update() {
@@ -187,10 +143,10 @@ export default {
     async backwards(limit = 50, lastTop) {
       const oldStartIndex = state.timeline.indexOf(state.sliceStart);
       if (oldStartIndex - limit < 0 && state.events.get(state.timeline[0])?.type !== "m.room.create") {
-        console.log("fetching")
         const roomId = state.focusedRoomId;
         if (!timelineBatches.has(roomId)) timelineBatches.set(roomId, (await state.store.rooms.get(state.focusedRoomId)).batch);
         const batch = timelineBatches.get(roomId);
+        state.log.matrix(`fetching in ${roomId} from ${batch}`);
         const { end, chunk } = await state.api.fetchMessages(state.focusedRoomId, batch, "b");
         for (let event of chunk || []) actions.timeline.handleEvent(state.focusedRoomId, event, true);
         timelineBatches.set(roomId, end);
@@ -208,7 +164,7 @@ export default {
       const newStart = Math.max(startIndex - limit, 0);
       const newEnd = Math.min(newStart + eventCount, state.timeline.length - 1);
        
-      console.log(`now viewing [${newStart}..${newEnd}] of ${state.timeline.length}`);
+      state.log.ui(`now viewing [${newStart}..${newEnd}] of ${state.timeline.length}`);
       
       state.sliceStart = state.timeline[newStart];
       state.sliceEnd = state.timeline[newEnd];
@@ -225,7 +181,7 @@ export default {
       const newStart = Math.max(startIndex + limit, 0);
       const newEnd = Math.min(newStart + eventCount, state.timeline.length - 1);
       
-      console.log(`now viewing [${newStart}..${newEnd}] of ${state.timeline.length}`);
+      state.log.ui(`now viewing [${newStart}..${newEnd}] of ${state.timeline.length}`);
       
       state.sliceStart = state.timeline[newStart];
       state.sliceEnd = state.timeline[newEnd];
@@ -233,35 +189,6 @@ export default {
       state.slice.set(state.sliceRef);
     },
     async jump(_roomId, eventId) {
-      // TODO: add better jumping/context support
-      console.log("jump to ", eventId)
-      // const index = state.timeline.indexOf(eventId);
-      
-      // if (!state.sliceRef.find(i => i.eventId === eventId)) {
-      //   if (index === -1) return; // TODO: actually finish this
-        
-      //   const context = 50;
-      //   const newStart = Math.max(index - context, 0);
-      //   const newEnd = Math.min(index + context, state.timeline.length - 1);
-        
-      //   state.sliceStart = state.timeline[newStart].eventId;
-      //   state.sliceEnd = state.timeline[newEnd].eventId;
-      //   state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
-      //   state.slice.set(state.sliceRef);
-        
-        // state.sliceStart = eventId;
-        // state.sliceEnd = eventId;
-        // console.log(await state.client.fetchRoomEvent(roomId, eventId));
-
-        // state.sliceRef = [];
-        // state.timeline.slice(newStart, newEnd + 1);
-        // state.slice.set(state.sliceRef);
-        // state.sliceStart = state.timeline[newStart].eventId;
-        // state.sliceEnd = state.timeline[newEnd].eventId;
-        // state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
-        // state.slice.set(state.sliceRef);
-      // }
-      
       state.roomState.focused.set(eventId);
     },
   },

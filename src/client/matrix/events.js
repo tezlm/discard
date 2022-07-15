@@ -2,7 +2,7 @@
 const supportedEvents = ["m.room.create", "m.room.message", "m.reaction"];
 // const relations = new Map();
 
-function format(roomId, raw) {
+export function format(roomId, raw) {
   const event = {
     roomId:     roomId,
     eventId:    raw.event_id,
