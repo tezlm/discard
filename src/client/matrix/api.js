@@ -16,13 +16,17 @@ export default class Api {
   }
   
   async fetchUnauth(method, path, body) {
-  	return fetchRaw(method, `/_matrix/client/v3${path}`, JSON.stringify(body)).then(res => res.json());
+  	return this.fetchRaw(method, `/_matrix/client/v3${path}`, JSON.stringify(body));
   }
-    
-  async fetch(method, path, body, opts = {}) {
+  
+  async fetchAuth(method, path, body, opts = {}) {
     if (!this.token) throw "token required";
   	opts.headers = { authorization: "Bearer " + this.token };
-  	return this.fetchRaw(method, `/_matrix/client/v3${path}`, body && JSON.stringify(body), opts);
+  	return this.fetchRaw(method, path, body && JSON.stringify(body), opts);
+  }
+  
+  async fetch(method, path, body, opts = {}) {
+  	return this.fetchAuth(method, `/_matrix/client/v3${path}`, body, opts);
   }
     
   // filters and syncing

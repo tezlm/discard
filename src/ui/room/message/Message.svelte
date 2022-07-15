@@ -4,12 +4,16 @@ import MessageContent from "./MessageContent.svelte";
 import MessageReactions from "./MessageReactions.svelte";
 import MessageToolbar from "./MessageToolbar.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
-import { getDisplayName, getAvatar, defaultAvatar } from '../../../util/events.js';
+import { parseMxc, defaultAvatar } from '../../../util/events.js';
 
 export let event, header = false, shiftKey = false;
 
 let missingAvs = state.missingAvatars;
 $: toolbar = getToolbar(event, shiftKey);
+
+let room = state.focusedRoom;
+$room.members.fetch();
+$: sender = $room.members.get(event.sender) ?? {};
 
 function unwrapEdits(event) {
   while (event.original) event = event.original;
@@ -35,6 +39,11 @@ function getToolbar(event, shift = false) {
 
 function getReply(content) {
   return content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
+}
+
+function getAvatar() {
+  if (missingAvs.has(sender.userId)) return defaultAvatar;
+  return sender.avatar ? parseMxc(sender.avatar) : defaultAvatar;
 }
 </script>
 <style>
@@ -115,9 +124,9 @@ time {
     {#if header}
     <img
       class="avatar"
-      alt="pfp for {getDisplayName(event.sender)}"
-      src={missingAvs.has(event.sender) ? defaultAvatar : getAvatar(event.sender, event.roomId)}
-      on:error={(e) => { missingAvs.add(event.sender); e.target.src = defaultAvatar }}
+      alt="pfp for {sender.name ?? sender.userId}"
+      src={getAvatar()}
+      on:error={(e) => { missingAvs.add(sender.userId); e.target.src = defaultAvatar }}
     />
     {:else}
     <time datetime={event.date.toISOString()}>{formatTime(event.date)}</time>
@@ -127,7 +136,7 @@ time {
     {#if getReply(event.content)}<MessageReply roomId={event.roomId} eventId={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
-      <span class="author">{getDisplayName(event.sender, event.roomId)}</span>
+      <span class="author">{sender.name ?? event.sender}</span>
       <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
     </div>
     {/if}

@@ -1,35 +1,38 @@
 import { handleEvent } from "./events.js";
 
 class Timeline extends Array {
-  constructor(start, end) {
+  constructor(roomId, start, end) {
     super();
-    this._batchStart = start;
-    this._batchEnd = end;
+    this.roomId = roomId;
+    this.batchStart = start;
+    this.batchEnd = end;
   }
   
-  backwards() {
-    if (!this._batchEnd) return false;
-    const { end, chunk } = state.api.fetchMessages(this.roomId, this._batchEnd, "b");
+  async backwards() {
+    if (!this.batchEnd) return false;
+    const { end, chunk } = await state.api.fetchMessages(this.roomId, this.batchEnd, "b");
     for (let i of chunk) handleEvent(this, i, true);
-    this._batchEnd = end;
+    this.batchEnd = end;
     return true;
   }
   
-  forwards() {
-    if (!this._batchStart) return false;
-    const { start, chunk } = state.api.fetchMessages(this.roomId, this._batchEnd, "f");
+  async forwards() {
+    if (!this.batchStart) return false;
+    const { start, chunk } = await state.api.fetchMessages(this.roomId, this.batchStart, "f");
     for (let i of chunk) handleEvent(this, i);
-    this._batchStart = start;
+    this.batchStart = start;
     return true;
   }
   
   merge(other) {
     const index = this.lastIndexOf(other[0]);
     if (index >= 0) {
+        this.push(...other.slice(index));
         return true;
     } else {
       const index = this.indexOf(other[other.length - 1]);
       if (index >= 0) {
+        this.unshift(...other.slice(-index));
         return true;
       } else {
         return false;
@@ -39,14 +42,29 @@ class Timeline extends Array {
 }
 
 export default class TimelineSet {
-  constructor(roomId) {
+  constructor(roomId, batch) {
     this.roomId = roomId;
+    this.live = new Timeline(roomId, null, batch);
+    this.current = this.live;
     this._timelines = new Set();
+    this._timelines.add(this.live);
   }
   
-  async for(eventId) {
+  async backwards() {
+    return this.current.backwards();
+  }
+  
+  async forwards() {
+    return this.current.forwards();
+  }
+  
+  async jump(eventId) {
+    if (!eventId) this.current = this.live;
+
     for (let timeline of this._timelines) {
-      if (timeline.includes(eventId)) return timeline;
+      if (timeline.includes(eventId)) {
+        this.current = timeline;
+      }
     }
     
     // couldn't find any timeline for that event, get the event's context
@@ -66,6 +84,6 @@ export default class TimelineSet {
       handleEvent(i, timeline);
     }
     this._timelines.add(timeline);
-    return timeline;
+    this.current = timeline;
   }
 }

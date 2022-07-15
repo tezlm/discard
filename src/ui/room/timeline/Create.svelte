@@ -1,7 +1,7 @@
 <script>
 export let event;
 let rooms = state.rooms;
-$: room = $rooms.find(i => i.roomId === event.roomId);
+$: room = $rooms.get(event.roomId);
 $: name = room?.name;
 $: topic = room?.topic;
 </script>

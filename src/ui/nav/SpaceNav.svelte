@@ -1,15 +1,8 @@
 <script>
-import { onDestroy } from "svelte";
 import Tooltip from "../atoms/Tooltip.svelte";
-
+import { parseMxc } from "../../util/events.js";
 let focusedSpace = state.focusedSpace;
-let spaceMap = state.spaceMap;
-let rooms = state.rooms;
-
-let mxcToHttp = h => h?.replace(/mxc:\/\/([^/]+)\/(.+)/, `https://celery.eu.org/_matrix/media/r0/download/$1/$2`) // TODO: not hardcode this, split into module
-
-onDestroy(state.focusedSpace.subscribe(() => spaceMap = state.spaceMap));
-onDestroy(state.rooms.subscribe(() => spaceMap = state.spaceMap));
+let spaces = state.spaces;
 
 function getLastMessage(timeline) {
 	for (let i = timeline.length - 1; i >= 0; i--) {
@@ -28,18 +21,11 @@ function isRead(room) {
 
 function allRead(spaceId) {
   return true;
-  return $spaceMap.get(spaceId).every(roomId => {
-    const room = state.client.getRoom(roomId);
-    if (!room || room.getMyMembership() !== "join") return true;
-    return isRead(room);
-  });
-}
-
-function getClasses(space) {
-	const classes = ["space"];
-	if ($focusedSpace === space) classes.push("selected");
-	if (!allRead(space)) classes.push("unread");
-	return classes;
+  // return $spaceMap.get(spaceId).every(roomId => {
+  //   const room = state.client.getRoom(roomId);
+  //   if (!room || room.getMyMembership() !== "join") return true;
+  //   return isRead(room);
+  // });
 }
 </script>
 <style>
@@ -71,7 +57,7 @@ function getClasses(space) {
   border-radius: 35%;
 }
 
-.space.selected img {
+.space.focused img {
   border-radius: 35%;
 }
 
@@ -88,7 +74,7 @@ function getClasses(space) {
   transition: all 200ms;
 }
 
-.space.unread::before, .space:hover::before, .space.selected::before {
+.space::before {
   opacity: 1;
 	left: -16px;
 }
@@ -103,7 +89,7 @@ function getClasses(space) {
 	top: 22px;
 }
 
-.space.selected::before {
+.space.focused::before {
   height: 36px;
 	top: 14px;
 }
@@ -126,11 +112,14 @@ function getClasses(space) {
     </Tooltip>
   </div>
   <div class="separator"></div>
-	{#each $spaceMap.get("orphanSpaces") ?? [] as space}
-  <div class={getClasses(space).join(" ")}>
+	{#each $spaces.get("orphanSpaces") as space}
+  <div
+    class="space"
+    class:focused={$focusedSpace?.roomId === space?.roomId}
+  >
     <Tooltip position="right">
       <img
-        src={mxcToHttp(space?.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"}
+        src={parseMxc(space?.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"}
         on:click={() => actions.spaces.focus(space)}
       />
       <b slot="tip">{space?.name ?? "unknown..."}</b>

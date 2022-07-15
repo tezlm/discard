@@ -2,12 +2,7 @@
 import Tooltip from "../atoms/Tooltip.svelte";
 let focusedRoom = state.focusedRoom;
 let focusedSpace = state.focusedSpace;
-let spaceMap = state.spaceMap;
-let rooms = state.rooms;
-
-state.focusedRoom.subscribe(() => {
-	rooms = state.rooms; // hacky svelte ;)
-});
+let spaces = state.spaces;
 
 function getLastMessage(timeline) {
 	for (let i = timeline.length - 1; i >= 0; i--) {
@@ -18,17 +13,10 @@ function getLastMessage(timeline) {
 
 function isRead(room) {
 	return true; // TODO: fix
-	const userId = state.client.getUserId();
-	const eventId = getLastMessage(room.timeline)?.getId();
-	if (!eventId) return true;
-	return room.hasUserReadEvent(userId, eventId);
-}
-
-function getClasses(room) {
-	const classes = ["room"];
-	if (state.focusedRoomId === room.roomId) classes.push("selected");
-	if (!isRead(room)) classes.push("unread");
-	return classes;
+	// const userId = state.client.getUserId();
+	// const eventId = getLastMessage(room.timeline)?.getId();
+	// if (!eventId) return true;
+	// return room.hasUserReadEvent(userId, eventId);
 }
 </script>
 <style>
@@ -66,7 +54,7 @@ function getClasses(room) {
   color: var(--fg-light);
 }
 
-.room.selected .wrapper {
+.room.focused .wrapper {
 	color: var(--fg-content); 
 	background: rgba(79,84,92,0.6);
 }
@@ -75,7 +63,7 @@ function getClasses(room) {
 	color: var(--fg-content); 
 }
 
-.room.unread:not(.selected)::before {
+.room.unread:not(.focused)::before {
 	content: "\2b24";
 	position: absolute;
 	color: var(--fg-content);
@@ -109,34 +97,34 @@ function getClasses(room) {
 	margin-left: auto;
 }
 
-.room.selected .settings, .room:hover .settings {
+.room.focused .settings, .room:hover .settings {
 	display: block;
 }
 </style>
 	<div class="nav" tabindex=-1>
 		<div class="spacer"></div>
-		{#if !$focusedSpace}
 	  <div
-			class={$focusedRoom ? "room home" : "room home selected"}
+			class={$focusedRoom ? "room home" : "room home focused"}
 			on:click={() => actions._rooms.focus(null)}>
 			<div class="wrapper">Home</div>
 		</div>
-		{/if}
-		{#each $spaceMap.get($focusedSpace?.roomId ?? "orphanRooms") as room}
+		{#each $spaces.get($focusedSpace?.roomId ?? "orphanRooms") as room}
 	  <div
-				class={getClasses(room).join(" ")}
-				on:click={() => actions._rooms.focus(room)}>
-				<div class="wrapper">
-					<div class="icon">#</div>
-					<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
-					<div class="settings" on:click={() => state.popup.set({ id: "invite", type: "room", room: $focusedRoom })}>
-						<Tooltip tip="Send Invite">&#129730;</Tooltip>
-					</div>
-					<div class="settings" style="margin-left: 4px;" on:click={() => state.scene.set("room-settings")}>
-						<Tooltip tip="Edit Room">🔧</Tooltip>
-					</div>
+			class="room"
+			class:focused={$focusedRoom?.roomId === room.roomId}
+			class:unread={false}
+			on:click={() => actions._rooms.focus(room)}>
+			<div class="wrapper">
+				<div class="icon">#</div>
+				<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
+				<div class="settings" on:click={(e) => { e.stopImmediatePropagation(); state.popup.set({ id: "invite", type: "room", room: $focusedRoom }) }}>
+					<Tooltip tip="Send Invite">&#129730;</Tooltip>
+				</div>
+				<div class="settings" style="margin-left: 4px;" on:click={(e) => { e.stopImmediatePropagation(); state.scene.set("room-settings") }}>
+					<Tooltip tip="Edit Room">🔧</Tooltip>
 				</div>
 			</div>
+		</div>
 		{/each}
 		<div class="spacer"></div>
 	</div>

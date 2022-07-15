@@ -13,6 +13,8 @@ const defaultFilter = {
 
 // try to fetch the current client
 export async function fetch() {
+  state.log.debug("hello, there!");
+  
   const homeserver = localStorage.getItem("homeserver");
   const userId = localStorage.getItem("userid");
   const token = localStorage.getItem("token");
@@ -26,6 +28,7 @@ export async function fetch() {
   api.useFilter(filter);
   const syncer = new Syncer(api);
   syncer.start();
+  state.log.matrix("starting sync");
   
   state.api = api;
   state.syncer = syncer;
@@ -39,6 +42,7 @@ export async function login({ localpart, homeserver, password }) {
   const api = new Api("https://" + homeserver);
 
   try {
+    state.log.matrix("logging in");
     const token = await api.login(userId, password, Math.random() > 0.99 ? "discount" : "discard");
     const filter = await api.postFilter(userId, defaultFilter);
     api.useFilter(filter);
@@ -47,6 +51,7 @@ export async function login({ localpart, homeserver, password }) {
     localStorage.setItem("token", token);
     const syncer = new Syncer(api);
     syncer.start();
+    state.log.matrix("starting sync");
     state.api = api;
     state.syncer = syncer;
     state.userId = userId;
@@ -74,7 +79,7 @@ export async function logout() {
 // TODO: FIX
 export async function listen(syncer) {
   state.userId = localStorage.getItem("userid");
-  return; // new meta
+  // new meta
   /*
    * ui <-----------------
    *  \                   \
@@ -83,6 +88,7 @@ export async function listen(syncer) {
    * matrix
    *
    */
+  /*
   
   let synced = false;
 
@@ -190,4 +196,5 @@ export async function listen(syncer) {
     state.client = null;
     localStorage.removeItem("token");
   });
+  */
 }

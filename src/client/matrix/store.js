@@ -1,9 +1,11 @@
 import { openDB, deleteDB } from "idb";
+import { format } from "./events.js";
 
+// TODO: persist?
 class Events extends Map {
   async fetch(roomId, eventId) {
     if (this.has(eventId)) return this.get(eventId);
-    const event = Events.format(state.client.getEventMapper()(await state.client.fetchRoomEvent(roomId, eventId)));
+    const event = format(roomId, await state.api.fetchEvent(roomId, eventId));
     this.set(eventId, event);
     return event;
   }
@@ -45,7 +47,6 @@ export default class Store {
     this._db = db;
     this.events = new Events();
     this.account = new PersistentMap("account", db);
-    this.events = new PersistentMap("events", db);
     this.rooms = new PersistentMap("rooms", db);
     this.sync = new PersistentMap("sync", db);
     this.users= new PersistentMap("users", db);
