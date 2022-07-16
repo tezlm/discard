@@ -4,7 +4,7 @@ import MessageContent from "./MessageContent.svelte";
 import MessageReactions from "./MessageReactions.svelte";
 import MessageToolbar from "./MessageToolbar.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
-import { parseMxc, defaultAvatar } from '../../../util/events.js';
+import { parseMxc, defaultAvatar } from '../../../util/content.js';
 
 export let event, header = false, shiftKey = false;
 
@@ -22,18 +22,26 @@ function unwrapEdits(event) {
 
 // amazing logic
 function getToolbar(event, shift = false) {
-  if (event.isSending) return [{ name: "Cancel", icon: "x", clicked: todo }];
-  let toolbar = [];
+  const toolbar = [];
   const fromMe = event.sender === state.userId;
-  if (!shift) toolbar.push({ name: "Add Reaction", icon: "+", clicked: todo });
-  if (fromMe && !shift) toolbar.push({ name: "Edit", icon: "_", clicked: (ev) => state.roomState.edit.set(unwrapEdits(ev).eventId) });
-  if (shift) toolbar.push({ name: "View Source", icon: "!", clicked: (ev) => state.popup.set({ id: "source", event: ev }) });
-  if (!fromMe || shift) toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => state.roomState.reply.set(unwrapEdits(ev)) });
-  if (shift) {
+
+  if (event.special) {
+    if (event.special === "errored") toolbar.push({ name: "Retry", icon: "r", clicked: todo });
+    toolbar.push({ name: "Cancel", icon: "x", clicked: todo });
+  } else if (shift) {
     toolbar.push({ name: "Delete", icon: "x", clicked: (ev) => { state.api.redactEvent(ev.roomId, ev.eventId) }});
+    toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => state.roomState.reply.set(unwrapEdits(ev)) });
+    toolbar.push({ name: "Source", icon: "!", clicked: (ev) => state.popup.set({ id: "source", event: ev }) });
   } else {
+    toolbar.push({ name: "React", icon: "+", clicked: todo });
+    if (fromMe) {
+      toolbar.push({ name: "Edit", icon: "_", clicked: (ev) => state.roomState.edit.set(unwrapEdits(ev).eventId) });
+    } else {
+      toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => state.roomState.reply.set(unwrapEdits(ev)) });
+    }
     toolbar.push({ name: "More", icon: "\u22ee", clicked: todo });
   }
+
   return toolbar;
 }
 
@@ -43,7 +51,7 @@ function getReply(content) {
 
 function getAvatar() {
   if (missingAvs.has(sender.userId)) return defaultAvatar;
-  return sender.avatar ? parseMxc(sender.avatar) : defaultAvatar;
+  return sender.avatar ? parseMxc(sender.avatar, 40) : defaultAvatar;
 }
 </script>
 <style>
@@ -62,10 +70,6 @@ function getAvatar() {
 .content {
   color: var(--fg-content);
   width: 100%;
-}
-
-.top {
-  margin: .125rem 0;
 }
 
 .author {
@@ -91,7 +95,6 @@ function getAvatar() {
   border-radius: 50%;
   height: 40px;
   width: 40px;
-  margin-top: 4px;
   background-color: var(--bg-spaces);
   object-fit: cover;
   filter: drop-shadow(0, 4px, 4px, #00000022);
@@ -120,7 +123,7 @@ time {
 </style>
 <div class="message">
   <div class="side">
-    {#if getReply(event.content)}<div style="height: 16px"></div>{/if}
+    {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
     {#if header}
     <img
       class="avatar"

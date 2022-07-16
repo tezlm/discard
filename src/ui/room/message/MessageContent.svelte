@@ -1,14 +1,13 @@
 <script>
 import { parseHtml } from "../../../util/html.js";
-import { parseMxc } from "../../../util/events.js";
+import { parseMxc } from "../../../util/content.js";
 import fileIcon from "../../../assets/file.svg";
 export let event;
 
 $: content = event.content;
 $: type = content.msgtype;
 $: edited = event.original;
-$: redacted = event.redacted;
-$: sending = event.isSending;
+$: special = event.special;
 $: dimensions = parseDimensions(content.info?.thumbnail_info ?? content.info);
 
 function parseDimensions(info) {
@@ -128,7 +127,11 @@ img {
   background: var(--ping-bg);
 }
 </style>
-<div class:redacted class:sending style={type === "m.image" || type === "m.video" ? dimensions : ""}>
+<div
+  class:redacted={special === "redacted" || special === "errored"}
+  class:sending={special === "sending"}
+  style={type === "m.image" || type === "m.video" ? dimensions : ""}
+>
   {#if type === "m.image"}
   <img src={parseMxc(content.url) + "/" + content.body} alt={content.body} style={dimensions} on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + content.body })} />
   {:else if type === "m.video"}

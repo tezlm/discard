@@ -6,15 +6,15 @@ let spaces = state.spaces;
 
 function getLastMessage(timeline) {
 	for (let i = timeline.length - 1; i >= 0; i--) {
-		if (timeline[i].getType() === "m.room.message" && !timeline[i].isRedacted()) return timeline[i];
+		if (timeline[i].type === "m.room.message" && !timeline[i].special !== "redacted") return timeline[i];
 	}
 	return null;
 }
 
 function isRead(room) {
 	return true; // TODO: fix
-	// const userId = state.client.getUserId();
-	// const eventId = getLastMessage(room.timeline)?.getId();
+	// const userId = state.userId;
+	// const eventId = getLastMessage(room.timeline)?.eventId;
 	// if (!eventId) return true;
 	// return room.hasUserReadEvent(userId, eventId);
 }
@@ -117,10 +117,10 @@ function isRead(room) {
 			<div class="wrapper">
 				<div class="icon">#</div>
 				<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
-				<div class="settings" on:click={(e) => { e.stopImmediatePropagation(); state.popup.set({ id: "invite", type: "room", room: $focusedRoom }) }}>
+				<div class="settings" on:click={(e) => { e.stopImmediatePropagation(); state.popup.set({ id: "invite", type: "room", room }) }}>
 					<Tooltip tip="Send Invite">&#129730;</Tooltip>
 				</div>
-				<div class="settings" style="margin-left: 4px;" on:click={(e) => { e.stopImmediatePropagation(); state.scene.set("room-settings") }}>
+				<div class="settings" style="margin-left: 4px;" on:click={(e) => { e.stopImmediatePropagation(); state.selectedRoom.set(room); state.scene.set("room-settings") }}>
 					<Tooltip tip="Edit Room">🔧</Tooltip>
 				</div>
 			</div>

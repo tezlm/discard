@@ -86,7 +86,7 @@ function showPopup(id, opts) {
   <div class="menu" transition:zoomIn>
       <div class="item" on:click={() => showPopup("invite")}><span class="color-accent">Invite People</span></div>
       <div class="spacer"></div>
-      <div class="item" on:click={() => state.scene.set("space-settings")}>Space Settings</div>
+      <div class="item" on:click={() => { state.selectedRoom.set($focusedSpace); state.scene.set("space-settings") }}>Space Settings</div>
       <div class="spacer"></div>
       <div class="item" on:click={() => showPopup("create", { type: "room", confirm: todo })}>Create Room</div>
       <div class="item" on:click={() => showPopup("create", { confirm: todo })}>Create Subspace</div>

@@ -1,7 +1,6 @@
 import TimelineSet from "../matrix/timeline.js";
 
 const rooms = new Map();
-const batches = new Map();
 
 class MemberCache extends Map {
   constructor(roomId, getPower) {
@@ -44,7 +43,7 @@ class MemberCache extends Map {
   }
 }
 
-function formatRoom(roomId, room, batch) {
+function formatRoom(roomId, room) {
   const memberCache = new MemberCache(roomId, getPower);
   const getState = (event) => room.find(i => i.type === event)?.content;
   
@@ -79,7 +78,6 @@ function formatRoom(roomId, room, batch) {
     type:       getType(),
     power:      getPower(),
     members:    memberCache,        
-    timelines:  new TimelineSet(roomId, batch),
     
     hasUserReadEvent: (user, ev) => true, // TODO: fix
   }
@@ -99,7 +97,7 @@ export function load() {
 
 export function handleJoin(roomId, event, batch) {
   if (!rooms.has(roomId)) rooms.set(roomId, []);
-  if (!batches.has(roomId)) batches.set(roomId, batch);
+  if (!state.roomTimelines.has(roomId)) state.roomTimelines.set(roomId, new TimelineSet(roomId, batch));
   const roomState = rooms.get(roomId);
   const index = roomState.findIndex(i => i.type === event.type && i.state_key === event.state_key);
   if (index >= 0) {
@@ -107,6 +105,7 @@ export function handleJoin(roomId, event, batch) {
   } else {
     roomState.push(event);
   }
+  
 }
 
 export function handleInvite(roomId, event) {
@@ -121,7 +120,7 @@ export function update() {
   const joinedRooms = new Map();
 
   for (let [id, data] of rooms.entries()) {
-    joinedRooms.set(id, formatRoom(id, data, batches.get(id)));
+    joinedRooms.set(id, formatRoom(id, data));
   }
 
   // TODO: dms

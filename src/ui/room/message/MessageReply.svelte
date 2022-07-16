@@ -1,7 +1,7 @@
 <script>
 // TODO: make edits apply
 import { parseHtml } from "../../../util/html.js";
-import { parseMxc, defaultAvatar } from '../../../util/events.js';
+import { parseMxc, defaultAvatar } from '../../../util/content.js';
 export let roomId, eventId;
 let missingAvs = state.missingAvatars;
 let room = state.focusedRoom;
@@ -9,7 +9,7 @@ let eventPromise = state.events.fetch(roomId, eventId);
 
 function getName(sender) {
   const member = $room.members.get(sender);
-  if (!member) return member.userId;
+  if (!member) return sender;
   return member.name ?? member.userId;
 }
 
@@ -25,9 +25,10 @@ function getAvatar(sender) {
   display: flex;
   align-items: center;
   position: relative;
+  margin-bottom: 8px;
+  height: 14px;
 
   font-size: 14px;
-  height: 14px;
   color: var(--fg-light);
   white-space: nowrap;
 }
@@ -40,7 +41,7 @@ function getAvatar(sender) {
   position: absolute;
   left: -38px;
   top: 6px;
-  height: 8px;
+  height: 10px;
   width: 30px;
 }
 

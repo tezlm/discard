@@ -2,6 +2,7 @@
 import { parseHtml } from "../../util/html.js";
 import roomNormalIcon from "../../assets/icons/room-normal.svg";
 let room = state.focusedRoom;
+let space = state.focusedSpace;
 </script>
 <style>
 .header {
@@ -14,6 +15,10 @@ let room = state.focusedRoom;
     0 2px 0 rgba(4, 4, 5, 0.05);
   z-index: 1;
   max-width: 100%;
+}
+
+.dark {
+  background: #2c2e33;
 }
 
 .name {
@@ -44,7 +49,7 @@ let room = state.focusedRoom;
   background-color: var(--fg-dim);
 }
 </style>
-<div class="header">
+<div class="header" class:dark={$space && !$room}>
   {#if $room}
   <span class="icon" style="mask-image: url({roomNormalIcon})" />
   {/if}

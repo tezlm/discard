@@ -1,5 +1,4 @@
 import { writable } from "svelte/store";
-// import Events from "./state/events.js";
 import Store from "./matrix/store.js";
 
 const store = new Store();
@@ -25,14 +24,14 @@ export default {
   rooms: writable(new Map()),
   spaces: writable(new Map()),
   dms: new Map(),
+  selectedRoom: writable(null),
   focusedRoom: writable(null),
-  focusedRoomId: null,
   focusedSpace: writable(null),
+  focusedRoomId: null, // DEPRECATED: don't use this for any new code. will be removed in the future
   recentRooms: [],
   
   // events
-  // events: new Events(), // TODO: move to `store` for offline support?
-  events: store.events,
+  events: store.events, // TODO: move to `store` for offline support?
   roomTimelines: new Map(),
   roomStates: new Map(),
   roomState: null,

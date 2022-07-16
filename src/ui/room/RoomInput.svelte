@@ -2,15 +2,17 @@
 // TODO: split out most of this into RoomFooter, make RoomInput just the input
 import Typing from "../atoms/Typing.svelte";
 import { marked } from "marked";
-import { getDisplayName } from "../../util/events.js";
+import { getDisplayName } from "../../util/content.js";
 import { onDestroy } from "svelte";
 let textarea;
 let room = state.focusedRoom;
 let { reply, input, rows, upload: fileUpload, typing } = state.roomState;
 
 async function handleKeyDown(e) {
-  if (e.key === "Enter" && !e.shiftKey && $input.trim()) {
+  if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
+
+    if (!$input.trim()) return;
 
     sendMessage({
       body: $input.trim(),
@@ -103,7 +105,8 @@ async function sendMessage(content, roomId = $room.roomId) {
     reply.set(null);
   }
 
-  await state.api.sendEvent(roomId, "m.room.message", content, Math.random());
+  actions.timeline.send(roomId, "m.room.message", content);
+  state.log.debug("send event to " + roomId);
 
   // const { event_id } = await state.client.sendEvent($room.roomId, null, "m.room.message", content);
   // state.client.sendReadReceipt($room.timeline.find(i => i.getId() === event_id)); // FIXME: flash of unread on message send

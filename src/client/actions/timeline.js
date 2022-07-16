@@ -1,54 +1,87 @@
 // this module handles the recieved events from sync
+import { format } from "../../util/events.js";
 
 const supportedEvents = ["m.room.create", "m.room.message", "m.reaction"];
-const relations = new Map();
+// const relations = new Map();
 
-function format(roomId, raw) {
-  const event = {
-    roomId:     roomId,
-    eventId:    raw.event_id,
-    stateKey:   raw.state_key,
-    content:    raw.content,
-    sender:     raw.sender,
-    type:       raw.type,
-    date:       new Date(raw.origin_server_ts),
-    isSending:  false,
-    // isPing:     state.client.getPushActionsForEvent(ev).tweaks?.highlight || false, // TODO: fix
-    // isRedacted: ev.isRedacted(), // TODO: fix
-    reactions:  new Map(),
-  };
-  return event;
+// function getRelation(event) {
+//   const relation = event.content["m.relates_to"];
+//   for (let key in relation) {
+//     return { rel_type: key, event_id: relation[key].event_id, key: relation[key].key }
+//   }
+// }
+
+// function queueRelation(id, event) {
+//   if (!relations.has(id)) relations.set(id, []);
+//   relations.get(id).push(event);
+// }
+
+export function getTimeline(roomId) {
+  return state.roomTimelines.get(roomId).live;
 }
 
+function addToTimeline(roomId, eventId, toStart = false) {
+  const atEnd = actions.slice.isAtEnd();
+  const timeline = getTimeline(roomId);
+  timeline[toStart ? "unshift" : "push"](eventId);
+  
+  if (state.focusedRoomId === roomId && atEnd && !toStart) {
+    state.sliceRef.push(eventId);
+    state.sliceEnd = eventId;
 
-function getRelation(event) {
-  const relation = event.content["m.relates_to"];
-  for (let key in relation) {
-    return { rel_type: key, event_id: relation[key].event_id, key: relation[key].key }
+    const startIndex = timeline.lastIndexOf(state.sliceStart);
+    if (startIndex >= 0) {
+      state.sliceStart = timeline[startIndex + 1];
+      state.sliceRef.shift();
+    }
+  
+    state.slice.set(state.sliceRef);
   }
 }
 
-function queueRelation(id, event) {
-  if (!relations.has(id)) relations.set(id, []);
-  relations.get(id).push(event);
+export function send(roomId, type, content) {
+  const id = `~${Math.random().toString(36).slice(2)}`;
+  
+  const temp = format(roomId, {
+    event_id:         id,
+    sender:           state.userId,
+    origin_server_ts: new Date(),
+    type,
+    content,
+  });
+  temp.special = "sending";
+  state.events.set(id, temp);
+  addToTimeline(roomId, id);
+  
+  state.api.sendEvent(roomId, type, content, id);
 }
 
-export function get(roomId) {
-  const tls = state.roomTimelines;
-  if (!tls.has(roomId)) {
-    const tl = [];
-    tls.set(roomId, tl);
-    return tl;
-  } else {
-    return tls.get(roomId);
-  }
-}
-
-export function handleEvent(roomId, event, toStart) {
+export function handle(roomId, event, toStart) {
+  if (event.type === "m.room.redaction" && !toStart) return redact(roomId, event);
   if (!supportedEvents.includes(event.type)) return;
-  if (event.content.redacts) return;
+  if (!event.content.body) return; // redacted
   const id = event.event_id;
-  const timeline = get(roomId);
+  if (!toStart) state.log.debug(`handle event in ${roomId} for ${id} (${event.type})`);
+  
+  // event echo, update local status
+  if (event.unsigned?.transaction_id) {
+    const tx = event.unsigned.transaction_id;
+    const original = state.events.get(tx);
+    if (original) {
+      original.eventId = id;
+      original.special = null;
+      state.events.set(id, original);
+    
+      getTimeline(roomId)[getTimeline(roomId).lastIndexOf(tx)] = id;
+      if (state.sliceRef.lastIndexOf(tx) !== -1) {
+        state.sliceRef[state.sliceRef.lastIndexOf(tx)] = id;
+        state.sliceEnd = id;
+        state.slice.set(state.sliceRef);
+      }
+      
+      return;
+    }
+  }
   
   // TODO: get relations to work again
   // if (getRelation(event.content)) {
@@ -62,7 +95,7 @@ export function handleEvent(roomId, event, toStart) {
   //       const index = timeline.lastIndexOf(relId);
   //       if (index < 0) return queueRelation(relId, event);
   //       state.events.set(id, {
-  //         ...Events.format(event),
+  //         ...format(event),
   //         content: { ...original.content, ...event.getContent()["m.new_content"] },
   //         original,
   //       });
@@ -71,30 +104,11 @@ export function handleEvent(roomId, event, toStart) {
   //       original.reactions.set(key, [count + 1, selfReacted || event.getSender() === state.client.getUserId()]);
   //     }
   // } else {
-  const atEnd = actions.slice.isAtEnd();
-  state.events.set(id, format(roomId, event));
-  timeline[toStart ? "unshift" : "push"](id);
   
   // TODO: update on state events
   // TODO: clean up
-  if (state.focusedRoomId === roomId && !toStart && atEnd) {
-    // TODO: fix relations
-    // if (event.isRelation()) {
-      // state.sliceEnd = state.timeline.at(-1);
-      // state.sliceRef[state.sliceRef.length - 1] = state.timeline.at(-1);
-    // } else {
-      state.sliceRef.push(timeline.at(-1));
-      state.sliceEnd = timeline.at(-1);
-  
-      const startIndex = timeline.lastIndexOf(state.sliceStart);
-      if (startIndex >= 0) {
-        state.sliceStart = timeline[startIndex + 1];
-        state.sliceRef.shift();
-      }
-    // }
-  
-    state.slice.set(state.sliceRef);        
-  }
+  state.events.set(id, format(roomId, event));
+  addToTimeline(roomId, id, toStart);
   
   //   if (relations.has(id)) {
   //     for (let relation of relations.get(id)) add(relation);
@@ -103,17 +117,15 @@ export function handleEvent(roomId, event, toStart) {
   // }
 }
 
-// TODO: merge into event()
-export function redact(event) {
-  const original = state.events.get(event.event.redacts);
-  console.log("redact", original.eventId)
-  original.isRedacted = true;
+// TODO: slice out the event from room timeline?
+export function redact(roomId, event) {
+  const id = event.redacts ?? event.content.redacts;
+  state.log.debug(`handle redaction in ${roomId} for ${id}`)
+  const original = state.events.get(id);
+  if (!original) return;
+  original.special = "redacted";
 }
 
 export function handleEphermeral(roomId, event) {
   // TODO
-}
-
-export function handleState(roomId, event, batch) {
-  actions.rooms.handleJoin(roomId, event, batch);
 }
