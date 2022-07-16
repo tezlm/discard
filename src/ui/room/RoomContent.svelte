@@ -156,7 +156,7 @@ onDestroy(focused.subscribe(() => {
 		<div slot="top" style="margin-top: auto"></div>
 		<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
 		<div>
-			{#if !get(event).isRedacted}
+			{#if get(event).special !== "redacted"}
 			<div
 				class:header={shouldSplit(get($slice[index - 1]), get(event))}
 				class:ping={get(event).isPing}
@@ -166,7 +166,7 @@ onDestroy(focused.subscribe(() => {
 			>
 				{#if get(event).type === "m.room.create"}
 					<Create event={get(event)} />
-				{:else if get(event).type === "m.room.message" && !get(event).isRedacted}
+				{:else if get(event).type === "m.room.message"}
 				  <Message
 						{shiftKey}
 						event={get(event)}

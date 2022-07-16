@@ -8,7 +8,7 @@ import Audit from "../settings/space/Audit.svelte";
 import Emoji from "../settings/room/Emoji.svelte";
 import Members from "../settings/room/Members.svelte";
 
-let room = state.focusedSpace;
+let room = state.selectedRoom;
 
 const views = [
   { view: Overview,    name: "Overview", raw: true },
@@ -21,7 +21,7 @@ const views = [
   { view: Members,     name: "Bans",    raw: true, props: { membership: "ban" }},
   { view: Members,     name: "Invites", raw: true, props: { membership: "invite" }},
   null,
-  { clicked: () => state.popup.set({ id: "leave", type: "space", room, confirm: () => queueMicrotask(todo) }), name: "Leave Space", color: "var(--color-red)" },
+  { clicked: () => state.popup.set({ id: "leave", type: "space", room: $room, confirm: () => queueMicrotask(todo) }), name: "Leave Space", color: "var(--color-red)" },
 ];
 </script>
 <Settings {views} options={{ room }} />

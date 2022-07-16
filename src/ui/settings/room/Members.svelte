@@ -1,6 +1,6 @@
 <script>
 import Input from "../../atoms/Input.svelte";
-import { parseMxc, defaultAvatar } from '../../../util/events.js';
+import { parseMxc, defaultAvatar } from '../../../util/content.js';
 
 export let room, membership;
 let missingAvs = state.missingAvatars;

@@ -6,7 +6,7 @@ import Permissions from "../settings/room/Permissions.svelte";
 import Emoji from "../settings/room/Emoji.svelte";
 import Members from "../settings/room/Members.svelte";
 
-let room = state.focusedRoom;
+let room = state.selectedRoom;
 
 const views = [
   { view: Overview,    name: "Overview" },

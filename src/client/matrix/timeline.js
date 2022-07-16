@@ -1,4 +1,4 @@
-import { handleEvent } from "./events.js";
+import { handle } from "../actions/timeline.js";
 
 class Timeline extends Array {
   constructor(roomId, start, end) {
@@ -11,7 +11,7 @@ class Timeline extends Array {
   async backwards() {
     if (!this.batchEnd) return false;
     const { end, chunk } = await state.api.fetchMessages(this.roomId, this.batchEnd, "b");
-    for (let i of chunk) handleEvent(this, i, true);
+    for (let i of chunk) handle(this.roomId, i, true);
     this.batchEnd = end;
     return true;
   }
@@ -19,7 +19,7 @@ class Timeline extends Array {
   async forwards() {
     if (!this.batchStart) return false;
     const { start, chunk } = await state.api.fetchMessages(this.roomId, this.batchStart, "f");
-    for (let i of chunk) handleEvent(this, i);
+    for (let i of chunk) handleEvent(this.roomId, i);
     this.batchStart = start;
     return true;
   }
@@ -43,6 +43,7 @@ class Timeline extends Array {
 
 export default class TimelineSet {
   constructor(roomId, batch) {
+    state.log.debug("create new timelineset for " + roomId)
     this.roomId = roomId;
     this.live = new Timeline(roomId, null, batch);
     this.current = this.live;
@@ -51,11 +52,25 @@ export default class TimelineSet {
   }
   
   async backwards() {
-    return this.current.backwards();
+    if (!this.current.backwards()) return false;
+    for (let timeline of this._timelines) {
+      if (this.current !== timeline && this.current.merge(other)) {
+        this._timelines.delete(other);
+        return true;
+      }
+    }
+    return true;
   }
   
   async forwards() {
-    return this.current.forwards();
+    if (!this.current.forwards()) return false;
+    for (let timeline of this._timelines) {
+      if (this.current !== timeline && this.current.merge(other)) {
+        this._timelines.delete(other);
+        return true;
+      }
+    }
+    return true;
   }
   
   async jump(eventId) {
@@ -64,6 +79,7 @@ export default class TimelineSet {
     for (let timeline of this._timelines) {
       if (timeline.includes(eventId)) {
         this.current = timeline;
+        return;
       }
     }
     

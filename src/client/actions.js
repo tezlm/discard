@@ -1,11 +1,10 @@
 import { writable, get } from "svelte/store";
 import * as client from "./actions/client.js";
-import * as events from "./actions/events.js";
 import * as timeline from "./actions/timeline.js";
 import * as rooms from "./actions/rooms.js";
+import * as parser from "./matrix/parser.js";
 
 // TODO: timeline slice
-const timelineBatches = new Map();
 
 function getDefaultRoomState() {
   return {
@@ -34,9 +33,9 @@ function getDefaultTimeline() {
 
 export default {
   client,
-  events,
   rooms,
   timeline,
+  parser,
   _rooms: {
     focus(room) {
       state.log.ui("set focused room to " + room?.roomId);
@@ -72,7 +71,7 @@ export default {
         	state.roomState[key].set(newState[key]);
         }
         
-        state.timeline = actions.timeline.get(room.roomId);
+        state.timeline = state.roomTimelines.get(room.roomId).live;
         
         const newStart = Math.max(state.timeline.length - 51, 0);
         const newEnd = state.timeline.length - 1;
@@ -130,6 +129,7 @@ export default {
       state.spaceMap.set(spaceMap);
     },
   },
+  // TODO: split into separate module
   slice: {
     isAtEnd() {
       const endIndex = state.timeline.lastIndexOf(state.sliceEnd);
@@ -140,19 +140,13 @@ export default {
       const endIndex = state.timeline.lastIndexOf(state.sliceEnd);
       return state.timeline.slice(startIndex, endIndex + 1);
     },
-    async backwards(limit = 50, lastTop) {
+    async backwards(limit = 50) {
       const oldStartIndex = state.timeline.indexOf(state.sliceStart);
       if (oldStartIndex - limit < 0 && state.events.get(state.timeline[0])?.type !== "m.room.create") {
         const roomId = state.focusedRoomId;
-        if (!timelineBatches.has(roomId)) timelineBatches.set(roomId, (await state.store.rooms.get(state.focusedRoomId)).batch);
-        const batch = timelineBatches.get(roomId);
-        state.log.matrix(`fetching in ${roomId} from ${batch}`);
-        const { end, chunk } = await state.api.fetchMessages(state.focusedRoomId, batch, "b");
-        for (let event of chunk || []) actions.timeline.handleEvent(state.focusedRoomId, event, true);
-        timelineBatches.set(roomId, end);
-        // if (state.timeline.length < limit && state.timeline.at(-1) !== lastTop) { // lastTop is a hacky solution for now
-        //   return actions.slice.backwards(limit, state.timeline.at(-1));
-        // }
+        const timeline = state.roomTimelines.get(roomId).current;
+        state.log.matrix(`fetching in ${roomId}`);
+        if (!await timeline.backwards()) return; // no new events
       }
 
       const startIndex = state.timeline.indexOf(state.sliceStart);

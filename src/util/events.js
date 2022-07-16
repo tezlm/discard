@@ -1,13 +1,15 @@
-// TODO: fix this
-import defaultAv from "../assets/default-avatar.png";
-export const defaultAvatar = defaultAv;
-export const parseMxc = (mxc) => mxc?.replace(/mxc:\/\/([^/]+)\/(.+)/, `${state.api.baseUrl}/_matrix/media/r0/download/$1/$2`);
-
-export const getDisplayName = (userId, roomId, raw = false) => 
-  // state.client.getRoom(roomId)?.getMember(userId)?.[raw ? "rawDisplayName" : "name"] ??
-  // state.client.getUser(userId)?.[raw ? "rawDisplayName" : "displayName"]??
-  userId;
-export const getAvatar = (userId, roomId, size = 40) => 
-  // state.client.getRoom(roomId)?.getMember(userId)?.getAvatarUrl(state.client.baseUrl, size, size) ??
-  // state.client.mxcUrlToHttp(state.client.getUser(userId)?.avatarUrl, size, size) ??
-  defaultAvatar;
+export function format(roomId, raw) {
+  const event = {
+    roomId:     roomId,
+    eventId:    raw.event_id,
+    stateKey:   raw.state_key,
+    content:    raw.content,
+    sender:     raw.sender,
+    type:       raw.type,
+    date:       new Date(raw.origin_server_ts),
+    special:    null,
+    // isPing:     state.client.getPushActionsForEvent(ev).tweaks?.highlight || false, // TODO: fix
+    reactions:  new Map(),
+  };
+  return event;
+}

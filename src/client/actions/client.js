@@ -57,7 +57,7 @@ export async function login({ localpart, homeserver, password }) {
     state.userId = userId;
     state.scene.set("loading");
   } catch(err) {
-    console.error(err);
+    state.log.error(err);
     switch(err.name) {
       case "M_FORBIDDEN": throw "Incorrect username or password";
       case "M_USER_DEACTIVATED": throw "User was deactivated";
@@ -101,19 +101,6 @@ export async function listen(syncer) {
     return state.focusedRoomId && (event.getRoomId() === state.focusedRoomId);
   }
   
-  syncer.once("ready", () => {
-    synced = true;
-    console.log("ready");
-    // updateAll();
-    // state.scene.set("chat");
-  });
-  
-  // update rooms
-  // syncer.on("state", (roomId, raw) => console.log(a));
-  syncer.on("timeline", (roomId, raw) => {
-    const event = format(roomId, raw);
-    console.log(event)
-  });
   syncer.on("Room.name", () => synced && updateAll());
   syncer.on("Room", () => synced && updateAll());
   syncer.on("deleteRoom", () => synced && updateAll());

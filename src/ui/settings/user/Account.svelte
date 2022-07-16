@@ -1,5 +1,5 @@
 <script>
-import { getAvatar, getDisplayName } from '../../../util/events.js';
+import { getAvatar, getDisplayName } from '../../../util/content.js';
 let { userId }= state;
 </script>
 <style>

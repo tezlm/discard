@@ -1,12 +1,12 @@
 <script>
 import Tooltip from "../atoms/Tooltip.svelte";
-import { parseMxc } from "../../util/events.js";
+import { parseMxc } from "../../util/content.js";
 let focusedSpace = state.focusedSpace;
 let spaces = state.spaces;
 
 function getLastMessage(timeline) {
 	for (let i = timeline.length - 1; i >= 0; i--) {
-		if (timeline[i].getType() === "m.room.message" && !timeline[i].isRedacted()) return timeline[i];
+		if (timeline[i].type === "m.room.message" && !timeline[i].special !== "redacted") return timeline[i];
 	}
 	return null;
 }
@@ -14,18 +14,15 @@ function getLastMessage(timeline) {
 // TODO: fix unread
 function isRead(room) {
 	const userId = state.userId;
-	const eventId = getLastMessage(room.timeline)?.getId();
+	const eventId = getLastMessage(room.timeline)?.eventId;
 	if (!eventId) return true;
 	return room.hasUserReadEvent(userId, eventId);
 }
 
 function allRead(spaceId) {
   return true;
-  // return $spaceMap.get(spaceId).every(roomId => {
-  //   const room = state.client.getRoom(roomId);
-  //   if (!room || room.getMyMembership() !== "join") return true;
-  //   return isRead(room);
-  // });
+  // return $spaceMap.get(spaceId)
+  //   .every(roomId => isRead(state.rooms.get(roomId)));
 }
 </script>
 <style>

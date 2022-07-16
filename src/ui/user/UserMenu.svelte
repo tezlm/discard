@@ -2,7 +2,7 @@
 import { onMount, onDestroy } from 'svelte';
 import Tooltip from "../atoms/Tooltip.svelte";
 import settingsIcon from "../../assets/icons/settings.svg";
-import { getDisplayName, getAvatar } from "../../util/events.js";
+import { getDisplayName, getAvatar } from "../../util/content.js";
 let { userId }= state;
 let copyCount = 0, copyText = getCopyText(), copyEl;
 

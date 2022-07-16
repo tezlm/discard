@@ -1,5 +1,5 @@
 import { openDB, deleteDB } from "idb";
-import { format } from "./events.js";
+import { format } from "../../util/events.js";
 
 // TODO: persist?
 class Events extends Map {
