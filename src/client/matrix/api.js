@@ -89,8 +89,8 @@ export default class Api {
     return this.fetch("PUT", `/rooms/${encode(roomId)}/state/${encode(type)}/${encode(stateKey)}`, content);
   }
 
-  sendReceipt(roomId, eventId, type = "m.read") {
-    return this.fetch("PUT", `/rooms/${encode(roomId)}/receipt/${encode(type)}/${encode(eventId)}`, content);
+  sendReceipt(roomId, eventId) {
+    return this.fetch("POST", `/rooms/${encode(roomId)}/read_markers`, { "m.fully_read": eventId });
   }
   
   sendTyping() {

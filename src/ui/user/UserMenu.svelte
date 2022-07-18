@@ -109,7 +109,7 @@ onDestroy(() => copyEl.removeEventListener("mouseleave", resetCopy));
 <div class="user">
 	<img class="avatar" alt="your avatar" src={getAvatar(userId)} />
 	<div class="info" on:click={handleCopyClick} bind:this={copyEl}>
-		<Tooltip tip={copyText} color={copyCount > 0 ? "#3ba55d" : null}>
+		<Tooltip tip={copyText} color={copyCount > 0 ? "var(--color-green)" : null}>
 			<div class="displayname">{getDisplayName(userId)}</div>
 			<div class="userid">{userId}</div>
 		</Tooltip>

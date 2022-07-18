@@ -88,77 +88,12 @@ export async function listen(syncer) {
    * matrix
    *
    */
+  // this code is a reminder of what things have been implemented and what haven't yet
   /*
-  
-  let synced = false;
-
-  function updateAll() {
-    actions.rooms.update();
-    actions.spaces.update();
-  }
-  
-  function shouldHandle(event) {
-    return state.focusedRoomId && (event.getRoomId() === state.focusedRoomId);
-  }
   
   syncer.on("Room.name", () => synced && updateAll());
   syncer.on("Room", () => synced && updateAll());
-  syncer.on("deleteRoom", () => synced && updateAll());
-  
-  // room timeline
-  syncer.on("Room.timeline", (event, _, toBeginning) => {
-    if (!toBeginning) actions.rooms.update();
-    const atEnd = actions.slice.isAtEnd();
-    actions.timeline.add(event, toBeginning);
-
-    if (shouldHandle(event) && !toBeginning) {
-      if (event.isState()) {
-        state.focusedRoom.set(actions.rooms.get(state.focusedRoomId));
-        return;
-      }
-      
-      if (atEnd) {
-        // TODO: fix relations
-        if (event.isRelation()) {
-          // state.sliceEnd = state.timeline.at(-1);
-          // state.sliceRef[state.sliceRef.length - 1] = state.timeline.at(-1);
-        } else {
-          state.sliceRef.push(state.timeline.at(-1));
-          state.sliceEnd = state.timeline.at(-1);
-      
-          const startIndex = state.timeline.lastIndexOf(state.sliceStart);
-          if (startIndex >= 0) {
-            state.sliceStart = state.timeline[startIndex + 1];
-            state.sliceRef.shift();
-          }
-        }
-      
-        state.slice.set(state.sliceRef);        
-      }
-    }
-  });
-  syncer.on("Room.redaction", (event) => {
-    actions.rooms.update();
-    if (!shouldHandle(event)) return;
-    actions.timeline.remove(event);
-    state.sliceRef = actions.slice.reslice();
-    state.slice.set(state.sliceRef);
-  });
-  syncer.on("Room.localEchoUpdated", (event, _, id) => {
-    if (!id) return;
-    const original = state.events.get(id);
-    if (!original) return;
-    original.eventId = event.getId();
-    original.isSending = false;
-    state.events.set(event.getId(), original);
-    
-    const index = state.timeline.lastIndexOf(id);
-    if (index >= 0) state.timeline[index] = event.getId();
-    if (state.sliceEnd === id) state.sliceEnd = event.getId();
-    
-    state.sliceRef = actions.slice.reslice();
-    state.slice.set(state.sliceRef);
-  });
+  syncer.on("deleteRoom", () => synced && updateAll());  
   
   // misc
   syncer.on("Room.receipt", (event) => {
@@ -176,12 +111,6 @@ export async function listen(syncer) {
     if (member.roomId === state.focusedRoomId) {
       state.roomState.typing.set(typing);
     }
-  });
-  syncer.once("logout", () => {
-    state.scene.set("auth");
-    state.popup.set({});
-    state.client = null;
-    localStorage.removeItem("token");
   });
   */
 }

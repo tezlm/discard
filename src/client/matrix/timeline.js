@@ -19,7 +19,7 @@ class Timeline extends Array {
   async forwards() {
     if (!this.batchStart) return false;
     const { start, chunk } = await state.api.fetchMessages(this.roomId, this.batchStart, "f");
-    for (let i of chunk) handleEvent(this.roomId, i);
+    for (let i of chunk) handle(this.roomId, i);
     this.batchStart = start;
     return true;
   }
@@ -71,6 +71,14 @@ export default class TimelineSet {
       }
     }
     return true;
+  }
+  
+  for(eventId) {
+    for (let timeline of this._timelines) {
+      const index = timeline.indexOf(eventId);
+      if (index !== -1) return [timeline, index];
+    }
+    return [null, null];
   }
   
   async jump(eventId) {

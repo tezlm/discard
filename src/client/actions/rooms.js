@@ -1,6 +1,8 @@
+import { get } from "svelte/store";
 import TimelineSet from "../matrix/timeline.js";
 
-const rooms = new Map();
+const rooms = new Map(); // TODO: store object instead of just Array<stateEvent>
+const accountData = new Map();
 
 class MemberCache extends Map {
   constructor(roomId, getPower) {
@@ -78,8 +80,8 @@ function formatRoom(roomId, room) {
     type:       getType(),
     power:      getPower(),
     members:    memberCache,        
-    
-    hasUserReadEvent: (user, ev) => true, // TODO: fix
+    pings:      0,
+    readEvent:  accountData.get(roomId)?.get("m.fully_read")?.event_id ?? null,
   }
 }
 
@@ -95,6 +97,24 @@ export function load() {
   // state.store
 }
 
+// TODO: cleanup, set directly on room
+export function handleAccount(roomId, type, content) {
+  if (!accountData.has(roomId)) accountData.set(roomId, new Map());
+  accountData.get(roomId).set(type, content);
+
+  if (type === "m.fully_read") {
+    const room = state.rooms.get(roomId);
+    if (room) {
+      room.readEvent === content.event_id;
+      
+      // TODO: optimize instead of recalculating everything?
+      update();
+      const space = get(state.focusedSpace)?.roomId ?? "orphanRooms";
+      state.navRooms.set(state.spaces.get(space));
+    }
+  }
+}
+
 export function handleJoin(roomId, event, batch) {
   if (!rooms.has(roomId)) rooms.set(roomId, []);
   if (!state.roomTimelines.has(roomId)) state.roomTimelines.set(roomId, new TimelineSet(roomId, batch));
@@ -104,43 +124,39 @@ export function handleJoin(roomId, event, batch) {
     roomState[index] = event;
   } else {
     roomState.push(event);
-  }
-  
+  }  
 }
 
 export function handleInvite(roomId, event) {
-  
+  // TODO: invited rooms
 }
 
 export function handleLeave(roomId) {
   rooms.delete(roomId);
 }
 
-export function update() {
-  const joinedRooms = new Map();
-
+export function update() {  
   for (let [id, data] of rooms.entries()) {
-    joinedRooms.set(id, formatRoom(id, data));
+    state.rooms.set(id, formatRoom(id, data));
   }
 
   // TODO: dms
 
-  const spaces = new Map();
   const inSpaces = new Set();
-  for (let [id, room] of joinedRooms) {
+  for (let [id, room] of state.rooms) {
     if (room.type !== "space") continue;
     const children = rooms.get(room.roomId)
       .filter(i => i.type === "m.space.child")
-      .filter(i => joinedRooms.has(i.state_key))
-      .map(i => joinedRooms.get(i.state_key));
+      .filter(i => state.rooms.has(i.state_key))
+      .map(i => state.rooms.get(i.state_key));
     children.forEach(i => inSpaces.add(i.roomId));
-    spaces.set(id, children);
+    state.spaces.set(id, children);
   }
   
-  const orphans = [...joinedRooms.values()].filter(i => !inSpaces.has(i.roomId));
-  spaces.set("orphanRooms",  orphans.filter(i => i.type !== "space"));
-  spaces.set("orphanSpaces", orphans.filter(i => i.type === "space"));
+  const orphans = [...state.rooms.values()].filter(i => !inSpaces.has(i.roomId));
+  state.spaces.set("orphanRooms",  orphans.filter(i => i.type !== "space"));
+  state.spaces.set("orphanSpaces", orphans.filter(i => i.type === "space"));
   
-  state.rooms.set(joinedRooms);
-  state.spaces.set(spaces);
+  state.navRooms.set(state.spaces.get("orphanRooms"));
+  state.navSpaces.set(state.spaces.get("orphanSpaces"));
 }

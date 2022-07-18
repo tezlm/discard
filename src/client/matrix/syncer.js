@@ -25,10 +25,12 @@ export default class Syncer {
       // if (!this.rooms.has(roomId)) {
       //   this.rooms.set(roomId, { state: [], accountData: new Map() });
       // }
-      
+
       for (let event of room.state?.events ?? []) actions.parser.handleState(roomId, event, room.timeline.prev_batch);
       for (let event of room.timeline?.events ?? []) actions.parser.handleEvent(roomId, event);
       for (let event of room.ephermeral?.events ?? []) actions.parser.handleEphermeral(roomId, event);
+      for (let event of room.account_data?.events ?? []) actions.parser.handleRoomAccount(roomId, event.type, event.content);
+      if  (room.unread_notifications) actions.parser.handleNotis(roomId, room.unread_notifications?.highlight_count);
     }
     
     // TODO: invited rooms
@@ -36,8 +38,8 @@ export default class Syncer {
     //   console.log(rooms.invite[room])
     // }
     
-    for (let { type, content } of account_data?.events ?? []) {
-      // this.account.set(type, content);
+    for (let event of account_data?.events ?? []) {
+      actions.parser.handleAccount(event.type, event.content);
     }
     
     if (this.status === "starting") {

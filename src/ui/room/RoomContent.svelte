@@ -12,6 +12,8 @@ let shiftKey = false;
 let scrollTop, scrollMax, scrollTo, reset;
 const get = id => state.events.get(id); // TODO: this is just a shim for now to get things working. find a better way soon?
 
+// TODO: update read marker on esc
+
 function shouldSplit(prev, ev) {
 	if (!prev) return true;
 	if (prev.type !== "m.room.message") return true;
@@ -23,27 +25,26 @@ function shouldSplit(prev, ev) {
 }
 
 function dividerProps(prev, ev) {
-	// const room = state.client.getRoom(ev.roomId);
-	// const user = state.userId;
+	const room = state.rooms.get(ev.roomId);
 	return {
 		unpad: shouldSplit(prev, ev),
-		unread: false, // room.getEventReadUpTo(user) === prev.eventId, // TODO: fix
+		unread: room.readEvent === prev.eventId, // TODO: fix, only shows unread if its exactly the right event id
 		newdate: prev.date.getDay() !== ev.date.getDay() ? ev.date : null,
 	};
 }
 
 function atBottom() {
-	return $slice.at(-1) === state.timeline.at(-1);
+	return $slice.events.at(-1).eventId === state.timeline.at(-1);
 }
 
 async function fetchBackwards() {
-	await actions.slice.backwards();
-	return [get($slice[0])?.type === "m.room.create", atBottom()];
+	const success = await actions.slice.backwards();
+	return [!success, atBottom()];
 }
 
 async function fetchForwards() {
-	await actions.slice.forwards();
-	return [false, atBottom()];
+	const success = await actions.slice.forwards();
+	return [!success, atBottom()];
 }
 
 function refocus() {
@@ -142,7 +143,8 @@ onDestroy(focused.subscribe(() => {
 </style>
 <div class="content">
 	<Scroller
-		items={$slice}
+		items={$slice.events}
+		itemKey="eventId"
 		margin={300}
 		bind:scrollTop={scrollTop}
 		bind:scrollMax={scrollMax}
@@ -156,26 +158,28 @@ onDestroy(focused.subscribe(() => {
 		<div slot="top" style="margin-top: auto"></div>
 		<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
 		<div>
-			{#if get(event).special !== "redacted"}
-			<div
-				class:header={shouldSplit(get($slice[index - 1]), get(event))}
-				class:ping={get(event).isPing}
-				class:reply={$reply?.eventId === event}
-				class:focused={$focused === event}
-				data-event-id={event}
-			>
-				{#if get(event).type === "m.room.create"}
-					<Create event={get(event)} />
-				{:else if get(event).type === "m.room.message"}
-				  <Message
-						{shiftKey}
-						event={get(event)}
-						header={shouldSplit(get($slice[index - 1]), get(event)) ? true : null}
-					/>
+			{#if true} <!-- so i can use const -->
+			{#if event.special !== "redacted"}
+				<div
+					class:header={shouldSplit($slice.events[index - 1], event) ? true : null}
+					class:ping={event.isPing}
+					class:reply={$reply?.eventId === event.eventId}
+					class:focused={$focused === event.eventId}
+					data-event-id={event.eventId}
+				>
+					{#if event.type === "m.room.create"}
+						<Create event={event} />
+					{:else if event.type === "m.room.message"}
+					  <Message
+							{shiftKey}
+							event={event}
+							header={shouldSplit($slice.events[index - 1], event) ? true : null}
+						/>
+					{/if}
+				</div>
+				{#if index < $slice.events.length - 1}
+					<Divider {...dividerProps(event, $slice.events[index + 1])} />
 				{/if}
-			</div>
-			{#if index < $slice.length - 1}
-				<Divider {...dividerProps(get(event), get($slice[index + 1]))} />
 			{/if}
 			{/if}
 		</div>

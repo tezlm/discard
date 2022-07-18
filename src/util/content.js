@@ -13,3 +13,14 @@ export const getAvatar = (userId, roomId, size = 40) =>
   // state.client.getRoom(roomId)?.getMember(userId)?.getAvatarUrl(state.client.baseUrl, size, size) ??
   // state.client.mxcUrlToHttp(state.client.getUser(userId)?.avatarUrl, size, size) ??
   defaultAvatar;
+
+export function calculateHash(str) {
+  if (!str?.length) return 0;
+  let hash = 0;
+  for (let i = 0; i < str.length; i += 1) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}

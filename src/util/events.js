@@ -9,7 +9,7 @@ export function format(roomId, raw) {
     date:       new Date(raw.origin_server_ts),
     special:    null,
     // isPing:     state.client.getPushActionsForEvent(ev).tweaks?.highlight || false, // TODO: fix
-    reactions:  new Map(),
+    reactions:  null,
   };
   return event;
 }

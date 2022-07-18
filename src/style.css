@@ -17,6 +17,7 @@
   --color-accent: #7289da;
   --color-blue: #4651c3;
   --color-red: #ed4245;
+  --color-green: #3ba55d;
   --color-gray: #414548;
   --color-gray-light: #4f545c;
   --button-outline: #4f545c;
@@ -31,6 +32,14 @@
   --shadow-header:  0 1px 0 rgba(4, 4, 5, .2),
     0 1.5px 0 rgba(6, 6, 7, .05),
     0 2px 0 rgba(4, 4, 5, .05);
+  --mxid-1: #f1c40f;
+  --mxid-2: #3498db;
+  --mxid-3: #e91e63;
+  --mxid-4: #e74c3c;
+  --mxid-5: #e67e22;
+  --mxid-6: #1abc9c;
+  --mxid-7: #9b59b6;
+  --mxid-8: #2ecc71;
 }
 
 * {

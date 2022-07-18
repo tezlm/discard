@@ -25,14 +25,6 @@ function ease() {
   }
 }
 
-function easeInv() {
-  return {
-    duration: 200,
-    easing: quadOut,
-    css: t => `transform: scale(${0.9 + t / 10})`,
-  }
-}
-
 scene.subscribe(() => {
   state.log.ui("switch scene to " + $scene);
 });
@@ -58,11 +50,18 @@ main > div {
 .settings {
   z-index: 5;
 }
+
+.chat {
+  transition: transform 200ms;
+}
+
+.chat.hide {
+  transform: scale(0.9);
+}
 </style>
 <main>
-  {#if $scene === "chat"}
-  <div transition:easeInv><Chat /></div>
-  {:else if $scene === "user-settings"}
+  <div class="chat" class:hide={$scene !== "chat"}><Chat /></div>
+  {#if $scene === "user-settings"}
   <div class="settings" transition:ease><UserSettings /></div>
   {:else if $scene === "space-settings"}
   <div class="settings" transition:ease><SpaceSettings /></div>
@@ -70,7 +69,7 @@ main > div {
   <div class="settings" transition:ease><RoomSettings /></div>
   {:else if $scene === "auth"}
   <LoginRegister />
-  {:else}
+  {:else if $scene !== "chat"}
   <div class="loading" transition:opacity><Loading /></div>
   {/if}
 </main>

@@ -20,11 +20,8 @@ function handleKeyDown(e) {
 
 .sidebar {
   background: var(--bg-rooms-members);
-  width: calc(50% - 300px)
-}
-
-.main {
-  position: relative;
+  width: calc(50% - 300px);
+  overflow-y: auto;
 }
 
 nav {
@@ -53,6 +50,10 @@ nav {
 	background: rgba(79,84,92,0.6);
 }
 
+.main {
+  position: relative;
+}
+
 .wrapper {
   margin: 0 2em;
   padding: 4em 0;
@@ -60,12 +61,15 @@ nav {
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
   outline: none;
 }
 
-.wrapper::-webkit-scrollbar {
+.hidescroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hidescroll::-webkit-scrollbar {
   display: none;
 }
 
@@ -95,7 +99,7 @@ h1 {
 }
 </style>
 <div class="settings">
-  <div class="sidebar">
+  <div class="sidebar hidescroll">
     <nav>
       {#each views as view, i}
         {#if view}
@@ -107,7 +111,7 @@ h1 {
     </nav>
   </div>
   <div class="main">
-    <div class="wrapper">
+    <div class="wrapper hidescroll">
       {#if !focused.raw}
       <h1>{focused.name}</h1>
       {/if}

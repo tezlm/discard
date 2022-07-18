@@ -2,27 +2,30 @@
 import Tooltip from "../atoms/Tooltip.svelte";
 import { parseMxc } from "../../util/content.js";
 let focusedSpace = state.focusedSpace;
+let navSpaces = state.navSpaces;
 let spaces = state.spaces;
 
-function getLastMessage(timeline) {
-	for (let i = timeline.length - 1; i >= 0; i--) {
-		if (timeline[i].type === "m.room.message" && !timeline[i].special !== "redacted") return timeline[i];
-	}
-	return null;
-}
-
-// TODO: fix unread
 function isRead(room) {
-	const userId = state.userId;
-	const eventId = getLastMessage(room.timeline)?.eventId;
-	if (!eventId) return true;
-	return room.hasUserReadEvent(userId, eventId);
+	const timeline = state.roomTimelines.get(room.roomId).live;
+	if (!timeline.length) return true;
+	const lastMessage = timeline.at(-1);
+	const readMessage = getLastMessage(timeline, room.readEvent);
+	if (!readMessage) return false;
+	return getLastMessage(timeline, room.readEvent) === lastMessage;
+
+	function getLastMessage(timeline, fromEvent) {
+		const index = timeline.lastIndexOf(fromEvent);
+		if (index === -1) return null;
+		for (let i = timeline.length - 1; i >= 0; i--) {
+			const event = state.events.get(timeline[i]);
+			if (event.type === "m.room.message" && event.special !== "redacted") return event.eventId;
+		}
+		return null;
+	}
 }
 
 function allRead(spaceId) {
-  return true;
-  // return $spaceMap.get(spaceId)
-  //   .every(roomId => isRead(state.rooms.get(roomId)));
+  return spaces.get(spaceId).every(room => isRead(room));
 }
 </script>
 <style>
@@ -109,10 +112,11 @@ function allRead(spaceId) {
     </Tooltip>
   </div>
   <div class="separator"></div>
-	{#each $spaces.get("orphanSpaces") as space}
+	{#each $navSpaces as space}
   <div
     class="space"
-    class:focused={$focusedSpace?.roomId === space?.roomId}
+    class:focused={$focusedSpace?.roomId === space.roomId}
+    class:unread={!allRead(space.roomId)}
   >
     <Tooltip position="right">
       <img

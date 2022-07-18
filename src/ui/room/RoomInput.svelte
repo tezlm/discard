@@ -2,11 +2,19 @@
 // TODO: split out most of this into RoomFooter, make RoomInput just the input
 import Typing from "../atoms/Typing.svelte";
 import { marked } from "marked";
-import { getDisplayName } from "../../util/content.js";
 import { onDestroy } from "svelte";
 let textarea;
 let room = state.focusedRoom;
 let { reply, input, rows, upload: fileUpload, typing } = state.roomState;
+
+const getName = id => ($room.members.get(id)?.name ?? id.replace(/^@/, ""));
+
+function replacePing(input) {
+  return input.replace(
+    /@[a-z0-9-_]+:[a-z0-9.-]+/i,
+    (match) => `<a href="https://matrix.to/#/${match}">@${getName(match)}</a>`
+  );
+}
 
 async function handleKeyDown(e) {
   if (e.key === "Enter" && !e.shiftKey) {
@@ -14,10 +22,13 @@ async function handleKeyDown(e) {
 
     if (!$input.trim()) return;
 
+    // bootleg commands for now
+    if ($input === "/shrug") $input = "¯\\\\\\_(ツ)_/¯";
+
     sendMessage({
       body: $input.trim(),
       format: "org.matrix.custom.html",
-      formatted_body: marked($input.trim().replace(/@[a-z0-9-_]+:[a-z0-9.]+/i, (match) => `<a href="https://matrix.to/#/${match}">@${getDisplayName(match, true).replace(/^@/, '')}</a>`)).trim(),
+      formatted_body: marked(replacePing($input.trim())).trim(),
       msgtype: "m.text",
     });
 
@@ -27,7 +38,9 @@ async function handleKeyDown(e) {
     if ($reply) {
       reply.set(null);
     } else {
-      // state.client.sendReadReceipt($room.timeline[$room.timeline.length - 1]);  
+      const lastEvent = state.roomTimelines.get($room.roomId).live.at(-1);
+      state.log.debug(`mark ${lastEvent} as read`);
+      state.api.sendReceipt($room.roomId, lastEvent);  
     }
   } if (e.key === "ArrowUp") {
     // TODO: get last event by me from slice, set as edit
@@ -218,7 +231,7 @@ textarea::placeholder {
 <div class="container">
   {#if $reply}
   <div class="reply" on:click={() => actions.slice.jump($reply.roomId, $reply.eventId)}>
-    <div>Replying to <b>{getDisplayName($reply.sender)}</b></div>
+    <div>Replying to <b>{getName($reply.sender)}</b></div>
     <div class="close" on:click={e => { e.stopPropagation(); reply.set(null) }}>
         <div class="icon">&#xd7</div>
     </div>
@@ -246,7 +259,7 @@ textarea::placeholder {
   {/if}
   <div class="typing">
     {#if $typing.size}
-    <Typing users={[...$typing.values()].map(i => getDisplayName(i))} />
+    <Typing users={[...$typing.values()].map(getName)} />
     {/if}
   </div>
 </div>

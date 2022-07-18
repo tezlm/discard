@@ -2,7 +2,7 @@
 export let fetchBackwards = async () => {};
 export let fetchForwards = async () => {};
 export let scrollTop, scrollMax;
-export let items;
+export let items, itemKey;
 export let margin = 400;
 export let direction = "down";
 export let scrollEl;
@@ -67,7 +67,7 @@ queueMicrotask(() => {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow-x: none;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 </style>
@@ -83,7 +83,7 @@ queueMicrotask(() => {
   {/if}
   
   <div class="items" bind:this={contentEl}>
-  {#each items as item, i (item)}
+  {#each items as item, i (item[itemKey])}
   <slot data={item} index={i} />
   {/each}
   </div>

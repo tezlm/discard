@@ -4,7 +4,7 @@ import MessageContent from "./MessageContent.svelte";
 import MessageReactions from "./MessageReactions.svelte";
 import MessageToolbar from "./MessageToolbar.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
-import { parseMxc, defaultAvatar } from '../../../util/content.js';
+import { parseMxc, defaultAvatar, calculateHash } from '../../../util/content.js';
 
 export let event, header = false, shiftKey = false;
 
@@ -29,7 +29,9 @@ function getToolbar(event, shift = false) {
     if (event.special === "errored") toolbar.push({ name: "Retry", icon: "r", clicked: todo });
     toolbar.push({ name: "Cancel", icon: "x", clicked: todo });
   } else if (shift) {
-    toolbar.push({ name: "Delete", icon: "x", clicked: (ev) => { state.api.redactEvent(ev.roomId, ev.eventId) }});
+    if (fromMe || $room.power.me >= $room.power.getBase("redact")) {
+      toolbar.push({ name: "Delete", icon: "x", clicked: (ev) => { ev.special = "redacted"; state.api.redactEvent(ev.roomId, ev.eventId) }});
+    }
     toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => state.roomState.reply.set(unwrapEdits(ev)) });
     toolbar.push({ name: "Source", icon: "!", clicked: (ev) => state.popup.set({ id: "source", event: ev }) });
   } else {
@@ -127,7 +129,7 @@ time {
     {#if header}
     <img
       class="avatar"
-      alt="pfp for {sender.name ?? sender.userId}"
+      alt="pfp for {sender.name ?? event.sender}"
       src={getAvatar()}
       on:error={(e) => { missingAvs.add(sender.userId); e.target.src = defaultAvatar }}
     />
@@ -139,12 +141,12 @@ time {
     {#if getReply(event.content)}<MessageReply roomId={event.roomId} eventId={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
-      <span class="author">{sender.name ?? event.sender}</span>
+      <span class="author" style:color="var(--mxid-{calculateHash(event.sender) % 8 + 1})">{sender.name ?? event.sender}</span>
       <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
     </div>
     {/if}
     <MessageContent {event} />
-    {#if event.reactions.size}<MessageReactions {event} />{/if}
+    {#if event.reactions}<MessageReactions {event} />{/if}
   </div>
   <div class="toolbar">
     <MessageToolbar items={toolbar} {event} />
