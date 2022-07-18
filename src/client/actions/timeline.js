@@ -1,7 +1,9 @@
 // this module handles the recieved events from sync
+import Slice from "../matrix/slice.js";
 import { format } from "../../util/events.js";
 
-const supportedEvents = ["m.room.create", "m.room.message", "m.reaction"];
+// const supportedEvents = ["m.room.create", "m.room.message", "m.reaction"];
+const supportedEvents = ["m.room.create", "m.room.message"];
 // const relations = new Map();
 
 // function getRelation(event) {
@@ -21,21 +23,26 @@ export function getTimeline(roomId) {
 }
 
 function addToTimeline(roomId, eventId, toStart = false) {
-  const atEnd = actions.slice.isAtEnd();
+  if (!state.roomSlices.has(roomId)) {
+    const slice = new Slice(state.roomTimelines.get(roomId));
+    state.roomSlices.set(roomId, slice);
+  }
+  
+  const slice = state.roomSlices.get(roomId);
+  const atEnd = slice.atEnd();
   const timeline = getTimeline(roomId);
   timeline[toStart ? "unshift" : "push"](eventId);
-  
-  if (state.focusedRoomId === roomId && atEnd && !toStart) {
-    state.sliceRef.push(eventId);
-    state.sliceEnd = eventId;
+  if (atEnd && !toStart) {
+    slice.events.push(state.events.get(eventId));
+    slice.end = eventId;
 
-    const startIndex = timeline.lastIndexOf(state.sliceStart);
+    const startIndex = timeline.lastIndexOf(slice.start);
     if (startIndex >= 0) {
-      state.sliceStart = timeline[startIndex + 1];
-      state.sliceRef.shift();
+      slice.end = timeline[startIndex + 1];
+      slice.events.shift();
     }
   
-    state.slice.set(state.sliceRef);
+    if (state.focusedRoomId === roomId) state.slice.set(slice);
   }
 }
 
@@ -59,9 +66,8 @@ export function send(roomId, type, content) {
 export function handle(roomId, event, toStart) {
   if (event.type === "m.room.redaction" && !toStart) return redact(roomId, event);
   if (!supportedEvents.includes(event.type)) return;
-  if (!event.content.body) return; // redacted
+  if (event.unsigned?.redacted_because) return;
   const id = event.event_id;
-  if (!toStart) state.log.debug(`handle event in ${roomId} for ${id} (${event.type})`);
   
   // event echo, update local status
   if (event.unsigned?.transaction_id) {
@@ -71,14 +77,13 @@ export function handle(roomId, event, toStart) {
       original.eventId = id;
       original.special = null;
       state.events.set(id, original);
-    
-      getTimeline(roomId)[getTimeline(roomId).lastIndexOf(tx)] = id;
-      if (state.sliceRef.lastIndexOf(tx) !== -1) {
-        state.sliceRef[state.sliceRef.lastIndexOf(tx)] = id;
-        state.sliceEnd = id;
-        state.slice.set(state.sliceRef);
-      }
       
+      const timeline = getTimeline(roomId);
+      const slice = state.roomSlices.get(roomId);
+      const index = timeline.lastIndexOf(tx);
+      timeline[index] = id;
+      if (index === timeline.length - 1) slice.end = id;
+      state.slice.set(slice);      
       return;
     }
   }
@@ -106,7 +111,6 @@ export function handle(roomId, event, toStart) {
   // } else {
   
   // TODO: update on state events
-  // TODO: clean up
   state.events.set(id, format(roomId, event));
   addToTimeline(roomId, id, toStart);
   
@@ -117,13 +121,19 @@ export function handle(roomId, event, toStart) {
   // }
 }
 
-// TODO: slice out the event from room timeline?
 export function redact(roomId, event) {
   const id = event.redacts ?? event.content.redacts;
-  state.log.debug(`handle redaction in ${roomId} for ${id}`)
-  const original = state.events.get(id);
-  if (!original) return;
-  original.special = "redacted";
+  if (!state.events.has(id)) return;
+  state.log.debug(`handle redaction in ${roomId} for ${id} ${state.sliceEnd === id}`);
+  
+  const [timeline, index] = state.roomTimelines.get(roomId).for(id);
+  timeline.splice(index);
+  
+  const slice = state.roomSlices.get(roomId);
+  if (slice.end === id) slice.end = state.timeline.at(-1);
+  const sliceIndex = slice.events.findIndex(i => i.eventId === id);
+  if (sliceIndex !== -1) slice.events.splice(sliceIndex);
+  state.slice.set(slice);
 }
 
 export function handleEphermeral(roomId, event) {

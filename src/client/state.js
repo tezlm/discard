@@ -21,22 +21,26 @@ export default {
   popup: writable({}),
   
   // rooms/nav
-  rooms: writable(new Map()),
-  spaces: writable(new Map()),
+  rooms: new Map(),
+  spaces: new Map(),
   dms: new Map(),
+  navRooms: writable([]),
+  navSpaces: writable([]),
   selectedRoom: writable(null),
   focusedRoom: writable(null),
   focusedSpace: writable(null),
   focusedRoomId: null, // DEPRECATED: don't use this for any new code. will be removed in the future
   recentRooms: [],
   
-  // events
+  // timeline/events
   events: store.events, // TODO: move to `store` for offline support?
   roomTimelines: new Map(),
+  roomSlices: new Map(),
   roomStates: new Map(),
   roomState: null,
   
   // timeline
+  // DEPRECATED: each room now has its own timeline/slice
   timeline: [],
   sliceStart: null,
   sliceEnd: null,

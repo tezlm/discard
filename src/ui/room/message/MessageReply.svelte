@@ -1,7 +1,7 @@
 <script>
 // TODO: make edits apply
 import { parseHtml } from "../../../util/html.js";
-import { parseMxc, defaultAvatar } from '../../../util/content.js';
+import { parseMxc, defaultAvatar, calculateHash } from '../../../util/content.js';
 export let roomId, eventId;
 let missingAvs = state.missingAvatars;
 let room = state.focusedRoom;
@@ -17,7 +17,7 @@ function getAvatar(sender) {
   if (missingAvs.has(sender)) return defaultAvatar;
   const member = $room.members.get(sender);
   if (!member) return defaultAvatar;
-  return member.avatar ? parseMxc(member.avatar) : defaultAvatar;
+  return member.avatar ? parseMxc(member.avatar, 16) : defaultAvatar;
 }
 </script>
 <style>
@@ -51,7 +51,7 @@ function getAvatar(sender) {
 }
 
 .reply .author {
-  font-weight: bold;
+  filter: brightness(0.9);
   margin-right: .25rem;
   cursor: pointer;
 }
@@ -94,7 +94,15 @@ function getAvatar(sender) {
 
 .content > :global(*) {
   display: inline;
-  margin-left: 4px;
+}
+
+.content :global([data-mx-ping]) {
+  color: var(--fg-notice);
+  font-weight: 500;
+  background: var(--ping-bgalpha);
+  padding: 0 2px;
+  border-radius: 3px;
+  cursor: pointer;
 }
 </style>
 {#await eventPromise}
@@ -107,7 +115,7 @@ function getAvatar(sender) {
     src={getAvatar(event.sender)}
     on:error={(e) => { missingAvs.add(event.sender); e.target.src = defaultAvatar }}
   />
-  <span class="author">{getName(event.sender)}</span>
+  <span class="author" style:color="var(--mxid-{calculateHash(event.sender) % 8 + 1})">{getName(event.sender)}</span>
   <div class="content" on:click={() => actions.slice.jump(roomId, eventId)}>
     {#if event.content.format === "org.matrix.custom.html"}
       {@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n|<br.*?>/g, " ")}

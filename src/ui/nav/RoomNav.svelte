@@ -1,22 +1,27 @@
 <script>
 import Tooltip from "../atoms/Tooltip.svelte";
 let focusedRoom = state.focusedRoom;
-let focusedSpace = state.focusedSpace;
-let spaces = state.spaces;
+let navRooms = state.navRooms;
 
-function getLastMessage(timeline) {
-	for (let i = timeline.length - 1; i >= 0; i--) {
-		if (timeline[i].type === "m.room.message" && !timeline[i].special !== "redacted") return timeline[i];
-	}
-	return null;
-}
-
+// TODO: handle muted rooms
+// maybe clean up a bit?
 function isRead(room) {
-	return true; // TODO: fix
-	// const userId = state.userId;
-	// const eventId = getLastMessage(room.timeline)?.eventId;
-	// if (!eventId) return true;
-	// return room.hasUserReadEvent(userId, eventId);
+	const timeline = state.roomTimelines.get(room.roomId).live;
+	if (!timeline.length) return true;
+	const lastMessage = timeline.at(-1);
+	const readMessage = getLastMessage(timeline, room.readEvent);
+	if (!readMessage) return false;
+	return getLastMessage(timeline, room.readEvent) === lastMessage;
+
+	function getLastMessage(timeline, fromEvent) {
+		const index = timeline.lastIndexOf(fromEvent);
+		if (index === -1) return null;
+		for (let i = timeline.length - 1; i >= 0; i--) {
+			const event = state.events.get(timeline[i]);
+			if (event.type === "m.room.message" && event.special !== "redacted") return event.eventId;
+		}
+		return null;
+	}
 }
 </script>
 <style>
@@ -30,6 +35,10 @@ function isRead(room) {
 	overflow: hidden scroll;
 }
 
+.nav > .spacer {
+	margin-top: 16px;
+}
+
 .room {
 	flex: 0;
 	position: relative;
@@ -40,7 +49,7 @@ function isRead(room) {
 	display: flex;
 	align-items: center;
 	margin: 1px 8px;
-	padding: 6px 10px;
+	padding: 6px 2px 6px 10px;
 
 	color: var(--fg-dim);
 	border-radius: 4px;
@@ -76,10 +85,6 @@ function isRead(room) {
 	content: "";
 }
 
-.spacer {
-	margin-top: 16px;
-}
-
 .icon {
 	position: absolute;
 	color: var(--fg-dim); 
@@ -92,9 +97,29 @@ function isRead(room) {
 	text-overflow: ellipsis;
 }
 
+.wrapper > .spacer {
+	margin-left: auto;
+	min-width: 4px;
+}
+
 .settings {
 	display: none;
-	margin-left: auto;
+	margin-right: 4px;
+}
+
+.pings {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 16px;
+	min-width: 16px;
+	margin-right: 4px;
+
+	background: var(--color-red);
+	color: var(--fg-notice);
+	font-size: 12px;
+	font-weight: 700;
+	border-radius: 50%;
 }
 
 .room.focused .settings, .room:hover .settings {
@@ -108,19 +133,22 @@ function isRead(room) {
 			on:click={() => actions._rooms.focus(null)}>
 			<div class="wrapper">Home</div>
 		</div>
-		{#each $spaces.get($focusedSpace?.roomId ?? "orphanRooms") as room}
+		<!-- {#each $spaces.get($focusedSpace?.roomId ?? "orphanRooms") as room} -->
+		{#each $navRooms as room}
 	  <div
 			class="room"
 			class:focused={$focusedRoom?.roomId === room.roomId}
-			class:unread={false}
+			class:unread={!isRead(room)}
 			on:click={() => actions._rooms.focus(room)}>
 			<div class="wrapper">
 				<div class="icon">#</div>
 				<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
+				<div class="spacer"></div>
+				{#if room.pings}<div class="pings">{room.pings}</div>{/if}
 				<div class="settings" on:click={(e) => { e.stopImmediatePropagation(); state.popup.set({ id: "invite", type: "room", room }) }}>
 					<Tooltip tip="Send Invite">&#129730;</Tooltip>
 				</div>
-				<div class="settings" style="margin-left: 4px;" on:click={(e) => { e.stopImmediatePropagation(); state.selectedRoom.set(room); state.scene.set("room-settings") }}>
+				<div class="settings" on:click={(e) => { e.stopImmediatePropagation(); state.selectedRoom.set(room); state.scene.set("room-settings") }}>
 					<Tooltip tip="Edit Room">🔧</Tooltip>
 				</div>
 			</div>

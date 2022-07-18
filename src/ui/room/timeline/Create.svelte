@@ -1,12 +1,11 @@
 <script>
 export let event;
-let rooms = state.rooms;
-$: room = $rooms.get(event.roomId);
+$: room = state.rooms.get(event.roomId);
 $: name = room?.name;
 $: topic = room?.topic;
 </script>
 <style>
-.create {
+.top {
   margin-top: 48px;
   padding: 2px 16px;
 }
@@ -20,7 +19,7 @@ h1 {
   margin-top: 8px;
 }
 </style>
-<div class="create">
+<div class="top">
   <h1>Welcome to {name}!</h1>
   <div class="info">This is the start of the {name} room. {#if topic}{topic}{/if}</div>
 </div>

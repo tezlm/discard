@@ -1,7 +1,9 @@
 import { writable, get } from "svelte/store";
+import Slice from "./matrix/slice.js"; // TODO: move into actions/slice.js
 import * as client from "./actions/client.js";
 import * as timeline from "./actions/timeline.js";
 import * as rooms from "./actions/rooms.js";
+import * as slice from "./actions/slice.js";
 import * as parser from "./matrix/parser.js";
 
 // TODO: timeline slice
@@ -36,8 +38,9 @@ export default {
   rooms,
   timeline,
   parser,
+  slice,
   _rooms: {
-    focus(room) {
+    async focus(room) {
       state.log.ui("set focused room to " + room?.roomId);
       
       // TODO: clean up this code
@@ -72,14 +75,14 @@ export default {
         }
         
         state.timeline = state.roomTimelines.get(room.roomId).live;
+        if (!state.timeline.length) await state.timeline.backwards();
         
-        const newStart = Math.max(state.timeline.length - 51, 0);
-        const newEnd = state.timeline.length - 1;
-
-        state.sliceStart = state.timeline[newStart];
-        state.sliceEnd = state.timeline[newEnd];
-        state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
-        state.slice.set(state.sliceRef);
+        if (!state.roomSlices.has(room.roomId)) {
+          const slice = new Slice(state.roomTimelines.get(room.roomId));
+          state.roomSlices.set(room.roomId, slice);
+        }
+        
+        state.slice.set(state.roomSlices.get(room.roomId));
       }
       
       // update recent rooms
@@ -88,102 +91,11 @@ export default {
       state.recentRooms.unshift(room);
       if (state.recentRooms.length > 8) state.recentRooms.pop();
     },
-    update() {
-      const client = state.client;
-      const rooms = client.getRooms().filter(i => ["join", "invite"].includes(i.getMyMembership())).map(formatRoom);
-      const dms = [];
-      const dmData = state.client.getAccountData("m.direct")?.getContent();
-
-      if (dmData) {
-        for (let userId in dmData) {
-          for (let roomId in dmData[userId]) dms.push({ userId, roomId });
-        }
-        state.dms.set(dms);
-      }
-
-      state.rooms.set(rooms);
-    },
-    get(id) {
-      return formatRoom(state.client.getRoom(id));
-    },
   },
   spaces: {
     focus(space) {
     	state.focusedSpace.set(space);
-    },
-    update() {
-      const spaceMap = new Map();
-      const inSpaces = [];
-      const spaces = state.client.getRooms().filter(i => i.isSpaceRoom());
-      for (let space of spaces) {
-        const rooms = space.currentState.getStateEvents("m.space.child").map(i => i.getStateKey());
-        inSpaces.push(...rooms);
-        spaceMap.set(space.roomId, rooms);
-      }
-      const orphans = state.client.getRooms().filter(i => !inSpaces.includes(i.roomId));
-      const pinnedSpaces = state.client.getAccountData("in.cinny.spaces")?.getContent().shortcut;
-      spaceMap.set("orphanRooms",  orphans.filter(i => !i.isSpaceRoom()).map(i => i.roomId));
-      spaceMap.set("orphanSpaces", pinnedSpaces
-        ? pinnedSpaces.filter(i => state.client.getRoom(i)?.getMyMembership() === "join")
-        : orphans.filter(i =>  i.isSpaceRoom()).map(i => i.roomId));
-      state.spaceMap.set(spaceMap);
-    },
-  },
-  // TODO: split into separate module
-  slice: {
-    isAtEnd() {
-      const endIndex = state.timeline.lastIndexOf(state.sliceEnd);
-      return endIndex === state.timeline.length - 1;
-    },
-    reslice() {
-      const startIndex = state.timeline.lastIndexOf(state.sliceStart);
-      const endIndex = state.timeline.lastIndexOf(state.sliceEnd);
-      return state.timeline.slice(startIndex, endIndex + 1);
-    },
-    async backwards(limit = 50) {
-      const oldStartIndex = state.timeline.indexOf(state.sliceStart);
-      if (oldStartIndex - limit < 0 && state.events.get(state.timeline[0])?.type !== "m.room.create") {
-        const roomId = state.focusedRoomId;
-        const timeline = state.roomTimelines.get(roomId).current;
-        state.log.matrix(`fetching in ${roomId}`);
-        if (!await timeline.backwards()) return; // no new events
-      }
-
-      const startIndex = state.timeline.indexOf(state.sliceStart);
-      const endIndex = state.timeline.indexOf(state.sliceEnd);
-      if (startIndex < 0) throw "this shouldn't happen";
-      if (endIndex < 0) throw "this shouldn't happen";
-      
-      const eventCount = 100;
-      const newStart = Math.max(startIndex - limit, 0);
-      const newEnd = Math.min(newStart + eventCount, state.timeline.length - 1);
-       
-      state.log.ui(`now viewing [${newStart}..${newEnd}] of ${state.timeline.length}`);
-      
-      state.sliceStart = state.timeline[newStart];
-      state.sliceEnd = state.timeline[newEnd];
-      state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
-      state.slice.set(state.sliceRef);
-    },
-    async forwards(limit = 50) {
-      const startIndex = state.timeline.indexOf(state.sliceStart);
-      const endIndex = state.timeline.indexOf(state.sliceEnd);
-      if (startIndex < 0) throw "this shouldn't happen";
-      if (endIndex < 0) throw "this shouldn't happen";
-      
-      const eventCount = 100;
-      const newStart = Math.max(startIndex + limit, 0);
-      const newEnd = Math.min(newStart + eventCount, state.timeline.length - 1);
-      
-      state.log.ui(`now viewing [${newStart}..${newEnd}] of ${state.timeline.length}`);
-      
-      state.sliceStart = state.timeline[newStart];
-      state.sliceEnd = state.timeline[newEnd];
-      state.sliceRef = state.timeline.slice(newStart, newEnd + 1);
-      state.slice.set(state.sliceRef);
-    },
-    async jump(_roomId, eventId) {
-      state.roomState.focused.set(eventId);
+    	state.navRooms.set(state.spaces.get(space?.roomId ?? "orphanRooms"));
     },
   },
 };

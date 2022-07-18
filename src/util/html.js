@@ -1,6 +1,7 @@
 // a lot (but not all) of this was copied from cinny
 import linkifyHtml from "linkifyjs/html";
 import sanitizeHtml from "sanitize-html";
+import { parseMxc } from "./content.js";
 
 const permittedHtmlTagsInline = [
   "font", "del", "p", "a", "sup", "sub", "b", "i",
@@ -53,12 +54,12 @@ function transformATag(tagName, attribs) {
 
 function transformImgTag(tagName, attribs) {
 	const { src } = attribs;
+	if (!src.startsWith("mxc://")) return {};
 	return {
 		tagName,
 		attribs: {
 			...attribs,
-			// TODO: fix
-			// src: src.startsWith("mxc://") ? state.client.mxcUrlToHttp(src) : src,
+			src: parseMxc(src),
 		},
 	};
 }
