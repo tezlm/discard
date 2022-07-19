@@ -1,14 +1,13 @@
 import Slice from "../matrix/slice.js";
 
-export function isAtEnd() {
-  const endIndex = state.timeline.lastIndexOf(state.sliceEnd);
-  return endIndex === state.timeline.length - 1;
-}
-
-export function reslice() {
-  const startIndex = state.timeline.lastIndexOf(state.sliceStart);
-  const endIndex = state.timeline.lastIndexOf(state.sliceEnd);
-  return state.timeline.slice(startIndex, endIndex + 1);
+export function get(roomId) {
+  if (state.roomSlices.has(roomId)) {
+    return state.roomSlices.get(roomId);
+  } else {
+    const slice = new Slice(state.roomTimelines.get(roomId));
+    state.roomSlices.set(roomId, slice);
+    return slice;
+  }
 }
 
 export async function backwards() {

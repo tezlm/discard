@@ -99,6 +99,7 @@ export function load() {
 
 // TODO: cleanup, set directly on room
 export function handleAccount(roomId, type, content) {
+  state.log.debug(`set ${type} to ${JSON.stringify(content)} in ${roomId}`);
   if (!accountData.has(roomId)) accountData.set(roomId, new Map());
   accountData.get(roomId).set(type, content);
 
@@ -111,6 +112,7 @@ export function handleAccount(roomId, type, content) {
       update();
       const space = get(state.focusedSpace)?.roomId ?? "orphanRooms";
       state.navRooms.set(state.spaces.get(space));
+      state.slice.set(state.roomSlices.get(roomId));
     }
   }
 }

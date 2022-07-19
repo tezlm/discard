@@ -6,22 +6,22 @@ import UserSettings from './scenes/UserSettings.svelte';
 import SpaceSettings from './scenes/SpaceSettings.svelte';
 import RoomSettings from './scenes/RoomSettings.svelte';
 import Popups from './Popups.svelte';
-import { quadOut } from 'svelte/easing';
+import { quadInOut, quartInOut } from 'svelte/easing';
 let scene = state.scene;
 
 function opacity() {
   return {
     duration: 500,
-    easing: quadOut,
+    easing: quadInOut,
     css: t => `opacity: ${t * 10}`,
   }
 }
 
 function ease() {
   return {
-    duration: 200,
-    easing: quadOut,
-    css: t => `opacity: ${Math.min(t * 1.5, 1)}; transform: scale(${1.1 - t / 10})`,
+    duration: 300,
+    easing: quartInOut,
+    css: t => `opacity: ${Math.min(t * 2, 1)}; transform: scale(${1.1 - t / 10})`,
   }
 }
 
@@ -52,7 +52,7 @@ main > div {
 }
 
 .chat {
-  transition: transform 200ms;
+  transition: transform 300ms ease-in-out;
 }
 
 .chat.hide {

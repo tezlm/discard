@@ -10,7 +10,7 @@ let eventPromise = state.events.fetch(roomId, eventId);
 function getName(sender) {
   const member = $room.members.get(sender);
   if (!member) return sender;
-  return member.name ?? member.userId;
+  return member.name || member.userId;
 }
 
 function getAvatar(sender) {

@@ -15,6 +15,13 @@ export default class Slice {
     return this.end === this.timelineSet.live.at(-1);
   }
   
+  reslice() {
+    const timeline = this.timelineSet.current;
+    const startIdx = timeline.lastIndexOf(this.start);
+    const endIdx = timeline.lastIndexOf(this.end);
+    this.events = timeline.slice(startIdx, endIdx + 1).map(i => state.events.get(i));
+  }
+  
   async backwards(count = 50) {
     const timeline = this.timelineSet.current;
     const oldStart = timeline.indexOf(this.start);
@@ -28,9 +35,9 @@ export default class Slice {
     
     const eventCount = 100;
     const newStart = Math.max(startIdx - count, 0);
-    const newEnd = Math.min(newStart + eventCount, state.timeline.length - 1);
+    const newEnd = Math.min(newStart + eventCount, timeline.length - 1);
      
-    state.log.ui(`now viewing [${newStart}..${newEnd}] of ${state.timeline.length}`);
+    state.log.ui(`now viewing [${newStart}..${newEnd}] of ${timeline.length}`);
     
     this.start = timeline[newStart];
     this.end = timeline[newEnd];
@@ -41,14 +48,14 @@ export default class Slice {
     // TODO: fetch events
     
     const timeline = this.timelineSet.current;
-    const startIdx = timeline.indexOf(this.start);
+    const startIdx = timeline.lastIndexOf(this.start);
     if (startIdx < 0) throw "this shouldn't happen";
     
     const eventCount = 100;
-    const newStart = Math.max(startIdx + count, 0);
-    const newEnd = Math.min(newStart + eventCount, state.timeline.length - 1);
+    const newStart = Math.min(Math.max(startIdx + count, 0), timeline.length - count - 1);
+    const newEnd = Math.min(newStart + eventCount, timeline.length - 1);
      
-    state.log.ui(`now viewing [${newStart}..${newEnd}] of ${state.timeline.length}`);
+    state.log.ui(`now viewing [${newStart}..${newEnd}] of ${timeline.length}`);
     
     this.start = timeline[newStart];
     this.end = timeline[newEnd];

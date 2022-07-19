@@ -33,19 +33,12 @@ export default {
   recentRooms: [],
   
   // timeline/events
-  events: store.events, // TODO: move to `store` for offline support?
   roomTimelines: new Map(),
   roomSlices: new Map(),
   roomStates: new Map(),
   roomState: null,
-  
-  // timeline
-  // DEPRECATED: each room now has its own timeline/slice
-  timeline: [],
-  sliceStart: null,
-  sliceEnd: null,
+  events: store.events, // TODO: move to `store` for offline support?
   slice: writable([]),
-  sliceRef: [],
   
   // cache
   missingAvatars: new Set(),

@@ -11,7 +11,7 @@ const getName = id => ($room.members.get(id)?.name ?? id.replace(/^@/, ""));
 
 function replacePing(input) {
   return input.replace(
-    /@[a-z0-9-_]+:[a-z0-9.-]+/i,
+    /@[a-z0-9-_/]+:[a-z0-9.-]+/i,
     (match) => `<a href="https://matrix.to/#/${match}">@${getName(match)}</a>`
   );
 }

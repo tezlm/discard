@@ -32,6 +32,18 @@ export let event;
   background: var(--event-focus-bg);
   border: solid var(--event-focus) 1px; 
 }
+
+.add {
+  display: inline-block;
+  opacity: 0;
+  color: var(--fg-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.add:hover {
+  opacity: 1;
+}
 </style>
 <div class="reactions">
 {#each [...event.reactions.entries()] as reaction}
@@ -40,4 +52,5 @@ export let event;
   <div class="count">{reaction[1][0]}</div>
 </div>
 {/each}
+<div class="add" class:self={false} on:click={todo}>+</div>
 </div>

@@ -34,7 +34,7 @@ function dividerProps(prev, ev) {
 }
 
 function atBottom() {
-	return $slice.events.at(-1).eventId === state.timeline.at(-1);
+	return $slice.atEnd();
 }
 
 async function fetchBackwards() {
@@ -49,6 +49,12 @@ async function fetchForwards() {
 
 function refocus() {
 	if (scrollTo && scrollTop === scrollMax) queueMicrotask(() => scrollTo(-1));
+}
+
+let resizeTimeout;
+function handleResize() {
+	clearTimeout(resizeTimeout);
+	resizeTimeout = setTimeout(refocus, 50);
 }
 
 function checkShift(e) {
@@ -189,4 +195,4 @@ onDestroy(focused.subscribe(() => {
 		</div>
 	</Scroller>
 </div>
-<svelte:window on:resize={refocus} on:keydown={checkShift} on:keyup={checkShift} on:mousemove={checkShift} />
+<svelte:window on:resize={handleResize} on:keydown={checkShift} on:keyup={checkShift} on:mousemove={checkShift} />

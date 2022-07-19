@@ -244,7 +244,7 @@ pre {
 <Popup>
   <div slot="content">
     <div style="height: 16px"></div>
-    <Input placeholder="Where do you want to go" optional autofocus submitted={() => {actions.rooms.focus(state.recentRooms[1]); closePopup()}} />
+    <Input placeholder="Where do you want to go" optional autofocus submitted={() => {actions._rooms.focus(state.recentRooms[1]); closePopup()}} />
     <ul>
       {#each state.recentRooms.slice(1) as room}
         <li>{room.name}</li>
