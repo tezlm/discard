@@ -15,7 +15,7 @@ function getDefaultRoomState() {
     edit: null,
     focused: null,
     upload: null,
-    typing: new Set(),
+    typing: [],
     slice: [],
   };
 }

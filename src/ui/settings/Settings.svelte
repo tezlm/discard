@@ -80,7 +80,8 @@ nav {
 .exit {
   padding-top: 2em;
   padding-left: 0;
-  padding-right: 2em;
+  margin-right: 2em;
+  height: fit-content;
   color: var(--fg-interactive);
   font-weight: 700;
   cursor: pointer;

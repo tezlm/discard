@@ -10,7 +10,7 @@ export let event, header = false, shiftKey = false;
 
 let missingAvs = state.missingAvatars;
 let slice = state.slice;
-$: toolbar = getToolbar(event, shiftKey);
+$: toolbar = getToolbar(shiftKey);
 
 let room = state.focusedRoom;
 $room.members.fetch();

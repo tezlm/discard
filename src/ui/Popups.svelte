@@ -227,7 +227,7 @@ pre {
 <Popup>
   <h3 slot="header">View source <div class="close" on:click={closePopup}>&#xd7;</div></h3>
   <div slot="content">
-    <p>note: this is discard's internal event representation, and not matrix's</p><br />
+    <p>note: this is discard's internal event representation, and not matrix's. <a style:cursor="pointer"on:click={e => {e.preventDefault();navigator.clipboard.writeText($current.event.eventId)}}>copy id</a></p><br />
     <pre>{JSON.stringify($current.event, null, 2)}</pre>
   </div>
 </Popup>
