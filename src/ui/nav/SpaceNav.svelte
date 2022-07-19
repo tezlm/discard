@@ -2,8 +2,11 @@
 import Tooltip from "../atoms/Tooltip.svelte";
 import { parseMxc } from "../../util/content.js";
 let focusedSpace = state.focusedSpace;
+let navRooms = state.navRooms;
 let navSpaces = state.navSpaces;
 let spaces = state.spaces;
+
+navRooms.subscribe(() => navSpaces = state.navSpaces);
 
 function isRead(room) {
 	const timeline = state.roomTimelines.get(room.roomId).live;

@@ -4,6 +4,8 @@ import Button from "./atoms/Button.svelte";
 import Input from "./atoms/Input.svelte";
 import Popup from "./atoms/Popup.svelte";
 import Logout from "./popups/Logout.svelte";
+import Leave from "./popups/Leave.svelte";
+import Create from "./popups/Create.svelte";
 import { formatDate, formatSize } from "../util/format.js";
 let current = state.popup;
 let data; reset();
@@ -15,7 +17,7 @@ $: if ($current.id) {
 }
 
 function closePopup() {
-  state.popup.set({});
+  state.popup.set({ ...$current, id: null });
 }
 
 function cancelPopup() {
@@ -126,22 +128,6 @@ pre {
     {/if}
   </div>
 </Popup>
-{:else if $current.id === "leave"}
-<Popup>
-  <h2 slot="header">Leave {$current.room.name}</h2>
-  <p slot="content" style="max-width: 440px">
-    Are you sure you want to leave <b>{$current.room.name}</b>?
-    {#if $current.room.joinRule !== "public"}
-    You won't be able to rejoin this {$current.type} unless you're re-invited.
-    {:else}
-    This {$current.type} is public and can be rejoined at any time. (Unless it gets made private!)
-    {/if}
-  </p>
-  <div slot="footer">
-    <Button type="link" label="Cancel" clicked={closePopup} />
-    <Button type="danger" label="Leave {capitalize($current.type)}" clicked={$current.confirm} />
-  </div>
-</Popup>
 {:else if $current.id === "invite"}
 <Popup>
   <h3 slot="header">Invite friends to {$current.room.name} <div class="close" on:click={closePopup}>&#xd7;</div></h3>
@@ -156,18 +142,6 @@ pre {
     <br />
     <p>link (if exists)</p>
     <Input value="https://matrix.to/#/#somewhere:example.org" />
-  </div>
-</Popup>
-{:else if $current.id === "create"}
-<Popup>
-  <h3 slot="header">Create {capitalize($current.type)} <div class="close" on:click={closePopup}>&#xd7;</div></h3>
-  <div slot="content" style="display:flex;flex-direction:column">
-    <span class="title">{capitalize($current.type)} Name</span>
-    <Input placeholder="awesome-{$current.type}" bind:value={data.name} submitted={() => state.popup.set({ id: "todo" })} autofocus />
-  </div>
-  <div slot="footer">
-    <Button type="link" label="Cancel" clicked={closePopup} />
-    <Button type="primary" disabled={!data.name.length} label="Create {capitalize($current.type)}" clicked={() => state.popup.set({ id: "todo" })} />
   </div>
 </Popup>
 {:else if $current.id === "member"}
@@ -238,6 +212,10 @@ pre {
     <a href={$current.url} class="original">Open original</a>
   </div>
 </Popup>
+{:else if $current.id === "create"}
+<svelte:component this={Create} {current} bind:confirm={$current.confirm} />
+{:else if $current.id === "leave"}
+<svelte:component this={Leave} {current} bind:confirm={$current.confirm} />
 {:else if $current.id === "logout"}
 <svelte:component this={Logout} />
 {:else if $current.id === "switcher"}

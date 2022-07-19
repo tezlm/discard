@@ -60,7 +60,9 @@ main > div {
 }
 </style>
 <main>
+  {#if $scene !== "auth"}
   <div class="chat" class:hide={$scene !== "chat"}><Chat /></div>
+  {/if}
   {#if $scene === "user-settings"}
   <div class="settings" transition:ease><UserSettings /></div>
   {:else if $scene === "space-settings"}

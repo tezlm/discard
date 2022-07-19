@@ -109,8 +109,8 @@ onDestroy(focused.subscribe(() => {
 	background: var(--event-focus-bg);
 }
 
-/* actually edit *
-.edit {
+/*
+.editing {
 	position: relative;
 	background: var(--event-ping-bg);
 }
@@ -171,6 +171,7 @@ onDestroy(focused.subscribe(() => {
 					class:ping={event.isPing}
 					class:reply={$reply?.eventId === event.eventId}
 					class:focused={$focused === event.eventId}
+					class:editing={$edit === event.eventId}
 					data-event-id={event.eventId}
 				>
 					{#if event.type === "m.room.create"}
