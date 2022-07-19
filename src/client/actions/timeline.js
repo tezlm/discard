@@ -36,7 +36,7 @@ function addToTimeline(roomId, eventId, toStart = false) {
     slice.end = eventId;
 
     const startIndex = timeline.lastIndexOf(slice.start);
-    if (startIndex >= 0) {
+    if (slice.events.length > 50 && startIndex >= 0) {
       slice.start = timeline[startIndex + 1];
       slice.events.shift();
     }
@@ -59,6 +59,8 @@ export function send(roomId, type, content) {
   state.events.set(id, temp);
   addToTimeline(roomId, id);
   
+  state.rooms.get(roomId).readEvent = id;
+  state.slice.set(state.roomSlices.get(roomId));
   state.api.sendEvent(roomId, type, content, id);
 }
 
@@ -82,7 +84,10 @@ export function handle(roomId, event, toStart = false) {
       const index = timeline.lastIndexOf(tx);
       timeline[index] = id;
       if (index === timeline.length - 1) slice.end = id;
-      state.slice.set(slice);      
+      
+      state.rooms.get(roomId).readEvent = id;
+      state.api.sendReceipt(roomId, id);
+      if (roomId === state.focusedRoomId) state.slice.set(slice);
       return;
     }
   }
@@ -139,8 +144,4 @@ export function redact(roomId, event) {
   const sliceIndex = slice.events.findIndex(i => i.eventId === id);
   if (sliceIndex !== -1) slice.events.splice(sliceIndex);
   state.slice.set(slice);
-}
-
-export function handleEphermeral(roomId, event) {
-  // TODO
 }

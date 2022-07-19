@@ -79,7 +79,8 @@ function formatRoom(roomId, room) {
     joinRule:   getState("m.room.join_rules")?.join_rule,
     type:       getType(),
     power:      getPower(),
-    members:    memberCache,        
+    members:    memberCache,
+    typing:     [],
     pings:      0,
     readEvent:  accountData.get(roomId)?.get("m.fully_read")?.event_id ?? null,
   }
@@ -118,7 +119,8 @@ export function handleAccount(roomId, type, content) {
 }
 
 export function handleJoin(roomId, event, batch) {
-  if (!rooms.has(roomId)) rooms.set(roomId, []);
+  const isNew = !rooms.has(roomId);
+  if (isNew) rooms.set(roomId, []);
   if (!state.roomTimelines.has(roomId)) state.roomTimelines.set(roomId, new TimelineSet(roomId, batch));
   const roomState = rooms.get(roomId);
   const index = roomState.findIndex(i => i.type === event.type && i.state_key === event.state_key);
@@ -126,7 +128,8 @@ export function handleJoin(roomId, event, batch) {
     roomState[index] = event;
   } else {
     roomState.push(event);
-  }  
+  }
+  update();
 }
 
 export function handleInvite(roomId, event) {
@@ -134,10 +137,25 @@ export function handleInvite(roomId, event) {
 }
 
 export function handleLeave(roomId) {
+  const space = get(state.focusedSpace)?.roomId;
+  if (roomId === space) {
+    state.focusedSpace.set(null);
+    state.focusedRoomId = null;
+    state.focusedRoom.set(null);
+  }
+  if (roomId === state.focusedRoomId) {
+    state.focusedRoomId = null;
+    state.focusedRoom.set(null);
+  }
   rooms.delete(roomId);
+  state.rooms.delete(roomId);
+  update();
+  state.navRooms.set(state.spaces.get(space ?? "orphanRooms"));
 }
 
-export function update() {  
+export function update() {
+  if (state.syncer.status === "starting") return;
+  
   for (let [id, data] of rooms.entries()) {
     state.rooms.set(id, formatRoom(id, data));
   }

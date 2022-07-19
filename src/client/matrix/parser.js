@@ -14,13 +14,27 @@ export function handleEvent(roomId, event, toStart) {
   actions.timeline.handle(roomId, event, toStart);
 }
 
-export function handleEphermeral(roomId, event) {
-  // console.log(roomId, event);
-  // TODO
+export function handleEphermeral(roomId, type, content) {
+  if (type !== "m.typing") return;
+  
+  const roomState = state.roomStates.get(roomId);
+  if (!roomState) return;
+  roomState.typing = content.user_ids;
+  if (roomId === state.focusedRoomId) {
+    state.roomState.typing.set(content.user_ids);
+  }
 }
 
 export function handleState(roomId, event, batch) {
   actions.rooms.handleJoin(roomId, event, batch);
+}
+
+export function handleInvite(roomId) {
+  // TODO
+}
+
+export function handleLeave(roomId) {
+  actions.rooms.handleLeave(roomId);
 }
 
 export function handleNotis(roomId, pings) {
