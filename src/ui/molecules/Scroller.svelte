@@ -15,8 +15,9 @@ export function reset() {
   atItemsTop = direction === "up";
   atItemsBottom = direction === "down";
   if (direction === "down") {
-    queueMicrotask(() => scrollEl.scrollTop = scrollEl.scrollHeight);
+    queueMicrotask(() => scrollEl && (scrollEl.scrollTop = scrollEl.scrollHeight));
   }
+  queueMicrotask(paginate);
 }
 
 export function scrollTo(pos) {

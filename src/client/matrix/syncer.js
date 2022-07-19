@@ -47,10 +47,11 @@ export default class Syncer {
     }
     
     if (this.status === "starting") {
-      state.log.matrix("ready");
       this.status = "syncing";
-      state.scene.set("chat");
+      state.log.matrix("ready");
       actions.rooms.update();
+      actions.spaces.update();
+      state.scene.set("chat");
     }
     this._loop(sync.next_batch);
   }

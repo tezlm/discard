@@ -20,16 +20,19 @@ export default {
   scene: writable(null),
   popup: writable({}),
   
-  // rooms/nav
+  // data
   rooms: new Map(),
   spaces: new Map(),
   dms: new Map(),
+  
+  //nav
   navRooms: writable([]),
   navSpaces: writable([]),
   selectedRoom: writable(null),
   focusedRoom: writable(null),
   focusedSpace: writable(null),
-  focusedRoomId: null, // DEPRECATED: don't use this for any new code. will be removed in the future
+  focusedSpaceId: null,
+  focusedRoomId: null,
   recentRooms: [],
   
   // timeline/events
@@ -37,7 +40,7 @@ export default {
   roomSlices: new Map(),
   roomStates: new Map(),
   roomState: null,
-  events: store.events, // TODO: move to `store` for offline support?
+  events: store.events, // TODO: offline support?
   slice: writable([]),
   
   // cache

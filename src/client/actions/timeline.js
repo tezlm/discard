@@ -1,5 +1,6 @@
 // this module handles the recieved events from sync
 import { format } from "../../util/events.js";
+import TimelineSet from "../matrix/timeline.js";
 
 const supportedEvents = ["m.room.create", "m.room.message", "m.reaction"];
 const relations = new Map();
@@ -27,6 +28,8 @@ export function getTimeline(roomId) {
 }
 
 function addToTimeline(roomId, eventId, toStart = false) {
+  if (!state.roomTimelines.has(roomId)) state.roomTimelines.set(roomId, new TimelineSet(roomId));
+  
   const slice = actions.slice.get(roomId);
   const atEnd = slice.atEnd();
   const timeline = getTimeline(roomId);
@@ -108,7 +111,7 @@ export function handle(roomId, event, toStart = false) {
         });
         const slice = actions.slice.get(roomId);
         // slice.reslice();
-        state.slice.set(slice);
+      if (roomId === state.focusedRoomId) state.slice.set(slice);
     } else if (relation.rel_type === "m.annotation") {
       // FIXME: redact reactions
       const key = relation.key; 
@@ -116,7 +119,7 @@ export function handle(roomId, event, toStart = false) {
       if (!original.reactions.has(key)) original.reactions.set(key, [0, null]);
       if (event.sender === state.userId) original.reactions.get(relation.key)[1] = id;
       original.reactions.get(relation.key)[0]++;
-      state.slice.set(actions.slice.get(roomId));
+      if (roomId === state.focusedRoomId) state.slice.set(actions.slice.get(roomId));
     }
   } else {
     // TODO: update on state events

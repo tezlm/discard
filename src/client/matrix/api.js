@@ -124,9 +124,24 @@ export default class Api {
   }
     
   // rooms
-  createRoom() { throw "TODO" }
+  createRoom({ name, topic, creator, type }) {
+    return this.fetch("POST", `/createRoom`, {
+      name,
+      topic,
+      power_level_content_override: {
+        users: { [creator]: 101 },
+      },
+      ...(type && {
+        creation_content: { type },
+      }),
+    });  
+  }
+  
   joinRoom() { throw "TODO" }
-  leaveRoom() { throw "TODO" }
+  
+  leaveRoom(roomId) {
+    return this.fetch("POST", `/rooms/${encode(roomId)}/leave`);    
+  }
   
   // memers
   inviteMember() { throw "TODO" }

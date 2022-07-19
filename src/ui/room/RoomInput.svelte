@@ -5,13 +5,14 @@ import { marked } from "marked";
 import { onDestroy } from "svelte";
 let textarea;
 let room = state.focusedRoom;
-let { reply, input, rows, upload: fileUpload, typing } = state.roomState;
+let slice = state.slice;
+let { reply, edit, input, rows, upload: fileUpload, typing } = state.roomState;
 
 const getName = id => ($room.members.get(id)?.name ?? id.replace(/^@/, ""));
 
 function replacePing(input) {
   return input.replace(
-    /@[a-z0-9-_/]+:[a-z0-9.-]+/i,
+    /@[a-z0-9-_/]+:[a-z0-9.-]+/ig,
     (match) => `<a href="https://matrix.to/#/${match}">@${getName(match)}</a>`
   );
 }
@@ -40,10 +41,20 @@ async function handleKeyDown(e) {
     } else {
       const lastEvent = state.roomTimelines.get($room.roomId).live.at(-1);
       state.log.debug(`mark ${lastEvent} as read`);
+      state.rooms.get($room.roomId).readEvent = lastEvent;
+      state.slice.set(state.roomSlices.get($room.roomId));
       state.api.sendReceipt($room.roomId, lastEvent);  
     }
   } if (e.key === "ArrowUp") {
-    // TODO: get last event by me from slice, set as edit
+    for (let i = $slice.events.length - 1; i >= 0; i--) {
+      const event = $slice.events[i];
+      if (event.sender === state.userId) {
+        // TODO: edit
+        $edit = event.eventId;
+        actions.slice.jump(event.roomId, event.eventId);
+        return;
+      }
+    }
   }
 }
 

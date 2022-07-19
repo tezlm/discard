@@ -1,9 +1,10 @@
 import { writable, get } from "svelte/store";
+import * as parser from "./matrix/parser.js";
 import * as client from "./actions/client.js";
 import * as timeline from "./actions/timeline.js";
 import * as rooms from "./actions/rooms.js";
 import * as slice from "./actions/slice.js";
-import * as parser from "./matrix/parser.js";
+import * as spaces from "./actions/spaces.js";
 
 // TODO: timeline slice
 
@@ -26,6 +27,7 @@ export default {
   timeline,
   parser,
   slice,
+  spaces,
   _rooms: {
     async focus(room) {
       state.log.ui("set focused room to " + room?.roomId);
@@ -68,16 +70,12 @@ export default {
       }
       
       // update recent rooms
-      const recentIndex = state.recentRooms.findIndex(i => i.roomId === room.roomId);
-      if (recentIndex >= 0) state.recentRooms.splice(recentIndex, 1);
-      state.recentRooms.unshift(room);
-      if (state.recentRooms.length > 8) state.recentRooms.pop();
-    },
-  },
-  spaces: {
-    focus(space) {
-    	state.focusedSpace.set(space);
-    	state.navRooms.set(state.spaces.get(space?.roomId ?? "orphanRooms"));
+      if (room) {
+        const recentIndex = state.recentRooms.findIndex(i => i.roomId === room?.roomId);
+        if (recentIndex >= 0) state.recentRooms.splice(recentIndex, 1);
+        state.recentRooms.unshift(room);
+        if (state.recentRooms.length > 8) state.recentRooms.pop();
+      }
     },
   },
 };

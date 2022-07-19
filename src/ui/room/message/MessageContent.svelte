@@ -11,7 +11,7 @@ $: special = event.special;
 $: dimensions = parseDimensions(content.info?.thumbnail_info ?? content.info);
 
 function parseDimensions(info) {
-  if (!info || !info.w || !info.h) return `max-width: 400px; max-height: 300px; object-fit: cover`;
+  if (!info || !info.w || !info.h) return `max-width: 400px; height: 300px; object-fit: cover`;
   let width = info.w, height = info.h;
   if (width > 400) {
     const scale = 400 / width;
