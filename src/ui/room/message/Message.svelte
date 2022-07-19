@@ -9,6 +9,7 @@ import { parseMxc, defaultAvatar, calculateHash } from '../../../util/content.js
 export let event, header = false, shiftKey = false;
 
 let missingAvs = state.missingAvatars;
+let slice = state.slice;
 $: toolbar = getToolbar(event, shiftKey);
 
 let room = state.focusedRoom;
@@ -21,7 +22,7 @@ function unwrapEdits(event) {
 }
 
 // amazing logic
-function getToolbar(event, shift = false) {
+function getToolbar(shift = false) {
   const toolbar = [];
   const fromMe = event.sender === state.userId;
 
@@ -30,16 +31,22 @@ function getToolbar(event, shift = false) {
     toolbar.push({ name: "Cancel", icon: "x", clicked: todo });
   } else if (shift) {
     if (fromMe || $room.power.me >= $room.power.getBase("redact")) {
-      toolbar.push({ name: "Delete", icon: "x", clicked: (ev) => { ev.special = "redacted"; state.api.redactEvent(ev.roomId, ev.eventId) }});
+      toolbar.push({ name: "Delete", icon: "x", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) }});
     }
-    toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => state.roomState.reply.set(unwrapEdits(ev)) });
-    toolbar.push({ name: "Source", icon: "!", clicked: (ev) => state.popup.set({ id: "source", event: ev }) });
+    if ($room.power.me >= $room.power.getEvent("m.room.message")) {
+      toolbar.push({ name: "Reply", icon: ">", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
+    }
+    toolbar.push({ name: "Source", icon: "!", clicked: () => state.popup.set({ id: "source", event }) });
   } else {
-    toolbar.push({ name: "React", icon: "+", clicked: todo });
-    if (fromMe) {
-      toolbar.push({ name: "Edit", icon: "_", clicked: (ev) => state.roomState.edit.set(unwrapEdits(ev).eventId) });
-    } else {
-      toolbar.push({ name: "Reply", icon: ">", clicked: (ev) => state.roomState.reply.set(unwrapEdits(ev)) });
+    if ($room.power.me >= $room.power.getEvent("m.reaction")) {
+      toolbar.push({ name: "React", icon: "+", clicked: todo });
+    }
+    if ($room.power.me >= $room.power.getEvent("m.room.message")) {
+      if (fromMe) {
+        toolbar.push({ name: "Edit", icon: "_", clicked: () => state.roomState.edit.set(unwrapEdits(event).eventId) });
+      } else {
+        toolbar.push({ name: "Reply", icon: ">", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
+      }
     }
     toolbar.push({ name: "More", icon: "\u22ee", clicked: todo });
   }
@@ -54,6 +61,17 @@ function getReply(content) {
 function getAvatar() {
   if (missingAvs.has(sender.userId)) return defaultAvatar;
   return sender.avatar ? parseMxc(sender.avatar, 40) : defaultAvatar;
+}
+
+function handleClick(e) {
+  if (e.altKey) {
+    const prev = $slice.events[$slice.events.findIndex(i => i.eventId === event.eventId) - 1];
+    if (prev) {
+      state.rooms.get(state.focusedRoomId).readEvent = prev.eventId;
+      state.slice.set(state.roomSlices.get(state.focusedRoomId));
+      state.api.sendReceipt(event.roomId, prev.eventId);
+    }
+  }
 }
 </script>
 <style>
@@ -123,7 +141,7 @@ time {
   display: block;
 }
 </style>
-<div class="message">
+<div class="message" on:click={handleClick}>
   <div class="side">
     {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
     {#if header}
@@ -141,12 +159,12 @@ time {
     {#if getReply(event.content)}<MessageReply roomId={event.roomId} eventId={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
-      <span class="author" style:color="var(--mxid-{calculateHash(event.sender) % 8 + 1})">{sender.name ?? event.sender}</span>
+      <span class="author" style:color="var(--mxid-{calculateHash(event.sender) % 8 + 1})">{sender.name || event.sender}</span>
       <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
     </div>
     {/if}
     <MessageContent {event} />
-    {#if event.reactions}<MessageReactions {event} />{/if}
+    {#if false && event.reactions}<MessageReactions {event} />{/if}
   </div>
   <div class="toolbar">
     <MessageToolbar items={toolbar} {event} />

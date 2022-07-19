@@ -20,7 +20,7 @@ function handleKeyDown(e) {
 
 .sidebar {
   background: var(--bg-rooms-members);
-  width: calc(50% - 300px);
+  min-width: calc(50% - 300px);
   overflow-y: auto;
 }
 
@@ -51,13 +51,17 @@ nav {
 }
 
 .main {
+  display: flex;
   position: relative;
+  flex: 1;
 }
 
 .wrapper {
   margin: 0 2em;
   padding: 4em 0;
-  width: 660px;
+  flex: 1;
+  max-width: 660px;
+  min-width: 440px;
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
@@ -74,11 +78,12 @@ nav {
 }
 
 .exit {
-  cursor: pointer;
-  margin-top: 2em;
-  margin-right: auto;
+  padding-top: 2em;
+  padding-left: 0;
+  padding-right: 2em;
   color: var(--fg-interactive);
   font-weight: 700;
+  cursor: pointer;
 }
 
 .exit:hover {
@@ -117,7 +122,7 @@ h1 {
       {/if}
       <svelte:component this={focused.view} {...options} {...focused.props} />
     </div>
+    <div class="exit" on:click={() => state.scene.set("chat")}>ESC</div>
   </div>
-  <div class="exit" on:click={() => state.scene.set("chat")}>ESC</div>
 </div>
 <svelte:window on:keydown={handleKeyDown} />

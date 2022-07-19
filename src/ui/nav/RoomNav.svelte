@@ -16,7 +16,7 @@ function isRead(room) {
 	function getLastMessage(timeline, fromEvent) {
 		const index = timeline.lastIndexOf(fromEvent);
 		if (index === -1) return null;
-		for (let i = timeline.length - 1; i >= 0; i--) {
+		for (let i = index; i >= 0; i--) {
 			const event = state.events.get(timeline[i]);
 			if (event.type === "m.room.message" && event.special !== "redacted") return event.eventId;
 		}

@@ -112,6 +112,25 @@ function toggle() {
 .slider.checked {
   left: calc(100% - 18px - 3px);
 }
+
+.autocomplete {
+  background: var(--bg-rooms-members);
+  border-radius: 5px;
+  box-shadow: var(--shadow-popup);
+  overflow: hidden scroll;
+  padding: 8px;
+  min-width: 430px;
+  max-width: 800px;
+}
+
+.option {
+  border-radius: 5px;
+  padding: 8px;
+}
+
+.option:hover {
+  background: var(--bg-content);
+}
 </style>
 <p>testbed for random stuff</p>
 <br>
@@ -140,3 +159,9 @@ function toggle() {
   <div class="id">@username:example.com</div>
 </div>
 <br>
+<div class="autocomplete">
+  <h3>Commands matching <b>/</b></h3>
+  <div class="option">foo</div>
+  <div class="option">bar</div>
+  <div class="option">baz</div>
+</div>

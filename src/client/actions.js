@@ -1,5 +1,4 @@
 import { writable, get } from "svelte/store";
-import Slice from "./matrix/slice.js"; // TODO: move into actions/slice.js
 import * as client from "./actions/client.js";
 import * as timeline from "./actions/timeline.js";
 import * as rooms from "./actions/rooms.js";
@@ -19,18 +18,6 @@ function getDefaultRoomState() {
     typing: new Set(),
     slice: [],
   };
-}
-
-// TODO: ..?
-function getDefaultTimeline() {
-  return {
-    timeline: [],
-    slice: writable([]),
-    sliceStart: null,
-    sliceEnd: null,
-    sliceStartIdx: 0,
-    sliceEndIdx: 0,
-  }
 }
 
 export default {
@@ -74,15 +61,10 @@ export default {
         	state.roomState[key].set(newState[key]);
         }
         
-        state.timeline = state.roomTimelines.get(room.roomId).live;
-        if (!state.timeline.length) await state.timeline.backwards();
+        const timeline = state.roomTimelines.get(room.roomId).live;
+        if (!timeline.length) await timeline.backwards();
         
-        if (!state.roomSlices.has(room.roomId)) {
-          const slice = new Slice(state.roomTimelines.get(room.roomId));
-          state.roomSlices.set(room.roomId, slice);
-        }
-        
-        state.slice.set(state.roomSlices.get(room.roomId));
+        state.slice.set(actions.slice.get(room.roomId));
       }
       
       // update recent rooms

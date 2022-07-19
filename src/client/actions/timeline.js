@@ -1,34 +1,33 @@
 // this module handles the recieved events from sync
-import Slice from "../matrix/slice.js";
 import { format } from "../../util/events.js";
 
-// const supportedEvents = ["m.room.create", "m.room.message", "m.reaction"];
-const supportedEvents = ["m.room.create", "m.room.message"];
-// const relations = new Map();
+const supportedEvents = ["m.room.create", "m.room.message", "m.reaction"];
+const relations = new Map();
 
-// function getRelation(event) {
-//   const relation = event.content["m.relates_to"];
-//   for (let key in relation) {
-//     return { rel_type: key, event_id: relation[key].event_id, key: relation[key].key }
-//   }
-// }
+// TODO: multiple relations
+function getRelation(content) {
+  const relation = content["m.relates_to"];
+  if (!relation) return null;
+  if (relation.rel_type && relation.rel_type !== "m.in_reply_to") {
+    return relation;
+  } else {
+    const type = Object.keys(relation)?.[0];
+    if (!type || type === "m.in_reply_to") return null;
+    return { rel_type: type, ...relation[type] };
+  }
+}
 
-// function queueRelation(id, event) {
-//   if (!relations.has(id)) relations.set(id, []);
-//   relations.get(id).push(event);
-// }
+function queueRelation(id, event) {
+  if (!relations.has(id)) relations.set(id, []);
+  relations.get(id).push(event);
+}
 
 export function getTimeline(roomId) {
   return state.roomTimelines.get(roomId).live;
 }
 
 function addToTimeline(roomId, eventId, toStart = false) {
-  if (!state.roomSlices.has(roomId)) {
-    const slice = new Slice(state.roomTimelines.get(roomId));
-    state.roomSlices.set(roomId, slice);
-  }
-  
-  const slice = state.roomSlices.get(roomId);
+  const slice = actions.slice.get(roomId);
   const atEnd = slice.atEnd();
   const timeline = getTimeline(roomId);
   timeline[toStart ? "unshift" : "push"](eventId);
@@ -38,7 +37,7 @@ function addToTimeline(roomId, eventId, toStart = false) {
 
     const startIndex = timeline.lastIndexOf(slice.start);
     if (startIndex >= 0) {
-      slice.end = timeline[startIndex + 1];
+      slice.start = timeline[startIndex + 1];
       slice.events.shift();
     }
   
@@ -63,7 +62,7 @@ export function send(roomId, type, content) {
   state.api.sendEvent(roomId, type, content, id);
 }
 
-export function handle(roomId, event, toStart) {
+export function handle(roomId, event, toStart = false) {
   if (event.type === "m.room.redaction" && !toStart) return redact(roomId, event);
   if (!supportedEvents.includes(event.type)) return;
   if (event.unsigned?.redacted_because) return;
@@ -88,37 +87,41 @@ export function handle(roomId, event, toStart) {
     }
   }
   
-  // TODO: get relations to work again
-  // if (getRelation(event.content)) {
-  //     const { rel_type: type, event_id: relId, key } = getRelation(event);
-  //     const original = state.events.get(relId);
-  //     if (!original) return queueRelation(relId, event);
-  //     if (type === "m.replace") {
-  //       // TODO: invert current method of edits
-  //       // instead of replacing with an edit event with `original`
-  //       // keep the original with `edit` 
-  //       const index = timeline.lastIndexOf(relId);
-  //       if (index < 0) return queueRelation(relId, event);
-  //       state.events.set(id, {
-  //         ...format(event),
-  //         content: { ...original.content, ...event.getContent()["m.new_content"] },
-  //         original,
-  //       });
-  //     } else if (type === "m.annotation") {
-  //       const [count, selfReacted] = original.reactions.get(key) ?? [0, false];
-  //       original.reactions.set(key, [count + 1, selfReacted || event.getSender() === state.client.getUserId()]);
-  //     }
-  // } else {
-  
-  // TODO: update on state events
-  state.events.set(id, format(roomId, event));
-  addToTimeline(roomId, id, toStart);
-  
-  //   if (relations.has(id)) {
-  //     for (let relation of relations.get(id)) add(relation);
-  //     relations.delete(id);
-  //   }
-  // }
+  const relation = getRelation(event.content);
+  if (relation) {
+    const original = state.events.get(relation.event_id);
+    if (!original) return queueRelation(relation.event_id, event);
+    if (relation.rel_type === "m.replace") {
+        // TODO: invert current method of edits
+        // instead of replacing with an edit event with `original`
+        // keep the original with `edit`
+        state.events.set(relation.event_id, {
+          ...format(roomId, event),
+          content: { ...original.content, ...event.content["m.new_content"] },
+          eventId: original.eventId, // this is why the todo exists
+          original,
+        });
+        const slice = actions.slice.get(roomId);
+        // slice.reslice();
+        state.slice.set(slice);
+    } else if (relation.rel_type === "m.annotation") {
+      // FIXME: redact reactions
+      const key = relation.key; 
+      if (!original.reactions) original.reactions = new Map();
+      if (!original.reactions.has(key)) original.reactions.set(key, [0, null]);
+      if (event.sender === state.userId) original.reactions.get(relation.key)[1] = id;
+      original.reactions.get(relation.key)[0]++;
+      state.slice.set(actions.slice.get(roomId));
+    }
+  } else {
+    // TODO: update on state events
+    state.events.set(id, format(roomId, event));
+    addToTimeline(roomId, id, toStart);
+    if (relations.has(id)) {
+      for (let relation of relations.get(id)) handle(roomId, relation);
+      relations.delete(id);
+    }
+  }
 }
 
 export function redact(roomId, event) {
@@ -130,7 +133,9 @@ export function redact(roomId, event) {
   timeline.splice(index);
   
   const slice = state.roomSlices.get(roomId);
-  if (slice.end === id) slice.end = state.timeline.at(-1);
+  if (slice.end === id) slice.end = timeline.at(-1);
+  // TODO: edge case?
+  // if (slice.start === id) slice.start = timeline[0];
   const sliceIndex = slice.events.findIndex(i => i.eventId === id);
   if (sliceIndex !== -1) slice.events.splice(sliceIndex);
   state.slice.set(slice);
