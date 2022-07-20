@@ -1,6 +1,6 @@
 <script>
 import RoomContent from './RoomContent.svelte';
-import RoomInput from './RoomInput.svelte';
+import RoomFooter from './RoomFooter.svelte';
 import RoomHeader from './RoomHeader.svelte';
 import RoomHome from './RoomHome.svelte';
 let room = state.focusedRoom;
@@ -21,7 +21,7 @@ let room = state.focusedRoom;
   {#if $room}
   <RoomHeader />
   <RoomContent />
-  <RoomInput />
+  <RoomFooter />
   {:else}
   <RoomHeader />
   <RoomHome />

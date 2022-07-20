@@ -1,6 +1,7 @@
 <script>
 import MessageReply from "./MessageReply.svelte";
 import MessageContent from "./MessageContent.svelte";
+import MessageEdit from "./MessageEdit.svelte";
 import MessageReactions from "./MessageReactions.svelte";
 import MessageToolbar from "./MessageToolbar.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
@@ -8,6 +9,7 @@ import { parseMxc, defaultAvatar, calculateHash } from '../../../util/content.js
 
 export let event, header = false, shiftKey = false;
 
+let { edit } = state.roomState;
 let missingAvs = state.missingAvatars;
 let slice = state.slice;
 $: toolbar = getToolbar(shiftKey);
@@ -170,10 +172,16 @@ time {
       <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
     </div>
     {/if}
+    {#if event.eventId === $edit}
+    <MessageEdit {event} />
+    {:else}
     <MessageContent {event} />
+    {/if}
     {#if event.reactions}<MessageReactions {event} />{/if}
   </div>
+  {#if event.eventId !== $edit}
   <div class="toolbar">
     <MessageToolbar items={toolbar} {event} />
   </div>
+  {/if}
 </div>

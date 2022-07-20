@@ -68,6 +68,7 @@ export function send(roomId, type, content) {
 }
 
 export function handle(roomId, event, toStart = false) {
+  console.log(roomId, event)
   if (event.type === "m.room.redaction" && !toStart) return redact(roomId, event);
   if (!supportedEvents.includes(event.type)) return;
   if (event.unsigned?.redacted_because) return;
