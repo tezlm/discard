@@ -1,5 +1,4 @@
 <script>
-// TODO: split out most of this into RoomFooter, make RoomInput just the input
 import Typing from "../atoms/Typing.svelte";
 import { marked } from "marked";
 import { onDestroy } from "svelte";

@@ -7,6 +7,7 @@ import Create from './timeline/Create.svelte';
 import Placeholder from './timeline/Placeholder.svelte';
 import Message from './message/Message.svelte';
 let slice = state.slice;
+let room = state.focusedRoom;
 let { focused, reply, edit, upload } = state.roomState;
 let shiftKey = false;
 let scrollTop, scrollMax, scrollTo, reset;
@@ -54,15 +55,33 @@ function handleResize() {
 	resizeTimeout = setTimeout(refocus, 50);
 }
 
-function checkShift(e) {
+function handleKeyDown(e) {
+  // if (e.key === "Escape") {
+  //   if ($edit) {
+  //     edit.set(null);
+  //   } if ($reply) {
+  //     reply.set(null);
+  //   } else {
+  //     const lastEvent = state.roomTimelines.get($room.roomId).live.at(-1);
+  //     state.log.debug(`mark ${lastEvent} as read`);
+  //     state.rooms.get($room.roomId).readEvent = lastEvent;
+  //     state.slice.set(state.roomSlices.get($room.roomId));
+  //     state.api.sendReceipt($room.roomId, lastEvent);  
+  //   }
+  // }
+
 	if (e.type === "keydown") return shiftKey = e.key === "Shift";
 	if (e.type === "keyup") return shiftKey = false;
+}
+
+function checkShift(e) {
   shiftKey = e.shiftKey;
 }
 
 onDestroy(state.focusedRoom.subscribe(() => reset && reset()));
 onDestroy(slice.subscribe(refocus));
 onDestroy(reply.subscribe(refocus));
+onDestroy(edit.subscribe(refocus));
 onDestroy(focused.subscribe(() => {
 	if (!$focused) return;
 	const id = $focused;
@@ -106,12 +125,10 @@ onDestroy(focused.subscribe(() => {
 	background: var(--event-focus-bg);
 }
 
-/*
 .editing {
 	position: relative;
-	background: var(--event-ping-bg);
+  background: rgba(4,4,5,0.07);
 }
-*/
 
 .focused {
 	position: relative;
@@ -193,4 +210,4 @@ onDestroy(focused.subscribe(() => {
 		</div>
 	</Scroller>
 </div>
-<svelte:window on:resize={handleResize} on:keydown={checkShift} on:keyup={checkShift} on:mousemove={checkShift} />
+<svelte:window on:resize={handleResize} on:keydown={handleKeyDown} on:keyup={handleKeyDown} on:mousemove={checkShift} />

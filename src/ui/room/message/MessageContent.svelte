@@ -142,7 +142,7 @@ img {
   <div class="file">
     <img src={fileIcon} alt="file icon" />
     <div class="info">
-      <a href={parseMxc(content.url)}>{content.body}</a><br />
+      <a href={parseMxc(content.url)}>{content.filename ?? content.body}</a><br />
       <span class="size">{formatSize(content.info?.size)}</span>
     </div>
   </div>
@@ -150,17 +150,17 @@ img {
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}
     {@html parseHtml(content.formatted_body.trim()).trim()}
-    {#if edited}
-    <span class="edited">(edited)</span>
-    {/if}
   </div>
+  {#if edited}
+  <span class="edited">(edited)</span>
+  {/if}
   {:else if content.body}
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}
     {@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"), { linkify: true })}
-    {#if edited}
-    <span class="edited">(edited)</span>
-    {/if}
   </div>
+  {#if edited}
+  <span class="edited">(edited)</span>
+  {/if}
   {/if}
 </div>
