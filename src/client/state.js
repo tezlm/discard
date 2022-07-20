@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
 import Store from "./matrix/store.js";
+import Settings from "./matrix/settings.js";
 
 const store = new Store();
 await store.init();
@@ -24,6 +25,7 @@ export default {
   rooms: new Map(),
   spaces: new Map(),
   dms: new Map(),
+  settings: new Settings(),
   
   //nav
   navRooms: writable([]),

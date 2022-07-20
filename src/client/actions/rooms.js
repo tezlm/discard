@@ -23,10 +23,7 @@ export function handleAccount(roomId, type, content) {
   if (!roomAccounts.has(roomId)) roomAccounts.set(roomId, new Map());
   roomAccounts.get(roomId).set(type, content);
   
-  if (type === "m.fully_read") {
-    update();
-    actions.spaces.update();
-  }
+  if (type === "m.fully_read") update();
 }
 
 export function handleJoin(roomId, event, batch) {
@@ -72,6 +69,12 @@ export function update() {
   if (state.syncer.status === "starting") return;
   
   for (let [id, data] of rooms.entries()) {
-    state.rooms.set(id, formatRoom(id, data, roomAccounts.get(id)));
+    const formatted = formatRoom(id, data, roomAccounts.get(id));
+    if (state.rooms.has(id)) {
+      Object.assign(state.rooms.get(id), formatted);
+    } else {
+      state.rooms.set(id, formatted);
+    }
+    state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
   }
 }

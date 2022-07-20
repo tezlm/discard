@@ -63,6 +63,13 @@ function getAvatar() {
   return sender.avatar ? parseMxc(sender.avatar, 40) : defaultAvatar;
 }
 
+function getColor(sender) {
+  if (!sender) return;
+  if (state.settings.get("namecolors") === "never") return;
+  if (state.settings.get("namecolors") === "power" && $room.power.getUser(sender.userId) === 0) return;
+  return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
+}
+
 function handleClick(e) {
   if (e.altKey) {
     const prev = $slice.events[$slice.events.findIndex(i => i.eventId === event.eventId) - 1];
@@ -159,12 +166,12 @@ time {
     {#if getReply(event.content)}<MessageReply roomId={event.roomId} eventId={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
-      <span class="author" style:color="var(--mxid-{calculateHash(event.sender) % 8 + 1})">{sender.name || event.sender}</span>
+      <span class="author" style:color={getColor(sender)}>{sender.name || event.sender}</span>
       <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
     </div>
     {/if}
     <MessageContent {event} />
-    {#if false && event.reactions}<MessageReactions {event} />{/if}
+    {#if event.reactions}<MessageReactions {event} />{/if}
   </div>
   <div class="toolbar">
     <MessageToolbar items={toolbar} {event} />

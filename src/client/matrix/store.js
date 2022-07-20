@@ -29,7 +29,7 @@ class PersistentMap extends Map {
   async set(key, val) {
     super.set(key, val);
     await this._db.put(this.name, JSON.stringify(val), key);
-  }
+  }  
 }
 
 export default class Store {
