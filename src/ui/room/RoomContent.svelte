@@ -10,9 +10,6 @@ let slice = state.slice;
 let { focused, reply, edit, upload } = state.roomState;
 let shiftKey = false;
 let scrollTop, scrollMax, scrollTo, reset;
-const get = id => state.events.get(id); // TODO: this is just a shim for now to get things working. find a better way soon?
-
-// TODO: update read marker on esc
 
 function shouldSplit(prev, ev) {
 	if (!prev) return true;
@@ -28,7 +25,7 @@ function dividerProps(prev, ev) {
 	const room = state.rooms.get(ev.roomId);
 	return {
 		unpad: shouldSplit(prev, ev),
-		unread: room.readEvent === prev.eventId, // TODO: fix, only shows unread if its exactly the right event id
+		unread: room.readEvent === prev.eventId,
 		newdate: prev.date.getDay() !== ev.date.getDay() ? ev.date : null,
 	};
 }
@@ -39,12 +36,12 @@ function atBottom() {
 
 async function fetchBackwards() {
 	const success = await actions.slice.backwards();
-	return [!success, atBottom()];
+	return [!success || $slice.events[0]?.type === "m.room.create", atBottom()];
 }
 
 async function fetchForwards() {
 	const success = await actions.slice.forwards();
-	return [!success, atBottom()];
+	return [!success || $slice.events[0]?.type === "m.room.create", atBottom()];
 }
 
 function refocus() {

@@ -1,9 +1,9 @@
 // this module handles the recieved data from sync
 import { get } from "svelte/store";
+import Settings from "./settings.js"
 
 export function handleAccount(type, content) {
-  // console.log(type, content);
-  // TODO
+  if (type === "org.eu.celery.settings") state.settings = new Settings(content.data);
 }
 
 export function handleRoomAccount(roomId, type, content) {

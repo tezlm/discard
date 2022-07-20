@@ -46,12 +46,12 @@ async function handleKeyDown(e) {
       state.api.sendReceipt($room.roomId, lastEvent);  
     }
   } if (e.key === "ArrowUp") {
+    if (textarea.selectionStart !== 0) return;
+    if (textarea.selectionEnd !== 0) return;
     for (let i = $slice.events.length - 1; i >= 0; i--) {
       const event = $slice.events[i];
       if (event.sender === state.userId) {
-        // TODO: edit
         $edit = event.eventId;
-        actions.slice.jump(event.roomId, event.eventId);
         return;
       }
     }

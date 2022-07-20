@@ -97,6 +97,10 @@ export default class Api {
     return this.fetch("PUT", `/rooms/${encode(roomId)}/typing/${encode(eventId)}`, content);
   }
   
+  sendAccountData(userId, type, data) {
+    return this.fetch("PUT", `/user/${encode(userId)}/account_data/${encode(type)}`, data);
+  }
+  
   // redact events
   redactEvent(roomId, eventId, content, txnId) {
     return this.fetch("PUT", `/rooms/${encode(roomId)}/redact/${encode(eventId)}/${encode(txnId)}`, content);

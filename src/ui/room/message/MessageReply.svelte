@@ -19,6 +19,13 @@ function getAvatar(sender) {
   if (!member) return defaultAvatar;
   return member.avatar ? parseMxc(member.avatar, 16) : defaultAvatar;
 }
+
+function getColor(sender) {
+  if (!sender) return;
+  if (state.settings.get("namecolors") === "never") return;
+  if (state.settings.get("namecolors") === "power" && $room.power.getUser(sender.userId) === 0) return;
+  return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
+}
 </script>
 <style>
 .reply {
@@ -115,7 +122,7 @@ function getAvatar(sender) {
     src={getAvatar(event.sender)}
     on:error={(e) => { missingAvs.add(event.sender); e.target.src = defaultAvatar }}
   />
-  <span class="author" style:color="var(--mxid-{calculateHash(event.sender) % 8 + 1})">{getName(event.sender)}</span>
+  <span class="author" style:color={getColor($room.members.get(event.sender))}>{getName(event.sender)}</span>
   <div class="content" on:click={() => actions.slice.jump(roomId, eventId)}>
     {#if event.content.format === "org.matrix.custom.html"}
       {@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n|<br.*?>/g, " ")}

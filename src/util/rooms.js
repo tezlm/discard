@@ -35,7 +35,6 @@ export function formatRoom(roomId, stateEvents, accountData) {
     type:       getType(),
     power:      getPower(),
     members:    memberCache,
-    typing:     [],
     pings:      0,
     readEvent:  accountData?.get("m.fully_read")?.event_id ?? null,
     state:      stateEvents,

@@ -109,18 +109,15 @@ export function handle(roomId, event, toStart = false) {
           eventId: original.eventId, // this is why the todo exists
           original,
         });
-        const slice = actions.slice.get(roomId);
-        // slice.reslice();
-      if (roomId === state.focusedRoomId) state.slice.set(slice);
     } else if (relation.rel_type === "m.annotation") {
-      // FIXME: redact reactions
       const key = relation.key; 
       if (!original.reactions) original.reactions = new Map();
       if (!original.reactions.has(key)) original.reactions.set(key, [0, null]);
       if (event.sender === state.userId) original.reactions.get(relation.key)[1] = id;
       original.reactions.get(relation.key)[0]++;
-      if (roomId === state.focusedRoomId) state.slice.set(actions.slice.get(roomId));
     }
+    state.events.set(id, format(roomId, event));
+    if (roomId === state.focusedRoomId) state.slice.set(actions.slice.get(roomId));
   } else {
     // TODO: update on state events
     state.events.set(id, format(roomId, event));
@@ -135,16 +132,33 @@ export function handle(roomId, event, toStart = false) {
 export function redact(roomId, event) {
   const id = event.redacts ?? event.content.redacts;
   if (!state.events.has(id)) return;
-  state.log.debug(`handle redaction in ${roomId} for ${id} ${state.sliceEnd === id}`);
+  state.log.debug(`handle redaction in ${roomId} for ${id}`);
   
   const [timeline, index] = state.roomTimelines.get(roomId).for(id);
-  timeline.splice(index);
+  if (index) {
+    timeline.splice(index);
   
-  const slice = state.roomSlices.get(roomId);
-  if (slice.end === id) slice.end = timeline.at(-1);
-  // TODO: edge case?
-  // if (slice.start === id) slice.start = timeline[0];
-  const sliceIndex = slice.events.findIndex(i => i.eventId === id);
-  if (sliceIndex !== -1) slice.events.splice(sliceIndex);
-  state.slice.set(slice);
+    const slice = actions.slice.get(roomId);
+    if (slice.end === id) slice.end = timeline.at(-1);
+    // TODO: edge case?
+    // if (slice.start === id) slice.start = timeline[0];
+    
+    const sliceIndex = slice.events.findIndex(i => i.eventId === id);
+    if (sliceIndex !== -1) slice.events.splice(sliceIndex);
+    state.slice.set(slice);
+  } else {
+    const original = state.events.get(id);
+    const slice = actions.slice.get(roomId);
+    const relation = getRelation(original.content);
+    if (relation?.rel_type === "m.annotation") {
+      const reactions = state.events.get(relation.event_id)?.reactions?.get(relation.key);
+      if (!reactions) return;
+      reactions[0]--
+      if (original.sender === state.userId) reactions[1] = null;      
+      slice.reslice();
+      state.slice.set(slice);
+    }    
+  }
+  
+  state.events.delete(id);
 }

@@ -1,15 +1,8 @@
 <script>
+import Toggle from "../../atoms/Toggle.svelte";
 import Input from "../../atoms/Input.svelte";
-import { quadOut } from 'svelte/easing';
-let checked = false;
 
-function toggle() {
-  return {
-    duration: 500,
-    easing: quadOut,
-    css: t => `opacity: ${t * 10}`,
-  }
-}
+console.log(state.settings);
 </script>
 <style>
 .selector {
@@ -81,38 +74,6 @@ function toggle() {
   user-select: all;
 }
 
-.toggle {
-  display: block;
-  position: relative;
-  height: 24px;
-  width: 40px;
-  background: var(--fg-dim);
-  border-radius: 16px;
-}
-
-.toggle input {
-  display: none;
-}
-
-.toggle .slider {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  height: 18px;
-  width: 18px;
-  background: var(--fg-notice);
-  border-radius: 50%;
-  transition: all 200ms;
-}
-
-.toggle.checked {
-  background: var(--color-green);
-}
-
-.slider.checked {
-  left: calc(100% - 18px - 3px);
-}
-
 .autocomplete {
   background: var(--bg-rooms-members);
   border-radius: 5px;
@@ -134,10 +95,7 @@ function toggle() {
 </style>
 <p>testbed for random stuff</p>
 <br>
-<label class="toggle" class:checked>
-  <input type="checkbox" bind:checked>
-  <div class="slider" class:checked></div>
-</label>
+<Toggle />
 <div class="selector">
   <div class="header">
     <Input small placeholder="search do it you wont" />
