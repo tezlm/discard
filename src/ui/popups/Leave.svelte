@@ -23,11 +23,11 @@ function leave() {
     {#if $current.room.joinRule !== "public"}
     You won't be able to rejoin this {$current.type} unless you're re-invited.
     {:else}
-    This {$current.type} is public and can be rejoined at any time. (Unless it gets made private!)
+    This {$current.type} is public and can be rejoined at any time. (Unless it's made private!)
     {/if}
   </p>
   <div slot="footer">
-    <Button type="link" label="Cancel" clicked={() => state.popup.set({ room: $current.room })} />
+    <Button type="link" label="Cancel" clicked={() => state.popup.set({ ...$current, id: null })} />
     <Button type="danger" label="Leave {capitalize($current.type)}" clicked={leave} />
   </div>
 </Popup>

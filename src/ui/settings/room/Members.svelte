@@ -24,6 +24,7 @@ function showPopup(member) {
     id: "member",
     membership,
     member,
+    room: $room,
     canBan: power.me > power.getUser(member.userId) && power.me >= power.getBase("ban"),
     canKick: power.me > power.getUser(member.userId) && power.me >= power.getBase("kick"),
     canInvite: power.me > power.getUser(member.userId) && power.me >= power.getBase("invite"),

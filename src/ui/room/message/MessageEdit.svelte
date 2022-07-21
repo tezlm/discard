@@ -1,6 +1,5 @@
 <script>
 import { marked } from "marked";
-import Button from "../../atoms/Button.svelte";
 
 export let event;
 let textarea;
@@ -24,6 +23,7 @@ async function handleKeyDown(e) {
   } else if (e.key === "Escape") {
     $edit = null;
   } if (e.key === "ArrowUp") {
+    if (input !== event.content.body) return;
     if (textarea.selectionStart !== 0) return;
     if (textarea.selectionEnd !== 0) return;
     for (let i = $slice.events.findIndex(i => i.eventId === $edit) - 1; i >= 0; i--) {
@@ -34,6 +34,7 @@ async function handleKeyDown(e) {
       }
     }
   } if (e.key === "ArrowDown") {
+    if (input !== event.content.body) return;
     if (textarea.selectionStart !== input.length) return;
     if (textarea.selectionEnd !== input.length) return;
     for (let i = $slice.events.findIndex(i => i.eventId === $edit) + 1; i < $slice.events.length; i++) {
@@ -43,6 +44,7 @@ async function handleKeyDown(e) {
         return;
       }
     }
+    $edit = null;
   }
 }
 
@@ -51,6 +53,9 @@ function handleInput() {
 }
 
 function save() {
+  if (!input.trim()) {
+    // TODO: delete message
+  }
   const newEvent = {
     "m.relates_to": {
       rel_type: "m.replace",

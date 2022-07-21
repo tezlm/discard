@@ -137,6 +137,7 @@ async function sendMessage(content, roomId = $room.roomId) {
 
 onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus())));
 onDestroy(reply.subscribe(() => queueMicrotask(() => textarea?.focus())));
+onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus())));
 </script>
 <style>
 .container {

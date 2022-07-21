@@ -97,8 +97,7 @@ img {
 }
 
 .text {
-  display: inline-block;
-  width: 100%;
+  display: inline;
   word-break: break-word;
 }
 
@@ -150,17 +149,17 @@ img {
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}
     {@html parseHtml(content.formatted_body.trim()).trim()}
+    {#if edited}
+    <span class="edited">(edited)</span>
+    {/if}
   </div>
-  {#if edited}
-  <span class="edited">(edited)</span>
-  {/if}
   {:else if content.body}
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}
     {@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"), { linkify: true })}
+    {#if edited}
+    <span class="edited">(edited)</span>
+    {/if}
   </div>
-  {#if edited}
-  <span class="edited">(edited)</span>
-  {/if}
   {/if}
 </div>

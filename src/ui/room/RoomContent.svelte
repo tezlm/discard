@@ -31,22 +31,20 @@ function dividerProps(prev, ev) {
 	};
 }
 
-function atBottom() {
-	return $slice.atEnd();
-}
-
 async function fetchBackwards() {
 	const success = await actions.slice.backwards();
-	return [!success || $slice.events[0]?.type === "m.room.create", atBottom()];
+	return [!success || $slice.events[0]?.type === "m.room.create", $slice.atEnd()];
 }
 
 async function fetchForwards() {
 	const success = await actions.slice.forwards();
-	return [!success || $slice.events[0]?.type === "m.room.create", atBottom()];
+	return [!success || $slice.events[0]?.type === "m.room.create", $slice.atEnd()];
 }
 
 function refocus() {
-	if (scrollTo && scrollTop === scrollMax) queueMicrotask(() => scrollTo(-1));
+	if (scrollTo && scrollTop === scrollMax) {
+		queueMicrotask(() => scrollTo(-1));
+	}
 }
 
 let resizeTimeout;
@@ -80,6 +78,7 @@ function checkShift(e) {
 
 onDestroy(state.focusedRoom.subscribe(() => reset && reset()));
 onDestroy(slice.subscribe(refocus));
+onDestroy(upload.subscribe(refocus));
 onDestroy(reply.subscribe(refocus));
 onDestroy(edit.subscribe(refocus));
 onDestroy(focused.subscribe(() => {
@@ -89,6 +88,13 @@ onDestroy(focused.subscribe(() => {
 	if (element) {
 		queueMicrotask(() => element.scrollIntoView({ behavior: "smooth", block: "center" }));
 		setTimeout(() => id === $focused && focused.set(null), 2000);
+	}
+}));
+onDestroy(edit.subscribe(() => {
+	if (!$edit) return;
+	const element = document.querySelector(`[data-event-id="${$edit}"]`);
+	if (element) {
+		setTimeout(() => element.scrollIntoView({ behavior: "smooth", block: "center" }));
 	}
 }));
 </script>
@@ -174,6 +180,7 @@ onDestroy(focused.subscribe(() => {
 		let:index={index}
 		{fetchBackwards}
 		{fetchForwards}
+		getDefault={() => [$slice.events[0]?.type === "m.room.create", $slice.atEnd()]}
 	>
 		<div slot="top" style="margin-top: auto"></div>
 		<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>

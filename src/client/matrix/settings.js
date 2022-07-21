@@ -1,5 +1,10 @@
 const defaultSettings = new Map();
 defaultSettings.set("namecolors", "always");
+defaultSettings.set("showjoinleave", true);
+defaultSettings.set("showmembership", true);
+defaultSettings.set("shownickavatar", true);
+defaultSettings.set("shownametopic", true);
+defaultSettings.set("autojoin", true);
 
 export default class Settings extends Map {
   constructor(data) {

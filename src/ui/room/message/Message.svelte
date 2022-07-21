@@ -104,13 +104,25 @@ function handleClick(e) {
 .author {
 	font-weight: 500;
 	cursor: pointer;
-  margin-right: 0.25rem;
   display: inline-block;
   height: 22px;
 }
 
 .author:hover {
 	text-decoration: underline;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0 4px;
+
+  color: var(--fg-notice);
+  background: var(--color-accent);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  border-radius: 3px;
 }
 
 .side {
@@ -169,6 +181,10 @@ time {
     {#if header}
     <div class="top">
       <span class="author" style:color={getColor(sender)}>{sender.name || event.sender}</span>
+      {#if event.content.msgtype === "m.notice"}
+      <div class="badge">bot</div>
+      {/if}
+      <span style="margin-right: 0.25rem;"></span>
       <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
     </div>
     {/if}

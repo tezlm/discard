@@ -2,6 +2,7 @@
 // should only be used in src/Popups.svelte
 import { quadOut } from 'svelte/easing';
 export let raw = false;
+let current = state.popup;
 
 function card() {
   return {
@@ -73,7 +74,7 @@ function opacity() {
   padding: 16px;
 }
 </style>
-<div class="background" on:click={() => state.popup.set({})} transition:opacity>
+<div class="background" on:click={() => state.popup.set({ ...$current, id: null })} transition:opacity>
   <div class="card" on:click={e => e.stopPropagation()} class:raw transition:card>
     {#if raw}
       <slot name="content"></slot>

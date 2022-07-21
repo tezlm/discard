@@ -1,8 +1,28 @@
 <script>
-import Toggle from "../../atoms/Toggle.svelte";
+import emojis from "emojibase-data/en/compact.json";
 import Input from "../../atoms/Input.svelte";
+const groups = [[], [], null, [], [], [], [], [], [], []];
+let selected;
 
-console.log(state.settings);
+for (let emoji of emojis) {
+  if (emoji.group === 2) continue;
+  groups[emoji.group ?? 8].push(emoji);
+}
+
+function getGroupName(id) {
+  switch(id) {
+    case 0: return "Smilies";
+    case 1: return "People";
+    case 2: return "???";
+    case 3: return "Animals & nature";
+    case 4: return "Food & Drink";
+    case 5: return "Travel & Places";
+    case 6: return "Activities";
+    case 7: return "Objects";
+    case 8: return "Symbols";
+    case 9: return "Flags";
+ }
+}
 </script>
 <style>
 .selector {
@@ -18,10 +38,25 @@ console.log(state.settings);
 }
 
 .emojis {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 40px);
   background: var(--bg-rooms-members);
   overflow-y: scroll;
+}
+
+.group {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 40px);  
+}
+
+.emojis .label {
+  position: sticky;
+  top: 0;
+  padding: 8px;
+
+  background: var(--bg-rooms-members);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
 }
 
 .emoji {
@@ -37,6 +72,12 @@ console.log(state.settings);
 
 .emoji:hover {
   background: var(--color-gray-light);
+}
+
+.preview {
+  display: flex;
+  background: var(--bg-misc);
+  align-items: center;
 }
 
 .header {
@@ -95,18 +136,29 @@ console.log(state.settings);
 </style>
 <p>testbed for random stuff</p>
 <br>
-<Toggle />
 <div class="selector">
   <div class="header">
     <Input small placeholder="search do it you wont" />
   </div>
   <div style="grid-row: 2/4; background: var(--bg-spaces)"></div>
   <div class="emojis">
-    {#each new Array(100) as _, i}
-    <div class="emoji">{String.fromCodePoint(i + 127744)}</div>
+    {#each groups as emojis, i}
+      {#if emojis}
+      <div class="label">{getGroupName(i)}</div>
+      <div class="group">
+      {#each emojis as emoji}
+        <div class="emoji" on:mouseover={() => selected = emoji}>{emoji.unicode}</div>
+      {/each}
+      </div>
+      {/if}
     {/each}
   </div>
-  <div style="background: var(--bg-misc)"></div>
+  <div class="preview">
+    {#if selected}
+    <div class="preview">{selected?.unicode}</div>
+    <b>{selected.label}</b>
+    {/if}
+  </div>
 </div>
 <br>
 <div class="popout">
