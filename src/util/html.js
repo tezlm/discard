@@ -4,7 +4,7 @@ import sanitizeHtml from "sanitize-html";
 import { parseMxc } from "./content.js";
 
 const permittedHtmlTagsInline = [
-  "font", "del", "p", "a", "sup", "sub", "b", "i",
+  "font", "del", /*"p", */ "a", "sup", "sub", "b", "i",
 	"u", "strong", "em", "strike", "code", "br", "span",
 ];
 
@@ -88,6 +88,7 @@ const sanitizeOpts = {
 		span: transformFontSpanTags,
 		a: transformATag,
 		img: transformImgTag,
+		p: "span",
 	},
 	nonTextTags: ["style", "script", "textarea", "option", "noscript", "mx-reply"],
 	nestingLimit: 100,
@@ -100,6 +101,7 @@ const sanitizeOptsInline = {
 		font: transformFontSpanTags,
 		span: transformFontSpanTags,
 		a: transformATag,
+		p: "span",
 	},
 }
 

@@ -17,6 +17,8 @@
 		"vite": "^2.9.14"
 	},
 	"dependencies": {
+		"emojibase": "^6.1.0",
+		"emojibase-data": "^7.0.1",
 		"idb": "^7.0.2",
 		"linkifyjs": "^3.0.5",
 		"marked": "^4.0.17",

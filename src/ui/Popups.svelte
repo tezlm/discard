@@ -2,6 +2,8 @@
 import UserId from "./atoms/UserId.svelte";
 import Button from "./atoms/Button.svelte";
 import Input from "./atoms/Input.svelte";
+import Textarea from "./atoms/Textarea.svelte";
+import Dropdown from "./atoms/Dropdown.svelte";
 import Popup from "./atoms/Popup.svelte";
 import Logout from "./popups/Logout.svelte";
 import Leave from "./popups/Leave.svelte";
@@ -92,7 +94,7 @@ current.subscribe(reset);
   font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
-  margin-bottom: 16px;
+  margin: 8px 0;
 }
 
 pre {
@@ -150,13 +152,13 @@ pre {
   <div slot="content" style:margin-top="-8px">
     {#if ["invite", "ban"].includes($current.membership)}
     <div style:color="var(--fg-muted)">
-        {#if $current.membership === "ban"}
-        {#if $current.member.power < 0}{rnd(["violently", "thoroughly", "briskly"])} {/if}
-        {$current.powerLevel > 0 ? "fired" : rnd(["banned", "yeeted", "purged", "banished", "eliminated", "neutralized", "exiled", "expelled", "discontinued", "abolished", "discharged", "vanquished", "ejected"])}
-        {:else}
-        invited
-        {/if}
-        {formatDate($current.member.date, true)}
+      {#if $current.membership === "ban"}
+      {#if $current.member.power < 0}{rnd(["violently", "thoroughly", "briskly"])} {/if}
+      {$current.powerLevel > 0 ? "fired" : rnd(["banned", "yeeted", "purged", "banished", "eliminated", "neutralized", "exiled", "expelled", "discontinued", "abolished", "discharged", "vanquished", "ejected"])}
+      {:else}
+      invited
+      {/if}
+      {formatDate($current.member.date, true)}
     </div>
     <hr />
     <div>
@@ -177,7 +179,7 @@ pre {
       {#if $current.membership === "ban"}
       <Button type="danger" label="Unban" clicked={() => state.popup.set({ id: "todo" })} />
       {:else}
-      <Button type="danger" label="Ban" clicked={() => state.popup.set({ id: "todo" })} />
+      <Button type="danger" label="Ban" clicked={() => state.popup.set({ id: "ban", member: $current.member, room: $current.room })} />
       {/if}
     {/if}
   </div>
@@ -234,6 +236,24 @@ pre {
 <Popup>
   <h2 slot="header">todo <div class="close" on:click={closePopup}>&#xd7;</div></h2>
   <p slot="content">nice, you found a todo popup</p>
+</Popup>
+{:else if $current.id === "ban"}
+<Popup>
+  <h2 slot="header">Ban {$current.member.name}?</h2>
+  <div slot="content">
+    <div class="title">Ban scope</div>
+    <Dropdown options={[
+      ["Only this room", "room"],
+      ["This space", "space"],
+      // ["This server", "server"],
+    ]} />
+    <div class="title">Reason for ban</div>
+    <Textarea />
+  </div>
+  <div slot="footer">
+    <Button type="link" label="Nevermind!" clicked={closePopup} />
+    <Button type="danger" label="Do it!" clicked={() => state.popup.set({ id: "todo" })} />
+  </div>
 </Popup>
 {/if}
 <svelte:window on:keydown={handleKeyDown} />

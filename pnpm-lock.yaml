@@ -3,6 +3,8 @@ lockfileVersion: 5.4
 specifiers:
   '@sveltejs/vite-plugin-svelte': next
   '@types/marked': ^4.0.3
+  emojibase: ^6.1.0
+  emojibase-data: ^7.0.1
   idb: ^7.0.2
   linkifyjs: ^3.0.5
   marked: ^4.0.17
@@ -11,6 +13,8 @@ specifiers:
   vite: ^2.9.14
 
 dependencies:
+  emojibase: 6.1.0
+  emojibase-data: 7.0.1_emojibase@6.1.0
   idb: 7.0.2
   linkifyjs: 3.0.5
   marked: 4.0.17
@@ -101,6 +105,18 @@ packages:
       dom-serializer: 1.4.1
       domelementtype: 2.3.0
       domhandler: 4.3.1
+    dev: false
+
+  /emojibase-data/7.0.1_emojibase@6.1.0:
+    resolution: {integrity: sha512-BLZpOdwyFpZ7lzBWyDtnxmKVm/SJMYgAfp1if3o6n1TVUMSXAf0nikONXl90LZuJ/m3XWPBkkubgCet2BsCGGQ==}
+    peerDependencies:
+      emojibase: '*'
+    dependencies:
+      emojibase: 6.1.0
+    dev: false
+
+  /emojibase/6.1.0:
+    resolution: {integrity: sha512-1GkKJPXP6tVkYJHOBSJHoGOr/6uaDxZ9xJ6H7m6PfdGXTmQgbALHLWaVRY4Gi/qf5x/gT/NUXLPuSHYLqtLtrQ==}
     dev: false
 
   /entities/2.2.0:

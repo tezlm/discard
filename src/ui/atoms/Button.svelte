@@ -19,6 +19,10 @@ button {
   transition: all 170ms;
 }
 
+:not(.link) {
+  min-width: 5rem;
+}
+
 .standard::after {
   content: "";
   position: absolute;

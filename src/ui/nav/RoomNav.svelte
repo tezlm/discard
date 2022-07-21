@@ -18,7 +18,7 @@ function isRead(room) {
 		if (index === -1) return null;
 		for (let i = index; i >= 0; i--) {
 			const event = state.events.get(timeline[i]);
-			if (event.type === "m.room.message" && event.special !== "redacted") return event.eventId;
+			if (["m.room.message", "m.room.create"].includes(event.type) && event.special !== "redacted") return event.eventId;
 		}
 		return null;
 	}
@@ -145,9 +145,11 @@ function isRead(room) {
 				<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
 				<div class="spacer"></div>
 				{#if room.pings}<div class="pings">{room.pings}</div>{/if}
+				{#if room.power.me >= room.power.getBase("invite") || room.joinRule === "public"}
 				<div class="settings" on:click={(e) => { e.stopImmediatePropagation(); state.popup.set({ id: "invite", type: "room", room }) }}>
 					<Tooltip tip="Send Invite">&#129730;</Tooltip>
 				</div>
+				{/if}
 				<div class="settings" on:click={(e) => { e.stopImmediatePropagation(); state.selectedRoom.set(room); state.scene.set("room-settings") }}>
 					<Tooltip tip="Edit Room">🔧</Tooltip>
 				</div>

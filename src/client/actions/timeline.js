@@ -23,7 +23,7 @@ function queueRelation(id, event) {
   relations.get(id).push(event);
 }
 
-export function getTimeline(roomId) {
+function getTimeline(roomId) {
   return state.roomTimelines.get(roomId).live;
 }
 
@@ -68,7 +68,6 @@ export function send(roomId, type, content) {
 }
 
 export function handle(roomId, event, toStart = false) {
-  console.log(roomId, event)
   if (event.type === "m.room.redaction" && !toStart) return redact(roomId, event);
   if (!supportedEvents.includes(event.type)) return;
   if (event.unsigned?.redacted_because) return;
@@ -110,17 +109,23 @@ export function handle(roomId, event, toStart = false) {
           eventId: original.eventId, // this is why the todo exists
           original,
         });
+        console.log("handle edit")
     } else if (relation.rel_type === "m.annotation") {
-      const key = relation.key; 
+      const key = relation.key;
       if (!original.reactions) original.reactions = new Map();
       if (!original.reactions.has(key)) original.reactions.set(key, [0, null]);
       if (event.sender === state.userId) original.reactions.get(relation.key)[1] = id;
       original.reactions.get(relation.key)[0]++;
     }
     state.events.set(id, format(roomId, event));
+    const slice = actions.slice.get(roomId);
+    slice.reslice();
+    if (roomId === state.focusedRoomId) state.slice.set(slice);
+  } else if(event.state_key) {
+    actions.rooms.update();
+    actions.spaces.update();
     if (roomId === state.focusedRoomId) state.slice.set(actions.slice.get(roomId));
   } else {
-    // TODO: update on state events
     state.events.set(id, format(roomId, event));
     addToTimeline(roomId, id, toStart);
     if (relations.has(id)) {

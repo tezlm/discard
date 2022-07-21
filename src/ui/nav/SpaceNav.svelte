@@ -21,7 +21,7 @@ function isRead(room) {
 		if (index === -1) return null;
 		for (let i = index; i >= 0; i--) {
 			const event = state.events.get(timeline[i]);
-			if (event.type === "m.room.message" && event.special !== "redacted") return event.eventId;
+			if (["m.room.message", "m.room.create"].includes(event.type) && event.special !== "redacted") return event.eventId;
 		}
 		return null;
 	}

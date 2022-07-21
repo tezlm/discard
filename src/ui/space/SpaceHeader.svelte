@@ -84,14 +84,18 @@ function showPopup(id, opts) {
   <span>{$focusedSpace ? $focusedSpace?.name ?? "unknown" : "Home"}</span>
   {#if $focusedSpace && showMenu}
   <div class="menu" transition:zoomIn>
+      {#if $focusedSpace.power.me >= $focusedSpace.power.getBase("invite") || $focusedSpace.joinRule === "public"}
       <div class="item" on:click={() => showPopup("invite")}><span class="color-accent">Invite People</span></div>
       <div class="spacer"></div>
+      {/if}
       <div class="item" on:click={() => { state.selectedRoom.set($focusedSpace); state.scene.set("space-settings") }}>Space Settings</div>
       <div class="spacer"></div>
+      {#if $focusedSpace.power.me >= $focusedSpace.power.getState("m.space.child")}
       <div class="item" on:click={() => showPopup("create", { type: "room", confirm: todo })}>Create Room</div>
       <div class="item" on:click={() => showPopup("create", { confirm: todo })}>Create Subspace</div>
       <div class="item" on:click={todo}>Add Existing Room</div>
       <div class="spacer"></div>
+      {/if}
       <div class="item" on:click={() => showPopup("leave", { confirm: () => queueMicrotask(todo) })}><span class="color-red">Leave Space</span></div>
   </div>
   {/if}

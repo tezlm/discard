@@ -15,10 +15,14 @@ async function create() {
   const { room_id } = await state.api.createRoom({
     name,
     creator: state.userId,
+    ...($current.type === "space" && { type: "m.space" }),
   });
-  state.focusedRoomId = room_id;
-  state.focusedRoom.set(state.rooms.get(room_id));
-  state.popup.set({ type: $current.type });
+  const interval = setInterval(() => {
+    if (!state.rooms.has(room_id)) return;
+    actions._rooms.focus(state.rooms.get(room_id));
+    state.popup.set({ type: $current.type });
+    clearInterval(interval);
+  }, 10);
 }
 </script>
 <style>
@@ -35,13 +39,13 @@ async function create() {
 }
 </style>
 <Popup>
-  <h3 slot="header">Create {capitalize($current.type)} <div class="close" on:click={() => state.popup.set({ type: $current.type })}>&#xd7;</div></h3>
+  <h3 slot="header">Create {capitalize($current.type)} <div class="close" on:click={() => state.popup.set({ id: null, ...$current })}>&#xd7;</div></h3>
   <div slot="content" style="display: flex; flex-direction: column">
     <span class="title">{capitalize($current.type)} Name</span>
     <Input placeholder="awesome-{$current.type}" bind:value={name} submitted={create} autofocus />
   </div>
   <div slot="footer">
-    <Button type="link" label="Cancel" clicked={() => state.popup.set({ type: $current.type })} />
+    <Button type="link" label="Cancel" clicked={() => state.popup.set({ id: null, ...$current })} />
     <Button type="primary" disabled={!name.length} label="Create {capitalize($current.type)}" clicked={create} />
   </div>
 </Popup>

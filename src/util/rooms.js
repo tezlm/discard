@@ -12,7 +12,7 @@ export function formatRoom(roomId, stateEvents, accountData) {
   }
   
   function getPower() {
-    const power = getState("m.room.power_levels") ?? { state_default: 0 };
+    const power = getState("m.room.power_levels") ?? {};
     power.me = power.users?.[state.userId] ?? power.users_default ?? 0;
     return {
       ...power,

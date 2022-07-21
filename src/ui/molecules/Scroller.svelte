@@ -1,6 +1,7 @@
 <script>
 export let fetchBackwards = async () => {};
 export let fetchForwards = async () => {};
+export let getDefault = () => {};
 export let scrollTop, scrollMax;
 export let items, itemKey;
 export let margin = 400;
@@ -12,8 +13,7 @@ let atItemsTop, atItemsBottom;
 let paginating = false;
 
 export function reset() {
-  atItemsTop = direction === "up";
-  atItemsBottom = direction === "down";
+  [atItemsTop, atItemsBottom] = getDefault();
   if (direction === "down") {
     queueMicrotask(() => scrollEl && (scrollEl.scrollTop = scrollEl.scrollHeight));
   }

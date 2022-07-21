@@ -138,7 +138,7 @@ export default class Api {
       ...(type && {
         creation_content: { type },
       }),
-    });  
+    });
   }
   
   joinRoom() { throw "TODO" }
