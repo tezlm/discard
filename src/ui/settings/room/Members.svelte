@@ -87,12 +87,12 @@ h1 {
     {#each members as member}
     <div class="member" on:click={() => showPopup(member)}>
       <img
-          class="avatar"
-          alt="avatar for {member.name}"
-          src={missingAvs.has(member.userId) ? defaultAvatar : parseMxc(member.avatar, 40)}
-          on:error={(e) => { missingAvs.add(member.userId); e.target.src = defaultAvatar }}
-          loading="lazy"
-        />
+        class="avatar"
+        alt="avatar for {member.name}"
+        src={missingAvs.has(member.userId) ? defaultAvatar : parseMxc(member.avatar, 40)}
+        on:error={(e) => { missingAvs.add(member.userId); e.target.src = defaultAvatar }}
+        loading="lazy"
+      />
       <div class="name">
         {member.name}
         <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>

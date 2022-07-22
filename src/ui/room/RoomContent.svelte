@@ -113,7 +113,7 @@ onDestroy(edit.subscribe(() => {
 
 .tall {
 	display: flex;
-	min-height: 800px;
+	min-height: 1200px;
 	overflow: hidden;
 }
 

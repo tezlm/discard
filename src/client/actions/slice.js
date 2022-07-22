@@ -2,8 +2,10 @@ import Slice from "../matrix/slice.js";
 
 export function get(roomId) {
   if (state.roomSlices.has(roomId)) {
+    console.log(state.roomSlices.get(roomId))
     return state.roomSlices.get(roomId);
   } else {
+    console.log("creating new slice...")
     const slice = new Slice(state.roomTimelines.get(roomId));
     state.roomSlices.set(roomId, slice);
     return slice;

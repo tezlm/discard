@@ -17,7 +17,7 @@ export function reset() {
   if (direction === "down") {
     queueMicrotask(() => scrollEl && (scrollEl.scrollTop = scrollEl.scrollHeight));
   }
-  queueMicrotask(paginate);
+  // queueMicrotask(paginate);
 }
 
 export function scrollTo(pos) {
@@ -28,13 +28,16 @@ function handleScroll() {
   scrollTop = scrollEl.scrollTop;
   scrollMax = scrollEl.scrollHeight - scrollEl.offsetHeight;
   clearTimeout(debounce);
-  debounce = setTimeout(paginate, 30);
+  debounce = setTimeout(paginate, 20);
 }
 
-// FIXME: pagination sometimes jumps around
+// FIXME: pagination sometimes jumps around when scrolling up
+// possibly due to messages "merging together"
 async function paginate() {
   if (paginating || !contentEl || !contentEl.children[0]) return;
   paginating = true;
+
+  console.log("PAGINATE")
 
   const scrollTop = scrollEl.scrollTop;
   const scrollBottom = scrollEl.scrollHeight - scrollEl.offsetHeight - scrollTop;
@@ -56,10 +59,7 @@ async function paginate() {
   paginating = false;
 }
 
-queueMicrotask(() => {
-  reset();
-  queueMicrotask(paginate);
-});
+queueMicrotask(reset);
 </script>
 <style>
 .scroll {

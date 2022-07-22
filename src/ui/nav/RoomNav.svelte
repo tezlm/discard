@@ -1,5 +1,6 @@
 <script>
 import Tooltip from "../atoms/Tooltip.svelte";
+let focusedSpace = state.focusedSpace;
 let focusedRoom = state.focusedRoom;
 let navRooms = state.navRooms;
 
@@ -103,7 +104,7 @@ function isRead(room) {
 }
 
 .settings {
-	display: none;
+  display: none;
 	margin-right: 4px;
 }
 
@@ -123,7 +124,7 @@ function isRead(room) {
 }
 
 .room.focused .settings, .room:hover .settings {
-	display: block;
+  display: block;
 }
 </style>
 	<div class="nav" tabindex=-1>
@@ -133,6 +134,16 @@ function isRead(room) {
 			on:click={() => actions._rooms.focus(null)}>
 			<div class="wrapper">Home</div>
 		</div>
+		{#if !$focusedSpace}
+	  <div
+			class="room"
+			on:click={() => state.popup.set({ id: "create", type: "room" })}>
+			<div class="wrapper">
+				<div class="icon">+</div>
+				<div class="name">Create Room</div>
+			</div>
+		</div>
+		{/if}
 		<!-- {#each $spaces.get($focusedSpace?.roomId ?? "orphanRooms") as room} -->
 		{#each $navRooms as room}
 	  <div

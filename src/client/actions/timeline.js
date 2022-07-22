@@ -113,9 +113,11 @@ export function handle(roomId, event, toStart = false) {
     } else if (relation.rel_type === "m.annotation") {
       const key = relation.key;
       if (!original.reactions) original.reactions = new Map();
-      if (!original.reactions.has(key)) original.reactions.set(key, [0, null]);
-      if (event.sender === state.userId) original.reactions.get(relation.key)[1] = id;
-      original.reactions.get(relation.key)[0]++;
+      if (!original.reactions.has(key)) original.reactions.set(key, { count: 0, senders: new Set(), mine: null });
+      const reaction = original.reactions.get(relation.key);
+      if (event.sender === state.userId) reaction.mine = id;
+      reaction.senders.add(event.sender);
+      reaction.count++;
     }
     state.events.set(id, format(roomId, event));
     const slice = actions.slice.get(roomId);
@@ -159,8 +161,9 @@ export function redact(roomId, event) {
     if (relation?.rel_type === "m.annotation") {
       const reactions = state.events.get(relation.event_id)?.reactions?.get(relation.key);
       if (!reactions) return;
-      reactions[0]--
-      if (original.sender === state.userId) reactions[1] = null;      
+      reactions.count--;
+      reactions.senders.delete(original.sender);
+      if (original.sender === state.userId) reactions.mine = null;
       slice.reslice();
       state.slice.set(slice);
     }    

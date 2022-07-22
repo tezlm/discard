@@ -60,21 +60,12 @@ h1 {
   margin-left: 10px;
 }
 
-.title {
-  color: var(--fg-light);
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
 .section {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-bottom: 40px;
-  margin-bottom: 40px;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
   border-bottom: solid #4F545C7b 1px;
 }
 

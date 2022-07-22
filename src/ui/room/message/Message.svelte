@@ -7,6 +7,8 @@ import MessageToolbar from "./MessageToolbar.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
 import { parseMxc, defaultAvatar, calculateHash } from '../../../util/content.js';
 
+// TODO: modularize more, don't require fetching members and stuff
+
 export let event, header = false, shiftKey = false;
 
 let { edit } = state.roomState;

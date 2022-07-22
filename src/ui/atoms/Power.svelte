@@ -2,6 +2,7 @@
 export let showDefault = false;
 export let disabled = false;
 export let value = 0;
+export let max = 100;
 export let changed = () => {};
 let original = value;
 let focus = false;
@@ -104,8 +105,8 @@ input::-webkit-inner-spin-button {
   <div class="selector" class:focus>
     <input
       {disabled}
+      {max}
       type="number"
-      max="100"
       placeholder={disabled ? "" : "edit"}
       bind:value={value}
       bind:this={input}
@@ -118,9 +119,15 @@ input::-webkit-inner-spin-button {
       {#if showDefault}
       <div on:mousedown={() => value = null} class:selected={value === null}>Default</div>
       {/if}
+      {#if max >= 0}
       <div on:mousedown={() => value = 0}    class:selected={value === 0}>User - 0</div>
+      {/if}
+      {#if max >= 50}
       <div on:mousedown={() => value = 50}   class:selected={value === 50}>Moderator - 50</div>
+      {/if}
+      {#if max >= 100}
       <div on:mousedown={() => value = 100}  class:selected={value === 100}>Admin - 100</div>
+      {/if}
     </div>
   </div>
 </div>

@@ -7,6 +7,7 @@ export let autofocus = false;
 export let readonly = false;
 export let optional = false;
 export let submitted = () => {};
+export let escaped = () => {};
 
 function handleInput(e) {
   value = e.target.value;
@@ -16,7 +17,9 @@ function handleKeyDown(e) {
   if (e.key === "Enter") {
     e.stopPropagation();
     e.preventDefault();
-    if (value || optional) submitted();
+    if (value || optional) submitted(value, e);
+  } else if (e.key === "Escape") {
+    escaped(e);
   }
 }
 </script>

@@ -73,8 +73,10 @@ function getItems() {
 
 .title {
   color: var(--fg-notice);
+  font-family: inherit;
   font-weight: 500;
   font-size: 16px;
+  text-transform: initial;
 }
 
 .description {
@@ -106,6 +108,7 @@ function getItems() {
     <div style="margin-left: auto">
       <Power
         value={item.power}
+        max={perms.me}
         disabled={perms.me < perms.getState("m.room.power_levels") || perms.me < item.power}
         changed={(p) => { modified[item.power === p ? "delete" : "add"](item.id); isModified = modified.size }}
       />

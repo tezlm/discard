@@ -39,8 +39,7 @@ function allRead(spaceId) {
   align-items: center;
   max-width: 72px;
   padding: 4px 12px;
-  z-index: 3;
-  /* overflow: hidden scroll; */
+  overflow-y: scroll;
 }
 
 .space {

@@ -1,20 +1,23 @@
 export default class Slice {
-  constructor(timelineSet, count = 50) {
+  constructor(timelineSet) {
     // this assumes that there's at least some events in the timeline    
-    this.timelineSet = timelineSet;
-    
-    const timeline = timelineSet.current;
-    const startIdx = Math.max(timeline.length - count - 1, 0);
-    const endIdx = timeline.length - 1;
-    this.start = timeline[startIdx];
-    this.end = timeline[endIdx];
-    this.events = timeline.slice(startIdx, endIdx + 1).map(i => state.events.get(i));
+    this.timelineSet = timelineSet;    
+    this.reset();
   }
   
   atEnd() {
     return this.end === this.timelineSet.live.at(-1);
   }
   
+  reset(count = 50) {
+    const timeline = this.timelineSet.current;
+    const startIdx = Math.max(timeline.length - count - 1, 0);
+    const endIdx = timeline.length - 1;
+    this.start = timeline[startIdx];
+    this.end = timeline[endIdx];
+    this.events = timeline.slice(startIdx, endIdx + 1).map(i => state.events.get(i));
+  }
+    
   reslice() {
     const timeline = this.timelineSet.current;
     const startIdx = timeline.lastIndexOf(this.start);
@@ -31,7 +34,7 @@ export default class Slice {
     }
     
     const startIdx = this.start ? timeline.indexOf(this.start) : Math.max(timeline.length - count, 0);
-    if (startIdx < 0) throw "this shouldn't happen";
+    if (startIdx < 0) this.reset();
     
     const eventCount = 100;
     const newStart = Math.max(startIdx - count, 0);
@@ -49,7 +52,7 @@ export default class Slice {
     
     const timeline = this.timelineSet.current;
     const startIdx = timeline.lastIndexOf(this.start);
-    if (startIdx < 0) throw "this shouldn't happen";
+    if (startIdx < 0) this.reset();
     
     const eventCount = 100;
     const newStart = Math.min(Math.max(startIdx + count, 0), timeline.length - count - 1);
