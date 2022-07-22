@@ -1,9 +1,19 @@
 <script>
 import { backOut } from "svelte/easing";
+import Tooltip from "../../atoms/Tooltip.svelte";
 export let event;
+$: room = state.rooms.get(event.roomId);
 
 // i have no idea how these work but they do so /shrug lol
 // TODO: make the number animate in reverse when the count goes down
+
+function getPeople(set) {
+  const ids = [...set].map(i => room.members.get(i)?.name || i);
+  if (set.size === 1) return [ids[0]];
+  if (set.size === 2) return [ids[0], " and ", ids[1]];
+  if (set.size < 6) return [ids.slice(0, -1).join(", "), " and ", ids[1]];
+  return [ids.slice(0, 6).join(", "), " and ", ids.length - 6, " others "];
+}
 
 function counterIn() {
   return {
@@ -21,11 +31,10 @@ function counterOut() {
   }
 }
 
-function handleClick(key) {
-  const myReactionId = event.reactions.get(key)[1];
+function handleClick(mine, key) {
   // instantly respond with reaction?
-  if (myReactionId) {
-    state.api.redactEvent(event.roomId, myReactionId);
+  if (mine) {
+    state.api.redactEvent(event.roomId, mine);
   } else {
     const reaction = {
       "m.relates_to": {
@@ -92,21 +101,37 @@ function handleClick(key) {
 .add:hover {
   opacity: 1;
 }
+
+.dim {
+  color: var(--fg-dim);
+}
 </style>
 <div class="reactions">
-{#each [...event.reactions.entries()] as reaction}
-  {#if reaction[1][0]}
-  <div class="reaction" class:self={reaction[1][1]} on:click={() => handleClick(reaction[0])}>
-    <div class="key">{reaction[0]}</div>
-    {#key reaction[1][0]}
-      <div class="count" in:counterIn out:counterOut>
-      {reaction[1][0]}
+{#each [...event.reactions.entries()] as [key, { count, mine, senders }]}
+  {#if count}
+  <Tooltip>
+    <span slot="tip">
+      {#each getPeople(senders) as part, i}
+      {#if i % 2 === 0}
+        {part}
+      {:else}
+        <span class="dim">{part}</span>
+      {/if}
+      {/each}
+      <span class="dim">reacted with</span> {key}
+    </span>
+    <div class="reaction" class:self={mine} on:click={() => handleClick(mine, key)}>
+      <div class="key">{key}</div>
+      {#key count}
+        <div class="count" in:counterIn out:counterOut>
+        {count}
+        </div>
+      {/key}
+      <div class="spacer">
+      {count}
       </div>
-    {/key}
-    <div class="spacer">
-    {reaction[1][0]}
     </div>
-  </div>
+  </Tooltip>
   {/if}
 {/each}
 <div class="add" class:self={false} on:click={todo}>+</div>

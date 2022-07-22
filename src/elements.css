@@ -40,3 +40,12 @@ hr {
   height: 0;
   border: solid var(--color-gray) 1px;
 }
+
+.title {
+  color: var(--fg-light);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}

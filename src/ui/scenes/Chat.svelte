@@ -9,7 +9,6 @@ import UserMenu from '../user/UserMenu.svelte';
 .nav {
   display: flex;
   flex-direction: column;
-  z-index: 2;
 }
 </style>
 <SpaceNav />

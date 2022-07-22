@@ -11,7 +11,7 @@ $: special = event.special;
 $: dimensions = parseDimensions(content.info?.thumbnail_info ?? content.info);
 
 function parseDimensions(info) {
-  if (!info || !info.w || !info.h) return `max-width: 400px; height: 300px; object-fit: cover`;
+  if (!info || !info.w || !info.h) return { width: 400, height: 300, css: `max-width: 400px; height: 300px; object-fit: cover` };
   let width = info.w, height = info.h;
   if (width > 400) {
     const scale = 400 / width;
@@ -23,7 +23,9 @@ function parseDimensions(info) {
     width *= scale;
     height *= scale;
   }
-  return `width: ${width}px; height: ${height}px`;
+  width = Math.floor(width);
+  height = Math.floor(height);
+  return { width, height, css: `width: ${width}px; height: ${height}px` };
 }
 
 function formatSize(size) {
@@ -129,12 +131,18 @@ img {
 <div
   class:redacted={special === "redacted" || special === "errored"}
   class:sending={special === "sending"}
-  style={type === "m.image" || type === "m.video" ? dimensions : ""}
+  style={type === "m.image" || type === "m.video" ? dimensions.css : ""}
 >
   {#if type === "m.image"}
-  <img src={parseMxc(content.url) + "/" + content.body} alt={content.body} style={dimensions} on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + content.body })} />
+  <img
+    src={parseMxc(content.url, dimensions.width, dimensions.height)}
+    alt={content.body}
+    style={dimensions.css}
+    on:error={(e) => e.target.src = parseMxc(content.url) }
+    on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
+  />
   {:else if type === "m.video"}
-  <video controls src={parseMxc(content.url)} alt={content.body} style={dimensions} />
+  <video controls src={parseMxc(content.url)} alt={content.body} style={dimensions.css} />
   {:else if type === "m.audio"}
   <audio controls src={parseMxc(content.url)} alt={content.body} />
   {:else if type === "m.file"}

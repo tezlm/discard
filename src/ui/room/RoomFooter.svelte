@@ -1,11 +1,15 @@
 <script>
 import Typing from "../atoms/Typing.svelte";
+import Emoji from "../molecules/Emoji.svelte";
 import { marked } from "marked";
 import { onDestroy } from "svelte";
 let textarea;
 let room = state.focusedRoom;
 let slice = state.slice;
 let { reply, edit, input, rows, upload: fileUpload, typing } = state.roomState;
+let showEmoji = false;
+
+// TODO: split out input from rest of footer
 
 const getName = id => ($room.members.get(id)?.name ?? id.replace(/^@/, ""));
 
@@ -35,7 +39,9 @@ async function handleKeyDown(e) {
     $input = "";
     $rows = 1;
   } else if (e.key === "Escape") {
-    if ($reply) {
+    if (showEmoji) {
+      showEmoji = false;
+    } else if ($reply) {
       reply.set(null);
     } else {
       const lastEvent = state.roomTimelines.get($room.roomId).live.at(-1);
@@ -146,7 +152,7 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
 
 .input {
   display: flex;
-  align-items: center;
+  align-items: start;
   min-height: 44px;
   padding: 0 16px;
   border-radius: 8px;
@@ -158,11 +164,18 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
   cursor: not-allowed;
 }
 
-.upload {
+.upload, .emoji {
   padding: 10px 0;
   padding-right: 16px;
   display: flex;
   align-items: center;
+}
+
+.emoji {
+  position: relative;
+  padding-right: 0;
+  padding-left: 16px;
+  pointer-events: none;
 }
 
 .upload-button {
@@ -172,6 +185,17 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
   /* TODO actual upload icon */
   background: var(--fg-dim);
   border-radius: 50%;
+}
+
+.emoji-button {
+  pointer-events: all;
+}
+
+.emoji-wrapper {
+  position: absolute;
+  bottom: calc(44px + 8px);
+  right: 0;
+  pointer-events: all;
 }
 
 textarea {
@@ -266,6 +290,15 @@ textarea::placeholder {
       on:keydown={handleKeyDown}
       on:paste={handlePaste}
     ></textarea>
+    <div class="emoji">
+      <!-- TODO: get a separate emoji button -->
+      <div class="emoji-button upload-button" on:click={(e) => { e.stopImmediatePropagation(); showEmoji = !showEmoji }}></div>
+      {#if showEmoji}
+      <div class="emoji-wrapper">
+        <Emoji selected={(val, keep) => { val && ($input += val); if (!keep) { showEmoji = false; textarea.focus() } }}/>
+      </div>
+      {/if}
+    </div>
   </div>
   {/if}
   <div class="typing">
@@ -274,3 +307,4 @@ textarea::placeholder {
     {/if}
   </div>
 </div>
+<svelte:window on:click={() => showEmoji = false} />

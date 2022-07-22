@@ -2,12 +2,12 @@
 import UserId from "./atoms/UserId.svelte";
 import Button from "./atoms/Button.svelte";
 import Input from "./atoms/Input.svelte";
-import Textarea from "./atoms/Textarea.svelte";
-import Dropdown from "./atoms/Dropdown.svelte";
 import Popup from "./atoms/Popup.svelte";
-import Logout from "./popups/Logout.svelte";
-import Leave from "./popups/Leave.svelte";
 import Create from "./popups/Create.svelte";
+import Leave from "./popups/Leave.svelte";
+import Ban from "./popups/Ban.svelte";
+import Switcher from "./popups/Switcher.svelte";
+import Logout from "./popups/Logout.svelte";
 import { formatDate, formatSize } from "../util/format.js";
 let current = state.popup;
 let data; reset();
@@ -31,10 +31,6 @@ function confirmPopup() {
   if (!$current.confirm) return;
   $current.confirm(data);
   closePopup();
-}
-
-function capitalize(str) {
-  return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
 
 function rnd(arr) {
@@ -218,42 +214,16 @@ pre {
 <svelte:component this={Create} {current} bind:confirm={$current.confirm} />
 {:else if $current.id === "leave"}
 <svelte:component this={Leave} {current} bind:confirm={$current.confirm} />
+{:else if $current.id === "ban"}
+<svelte:component this={Ban} {current} bind:confirm={$current.confirm} />
+{:else if $current.id === "switcher"}
+<svelte:component this={Switcher} bind:confirm={$current.confirm} />
 {:else if $current.id === "logout"}
 <svelte:component this={Logout} />
-{:else if $current.id === "switcher"}
-<Popup>
-  <div slot="content">
-    <div style="height: 16px"></div>
-    <Input placeholder="Where do you want to go" optional autofocus submitted={() => {actions._rooms.focus(state.recentRooms[1]); closePopup()}} />
-    <ul>
-      {#each state.recentRooms.slice(1) as room}
-        <li>{room.name}</li>
-      {/each}
-    </ul>
-  </div>
-</Popup>
 {:else if $current.id === "todo"}
 <Popup>
   <h2 slot="header">todo <div class="close" on:click={closePopup}>&#xd7;</div></h2>
   <p slot="content">nice, you found a todo popup</p>
-</Popup>
-{:else if $current.id === "ban"}
-<Popup>
-  <h2 slot="header">Ban {$current.member.name}?</h2>
-  <div slot="content">
-    <div class="title">Ban scope</div>
-    <Dropdown options={[
-      ["Only this room", "room"],
-      ["This space", "space"],
-      // ["This server", "server"],
-    ]} />
-    <div class="title">Reason for ban</div>
-    <Textarea />
-  </div>
-  <div slot="footer">
-    <Button type="link" label="Nevermind!" clicked={closePopup} />
-    <Button type="danger" label="Do it!" clicked={() => state.popup.set({ id: "todo" })} />
-  </div>
 </Popup>
 {/if}
 <svelte:window on:keydown={handleKeyDown} />

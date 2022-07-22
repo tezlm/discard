@@ -2,7 +2,7 @@
 const placeholders = [];
 
 // i just picked whatever numbers looked good lol
-for (let i = 0; i < 12; i++) {
+for (let i = 0; i < 20; i++) {
   const holder = {
     header: Math.random() > .5,
     attachment: Math.random() > .8,

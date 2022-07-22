@@ -5,15 +5,6 @@ import Toggle from "../../atoms/Toggle.svelte";
 const opts = state.settings;
 </script>
 <style>
-.title {
-  color: var(--fg-light);
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
 .option {
   display: flex;
   justify-content: space-between;
