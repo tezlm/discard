@@ -19,7 +19,10 @@ export default {
   store: store,
   log: log,
   scene: writable(null),
+  
+  // objects
   popup: writable({}),
+  context: writable({}),
   
   // data
   rooms: new Map(),

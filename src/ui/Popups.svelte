@@ -65,10 +65,9 @@ current.subscribe(reset);
 .close {
   position: absolute;
   top: 12px;
-  right: 16px;
+  right: 12px;
   font-size: 28px;
   font-weight: normal;
-  font-family: initial;
   color: var(--fg-muted);
   cursor: pointer;
   transition: color 0.4s;
@@ -115,9 +114,21 @@ pre {
   opacity: 1;
 }
 </style>
-{#if $current.id === "info"}
+{#if $current.id === "nick"}
 <Popup>
-  <h2 slot="header">{$current.head} <div class="close" on:click={closePopup}>&#xd7;</div></h2>
+  <h2 slot="header">Change Nickname</h2>
+  <div slot="content">
+    <span class="title">Nickname<br><br></span>
+    <Input />
+  </div>
+  <div slot="footer">
+    <Button type="link" label="Cancel" clicked={closePopup} />
+    <Button type="primary" label="Save" clicked={() => state.popup.set({ id: "todo" })} />
+  </div>
+</Popup>
+{:else if $current.id === "info"}
+<Popup>
+  <h2 slot="header">{$current.head} <div class="close icon" on:click={closePopup}>close</div></h2>
   <div slot="content" style:width="440px">
     {#if $current.html}
     {@html $current.body}
@@ -128,7 +139,7 @@ pre {
 </Popup>
 {:else if $current.id === "invite"}
 <Popup>
-  <h3 slot="header">Invite friends to {$current.room.name} <div class="close" on:click={closePopup}>&#xd7;</div></h3>
+  <h3 slot="header">Invite friends to {$current.room.name} <div class="close icon" on:click={closePopup}>close</div></h3>
   <div slot="content">
     <b>ideas</b>
     <p>search box</p>
@@ -139,7 +150,9 @@ pre {
     <UserId />
     <br />
     <p>link (if exists)</p>
-    <Input value="https://matrix.to/#/#somewhere:example.org" />
+    {#if $current.room.state.find(i => i.type === "m.room.canonical_alias")?.content?.alias}
+      <Input value={"https://matrix.to/#/" + encodeURIComponent($current.room.state.find(i => i.type === "m.room.canonical_alias").content.alias)} />
+    {/if}
   </div>
 </Popup>
 {:else if $current.id === "member"}
@@ -197,7 +210,7 @@ pre {
 </Popup>
 {:else if $current.id === "source"}
 <Popup>
-  <h3 slot="header">View source <div class="close" on:click={closePopup}>&#xd7;</div></h3>
+  <h3 slot="header">View source <div class="close icon" on:click={closePopup}>close</div></h3>
   <div slot="content">
     <p>note: this is discard's internal event representation, and not matrix's. <a style:cursor="pointer"on:click={e => {e.preventDefault();navigator.clipboard.writeText($current.event.eventId)}}>copy id</a></p><br />
     <pre>{JSON.stringify($current.event, null, 2)}</pre>
@@ -222,7 +235,7 @@ pre {
 <svelte:component this={Logout} />
 {:else if $current.id === "todo"}
 <Popup>
-  <h2 slot="header">todo <div class="close" on:click={closePopup}>&#xd7;</div></h2>
+  <h2 slot="header">todo <div class="close icon" on:click={closePopup}>close</div></h2>
   <p slot="content">nice, you found a todo popup</p>
 </Popup>
 {/if}

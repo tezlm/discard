@@ -12,6 +12,8 @@ let { focused, reply, edit, upload } = state.roomState;
 let shiftKey = false;
 let scrollTop, scrollMax, scrollTo, reset;
 
+// TODO: unruin this code
+
 function shouldSplit(prev, ev) {
 	if (!prev) return true;
 	if (prev.type !== "m.room.message") return true;
@@ -76,7 +78,7 @@ function checkShift(e) {
   shiftKey = e.shiftKey;
 }
 
-onDestroy(state.focusedRoom.subscribe(() => reset && reset()));
+onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => reset && reset())));
 onDestroy(slice.subscribe(refocus));
 onDestroy(upload.subscribe(refocus));
 onDestroy(reply.subscribe(refocus));

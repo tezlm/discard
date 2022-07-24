@@ -14,6 +14,7 @@ const opts = state.settings;
 <div class="preview">
   <!-- TODO: preview message -->
 </div>
+<br />
 <div class="title">User colors</div>
 <Radio
   options={[["Always", "always"], ["If they have a power level", "power"], ["Never", "never"]]}

@@ -3,11 +3,14 @@ import Typing from "../atoms/Typing.svelte";
 import Emoji from "../molecules/Emoji.svelte";
 import { marked } from "marked";
 import { onDestroy } from "svelte";
+import twemoji from "twemoji";
 let textarea;
 let room = state.focusedRoom;
 let slice = state.slice;
 let { reply, edit, input, rows, upload: fileUpload, typing } = state.roomState;
 let showEmoji = false;
+
+// magic numbers in this file?
 
 // TODO: split out input from rest of footer
 
@@ -68,7 +71,11 @@ function handleInput() {
 }
 
 async function handlePaste(e) {
-  const file = e.clipboardData.files[0];
+  e.preventDefault();
+  handleUpload(e.clipboardData.files[0]);
+}
+
+async function handleUpload(file) {
   if (!file) return;
   textarea.blur();
   state.popup.set({
@@ -152,9 +159,7 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
 
 .input {
   display: flex;
-  align-items: start;
   min-height: 44px;
-  padding: 0 16px;
   border-radius: 8px;
   background: #40444b;
 }
@@ -164,36 +169,52 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
   cursor: not-allowed;
 }
 
-.upload, .emoji {
-  padding: 10px 0;
-  padding-right: 16px;
-  display: flex;
-  align-items: center;
+.upload {
+  padding: 8px 16px 0;
+  align-items: start;
+  font-size: 24px;
+  color: var(--fg-light);
+  cursor: pointer;
+}
+
+.upload:hover {
+  color: var(--fg-notice);
+}
+
+.upload .icon {
+  cursor: pointer;
+}
+
+.upload input {
+  display: none;
 }
 
 .emoji {
   position: relative;
-  padding-right: 0;
-  padding-left: 16px;
-  pointer-events: none;
 }
 
-.upload-button {
-  height: 24px;
-  width: 24px;
-
-  /* TODO actual upload icon */
-  background: var(--fg-dim);
-  border-radius: 50%;
-}
-
-.emoji-button {
+.emoji .button {
+  padding: 11px 12px 0;
+  height: 100%;
   pointer-events: all;
+  cursor: pointer;
 }
 
-.emoji-wrapper {
+.emoji .button .icon {
+  height: 22px;
+  width: 22px;
+  filter: grayscale(1);
+  transition: all .2s ease-out;
+}
+
+.emoji:hover .button .icon {
+  filter: grayscale(0);
+  transform: scale(1.2);
+}
+
+.emoji .wrapper {
   position: absolute;
-  bottom: calc(44px + 8px);
+  bottom: calc(56px);
   right: 0;
   pointer-events: all;
 }
@@ -207,7 +228,7 @@ textarea {
   resize: none;
 
   flex: 1;
-  padding: 11px 0;
+  padding: 12px 0;
 }
 
 textarea::placeholder {
@@ -215,8 +236,7 @@ textarea::placeholder {
 }
 
 .reply {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
   background: var(--bg-rooms-members);
   padding: .5rem 16px;
   border-top-left-radius: 5px;
@@ -227,28 +247,21 @@ textarea::placeholder {
 }
 
 .close {
+  position: absolute;
   display: flex;
-  margin: -8px -16px;
-  padding: 8px 16px;
+  align-items: center;
+  height: 100%;
+  top: 0;
+  right: 0;
+  padding: 0 18px;
+
+  font-size: 18px;
   cursor: pointer;
+  color: var(--fg-interactive);
 }
 
-/* TODO: like everything else, eventually find an actual icon*/
-/* (this is worse than normal thanks to magic numbers) */
-.close .icon {
-  font-family: initial;
-  font-size: 12px;
-  height: 16px;
-  width: 16px;
-  background: var(--fg-interactive);
-  border-radius: 50%;
-  font-weight: 700;
-  padding-left: 3px;
-  color: var(--bg-rooms-members);
-}
-
-.close:hover .icon {
-  background: var(--fg-content);  
+.close:hover {
+  color: var(--fg-content);  
 }
 
 .reply + .input {
@@ -267,9 +280,7 @@ textarea::placeholder {
   {#if $reply}
   <div class="reply" on:click={() => actions.slice.jump($reply.roomId, $reply.eventId)}>
     <div>Replying to <b>{getName($reply.sender)}</b></div>
-    <div class="close" on:click={e => { e.stopPropagation(); reply.set(null) }}>
-        <div class="icon">&#xd7</div>
-    </div>
+    <div class="close icon" on:click={e => { e.stopPropagation(); reply.set(null) }}>cancel</div>
   </div>
   {/if}
   {#if $room.tombstone}
@@ -279,7 +290,10 @@ textarea::placeholder {
   {:else}
   <div class="input">
     <div class="upload">
-      <div class="upload-button"></div>
+      <label class="icon">
+        add_circle
+        <input type="file" on:change={e => handleUpload(e.target.files[0])} />
+      </label>
     </div>
     <textarea
       placeholder={`Message ${$room.name}`}
@@ -291,10 +305,16 @@ textarea::placeholder {
       on:paste={handlePaste}
     ></textarea>
     <div class="emoji">
-      <!-- TODO: get a separate emoji button -->
-      <div class="emoji-button upload-button" on:click={(e) => { e.stopImmediatePropagation(); showEmoji = !showEmoji }}></div>
+      <div class="button" on:click={(e) => { e.stopImmediatePropagation(); showEmoji = !showEmoji }}>
+        <div class="icon">
+          {@html twemoji.parse("😀", {
+            folder: "svg",
+            ext: ".svg",
+          })}
+        </div>
+      </div>
       {#if showEmoji}
-      <div class="emoji-wrapper">
+      <div class="wrapper">
         <Emoji selected={(val, keep) => { val && ($input += val); if (!keep) { showEmoji = false; textarea.focus() } }}/>
       </div>
       {/if}

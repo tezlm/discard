@@ -33,17 +33,16 @@ async function create() {
 .close {
   position: absolute;
   top: 12px;
-  right: 16px;
+  right: 12px;
   font-size: 28px;
   font-weight: normal;
-  font-family: initial;
   color: var(--fg-muted);
   cursor: pointer;
   transition: color 0.4s;
 }
 </style>
 <Popup>
-  <h3 slot="header">Create {capitalize($current.type)} <div class="close" on:click={() => state.popup.set({ id: null, ...$current })}>&#xd7;</div></h3>
+  <h3 slot="header">Create {capitalize($current.type)} <div class="close icon" on:click={() => state.popup.set({ id: null, ...$current })}>close</div></h3>
   <div slot="content" style="display: flex; flex-direction: column">
     <span class="title">{capitalize($current.type)} Name</span>
     <Input placeholder="awesome-{$current.type}" bind:value={name} submitted={create} autofocus />

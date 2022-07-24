@@ -49,15 +49,23 @@ let hovered;
     {#if item}
       <div
         class="item"
+        style:color={item.color}
         on:click={item.clicked}
         on:mouseover={() => hovered = item}
         on:focus={() => hovered = item}
-        style:color={item.color}
+        on:mouseout={() => hovered = null}
+        on:blur={() => hovered = null}
       >
         {item.label}
       </div>
       {#if item.submenu && hovered === item}
-        <svelte:self items={item.submenu} x={x + width + 4} y={y} />
+        <svelte:self
+          items={item.submenu}
+          x={x + width + 4}
+          y={y}
+          on:mouseover={() => hovered = item}
+          on:focus={() => hovered = item}
+        />
       {/if}
     {:else}
       <div class="spacer"></div>
