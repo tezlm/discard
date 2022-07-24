@@ -50,7 +50,7 @@ function isRead(room) {
 	display: flex;
 	align-items: center;
 	margin: 1px 8px;
-	padding: 6px 2px 6px 10px;
+	padding: 0 2px 0 10px;
 
 	color: var(--fg-dim);
 	border-radius: 4px;
@@ -86,16 +86,19 @@ function isRead(room) {
 	content: "";
 }
 
-.icon {
+.wrapper > .icon {
 	position: absolute;
 	color: var(--fg-dim); 
-	font-size: 22px;
+	font-size: 20px;
+	margin-left: -2px;
+	padding: 6px 0;
 }
 
 .name {
 	margin-left: 1.5em;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	padding: 6px 0;
 }
 
 .wrapper > .spacer {
@@ -105,7 +108,17 @@ function isRead(room) {
 
 .settings {
   display: none;
-	margin-right: 4px;
+	line-height: 1;
+}
+
+.icon {
+	color: var(--fg-dim);
+	font-size: 16px;
+	padding: 6px 2px;
+}
+
+.icon:hover {
+	color: var(--fg-light);
 }
 
 .pings {
@@ -132,19 +145,21 @@ function isRead(room) {
 	  <div
 			class={$focusedRoom ? "room home" : "room home focused"}
 			on:click={() => actions._rooms.focus(null)}>
-			<div class="wrapper">Home</div>
+			<div class="wrapper">
+				<div class="icon">home</div>
+				<div class="name">Home</div>
+			</div>
 		</div>
 		{#if !$focusedSpace}
 	  <div
 			class="room"
 			on:click={() => state.popup.set({ id: "create", type: "room" })}>
 			<div class="wrapper">
-				<div class="icon">+</div>
+				<div class="icon">add_circle</div>
 				<div class="name">Create Room</div>
 			</div>
 		</div>
 		{/if}
-		<!-- {#each $spaces.get($focusedSpace?.roomId ?? "orphanRooms") as room} -->
 		{#each $navRooms as room}
 	  <div
 			class="room"
@@ -158,12 +173,17 @@ function isRead(room) {
 				{#if room.pings}<div class="pings">{room.pings}</div>{/if}
 				{#if room.power.me >= room.power.getBase("invite") || room.joinRule === "public"}
 				<div class="settings" on:click={(e) => { e.stopImmediatePropagation(); state.popup.set({ id: "invite", type: "room", room }) }}>
-					<Tooltip tip="Send Invite">&#129730;</Tooltip>
+					<Tooltip tip="Send Invite">
+						<span class="icon">person_add</span>
+					</Tooltip>
 				</div>
 				{/if}
 				<div class="settings" on:click={(e) => { e.stopImmediatePropagation(); state.selectedRoom.set(room); state.scene.set("room-settings") }}>
-					<Tooltip tip="Edit Room">🔧</Tooltip>
+					<Tooltip tip="Edit Room">
+						<span class="icon">settings</span>
+					</Tooltip>
 				</div>
+				<div style="width: 4px"></div>
 			</div>
 		</div>
 		{/each}

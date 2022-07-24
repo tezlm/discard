@@ -109,7 +109,6 @@ function getColor(sender) {
   background: var(--ping-bgalpha);
   padding: 0 2px;
   border-radius: 3px;
-  cursor: pointer;
 }
 </style>
 {#await eventPromise}

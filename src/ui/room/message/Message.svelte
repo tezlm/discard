@@ -35,24 +35,24 @@ function getToolbar(shift = false) {
     toolbar.push({ name: "Cancel", icon: "x", clicked: todo });
   } else if (shift) {
     if (fromMe || $room.power.me >= $room.power.getBase("redact")) {
-      toolbar.push({ name: "Delete", icon: "x", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) }});
+      toolbar.push({ name: "Delete", icon: "delete", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) }});
     }
     if ($room.power.me >= $room.power.getEvent("m.room.message")) {
-      toolbar.push({ name: "Reply", icon: ">", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
+      toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
     }
-    toolbar.push({ name: "Source", icon: "!", clicked: () => state.popup.set({ id: "source", event }) });
+    toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "source", event }) });
   } else {
     if ($room.power.me >= $room.power.getEvent("m.reaction")) {
-      toolbar.push({ name: "React", icon: "+", clicked: todo });
+      toolbar.push({ name: "React", icon: "add_reaction", clicked: todo });
     }
     if ($room.power.me >= $room.power.getEvent("m.room.message")) {
       if (fromMe) {
-        toolbar.push({ name: "Edit", icon: "_", clicked: () => state.roomState.edit.set(unwrapEdits(event).eventId) });
+        toolbar.push({ name: "Edit", icon: "edit", clicked: () => state.roomState.edit.set(unwrapEdits(event).eventId) });
       } else {
-        toolbar.push({ name: "Reply", icon: ">", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
+        toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
       }
     }
-    toolbar.push({ name: "More", icon: "\u22ee", clicked: todo });
+    toolbar.push({ name: "More", icon: "more_vert", clicked: todo });
   }
 
   return toolbar;
@@ -116,7 +116,9 @@ function handleClick(e) {
 
 .badge {
   display: inline-block;
+  position: relative;
   padding: 0 4px;
+  bottom: 2px;
 
   color: var(--fg-notice);
   background: var(--color-accent);

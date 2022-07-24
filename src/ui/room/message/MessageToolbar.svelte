@@ -20,10 +20,13 @@ export let items, event;
 }
 
 .button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 32px;
   height: 32px;
-  padding: 6px;
-  color: var(--fg-content);
+  color: var(--fg-light);
+  font-size: 20px;
   font-weight: 700;
   text-align: center;
   cursor: pointer;
@@ -32,16 +35,17 @@ export let items, event;
 
 .button:hover {
   background: var(--color-gray);
+  color: var(--fg-notice);
 }
 
 .button:active {
-  padding-top: 7px;
+  padding-top: 1px;
 }
 </style>
 <div class="toolbar">
   {#each items as item}
   <Tooltip tip={item.name}>
-    <div class="button" on:click={() => item.clicked(event)}>{item.icon}</div>
+    <div class="button icon" style:color={item.color} on:click={() => item.clicked(event)}>{item.icon}</div>
   </Tooltip>
   {/each}
 </div>

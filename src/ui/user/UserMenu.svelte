@@ -52,15 +52,20 @@ onDestroy(() => copyEl.removeEventListener("mouseleave", resetCopy));
 }
 
 .user .icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	height: 30px;
 	width: 30px;
-	cursor: pointer;
 	padding: 6px;
+	font-size: 22px;
+	color: var(--fg-light);
+	cursor: pointer;
 	border-radius: 4px;
 }
 
 .user .icon:hover {
-	filter: brightness(2);
+	color: var(--fg-notice);
 	background: #ffffff33;
 }
 
@@ -115,6 +120,6 @@ onDestroy(() => copyEl.removeEventListener("mouseleave", resetCopy));
 		</Tooltip>
 	</div>
 	<Tooltip tip="User Settings" style="height: 30px">
-		<img class="icon" alt="settings icon" src={settingsIcon} on:click={() => state.scene.set("user-settings")} />
+		<span class="icon" on:click={() => state.scene.set("user-settings")}>settings</span>
 	</Tooltip>
 </div>

@@ -9,10 +9,11 @@ function capitalize(str) {
   return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
 
-function leave() {
+async function leave() {
   const roomId = $current.room.roomId;
   state.log.debug("goodbye " + roomId);
   state.api.leaveRoom(roomId);
+  state.popup.set({ ...$current, id: null });
   state.scene.set("chat");
 }
 </script>
