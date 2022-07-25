@@ -155,6 +155,7 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
 <style>
 .container {
   padding: 0 16px;
+  z-index: 1;
 }
 
 .input {
@@ -290,12 +291,12 @@ textarea::placeholder {
   <div class="input disabled">You can't send messages here</div>
   {:else}
   <div class="input">
-    <div class="upload">
-      <label class="icon">
-        add_circle
-        <input type="file" on:change={e => handleUpload(e.target.files[0])} />
-      </label>
-    </div>
+    <label class="upload">
+      <div class="icon">
+          add_circle
+          <input type="file" on:change={e => handleUpload(e.target.files[0])} />
+      </div>
+    </label>
     <textarea
       placeholder={`Message ${$room.name}`}
       rows={$rows}
@@ -305,8 +306,8 @@ textarea::placeholder {
       on:keydown={handleKeyDown}
       on:paste={handlePaste}
     ></textarea>
-    <div class="emoji">
-      <div class="button" on:click={(e) => { e.stopImmediatePropagation(); showEmoji = !showEmoji }}>
+    <div class="emoji" on:click={(e) => { e.stopImmediatePropagation(); showEmoji = !showEmoji }}>
+      <div class="button">
         <div class="icon" class:shown={showEmoji}>
           {@html twemoji.parse("😀", {
             folder: "svg",

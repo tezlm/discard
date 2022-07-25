@@ -4,6 +4,8 @@ import RoomFooter from './RoomFooter.svelte';
 import RoomHeader from './RoomHeader.svelte';
 import RoomHome from './RoomHome.svelte';
 let room = state.focusedRoom;
+let slice = state.slice;
+// FIXME: flash when switching to roomhome?
 </script>
 <style>
 .room {
@@ -15,14 +17,12 @@ let room = state.focusedRoom;
 	overflow: hidden;
 }
 </style>
-
 <div class="room">
-  {#if $room}
   <RoomHeader />
-  <RoomContent />
+  {#if $room && $slice}
+  <RoomContent room={$room} slice={$slice} />
   <RoomFooter />
   {:else}
-  <RoomHeader />
   <RoomHome />
   {/if}
 </div>

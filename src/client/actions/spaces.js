@@ -21,7 +21,7 @@ export function update() {
 }
 
 export function focus(space) {
-  state.log.debug(`focus space ${space?.roomId}`);
+  state.log.ui(`focus space ${space?.roomId}`);
 	state.focusedSpaceId = space?.roomId;
 	state.focusedSpace.set(space);
 	state.navRooms.set(state.spaces.get(space?.roomId ?? "orphanRooms"));

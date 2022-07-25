@@ -46,7 +46,7 @@ export default {
   roomStates: new Map(),
   roomState: null,
   events: store.events, // TODO: offline support?
-  slice: writable([]),
+  slice: writable(null),
   
   // cache
   missingAvatars: new Set(),

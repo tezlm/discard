@@ -7,26 +7,23 @@ import MessageToolbar from "./MessageToolbar.svelte";
 import Emoji from "../../molecules/Emoji.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
 import { parseMxc, defaultAvatar, calculateHash } from '../../../util/content.js';
+import { quadOut } from "svelte/easing";
 
 // TODO: modularize more, don't require fetching members and stuff
 
 // reaction picker:
-// TODO: animate in/out
 // TODO: share code with MessageReaction.svelte
 // TODO: (along with other menus) move into viewport
 
-export let event, header = false, shiftKey = false;
+export let room, event, header = false, shiftKey = false;
 
 let { edit } = state.roomState;
 let missingAvs = state.missingAvatars;
 let slice = state.slice;
 $: toolbar = getToolbar(shiftKey);
+$: sender = room.members.get(event.sender) ?? {};
 
-let room = state.focusedRoom;
-$room.members.fetch();
-$: sender = $room.members.get(event.sender) ?? {};
-
-let showReactionPicker = false;
+let showReactionPicker = null;
 
 function unwrapEdits(event) {
   while (event.original) event = event.original;
@@ -41,19 +38,19 @@ function getToolbar(shift = false) {
   if (event.special) {
     if (event.special === "errored") toolbar.push({ name: "Retry", icon: "refresh", clicked: todo });
     toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
-  } else if (shift) {
-    if (fromMe || $room.power.me >= $room.power.getBase("redact")) {
+  } else if (shift && showReactionPicker !== event.eventId) {
+    if (fromMe || room.power.me >= room.power.getBase("redact")) {
       toolbar.push({ name: "Delete", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) }});
     }
-    if ($room.power.me >= $room.power.getEvent("m.room.message")) {
+    if (room.power.me >= room.power.getEvent("m.room.message")) {
       toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
     }
     toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "source", event }) });
   } else {
-    if ($room.power.me >= $room.power.getEvent("m.reaction")) {
-      toolbar.push({ name: "React", icon: "add_reaction", clicked: () => showReactionPicker = event.eventId });
+    if (room.power.me >= room.power.getEvent("m.reaction")) {
+      toolbar.push({ name: "React", icon: "add_reaction", clicked: () => showReactionPicker = showReactionPicker ? null : event.eventId });
     }
-    if ($room.power.me >= $room.power.getEvent("m.room.message")) {
+    if (room.power.me >= room.power.getEvent("m.room.message")) {
       if (fromMe) {
         toolbar.push({ name: "Edit", icon: "edit", clicked: () => state.roomState.edit.set(unwrapEdits(event).eventId) });
       } else {
@@ -78,7 +75,7 @@ function getAvatar() {
 function getColor(sender) {
   if (!sender) return;
   if (state.settings.get("namecolors") === "never") return;
-  if (state.settings.get("namecolors") === "power" && $room.power.getUser(sender.userId) === 0) return;
+  if (state.settings.get("namecolors") === "power" && room.power.getUser(sender.userId) === 0) return;
   return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
 }
 
@@ -86,11 +83,19 @@ function handleClick(e) {
   if (e.altKey) {
     const prev = $slice.events[$slice.events.findIndex(i => i.eventId === event.eventId) - 1];
     if (prev) {
-      state.rooms.get(state.focusedRoomId).readEvent = prev.eventId;
+      room.readEvent = prev.eventId;
       state.slice.set(state.roomSlices.get(state.focusedRoomId));
       state.api.sendReceipt(event.roomId, prev.eventId);
     }
   }
+}
+
+function fly() {
+  return {
+    duration: 200,
+    easing: quadOut,
+    css: t => `transform: translateX(${t * 15 - 15}px)`,
+  };
 }
 </script>
 <style>
@@ -198,7 +203,7 @@ time {
     {/if}
   </div>
   <div class="content">
-    {#if getReply(event.content)}<MessageReply roomId={event.roomId} eventId={getReply(event.content)} />{/if}
+    {#if getReply(event.content)}<MessageReply {room} eventId={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
       <span class="author" style:color={getColor(sender)}>{sender.name || event.sender}</span>
@@ -219,9 +224,9 @@ time {
   {#if event.eventId !== $edit}
   <div class="toolbar" style:display={showReactionPicker === event.eventId ? "flex" : null}>
     {#if showReactionPicker === event.eventId}
-    <div class="reaction-picker">
+    <div class="reaction-picker" in:fly>
       <Emoji selected={(emoji, keep) => {
-        if (!event.reactions?.get(emoji)?.mine) {
+        if (!event.reactions?.get(emoji)?.mine && emoji) {
           const reaction = {
             "m.relates_to": {
               key: emoji,

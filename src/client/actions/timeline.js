@@ -109,7 +109,6 @@ export function handle(roomId, event, toStart = false) {
           eventId: original.eventId, // this is why the todo exists
           original,
         });
-        console.log("handle edit")
     } else if (relation.rel_type === "m.annotation") {
       const key = relation.key;
       if (!original.reactions) original.reactions = new Map();

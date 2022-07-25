@@ -2,20 +2,22 @@ import { writable, get } from "svelte/store";
 import TimelineSet from "../matrix/timeline.js";
 import { formatRoom } from "../../util/rooms.js";
 
-const rooms = new Map(); // TODO: store object instead of just Array<stateEvent>
+const roomStates = new Map();
 const roomAccounts = new Map();
 
-export function save() {
-  for (let [id, data] of rooms) {
-    state.store.rooms.set(id, data);
-  }
-}
+// maybe rename the 2 roomStates? (matrix state and discard state)
+// TODO: lazy loading
+// export function save() {
+//   for (let [id, data] of rooms) {
+//     state.store.rooms.set(id, data);
+//   }
+// }
 
-export function load() {
-  // console.log(state.store.rooms.all(id));
-  // .then(state => rooms.set(id, state));
-  // state.store
-}
+// export function load() {
+//   console.log(state.store.rooms.all(id));
+//   .then(state => rooms.set(id, state));
+//   state.store
+// }
 
 // TODO: cleanup, set directly on room
 export function handleAccount(roomId, type, content) {
@@ -27,18 +29,19 @@ export function handleAccount(roomId, type, content) {
 }
 
 export function handleJoin(roomId, event, batch) {
-  const isNew = !rooms.has(roomId);
-  if (isNew) rooms.set(roomId, []);
+  const isNew = !roomStates.has(roomId);
+  if (isNew) roomStates.set(roomId, []);
   if (!state.roomTimelines.has(roomId)) state.roomTimelines.set(roomId, new TimelineSet(roomId, batch));
   
-  const roomState = rooms.get(roomId);
+  const roomState = roomStates.get(roomId);
   const index = roomState.findIndex(i => i.type === event.type && i.state_key === event.state_key);
   if (index >= 0) {
     roomState[index] = event;
   } else {
     roomState.push(event);
-  }
+  }  
   
+  if (event.type === "m.room.member") state.rooms.get(roomId)?.members.add(event);
   update();
   if (isNew || event.type === "m.space.child") actions.spaces.update();
 }
@@ -58,7 +61,7 @@ export function handleLeave(roomId) {
     state.focusedRoomId = null;
     state.focusedRoom.set(null);
   }
-  rooms.delete(roomId);
+  roomStates.delete(roomId);
   state.rooms.delete(roomId);
   actions.spaces.update();
   update();
@@ -68,7 +71,7 @@ export function handleLeave(roomId) {
 export function update() {
   if (state.syncer.status === "starting") return;
   
-  for (let [id, data] of rooms.entries()) {
+  for (let [id, data] of roomStates.entries()) {
     const formatted = formatRoom(id, data, roomAccounts.get(id));
     if (state.rooms.has(id)) {
       const old = state.rooms.get(id);
@@ -101,6 +104,7 @@ export async function focus(room) {
   
 	state.focusedRoomId = room?.roomId ?? null;
 	state.focusedRoom.set(room);
+  state.log.debug("set room for" + room?.roomId);
   
   if (room) {
   	if (!states.has(room.roomId)) states.set(room.roomId, getDefaultState());
@@ -112,6 +116,7 @@ export async function focus(room) {
     
     const timeline = state.roomTimelines.get(room.roomId).live;
     if (!timeline.length) await timeline.backwards();
+    state.log.debug("set slice for" + room?.roomId);
     state.slice.set(actions.slice.get(room.roomId));
   }
       
