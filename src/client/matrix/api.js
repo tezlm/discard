@@ -80,6 +80,10 @@ export default class Api {
     return this.fetch("GET", `/rooms/${encode(roomId)}/members?not_membership=leave`);
   }
   
+  fetchUser(userId) {
+    return this.fetch("GET", `/profile/${encode(userId)}`);
+  }  
+  
   // sending content
   sendEvent(roomId, type, content, txnId) {
     return this.fetch("PUT", `/rooms/${encode(roomId)}/send/${encode(type)}/${encode(txnId)}`, content);

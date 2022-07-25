@@ -1,6 +1,7 @@
 <script>
-import { getAvatar, getDisplayName } from '../../../util/content.js';
-let { userId }= state;
+import Button from "../../atoms/Button.svelte";
+import { parseMxc } from "../../../util/content.js";
+let { userId, users } = state;
 </script>
 <style>
 .account {
@@ -29,12 +30,14 @@ let { userId }= state;
 }
 </style>
 <div class="account">
-  <img src={getAvatar(userId)} alt="your avatar" />
+  <img src={parseMxc(users.get(userId).avatar)} alt="your avatar" />
   <div class="details">
-    <span class="big">{getDisplayName(userId)}</span>
+    <span class="big">{users.get(userId).name}</span>
     <span>{userId}</span>
   </div>
 </div>
-<!-- TODO: change password
-<br>
-<Button type="primary" label="Change password" /> -->
+<br><br>
+<Button type="primary" label="Change password" clicked={todo} /><br><br>
+<Button type="primary" label="Change email" clicked={todo} /><br><br>
+<Button type="primary" label="Change phone number" clicked={todo} /><br><br>
+<Button type="danger" label="Disable account" clicked={todo} /><br><br>

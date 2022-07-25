@@ -6,6 +6,7 @@ import UserSettings from './scenes/UserSettings.svelte';
 import SpaceSettings from './scenes/SpaceSettings.svelte';
 import RoomSettings from './scenes/RoomSettings.svelte';
 import Popups from './Popups.svelte';
+import ContextMenus from './ContextMenus.svelte';
 import { quadInOut, quartInOut } from 'svelte/easing';
 let scene = state.scene;
 
@@ -76,3 +77,4 @@ main > div {
   {/if}
 </main>
 <Popups />
+<ContextMenus />
