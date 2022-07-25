@@ -149,9 +149,9 @@ pre {
     <p>userid entry (discord doesnt have this though)</p>
     <UserId />
     <br />
-    <p>link (if exists)</p>
-    {#if $current.room.state.find(i => i.type === "m.room.canonical_alias")?.content?.alias}
-      <Input value={"https://matrix.to/#/" + encodeURIComponent($current.room.state.find(i => i.type === "m.room.canonical_alias").content.alias)} />
+    {#if $current.room.state.find(i => i.type === "m.room.canonical_alias")?.content?.alias && $current.room.joinRule === "public"}
+      <div class="title">Or, send a link</div>
+      <Input value={"https://matrix.to/#/" + encodeURIComponent($current.room.state.find(i => i.type === "m.room.canonical_alias").content.alias)} autofocus />
     {/if}
   </div>
 </Popup>

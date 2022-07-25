@@ -4,10 +4,16 @@ import MessageContent from "./MessageContent.svelte";
 import MessageEdit from "./MessageEdit.svelte";
 import MessageReactions from "./MessageReactions.svelte";
 import MessageToolbar from "./MessageToolbar.svelte";
+import Emoji from "../../molecules/Emoji.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
 import { parseMxc, defaultAvatar, calculateHash } from '../../../util/content.js';
 
 // TODO: modularize more, don't require fetching members and stuff
+
+// reaction picker:
+// TODO: animate in/out
+// TODO: share code with MessageReaction.svelte
+// TODO: (along with other menus) move into viewport
 
 export let event, header = false, shiftKey = false;
 
@@ -20,6 +26,8 @@ let room = state.focusedRoom;
 $room.members.fetch();
 $: sender = $room.members.get(event.sender) ?? {};
 
+let showReactionPicker = false;
+
 function unwrapEdits(event) {
   while (event.original) event = event.original;
   return event;
@@ -31,11 +39,11 @@ function getToolbar(shift = false) {
   const fromMe = event.sender === state.userId;
 
   if (event.special) {
-    if (event.special === "errored") toolbar.push({ name: "Retry", icon: "r", clicked: todo });
-    toolbar.push({ name: "Cancel", icon: "x", clicked: todo });
+    if (event.special === "errored") toolbar.push({ name: "Retry", icon: "refresh", clicked: todo });
+    toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
   } else if (shift) {
     if (fromMe || $room.power.me >= $room.power.getBase("redact")) {
-      toolbar.push({ name: "Delete", icon: "delete", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) }});
+      toolbar.push({ name: "Delete", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) }});
     }
     if ($room.power.me >= $room.power.getEvent("m.room.message")) {
       toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
@@ -43,7 +51,7 @@ function getToolbar(shift = false) {
     toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "source", event }) });
   } else {
     if ($room.power.me >= $room.power.getEvent("m.reaction")) {
-      toolbar.push({ name: "React", icon: "add_reaction", clicked: todo });
+      toolbar.push({ name: "React", icon: "add_reaction", clicked: () => showReactionPicker = event.eventId });
     }
     if ($room.power.me >= $room.power.getEvent("m.room.message")) {
       if (fromMe) {
@@ -156,6 +164,15 @@ time {
 
 .toolbar {
   display: none;
+  align-items: start;
+  position: absolute;
+  right: 1rem;
+  top: -16px;
+  z-index: 1;
+}
+
+.reaction-picker {
+  margin-right: 8px;
 }
 
 .message:hover time {
@@ -163,7 +180,7 @@ time {
 }
 
 .message:hover .toolbar {
-  display: block;
+  display: flex;
 }
 </style>
 <div class="message" on:click={handleClick}>
@@ -200,8 +217,26 @@ time {
     {#if event.reactions}<MessageReactions {event} />{/if}
   </div>
   {#if event.eventId !== $edit}
-  <div class="toolbar">
+  <div class="toolbar" style:display={showReactionPicker === event.eventId ? "flex" : null}>
+    {#if showReactionPicker === event.eventId}
+    <div class="reaction-picker">
+      <Emoji selected={(emoji, keep) => {
+        if (!event.reactions?.get(emoji)?.mine) {
+          const reaction = {
+            "m.relates_to": {
+              key: emoji,
+              rel_type: "m.annotation",
+              event_id: event.eventId,
+            },
+          };
+          state.api.sendEvent(event.roomId, "m.reaction", reaction, Math.random());  
+        }
+        if (!keep) showReactionPicker = null;
+      }} />
+    </div>
+    {/if}
     <MessageToolbar items={toolbar} {event} />
   </div>
   {/if}
 </div>
+<svelte:window on:click={() => showReactionPicker = null} />

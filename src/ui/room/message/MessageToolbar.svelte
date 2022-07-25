@@ -1,13 +1,15 @@
 <script>
 import Tooltip from "../../atoms/Tooltip.svelte";
 export let items, event;
+
+const handleEvent = (item) => (e) => {
+  e.stopImmediatePropagation();
+  item.clicked(event);
+};
 </script>
 <style>
 .toolbar {
   display: flex;
-  position: absolute;
-  right: 1rem;
-  top: -16px;
 
   border: solid var(--bg-misc) 1px;
   border-radius: 4px;
@@ -45,7 +47,11 @@ export let items, event;
 <div class="toolbar">
   {#each items as item}
   <Tooltip tip={item.name}>
-    <div class="button icon" style:color={item.color} on:click={() => item.clicked(event)}>{item.icon}</div>
+    {#if item.color}
+      <div class="button icon" style:color={item.color} on:click={handleEvent(item)}>{item.icon}</div>
+    {:else}
+      <div class="button icon" on:click={handleEvent(item)}>{item.icon}</div>
+    {/if}
   </Tooltip>
   {/each}
 </div>

@@ -1,10 +1,14 @@
 <script>
 import { backOut } from "svelte/easing";
 import Tooltip from "../../atoms/Tooltip.svelte";
+import Emoji from "../../molecules/Emoji.svelte";
 export let event;
 $: room = state.rooms.get(event.roomId);
 // i have no idea how these work but they do so /shrug lol
 // TODO: make the number animate in reverse when the count goes down
+// TODO: animate in reaction picker
+
+let showPicker = false;
 
 function getPeople(set) {
   const ids = [...set].map(i => room.members.get(i)?.name || i);
@@ -48,6 +52,9 @@ function handleClick(mine, key) {
 </script>
 <style>
 .reactions {
+  display: flex;
+  position: relative;
+  align-items: center;
   margin-top: 4px;
 }
 
@@ -91,18 +98,29 @@ function handleClick(mine, key) {
 
 .add {
   display: inline-block;
+  position: relative;
+  margin-left: 4px;
+}
+
+.add .icon {
   opacity: 0;
   color: var(--fg-dim);
   cursor: pointer;
   transition: all .2s;
 }
 
-.add:hover {
+.add .icon:hover {
   opacity: 1;
 }
 
 .dim {
   color: var(--fg-dim);
+}
+
+.picker {
+  position: absolute;
+  top: 0;
+  z-index: 1;
 }
 </style>
 <div class="reactions">
@@ -133,5 +151,25 @@ function handleClick(mine, key) {
   </Tooltip>
   {/if}
 {/each}
-<div class="add" class:self={false} on:click={todo}>+</div>
+<div class="add">
+  <div class="icon" class:self={false} on:click={(e) => { e.stopImmediatePropagation(); showPicker = true }}>add_reaction</div>
+  {#if showPicker}
+  <div class="picker">
+    <Emoji selected={(emoji, keep) => {
+      if (!event.reactions?.get(emoji)?.mine) {
+        const reaction = {
+          "m.relates_to": {
+            key: emoji,
+            rel_type: "m.annotation",
+            event_id: event.eventId,
+          },
+        };
+        state.api.sendEvent(event.roomId, "m.reaction", reaction, Math.random());  
+      }
+      if (!keep) showPicker = false;
+    }} />
+  </div>
+  {/if}
 </div>
+</div>
+<svelte:window on:click={() => showPicker = false} />
