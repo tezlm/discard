@@ -71,7 +71,7 @@ function handleInput() {
 }
 
 async function handlePaste(e) {
-  e.preventDefault();
+  if (e.clipboardData.files.length) e.preventDefault();
   handleUpload(e.clipboardData.files[0]);
 }
 
@@ -207,7 +207,7 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
   transition: all .2s ease-out;
 }
 
-.emoji:hover .button .icon {
+.emoji:hover .button .icon, .emoji .icon.shown {
   filter: grayscale(0);
   transform: scale(1.2);
 }
@@ -276,6 +276,7 @@ textarea::placeholder {
   align-content: center;
 }
 </style>
+{#if $room}
 <div class="container">
   {#if $reply}
   <div class="reply" on:click={() => actions.slice.jump($reply.roomId, $reply.eventId)}>
@@ -306,7 +307,7 @@ textarea::placeholder {
     ></textarea>
     <div class="emoji">
       <div class="button" on:click={(e) => { e.stopImmediatePropagation(); showEmoji = !showEmoji }}>
-        <div class="icon">
+        <div class="icon" class:shown={showEmoji}>
           {@html twemoji.parse("😀", {
             folder: "svg",
             ext: ".svg",
@@ -327,4 +328,5 @@ textarea::placeholder {
     {/if}
   </div>
 </div>
+{/if}
 <svelte:window on:click={() => showEmoji = false} />
