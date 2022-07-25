@@ -152,7 +152,7 @@ async function handleSubmit(value, e) {
   <div style="grid-row: 2/4; background: var(--bg-spaces)"></div>
   <div class="emojis">
     {#await getFiltered(search)}
-      <p>getting emoji...</p>
+      <div style="display: flex; align-items: center; justify-content: center; width 100%; height: 100%">getting emoji...</div>
     {:then filtered}
       {#each filtered as emojis, i}
         {#if emojis && emojis.length}

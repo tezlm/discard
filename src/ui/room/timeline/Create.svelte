@@ -1,8 +1,7 @@
 <script>
-export let event;
-$: room = state.rooms.get(event.roomId);
-$: name = room?.name;
-$: topic = room?.topic;
+export let room;
+$: name = room.name;
+$: topic = room.topic;
 </script>
 <style>
 .top {

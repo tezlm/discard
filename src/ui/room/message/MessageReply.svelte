@@ -2,20 +2,19 @@
 // TODO: make edits apply
 import { parseHtml } from "../../../util/html.js";
 import { parseMxc, defaultAvatar, calculateHash } from '../../../util/content.js';
-export let roomId, eventId;
+export let room, eventId;
 let missingAvs = state.missingAvatars;
-let room = state.focusedRoom;
-let eventPromise = state.events.fetch(roomId, eventId);
+let eventPromise = state.events.fetch(room.roomId, eventId);
 
 function getName(sender) {
-  const member = $room.members.get(sender);
+  const member = room.members.get(sender);
   if (!member) return sender;
   return member.name || member.userId;
 }
 
 function getAvatar(sender) {
   if (missingAvs.has(sender)) return defaultAvatar;
-  const member = $room.members.get(sender);
+  const member = room.members.get(sender);
   if (!member) return defaultAvatar;
   return member.avatar ? parseMxc(member.avatar, 16) : defaultAvatar;
 }
@@ -23,7 +22,7 @@ function getAvatar(sender) {
 function getColor(sender) {
   if (!sender) return;
   if (state.settings.get("namecolors") === "never") return;
-  if (state.settings.get("namecolors") === "power" && $room.power.getUser(sender.userId) === 0) return;
+  if (state.settings.get("namecolors") === "power" && room.power.getUser(sender.userId) === 0) return;
   return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
 }
 </script>
@@ -121,8 +120,8 @@ function getColor(sender) {
     src={getAvatar(event.sender)}
     on:error={(e) => { missingAvs.add(event.sender); e.target.src = defaultAvatar }}
   />
-  <span class="author" style:color={getColor($room.members.get(event.sender))}>{getName(event.sender)}</span>
-  <div class="content" on:click={() => actions.slice.jump(roomId, eventId)}>
+  <span class="author" style:color={getColor(room.members.get(event.sender))}>{getName(event.sender)}</span>
+  <div class="content" on:click={() => actions.slice.jump(room.roomId, eventId)}>
     {#if event.content.format === "org.matrix.custom.html"}
       {@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n|<br.*?>/g, " ")}
     {:else}

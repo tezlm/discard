@@ -6,14 +6,15 @@ import Upload from './timeline/Upload.svelte';
 import Create from './timeline/Create.svelte';
 import Placeholder from './timeline/Placeholder.svelte';
 import Message from './message/Message.svelte';
-let slice = state.slice;
-let room = state.focusedRoom;
+export let room;
+export let slice;
 let { focused, reply, edit, upload } = state.roomState;
 let shiftKey = false;
 let scrollTop, scrollMax, scrollTo, reset;
 
-// TODO: unruin this code
+$: if (slice) refocus();
 
+// TODO: unruin this code
 function shouldSplit(prev, ev) {
 	if (!prev) return true;
 	if (prev.type !== "m.room.message") return true;
@@ -35,12 +36,12 @@ function dividerProps(prev, ev) {
 
 async function fetchBackwards() {
 	const success = await actions.slice.backwards();
-	return [!success || $slice.events[0]?.type === "m.room.create", $slice.atEnd()];
+	return [!success || slice.events[0]?.type === "m.room.create", slice.atEnd()];
 }
 
 async function fetchForwards() {
 	const success = await actions.slice.forwards();
-	return [!success || $slice.events[0]?.type === "m.room.create", $slice.atEnd()];
+	return [!success || slice.events[0]?.type === "m.room.create", slice.atEnd()];
 }
 
 function refocus() {
@@ -79,7 +80,6 @@ function checkShift(e) {
 }
 
 onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => reset && reset())));
-onDestroy(slice.subscribe(refocus));
 onDestroy(upload.subscribe(refocus));
 onDestroy(reply.subscribe(refocus));
 onDestroy(edit.subscribe(refocus));
@@ -171,7 +171,7 @@ onDestroy(edit.subscribe(() => {
 </style>
 <div class="content">
 	<Scroller
-		items={$slice.events}
+		items={slice.events}
 		itemKey="eventId"
 		margin={300}
 		bind:scrollTop={scrollTop}
@@ -182,7 +182,7 @@ onDestroy(edit.subscribe(() => {
 		let:index={index}
 		{fetchBackwards}
 		{fetchForwards}
-		getDefault={() => [$slice.events[0]?.type === "m.room.create", $slice.atEnd()]}
+		getDefault={() => [slice.events[0]?.type === "m.room.create", slice.atEnd()]}
 	>
 		<div slot="top" style="margin-top: auto"></div>
 		<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
@@ -190,7 +190,7 @@ onDestroy(edit.subscribe(() => {
 			{#if true} <!-- so i can use const -->
 			{#if event.special !== "redacted"}
 				<div
-					class:header={shouldSplit($slice.events[index - 1], event) ? true : null}
+					class:header={shouldSplit(slice.events[index - 1], event) ? true : null}
 					class:ping={event.isPing}
 					class:reply={$reply?.eventId === event.eventId}
 					class:focused={$focused === event.eventId}
@@ -198,17 +198,16 @@ onDestroy(edit.subscribe(() => {
 					data-event-id={event.eventId}
 				>
 					{#if event.type === "m.room.create"}
-						<Create event={event} />
+						<Create {room} />
 					{:else if event.type === "m.room.message"}
 					  <Message
-							{shiftKey}
-							event={event}
-							header={shouldSplit($slice.events[index - 1], event) ? true : null}
+							{shiftKey} {room} {event}
+							header={shouldSplit(slice.events[index - 1], event) ? true : null}
 						/>
 					{/if}
 				</div>
-				{#if index < $slice.events.length - 1}
-					<Divider {...dividerProps(event, $slice.events[index + 1])} />
+				{#if index < slice.events.length - 1}
+					<Divider {...dividerProps(event, slice.events[index + 1])} />
 				{/if}
 			{/if}
 			{/if}
