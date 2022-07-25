@@ -31,7 +31,7 @@ async function getFiltered(search) {
 
 function getGroupName(id) {
   switch(id) {
-    case 0: return "Smilies";
+    case 0: return "Faces";
     case 1: return "People";
     case 2: return "???";
     case 3: return "Animals & nature";

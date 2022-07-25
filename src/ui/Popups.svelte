@@ -13,6 +13,7 @@ let current = state.popup;
 let data; reset();
 
 // TODO: there are quite a lot of popups here, maybe move each of them into a separate file?
+// TODO: move emoji picker and user popout
 
 $: if ($current.id) {
   state.log.ui("open popup " + $current.id);

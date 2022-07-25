@@ -17,14 +17,14 @@ varying levels of difficulty
 - [x] emoji picker
 - [x] markdown
 - [x] user colors
+- [x] view members by memberships
+- [x] send reactions
+- [x] member popout
 - [-] space home
-- [-] send reactions
 - [ ] jump to older replys
 - [ ] jump to unread
 - [ ] jump to latest
-- [ ] member popout
 - [ ] members list
-- [ ] view members by memberships
 - [ ] join room
 - [ ] room invite list
 - [ ] file too big warning

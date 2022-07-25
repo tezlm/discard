@@ -1,8 +1,7 @@
 <script>
-import { onMount, onDestroy } from 'svelte';
 import Tooltip from "../atoms/Tooltip.svelte";
-import { getDisplayName, getAvatar } from "../../util/content.js";
-let { userId }= state;
+import { parseMxc } from '../../util/content.js';
+let { userId, users }= state;
 let copyCount = 0, copyText = getCopyText(), copyEl;
 
 function getCopyText() {
@@ -36,8 +35,13 @@ function resetCopy() {
 	}, 50);
 }
 
-onMount(() => copyEl.addEventListener("mouseleave", resetCopy));
-onDestroy(() => copyEl.removeEventListener("mouseleave", resetCopy));
+async function getProfile() {
+  if (users.has(userId)) return users.get(userId);
+	const { avatar_url, displayname } = await state.api.fetchUser(userId);
+	const data = { avatar: avatar_url, name: displayname || userId, userId };
+	users.set(userId, data);
+	return data;
+}
 </script>
 <style>
 .user {
@@ -111,13 +115,17 @@ onDestroy(() => copyEl.removeEventListener("mouseleave", resetCopy));
 <div class="offline">Offline!</div>
 {/if}
 <div class="user">
-	<img class="avatar" alt="your avatar" src={getAvatar(userId)} />
-	<div class="info" on:click={handleCopyClick} bind:this={copyEl}>
+	{#await getProfile()}
+		loading
+	{:then profile}
+	<img class="avatar" alt="your avatar" src={parseMxc(profile.avatar, 30)} />
+	<div class="info" on:click={handleCopyClick} on:mouseleave={resetCopy} bind:this={copyEl}>
 		<Tooltip tip={copyText} color={copyCount > 0 ? "var(--color-green)" : null}>
-			<div class="displayname">{getDisplayName(userId)}</div>
+			<div class="displayname">{profile.name}</div>
 			<div class="userid">{userId}</div>
 		</Tooltip>
 	</div>
+	{/await}
 	<Tooltip tip="User Settings" style="height: 30px">
 		<span class="icon" on:click={() => state.scene.set("user-settings")}>settings</span>
 	</Tooltip>

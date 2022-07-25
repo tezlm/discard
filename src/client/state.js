@@ -50,4 +50,5 @@ export default {
   
   // cache
   missingAvatars: new Set(),
+  users: new Map(),
 };

@@ -1,7 +1,7 @@
 <script>
 import Context from "../../atoms/Context.svelte";
 import { parseMxc } from "../../../util/content.js";
-let context = null;
+let context = { x: 100, y: 100 };
 let embed = {
   url: "https://www.freecodecamp.org/news/what-is-open-graph-and-how-can-i-use-it-for-my-website/",
   "og:site_name": "freeCodeCamp.org",
@@ -21,33 +21,6 @@ let embed = {
 }
 </script>
 <style>
-.popout {
-  width: 300px;
-  padding: 16px;
-  background: var(--bg-context);
-  border-radius: 8px;
-  box-shadow: var(--shadow-popup);
-}
-
-.popout img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-}
-
-.popout h3 {
-  margin-top: 16px;
-  font-weight: 500;
-  font-family: var(--font-display);
-  color: var(--fg-notice);
-}
-
-.popout .id {
-  color: var(--fg-muted);
-  font-size: 14px;
-  user-select: all;
-}
-
 .autocomplete {
   background: var(--bg-rooms-members);
   border-radius: 5px;
@@ -124,7 +97,6 @@ let embed = {
   right click
 </div>
 <br />
-{#if context}
 <Context x={context.x} y={context.y} items={[
   { label: "Mark As Read", clicked: todo },
   { label: "Notifications", clicked: todo, submenu: [
@@ -146,29 +118,20 @@ let embed = {
   null,
   { label: "Copy ID", clicked: todo },
 ]} />
-{/if}
-<svelte:window on:click={() => context = null} />
 <br />
-<!--
 <Context items={[
   { label: "Profile", clicked: todo },
+  { label: "Mention", clicked: todo },
   { label: "Message", clicked: todo },
   { label: "Block", clicked: todo },
   null,
   { label: "Kick [user]", clicked: todo, color: "var(--color-red)" },
   { label: "Ban [user]", clicked: todo, color: "var(--color-red)" },
   null,
+  { label: "Power", clicked: todo },
+  null,
   { label: "Copy ID", clicked: todo },
 ]} />
-<br />
--->
-<div class="popout">
-  <a href="https://celery.eu.org/_matrix/media/r0/download/celery.eu.org/h7g7YzhWoMJXVaOBT0vpOheqaOEQBhxY">
-    <img src="https://celery.eu.org/_matrix/media/r0/download/celery.eu.org/h7g7YzhWoMJXVaOBT0vpOheqaOEQBhxY" />
-  </a>
-  <h3>Display Name</h3>
-  <div class="id">@username:example.com</div>
-</div>
 <br />
 <div class="autocomplete">
   <h3>Commands matching <b>/</b></h3>

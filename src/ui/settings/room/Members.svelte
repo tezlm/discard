@@ -4,6 +4,7 @@ import { parseMxc, defaultAvatar } from '../../../util/content.js';
 
 export let room, membership;
 let missingAvs = state.missingAvatars;
+let users = state.users;
 
 let allMembers = false;
 let members = false;
@@ -38,6 +39,15 @@ function getTitle(membership) {
     case "ban": return "Ban";
   }
 }
+
+async function getMember(member) {
+  if (membership === "join") return member;
+  if (users.has(member.userId)) return users.get(member.userId);
+  const { displayname, avatar_url } = await state.api.fetchUser(member.userId);
+  const data = { avatar: avatar_url, name: displayname || member.userId, userId: member.userId };
+  users.set(member.userId, data);
+  return data;
+}
 </script>
 <style>
 .header {
@@ -49,10 +59,6 @@ function getTitle(membership) {
 h1 {
   font: 20px var(--font-display);
   font-weight: 500;
-}
-
-.input {
-  
 }
 
 .member {
@@ -86,6 +92,13 @@ h1 {
   {#if members}
     {#each members as member}
     <div class="member" on:click={() => showPopup(member)}>
+      {#await getMember(member)}
+        <div class="avatar"></div>
+        <div class="name">
+          {member.userId}
+          <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>
+        </div>
+      {:then member}
       <img
         class="avatar"
         alt="avatar for {member.name}"
@@ -97,6 +110,7 @@ h1 {
         {member.name}
         <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>
       </div>
+      {/await}
       {#if membership === "join"}
       <div style="margin-left: auto;">{member.power}</div>
       {/if}

@@ -40,44 +40,10 @@
   src: url(/assets/fonts/abcginto.woff2) format("woff2");
 }
 
-/* TODO: properly self host
-
 @font-face {
   font-family: "Material Icons";
-  src: url(/assets/fonts/material-icons.ttf) format("ttf");
+  src: url(/assets/fonts/material-icons.woff2) format("woff2");
 }
-
-.material-icons {
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;  /* Preferred icon size *
-  display: inline-block;
-  line-height: 1;
-  text-transform: none;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
-
-  /* Support for all WebKit browsers. *
-  -webkit-font-smoothing: antialiased;
-  /* Support for Safari and Chrome. *
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-
-  /* Support for Firefox. *
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  -moz-osx-font-smoothing: grayscale;
-
-  /* Support for IE. *
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: 'liga';
-}
-*/
 
 .icon {
   font-family: "Material Icons";

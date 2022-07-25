@@ -170,6 +170,12 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
   cursor: not-allowed;
 }
 
+.center {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
 .upload {
   padding: 8px 16px 0;
   align-items: start;
@@ -182,12 +188,17 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
   color: var(--fg-notice);
 }
 
-.upload .icon {
-  cursor: pointer;
-}
-
 .upload input {
   display: none;
+}
+
+.upload.disabled {
+  cursor: not-allowed;
+}
+
+.upload.disabled .icon {
+  color: var(--fg-dim);
+  cursor: not-allowed;
 }
 
 .emoji {
@@ -286,9 +297,9 @@ textarea::placeholder {
   </div>
   {/if}
   {#if $room.tombstone}
-  <div class="input disabled">{$room.tombstone?.body ?? "This room has been replaced"}</div>
+  <div class="input disabled"><div class="center">{$room.tombstone?.body ?? "This room has been replaced"}</div></div>
   {:else if $room.power?.getEvent("m.room.message") > $room.power?.me}
-  <div class="input disabled">You can't send messages here</div>
+  <div class="input disabled"><div class="center">You can't send messages here</div></div>
   {:else}
   <div class="input">
     <label class="upload">
@@ -306,8 +317,8 @@ textarea::placeholder {
       on:keydown={handleKeyDown}
       on:paste={handlePaste}
     ></textarea>
-    <div class="emoji" on:click={(e) => { e.stopImmediatePropagation(); showEmoji = !showEmoji }}>
-      <div class="button">
+    <div class="emoji">
+      <div class="button" on:click={(e) => { e.stopImmediatePropagation(); showEmoji = !showEmoji }}>
         <div class="icon" class:shown={showEmoji}>
           {@html twemoji.parse("😀", {
             folder: "svg",
