@@ -1,8 +1,10 @@
 <script>
 import Tooltip from "../atoms/Tooltip.svelte";
-import { parseMxc } from '../../util/content.js';
-let { userId, users }= state;
-let copyCount = 0, copyText = getCopyText(), copyEl;
+import { parseMxc, defaultAvatar } from '../../util/content.js';
+let { userId, users } = state;
+let copyCount = 0, copyText = getCopyText();
+
+let missingAvs = state.missingAvatars;
 
 function getCopyText() {
 	switch(copyCount) {
@@ -118,8 +120,13 @@ async function getProfile() {
 	{#await getProfile()}
 		loading
 	{:then profile}
-	<img class="avatar" alt="your avatar" src={parseMxc(profile.avatar, 30)} />
-	<div class="info" on:click={handleCopyClick} on:mouseleave={resetCopy} bind:this={copyEl}>
+	<img
+		class="avatar"
+		alt="your avatar"
+		src={missingAvs.has(userId) ? defaultAvatar : parseMxc(profile.avatar, 30) ?? defaultAvatar}
+    on:error={(e) => { missingAvs.add(userId); e.target.src = defaultAvatar }}
+	/>
+	<div class="info" on:click={handleCopyClick} on:mouseleave={resetCopy}>
 		<Tooltip tip={copyText} color={copyCount > 0 ? "var(--color-green)" : null}>
 			<div class="displayname">{profile.name}</div>
 			<div class="userid">{userId}</div>

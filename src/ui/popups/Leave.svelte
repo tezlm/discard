@@ -10,25 +10,25 @@ function capitalize(str) {
 }
 
 async function leave() {
-  const roomId = $current.room.roomId;
+  const roomId = current.room.roomId;
   state.log.debug("goodbye " + roomId);
   state.api.leaveRoom(roomId);
-  state.popup.set({ ...$current, id: null });
+  state.popup.set({ ...current, id: null });
   state.scene.set("chat");
 }
 </script>
 <Popup>
-  <h2 slot="header">Leave {$current.room.name}</h2>
+  <h2 slot="header">Leave {current.room.name}</h2>
   <p slot="content" style="max-width: 440px">
-    Are you sure you want to leave <b>{$current.room.name}</b>?
-    {#if $current.room.joinRule !== "public"}
-    You won't be able to rejoin this {$current.type} unless you're re-invited.
+    Are you sure you want to leave <b>{current.room.name}</b>?
+    {#if current.room.joinRule !== "public"}
+    You won't be able to rejoin this {current.type} unless you're re-invited.
     {:else}
-    This {$current.type} is public and can be rejoined at any time. (Unless it's made private!)
+    This {current.type} is public and can be rejoined at any time. (Unless it's made private!)
     {/if}
   </p>
   <div slot="footer">
-    <Button type="link" label="Cancel" clicked={() => state.popup.set({ ...$current, id: null })} />
-    <Button type="danger" label="Leave {capitalize($current.type)}" clicked={leave} />
+    <Button type="link" label="Cancel" clicked={() => state.popup.set({ ...current, id: null })} />
+    <Button type="danger" label="Leave {capitalize(current.type)}" clicked={leave} />
   </div>
 </Popup>

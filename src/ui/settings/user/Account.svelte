@@ -1,6 +1,6 @@
 <script>
 import Button from "../../atoms/Button.svelte";
-import { parseMxc } from "../../../util/content.js";
+import { parseMxc, defaultAvatar } from "../../../util/content.js";
 let { userId, users } = state;
 </script>
 <style>
@@ -30,7 +30,7 @@ let { userId, users } = state;
 }
 </style>
 <div class="account">
-  <img src={parseMxc(users.get(userId).avatar)} alt="your avatar" />
+  <img src={parseMxc(users.get(userId).avatar) ?? defaultAvatar} alt="your avatar" />
   <div class="details">
     <span class="big">{users.get(userId).name}</span>
     <span>{userId}</span>

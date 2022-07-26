@@ -25,7 +25,10 @@ export function handleAccount(roomId, type, content) {
   if (!roomAccounts.has(roomId)) roomAccounts.set(roomId, new Map());
   roomAccounts.get(roomId).set(type, content);
   
-  if (type === "m.fully_read") update();
+  if (type === "m.fully_read") {
+    update();
+    actions.spaces.update();
+  }
 }
 
 export function handleJoin(roomId, event, batch) {
