@@ -3,13 +3,13 @@ import { parseMxc, defaultAvatar } from "../../util/content.js";
 export let user;
 
 let missingAvs = state.missingAvatars;
-function getAvatar() {
+function getAvatar(size) {
   if (missingAvs.has(user.userId)) return;
   if (!user.avatar) {
     missingAvs.has(user.userId);
     return defaultAvatar;
   };
-  return parseMxc(user.avatar);
+  return parseMxc(user.avatar, size);
 }
 </script>
 <style>
@@ -61,7 +61,7 @@ function getAvatar() {
       <img
         class="avatar"
         alt="pfp for {user.name}"
-        src={getAvatar()}
+        src={getAvatar(80)}
         on:error={(e) => { missingAvs.add(user.userId); e.target.src = defaultAvatar }}
       />
     </a>

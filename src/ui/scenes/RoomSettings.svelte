@@ -9,15 +9,15 @@ import Members from "../settings/room/Members.svelte";
 let room = state.selectedRoom;
 
 const views = [
-  { view: Overview,    name: "Overview" },
-  { view: Permissions, name: "Permissions" },
-  { view: Emoji,       name: "Emoji" },
+  { view: Overview,    name: "Overview",    icon: "info" },
+  { view: Permissions, name: "Permissions", icon: "security" },
+  { view: Emoji,       name: "Emoji",       icon: "emoji_emotions" },
   null,
-  { view: Members,     name: "Members", raw: true, props: { membership: "join" }},
-  { view: Members,     name: "Bans",    raw: true, props: { membership: "ban" }},
-  { view: Members,     name: "Invites", raw: true, props: { membership: "invite" }},
+  { view: Members,     name: "Members",     icon: "people",           raw: true, props: { membership: "join" }},
+  { view: Members,     name: "Bans",        icon: "person_remove",    raw: true, props: { membership: "ban" }},
+  { view: Members,     name: "Invites",     icon: "person_add_alt_1", raw: true, props: { membership: "invite" }},
   null,
-  { clicked: () => state.popup.set({ id: "leave", type: "room", room: $room, confirm: () => queueMicrotask(todo) }), name: "Leave Room", color: "var(--color-red)" },
+  { clicked: () => state.popup.set({ id: "leave", type: "room", room: $room, confirm: () => queueMicrotask(todo) }), name: "Leave Room", color: "var(--color-red)", icon: "logout" },
 ];
 </script>
 <Settings {views} options={{ room }} />
