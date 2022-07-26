@@ -97,6 +97,20 @@ let embed = {
   right click
 </div>
 <br />
+<Context items={[
+  { label: "Profile", clicked: todo },
+  { label: "Mention", clicked: todo },
+  { label: "Message", clicked: todo },
+  { label: "Block", clicked: todo },
+  null,
+  { label: "Kick [user]", clicked: todo, color: "var(--color-red)" },
+  { label: "Ban [user]", clicked: todo, color: "var(--color-red)" },
+  null,
+  { label: "Power", clicked: todo },
+  null,
+  { label: "Copy ID", clicked: todo },
+]} />
+<br />
 <Context x={context.x} y={context.y} items={[
   { label: "Mark As Read", clicked: todo },
   { label: "Notifications", clicked: todo, submenu: [
@@ -119,19 +133,6 @@ let embed = {
   { label: "Copy ID", clicked: todo },
 ]} />
 <br />
-<Context items={[
-  { label: "Profile", clicked: todo },
-  { label: "Mention", clicked: todo },
-  { label: "Message", clicked: todo },
-  { label: "Block", clicked: todo },
-  null,
-  { label: "Kick [user]", clicked: todo, color: "var(--color-red)" },
-  { label: "Ban [user]", clicked: todo, color: "var(--color-red)" },
-  null,
-  { label: "Power", clicked: todo },
-  null,
-  { label: "Copy ID", clicked: todo },
-]} />
 <br />
 <div class="autocomplete">
   <h3>Commands matching <b>/</b></h3>

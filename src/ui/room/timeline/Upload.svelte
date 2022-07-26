@@ -9,14 +9,14 @@ $: file = upload.file;
   background: var(--bg-rooms-members);
   border: solid var(--bg-spaces) 1px;
   border-radius: 3px;
-  display: flex;
+  display: inline-flex;
   padding: .5rem;
   margin: 2px 72px;
   height: 60px;
-  width: fit-content;
 }
 
 .info {
+  flex: 1;
   padding: 0 1em;
   display: flex;
   flex-direction: column;
@@ -40,6 +40,16 @@ $: file = upload.file;
   background: var(--color-accent);
   border-radius: 3px;
 }
+
+.icon {
+  margin: 0;
+  font-size: 28px;
+  color: var(--fg-dim);
+}
+
+.icon:hover {
+  color: var(--fg-notice);
+}
 </style>
 <div class="file">
   <img src={fileIcon} alt="file icon" />
@@ -49,4 +59,5 @@ $: file = upload.file;
       <div class="bar" style:width="{upload.progress * 300}px"></div>
     </div>
   </div>
+  <div class="icon" on:click={() => upload.cancel()}>close</div>
 </div>

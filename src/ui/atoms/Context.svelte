@@ -32,6 +32,10 @@ let hovered;
   color: var(--fg-notice) !important;
 }
 
+.icon {
+  float: right;
+}
+
 .spacer {
   height: 1px;
   width: 100%;
@@ -57,6 +61,9 @@ let hovered;
         on:blur={() => hovered = null}
       >
         {item.label}
+        {#if item.submenu}
+        <div class="icon">navigate_next</div>
+        {/if}
       </div>
       {#if item.submenu && hovered === item}
         <svelte:self

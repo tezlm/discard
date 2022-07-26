@@ -119,16 +119,17 @@ export default class Api {
         if (xhr.status !== 200) rej(JSON.parse(xhr.response));
         res(JSON.parse(xhr.response).content_uri);
       });
+      xhr.addEventListener("abort", () => rej(null))
+      xhr.addEventListener("error", (err) => rej(err));
     });
-    xhr.addEventListener("progress", (e) => {
+    xhr.upload.addEventListener("progress", (e) => {
       progress({ loaded: e.loaded, total: e.total });
     });
     xhr.open("POST", `${this.baseUrl}/_matrix/media/v3/upload?filename=${encode(file.name)}`);
     xhr.setRequestHeader("Authorization", "Bearer " + this.token);
     xhr.setRequestHeader("Content-Type", file.type);
-    xhr.setRequestHeader("Content-Length", file.size);
     xhr.send(file);
-    return promise;
+    return { promise, abort: () => xhr.abort() };
   }
     
   // rooms

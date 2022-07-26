@@ -155,7 +155,7 @@ function isRead(room) {
 			class="room"
 			on:click={() => state.popup.set({ id: "create", type: "room" })}>
 			<div class="wrapper">
-				<div class="icon">add_circle</div>
+				<div class="icon">add</div>
 				<div class="name">Create Room</div>
 			</div>
 		</div>

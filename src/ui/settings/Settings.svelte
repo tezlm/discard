@@ -50,6 +50,10 @@ nav {
 	background: rgba(79,84,92,0.6);
 }
 
+.icon {
+  float: right;
+}
+
 .main {
   display: flex;
   position: relative;
@@ -109,7 +113,12 @@ h1 {
     <nav>
       {#each views as view, i}
         {#if view}
-        <div on:click={() => view.clicked ? view.clicked() : focused = view} class="item" class:selected={view === focused} style:color={view.color}>{view.name}</div>
+        <div on:click={() => view.clicked ? view.clicked() : focused = view} class="item" class:selected={view === focused} style:color={view.color}>
+          {view.name}
+          {#if view.icon}
+          <div class="icon">{view.icon}</div>
+          {/if}
+        </div>
         {:else}
         <div class="separator"></div>
         {/if}

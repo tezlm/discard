@@ -92,15 +92,21 @@ async function handleUpload(file) {
 }
 
 async function upload(file) {
-  const status = { file, progress: 0, cancel: todo };
+  const status = { file, progress: 0, cancel: () => {} };
   const roomId = $room.roomId;
-  fileUpload.set(status);
-  const url = await state.api.uploadFile(file, ({ loaded, total }) => {
+  const { promise, abort }= await state.api.uploadFile(file, ({ loaded, total }) => {
     status.progress = loaded / total;
     fileUpload.set(status);
   });
+  status.cancel = abort;
+  fileUpload.set(status);
 
+  const url = await promise.catch((err) => {
+    if (err) console.error(err);
+    return null;
+  });
   fileUpload.set(null);
+  if (!url) return;
 
   const type = getType(file.type);
 
