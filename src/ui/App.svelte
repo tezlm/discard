@@ -61,7 +61,7 @@ main > div {
 }
 </style>
 <main>
-  {#if $scene !== "auth"}
+  {#if $scene !== "loading" && $scene !== "auth"}
   <div class="chat" class:hide={$scene !== "chat"}><Chat /></div>
   {/if}
   {#if $scene === "user-settings"}

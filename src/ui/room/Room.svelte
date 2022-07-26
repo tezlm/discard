@@ -5,7 +5,6 @@ import RoomHeader from './RoomHeader.svelte';
 import RoomHome from './RoomHome.svelte';
 let room = state.focusedRoom;
 let slice = state.slice;
-// FIXME: flash when switching to roomhome?
 </script>
 <style>
 .room {
@@ -19,7 +18,7 @@ let slice = state.slice;
 </style>
 <div class="room">
   <RoomHeader />
-  {#if $room && $slice}
+  {#if $room}
   <RoomContent room={$room} slice={$slice} />
   <RoomFooter />
   {:else}

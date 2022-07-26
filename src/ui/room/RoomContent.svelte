@@ -169,7 +169,7 @@ onDestroy(edit.subscribe(() => {
 	100% { background: none }
 }
 </style>
-<div class="content">
+<div class="content" style:display={room ? null : "none"}>
 	<Scroller
 		items={slice.events}
 		itemKey="eventId"

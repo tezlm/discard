@@ -3,14 +3,13 @@ import Input from "../atoms/Input.svelte";
 import Button from "../atoms/Button.svelte";
 import UserId from "../atoms/UserId.svelte";
 let type = "login";
-let localpart, homeserver = localStorage.getItem("homeserver") ?? "", password, error;
-
-function submit() {
-  document.forms[0].submit();
-}
+let localpart, homeserver = localStorage.getItem("homeserver") ?? "", password;
+let form;
+let error;
 
 async function handleSubmit(e) {
-  e?.preventDefault();
+  e.preventDefault && e.preventDefault();
+
   for (let input of document.querySelectorAll("input")) {
     if (!input.value) return input.focus();
   }
@@ -66,13 +65,13 @@ h5, .spacer {
       <h1>Welcome back!</h1>
       <span>We're so excited to see you again!</span>
     </div>
-    <form on:submit={handleSubmit}>
+    <form on:submit={handleSubmit} bind:this={form}>
       <h5>User Id</h5>
       <UserId bind:localpart={localpart} bind:homeserver={homeserver} />
       <h5>Password</h5>
       <Input type="password" bind:value={password} submitted={handleSubmit} />
       <div class="spacer"></div>
-      <Button type="primary big" on:click={submit} label={type === "login" ? "Login" : "Register"} />
+      <Button type="primary big" clicked={handleSubmit} label={type === "login" ? "Login" : "Register"} />
       {#if error}
       <div class="error">{error}</div>
       {/if}

@@ -129,6 +129,8 @@ export function handle(roomId, event, toStart = false) {
   } else {
     state.events.set(id, format(roomId, event));
     addToTimeline(roomId, id, toStart);
+    actions.rooms.update();
+    actions.spaces.update();
     if (relations.has(id)) {
       for (let relation of relations.get(id)) handle(roomId, relation);
       relations.delete(id);
