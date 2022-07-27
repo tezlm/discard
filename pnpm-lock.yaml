@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@matrix-org/olm': https://gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.8.tgz
   '@sveltejs/vite-plugin-svelte': next
   '@types/marked': ^4.0.3
   emojibase: ^6.1.0
@@ -15,6 +16,7 @@ specifiers:
   vite: ^2.9.14
 
 dependencies:
+  '@matrix-org/olm': '@gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.8.tgz'
   emojibase: 6.1.0
   emojibase-data: 7.0.1_emojibase@6.1.0
   fuzzysort: 2.0.1
@@ -572,3 +574,9 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
+
+  '@gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.8.tgz':
+    resolution: {tarball: https://gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.8.tgz}
+    name: '@matrix-org/olm'
+    version: 3.2.8
+    dev: false

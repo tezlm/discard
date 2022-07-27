@@ -1,7 +1,10 @@
 <script>
 import Settings from '../settings/Settings.svelte';
 
+// maybe combine permissions with security? move security to overview?
+
 import Overview from "../settings/room/Overview.svelte";
+import Security from "../settings/room/Security.svelte";
 import Permissions from "../settings/room/Permissions.svelte";
 import Emoji from "../settings/room/Emoji.svelte";
 import Members from "../settings/room/Members.svelte";
@@ -10,7 +13,8 @@ let room = state.selectedRoom;
 
 const views = [
   { view: Overview,    name: "Overview",    icon: "info" },
-  { view: Permissions, name: "Permissions", icon: "security" },
+  { view: Permissions, name: "Permissions", icon: "flag" },
+  { view: Security,    name: "Security",    icon: "security" },
   { view: Emoji,       name: "Emoji",       icon: "emoji_emotions" },
   null,
   { view: Members,     name: "Members",     icon: "people",           raw: true, props: { membership: "join" }},

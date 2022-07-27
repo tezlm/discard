@@ -44,12 +44,3 @@
   font-family: "Material Icons";
   src: url(/assets/fonts/material-icons.woff2) format("woff2");
 }
-
-.icon {
-  font-family: "Material Icons";
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}

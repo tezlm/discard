@@ -74,4 +74,8 @@ export async function logout() {
   state.scene.set("auth");
   state.popup.set({});
   state.client = null;
+
+  state.rooms.clear();
+  state.spaces.clear();
+  state.dms.clear();
 }

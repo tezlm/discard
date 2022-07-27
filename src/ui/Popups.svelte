@@ -67,6 +67,7 @@ function handleKeyDown(e) {
   }
 
   closePopup();
+  e.preventDefault();
   e.stopImmediatePropagation();
 }
 </script>

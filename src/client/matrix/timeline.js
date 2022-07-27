@@ -100,8 +100,8 @@ export default class TimelineSet {
     }
     
     // couldn't find any timeline for that event, get the event's context
-    const [event, { start, end, events_before, events_after }] = Promise.all([
-      await state.api.fetchEent(this.roomId, eventId),
+    const [event, { start, end, events_before, events_after }] = await Promise.all([
+      await state.api.fetchEvent(this.roomId, eventId),
       await state.api.fetchContext(this.roomId, eventId),
     ]);
     const events = events_before.reverse().concat([event, ...events_after]);
@@ -113,7 +113,9 @@ export default class TimelineSet {
     // no timeline, make a new one    
     const timeline = new Timeline(start, end);
     for (let i of events_before.reverse().concat([event, ...events_after])) {
-      handleEvent(i, timeline);
+      // FIXME: aaaaaaaaaaaaaaaaa
+      // handleEvent(i, timeline);
+      handle(this.roomId, i);
     }
     this._timelines.add(timeline);
     this.current = timeline;

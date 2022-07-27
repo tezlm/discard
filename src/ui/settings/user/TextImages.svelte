@@ -27,8 +27,12 @@ import Radio from "../../atoms/Radio.svelte";
 <br />
 <div class="title">Show embeds</div>
 <Radio
-  options={[["Always", "always"], ["In unencrypted rooms", "unencrypted"], ["Never", "never"]]}
+  options={[
+    { name: "Always", id: "always" },
+    { name: "In unencrypted rooms", id: "unencrypted" },
+    { name: "Never", id: "never" },
+  ]}
   selected={state.settings.get("showembeds")}
-  changed={(op) => state.settings.put("showembeds", op)}
+  changed={(id) => state.settings.put("showembeds", id)}
 />
 <br />

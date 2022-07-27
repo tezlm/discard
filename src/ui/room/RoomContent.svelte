@@ -12,7 +12,10 @@ let { focused, reply, edit, upload } = state.roomState;
 let shiftKey = false;
 let scrollTop, scrollMax, scrollTo, reset;
 
-$: if (slice) refocus();
+$: if (slice) {
+	refocus();
+	// reset && reset();
+}
 
 // TODO: unruin this code
 function shouldSplit(prev, ev) {

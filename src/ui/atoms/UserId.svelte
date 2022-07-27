@@ -1,23 +1,24 @@
 <script>
 export let localpart = "";
 export let homeserver = "";
+let localpartEl, homeserverEl;
 
 function update() {
-  if (homeserver.startsWith("@")) {
+  if (homeserver?.startsWith("@")) {
     const [newLocal, newServer] = homeserver.slice(1).split(":");
     if (newLocal) localpart = newLocal;
     homeserver = newServer;
-    document.getElementById("localpart").focus(); 
+    localpartEl.focus(); 
   }
 
-  localpart  = localpart.replace(/^@*/, "");
-  if (localpart.includes(":"))  {
+  localpart  = localpart?.replace(/^@*/, "");
+  if (localpart?.includes(":"))  {
     const [newLocal, newServer] = localpart.split(":");
     localpart = newLocal;
     if (newServer) homeserver = newServer;
-    document.getElementById("homeserver").focus(); 
+    homeserverEl.focus(); 
   }
-  if (homeserver.includes(":")) {
+  if (homeserver?.includes(":")) {
     const [newLocal, newServer] = homeserver.split(":"); 
     homeserver = newServer;
     if (newLocal) localpart = newLocal;
@@ -31,7 +32,10 @@ function update() {
 }
 
 .userid span {
-  padding: 10px;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 10px;
   font-size: 16px;
   background: var(--bg-rooms-members);
 }
@@ -61,8 +65,8 @@ input:nth-child(4) {
 </style>
 <div class="userid">
   <span>@</span>
-  <input id="localpart"  bind:value={localpart}  on:input={update} placeholder="cool-id" />
+  <input id="localpart"  bind:value={localpart}  bind:this={localpartEl}  on:input={update} placeholder="cool-id" />
   <span>:</span>
-  <input id="homeserver" bind:value={homeserver} on:input={update} placeholder="example.org" />
+  <input id="homeserver" bind:value={homeserver} bind:this={homeserverEl} on:input={update} placeholder="example.org" />
 </div>
 

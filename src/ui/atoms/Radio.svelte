@@ -13,10 +13,11 @@ function select(option) {
   display: flex;
   align-items: center;
   margin: 8px 0;
-  padding: 10px;
+  padding: 10px 8px;
   background: var(--bg-rooms-members);
   border-radius: 3px;
   cursor: pointer;
+  border-left: solid transparent 3px;
 }
 
 .option:hover {
@@ -25,6 +26,11 @@ function select(option) {
 
 .option.selected {
   background: #40444b;
+}
+
+.option.disabled {
+  background: rgba(4, 4, 5, 0.06);
+  cursor: not-allowed;
 }
 
 .dot {
@@ -48,15 +54,45 @@ function select(option) {
   background: var(--fg-light);
   border-radius: 50%;
 }
+
+.label {
+  color: var(--fg-light);
+}
+
+.option:hover .label {
+  color: var(--fg-content);
+}
+
+.option.selected .label {
+  color: var(--fg-notice);
+}
+
+.name {
+  font-weight: 500;
+}
+
+.detail {
+  font-size: 14px;
+  margin-top: 4px;
+}
 </style>
 <div>
   {#each options as option}
-    <div class="option" class:selected={selected === option[1]} on:click={() => select(option[1])}>
+    <div
+      class="option"
+      class:selected={selected === option.id}
+      class:disabled={option.disabled}
+      style:border-left-color={option.color}
+      on:click={() => !option.disabled && select(option.id)}
+    >
       <div class="dot">
-        {#if selected === option[1]}<div></div>{/if}
+        {#if selected === option.id}<div></div>{/if}
       </div>
       <div class="label">
-        {option[0]}
+        <div class="name">{option.name}</div>
+        {#if option.detail}
+        <div class="detail">{option.detail}</div>
+        {/if}
       </div>
     </div>
   {/each}

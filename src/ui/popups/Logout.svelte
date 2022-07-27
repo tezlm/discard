@@ -1,6 +1,7 @@
 <script>
 import Popup from "../atoms/Popup.svelte";
 import Button from "../atoms/Button.svelte";
+export const confirm = actions.client.logout;
 </script>
 <Popup>
   <h2 slot="header">Log Out</h2>

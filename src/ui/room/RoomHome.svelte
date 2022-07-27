@@ -30,10 +30,11 @@ function formatJoinRule(rule) {
 </script>
 <style>
 .content {
-  padding: 32px;
-  flex: 1;
   display: flex;
   justify-content: center;
+  flex: 1;
+  padding: 32px;
+  overflow-y: scroll;
   background: #2c2e33;
 }
 

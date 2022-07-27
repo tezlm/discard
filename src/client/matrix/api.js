@@ -146,7 +146,9 @@ export default class Api {
     });
   }
   
-  joinRoom() { throw "TODO" }
+  joinRoom(roomId) {
+    return this.fetch("POST", `/rooms/${encode(roomId)}/join`);    
+  }
   
   leaveRoom(roomId) {
     return this.fetch("POST", `/rooms/${encode(roomId)}/leave`);    

@@ -29,6 +29,11 @@ export async function forwards() {
   return success;
 }
 
-export async function jump(_roomId, eventId) {
+export async function jump(_roomId, eventId) {  
+  // const slice = actions.slice.get(state.focusedRoomId);
+  // if (!slice.events.find(i => i.eventId === eventId)) {
+  //   await slice.jump(eventId);
+  // }
+  
   state.roomState.focused.set(eventId);
 }
