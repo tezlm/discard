@@ -11,7 +11,7 @@ export default class Slice {
   
   reset(count = 50) {
     const timeline = this.timelineSet.current;
-    const startIdx = Math.max(timeline.length - count - 1, 0);
+    const startIdx = Math.max(timeline.length - (count * 2) - 1, 0);
     const endIdx = timeline.length - 1;
     this.start = timeline[startIdx];
     this.end = timeline[endIdx];
@@ -36,7 +36,7 @@ export default class Slice {
     const startIdx = this.start ? timeline.indexOf(this.start) : Math.max(timeline.length - count, 0);
     if (startIdx < 0) this.reset();
     
-    const eventCount = 100;
+    const eventCount = count * 2;
     const newStart = Math.max(startIdx - count, 0);
     const newEnd = Math.min(newStart + eventCount, timeline.length - 1);
      
@@ -54,7 +54,7 @@ export default class Slice {
     const startIdx = timeline.lastIndexOf(this.start);
     if (startIdx < 0) this.reset();
     
-    const eventCount = 100;
+    const eventCount = count * 2;
     const newStart = Math.min(Math.max(startIdx + count, 0), timeline.length - count - 1);
     const newEnd = Math.min(newStart + eventCount, timeline.length - 1);
      
@@ -65,7 +65,18 @@ export default class Slice {
     this.events = timeline.slice(newStart, newEnd + 1).map(i => state.events.get(i));
   }
   
-  async jump(count = 50) {
-    // TODO: jump to context
+  async jump(eventId, count = 50) {
+    await this.timelineSet.jump(eventId);
+    const timeline = this.timelineSet.current;
+    const evIdx = timeline.indexOf(eventId);
+    
+    const newStart = Math.max(evIdx - count, 0);
+    const newEnd = Math.min(evIdx + count - 1, timeline.length - 1);
+    // const newStart = Math.min(Math.max(startIdx + count, 0), timeline.length - count - 1);
+    // const newEnd = Math.min(newStart + eventCount, timeline.length - 1);
+    
+    this.start = timeline[newStart];
+    this.end = timeline[newEnd];
+    this.events = timeline.slice(newStart, newEnd + 1).map(i => state.events.get(i));
   }
 }

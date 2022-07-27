@@ -3,6 +3,7 @@ import Popup from "../atoms/Popup.svelte";
 import Button from "../atoms/Button.svelte";
 import { formatSize } from "../../util/format.js";
 export let current;
+export const confirm = current.confirm;
 
 function closePopup() {
   state.popup.set({ ...current, id: null });

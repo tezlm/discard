@@ -17,6 +17,7 @@
 		"vite": "^2.9.14"
 	},
 	"dependencies": {
+		"@matrix-org/olm": "https://gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.8.tgz",
 		"emojibase": "^6.1.0",
 		"emojibase-data": "^7.0.1",
 		"fuzzysort": "^2.0.1",

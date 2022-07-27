@@ -50,8 +50,30 @@ hr {
   margin-bottom: 8px;
 }
 
-/*
 .icon {
-  font-family: "Material Icons";  
+  font-family: "Material Icons";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-*/
+
+.scroll {
+  overflow: hidden auto;
+  scrollbar-color: var(--bg-spaces) var(--bg-rooms-members);
+  scrollbar-gutter: stable;
+}
+
+.scroll::-webkit-scrollbar {
+  width: 3px;
+  background: var(--bg-rooms-members);
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  background: var(--bg-spaces);
+}
+
+.scroll::-webkit-scrollbar-button {
+  display: none;
+}

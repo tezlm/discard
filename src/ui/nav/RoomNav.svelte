@@ -33,7 +33,7 @@ function isRead(room) {
 	width: 240px;
 	display: flex;
 	flex-direction: column;
-	overflow: hidden scroll;
+  scrollbar-width: thin;
 }
 
 .nav > .spacer {
@@ -140,7 +140,7 @@ function isRead(room) {
   display: block;
 }
 </style>
-	<div class="nav" tabindex=-1>
+	<div class="nav scroll" tabindex=-1>
 		<div class="spacer"></div>
 	  <div
 			class={$focusedRoom ? "room home" : "room home focused"}

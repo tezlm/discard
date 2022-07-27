@@ -1,6 +1,5 @@
 <script>
 import { parseHtml } from "../../util/html.js";
-import roomNormalIcon from "../../assets/icons/room-normal.svg";
 let room = state.focusedRoom;
 let space = state.focusedSpace;
 </script>
@@ -44,14 +43,13 @@ let space = state.focusedSpace;
 
 .icon {
   margin-right: 6px;
-  width: 24px;
-  height: 24px;
-  background-color: var(--fg-dim);
+  font-size: 24px;
+  color: var(--fg-dim);
 }
 </style>
 <div class="header" class:dark={$space && !$room}>
   {#if $room}
-  <span class="icon" style="mask-image: url({roomNormalIcon})" />
+  <span class="icon">tag</span>
   {/if}
   <span class="name">{$room ? $room.name : "Home"}</span>
   {#if $room?.topic}

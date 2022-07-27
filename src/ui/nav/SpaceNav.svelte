@@ -36,7 +36,7 @@ function allRead(spaceId) {
   align-items: center;
   max-width: 72px;
   padding: 4px 12px;
-  overflow-y: scroll;
+  scrollbar-width: thin;
 }
 
 .space {
@@ -100,7 +100,7 @@ function allRead(spaceId) {
   margin: 4px 0 0;
 }
 </style>
-<div class="nav">
+<div class="nav scroll">
   <div class="space" class:selected={$focusedSpace === null}>
     <Tooltip position="right" tip="Home">
       <img

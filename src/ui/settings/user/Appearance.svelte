@@ -17,9 +17,13 @@ const opts = state.settings;
 <br />
 <div class="title">User colors</div>
 <Radio
-  options={[["Always", "always"], ["If they have a power level", "power"], ["Never", "never"]]}
+  options={[
+    { name: "Always", id: "always"},
+    { name: "If they have a power level", id: "power"},
+    { name: "Never", id: "never"}
+  ]}
   selected={opts.get("namecolors")}
-  changed={(op) => opts.put("namecolors", op)}
+  changed={(id) => opts.put("namecolors", id)}
 />
 <br />
 <div class="title">Room timeline</div>

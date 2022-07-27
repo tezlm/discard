@@ -122,7 +122,7 @@ export async function focus(room) {
     state.log.debug("set slice for" + room?.roomId);
     state.slice.set(actions.slice.get(room.roomId));
   }
-      
+
   if (room) {
     const recent = state.recentRooms;
     const recentIndex = recent.findIndex(i => i.roomId === room?.roomId);

@@ -21,29 +21,29 @@ varying levels of difficulty
 - [x] send reactions
 - [x] member popout
 - [-] space home
+- [ ] add/remove rooms from spaces
+- [ ] organize spaces/rooms
+- [ ] join room
+- [ ] room invite list
 - [ ] jump to older replys
 - [ ] jump to unread
 - [ ] jump to latest
-- [ ] members list
-- [ ] join room
-- [ ] room invite list
 - [ ] file too big warning
+- [ ] drag and drop to upload file
+- [ ] members list
 - [ ] make settings save
 - [ ] invite people
 - [ ] ban/kick people
 - [ ] context menus
-- [ ] add/remove rooms from spaces
-- [ ] organize spaces/rooms
 - [ ] dms
 - [ ] e2ee
 - [ ] custom emoji
 - [ ] threads
 - [ ] voice channels
-- [ ] drag and drop to upload file
 - [ ] link embeds
 - [ ] slash commands
-- [ ] user/command autocomplete
 - [ ] rich input
+- [ ] user/command autocomplete
 - [ ] notifications
 - [x] nitor
 
