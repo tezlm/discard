@@ -63,6 +63,8 @@ let hovered;
         {item.label}
         {#if item.submenu}
         <div class="icon">navigate_next</div>
+        {:else if item.icon}
+        <div class="icon">{item.icon}</div>
         {/if}
       </div>
       {#if item.submenu && hovered === item}

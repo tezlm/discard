@@ -26,14 +26,10 @@ export async function fetch() {
   const api = new Api("https://" + homeserver, token);
   const filter = await api.postFilter(userId, defaultFilter);
   api.useFilter(filter);
+  state.log.matrix("starting sync");  
   const syncer = new Syncer(api);
   syncer.start();
-  state.log.matrix("starting sync");
-  
-  state.api = api;
-  state.syncer = syncer;
-  state.userId = userId;
-  state.scene.set("loading");
+  start(api, syncer, userId);
 }
 
 // login to the homeserver and create a new client
@@ -51,11 +47,8 @@ export async function login({ localpart, homeserver, password }) {
     localStorage.setItem("token", token);
     const syncer = new Syncer(api);
     syncer.start();
+    start(api, syncer, userId);
     state.log.matrix("starting sync");
-    state.api = api;
-    state.syncer = syncer;
-    state.userId = userId;
-    state.scene.set("loading");
   } catch(err) {
     state.log.error(err);
     switch(err.name) {
@@ -65,6 +58,15 @@ export async function login({ localpart, homeserver, password }) {
       default: throw `Unknown error (${err.name}})`;
     }
   }
+}
+
+function start(api, syncer, userId) {
+  state.api = api;
+  state.syncer = syncer;
+  state.userId = userId;
+  state.scene.set("loading");
+  
+  syncer.on("timeline", (roomId, event) => actions.timeline.handle(roomId, event, false));
 }
 
 export async function logout() {

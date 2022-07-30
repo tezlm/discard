@@ -12,7 +12,6 @@ export function get(roomId) {
 
 export async function backwards() {
   const slice = actions.slice.get(state.focusedRoomId);
-  console.log(slice)
   const top = slice.events[0]?.eventId;
   await slice.backwards();
   const success = top !== slice.events[0]?.eventId;

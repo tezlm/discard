@@ -17,7 +17,7 @@ let slice = state.slice;
 }
 </style>
 <div class="room">
-  <RoomHeader />
+  <RoomHeader room={$room} />
   {#if $room}
   <RoomContent room={$room} slice={$slice} />
   <RoomFooter />

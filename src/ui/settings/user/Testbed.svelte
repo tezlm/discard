@@ -1,9 +1,8 @@
 <script>
 import Context from "../../atoms/Context.svelte";
 import { parseMxc } from "../../../util/content.js";
-let context = { x: 100, y: 100 };
 let embed = {
-  url: "https://www.freecodecamp.org/news/what-is-open-graph-and-how-can-i-use-it-for-my-website/",
+  "url": "https://www.freecodecamp.org/news/what-is-open-graph-and-how-can-i-use-it-for-my-website/",
   "og:site_name": "freeCodeCamp.org",
   "og:type": "article",
   "og:title": "What is Open Graph and how can I use it for my website?",
@@ -98,21 +97,22 @@ let embed = {
 </div>
 <br />
 <Context items={[
-  { label: "Profile", clicked: todo },
-  { label: "Mention", clicked: todo },
-  { label: "Message", clicked: todo },
-  { label: "Block", clicked: todo },
+  { label: "Profile", clicked: todo, icon: "person" },
+  { label: "Mention", clicked: todo, icon: "notifications" },
+  { label: "Message", clicked: todo, icon: "message" },
+  { label: "Block",   clicked: todo, icon: "block" },
   null,
-  { label: "Kick [user]", clicked: todo, color: "var(--color-red)" },
-  { label: "Ban [user]", clicked: todo, color: "var(--color-red)" },
+  { label: "Remove Messages", clicked: () => state.popup.set({ id: "deleterecent", room: { roomId: null }, member: { name: "yes" } }), icon: "delete",        color: "var(--color-red)" },
+  { label: "Kick [user]",     clicked: () => state.popup.set({ id: "kick",         room: { roomId: null }, member: { name: "yes" } }), icon: "person_remove", color: "var(--color-red)" },
+  { label: "Ban [user]",      clicked: () => state.popup.set({ id: "ban",          room: { roomId: null }, member: { name: "yes" } }), icon: "person_remove", color: "var(--color-red)" },
   null,
-  { label: "Power", clicked: todo },
+  { label: "Power",   clicked: todo, submenu: [] },
   null,
-  { label: "Copy ID", clicked: todo },
+  { label: "Copy ID", clicked: todo, icon: "terminal" },
 ]} />
 <br />
-<Context x={context.x} y={context.y} items={[
-  { label: "Mark As Read", clicked: todo },
+<Context x={200} items={[
+  { label: "Mark As Read",  clicked: todo, icon: "done" },
   { label: "Notifications", clicked: todo, submenu: [
     { label: "Foo", clicked: todo },
     { label: "Bar", clicked: todo },
@@ -125,14 +125,29 @@ let embed = {
     { label: "Baz", clicked: todo },
   ] },
   null,
-  { label: "Invite", clicked: todo, color: "var(--color-accent)" },
-  { label: "Copy Link", clicked: todo },
+  { label: "Invite",    clicked: todo, icon: "person_add", color: "var(--color-accent)" },
+  { label: "Copy Link", clicked: todo, icon: "link" },
   null,
-  { label: "Leave", clicked: todo, color: "var(--color-red)" },
+  { label: "Leave",   clicked: todo, icon: "logout", color: "var(--color-red)" },
   null,
-  { label: "Copy ID", clicked: todo },
+  { label: "Copy ID", clicked: todo, icon: "terminal" },
 ]} />
 <br />
+<Context x={390} items={[
+  { label: "Add Reaction", clicked: todo, submenu: [
+    { label: "Emoji 1", clicked: todo },
+    { label: "Emoji 2", clicked: todo },
+    { label: "Emoji 3", clicked: todo },
+    { label: "Emoji 4", clicked: todo },
+  ] },
+  { label: "Reply",          clicked: todo, icon: "reply" },
+  { label: "Mark Unread",    clicked: todo, icon: "mark_chat_unread" },
+  { label: "Copy Link",      clicked: todo, icon: "link" },
+  { label: "Edit Message",   clicked: todo, icon: "edit" },
+  { label: "Delete Message", clicked: todo, icon: "delete", color: "var(--color-red)" },
+  null,
+  { label: "Copy ID",        clicked: todo, icon: "terminal" },
+]} />
 <br />
 <div class="autocomplete">
   <h3>Commands matching <b>/</b></h3>

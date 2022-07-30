@@ -37,51 +37,48 @@ function select(option) {
   border-radius: 3px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  background: var(--bg-context);
+  background: var(--bg-rooms-members);
+  border: solid var(--bg-spaces) 1px;
+  z-index: 1;
 }
 
 .option {
+  width: 100%;
   display: flex;
   align-items: center;
   padding: 10px;
   cursor: pointer;
 }
 
-/* TODO: this code is wayy to hacky, get svg? */
+.option:hover {
+  background: rgba(98, 98, 100, .1);
+}
+
+.option.selected {
+  background: rgba(98, 98, 100, .2);
+}
+
 .arrow {
   position: relative;
-  margin-right: 8px;
   transition: all .1s;
+  transform: scale(1.5);
 }
 
 .arrow.show {
-  transform: rotate(180deg);
+  transform: scale(1.5) rotate(180deg);
 }
 
-.arrow::after, .arrow::before {
-  content: "";
-  display: block;
-  position: absolute;
-  top: 2px;
-  right: -4px;
-  width: 8px;
-  height: 2px;
-  background: var(--fg-notice);
-}
-
-.arrow::before {
-  transform: rotate(-45deg) translateX(3px);
-}
-
-.arrow::after {
-  transform: rotate(45deg) translateX(-3px);
+.checkmark {
+  margin-left: auto;
+  color: var(--color-accent);
+  transform: scale(1.2);
 }
 </style>
 <div class="container">
   <!-- FIXME: close on blur -->
   <div class="dropdown" class:show on:click={() => show = !show}>
     {options.find(i => i[1] === selected)?.[0]}
-    <div class="arrow" class:show></div>
+    <div class="arrow icon" class:show>expand_more</div>
   </div>
   {#if show}
   <div class="options">
@@ -90,6 +87,9 @@ function select(option) {
       <div class="label">
         {option[0]}
       </div>
+      {#if option[1] === selected}
+      <div class="checkmark icon">check_circle</div>
+      {/if}
     </div>
   {/each}
   </div>

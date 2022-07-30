@@ -18,15 +18,15 @@ const isOrphan = [...getIds("orphanRooms"), ...getIds("orphanSpaces")].includes(
 <div class="title">Access</div>
 <Radio selected={"invite"} options={[
   { id: "invite",     name: "Invite-only", detail: "Members must be invited to this room." },
-  { id: "restricted", name: "Restricted",  detail: "Any member part of this space can join", disabled: isOrphan },
-  { id: "public",     name: "Public",      detail: "Anyone can join this room" },
-  { id: "published",  name: "Published",   detail: "Public, and published to the room directory" },
+  { id: "restricted", name: "Restricted",  detail: "Any member part of this space can join.", disabled: isOrphan },
+  { id: "public",     name: "Public",      detail: "Anyone can join this room." },
+  { id: "published",  name: "Published",   detail: "Public, and published to the room directory." },
 ]} />
 <br />
 <div class="title">Message History</div>
 <Radio selected={"member"} options={[
-  { id: "world",  name: "Everyone", detail: "Includes guests. Good for public rooms", color: "var(--color-accent)" },
-  { id: "member", name: "Members",  detail: "All members since selecting this option", color: "var(--color-green)" },
-  { id: "invite", name: "Members, after invite", detail: "All members since they were invited", color: "var(--color-yellow)" },
-  { id: "join",   name: "Members, after join",   detail: "All members since they joined", color: "var(--color-red)" },
+  { id: "world",  name: "Everyone", detail: "Includes guests. Good for public rooms.", color: "var(--color-accent)" },
+  { id: "member", name: "Members",  detail: "All members since selecting this option.", color: "var(--color-green)" },
+  { id: "invite", name: "Members, after invite", detail: "All members since they were invited.", color: "var(--color-yellow)" },
+  { id: "join",   name: "Members, after join",   detail: "All members since they joined.", color: "var(--color-red)" },
 ]} />

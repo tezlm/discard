@@ -14,6 +14,8 @@ import Nickname from "./popups/Nickname.svelte";
 import Member from "./popups/Member.svelte";
 import Invite from "./popups/Invite.svelte";
 import Ban from "./popups/Ban.svelte";
+import Kick from "./popups/Kick.svelte";
+import DeleteRecent from "./popups/DeleteRecent.svelte";
 
 const popups = new Map();
 popups.set("todo", Todo);
@@ -35,6 +37,8 @@ popups.set("member", Member);
 popups.set("nickname", Nickname);
 popups.set("invite", Invite);
 popups.set("ban", Ban);
+popups.set("kick", Kick);
+popups.set("deleterecent", DeleteRecent);
 
 let current = state.popup;
 
