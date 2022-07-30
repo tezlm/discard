@@ -1,5 +1,5 @@
 <script>
-// merge with kick and deleterecent
+// merge with ban and deleterecent
 import Popup from "../atoms/Popup.svelte";
 import Textarea from "../atoms/Textarea.svelte";
 import Dropdown from "../atoms/Dropdown.svelte";
@@ -24,13 +24,13 @@ if (current.room.type === "room") {
 }
 </style>
 <Popup>
-  <h2 slot="header">Ban {current.member.name}?</h2>
+  <h2 slot="header">Kick {current.member.name}?</h2>
   <div slot="content">
     {#if options.length}
-    <div class="title">Ban scope</div>
+    <div class="title">Kick scope</div>
     <Dropdown {options} />
     {/if}
-    <div class="title">Reason for ban</div>
+    <div class="title">Reason for Kick</div>
     <Textarea />
   </div>
   <div slot="footer">

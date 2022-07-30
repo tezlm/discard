@@ -50,7 +50,7 @@ function getState() {
   <div slot="footer">
     <Button type="link" label="Okay" clicked={closePopup} />
     {#if current.canKick && membership !== "ban"}
-      <Button type="danger" label={membership === "join" ? "Kick" : "Disinvite"} clicked={todo} />
+      <Button type="danger" label={membership === "join" ? "Kick" : "Disinvite"} clicked={() => state.popup.set({ id: "kick", member, room: current.room })} />
     {/if}
     {#if current.canBan}
       {#if membership === "ban"}

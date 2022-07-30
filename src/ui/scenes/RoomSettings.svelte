@@ -4,8 +4,8 @@ import Settings from '../settings/Settings.svelte';
 // maybe combine permissions with security? move security to overview?
 
 import Overview from "../settings/room/Overview.svelte";
-import Security from "../settings/room/Security.svelte";
 import Permissions from "../settings/room/Permissions.svelte";
+import Security from "../settings/room/Security.svelte";
 import Emoji from "../settings/room/Emoji.svelte";
 import Members from "../settings/room/Members.svelte";
 

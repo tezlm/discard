@@ -1,7 +1,8 @@
 <script>
 import { parseHtml } from "../../util/html.js";
-let room = state.focusedRoom;
+export let room;
 let space = state.focusedSpace;
+$: dark = $space && !room;
 </script>
 <style>
 .header {
@@ -47,15 +48,15 @@ let space = state.focusedSpace;
   color: var(--fg-dim);
 }
 </style>
-<div class="header" class:dark={$space && !$room}>
-  {#if $room}
+<div class="header" class:dark={dark}>
+  {#if room}
   <span class="icon">tag</span>
   {/if}
-  <span class="name">{$room ? $room.name : "Home"}</span>
-  {#if $room?.topic}
+  <span class="name">{room ? room.name : "Home"}</span>
+  {#if room?.topic}
   <div class="spacer"></div>
-  <div class="topic" on:click={() => state.popup.set({ id: "info", head: $room.name, body: parseHtml($room.topic, { linkify: true }), html: true })}>
-    {@html parseHtml($room.topic, { linkify: true })}
+  <div class="topic" on:click={() => state.popup.set({ id: "info", head: room.name, body: parseHtml(room.topic, { linkify: true }), html: true })}>
+    {@html parseHtml(room.topic, { linkify: true })}
   </div>
   {/if}
 </div>

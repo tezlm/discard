@@ -36,7 +36,11 @@ export default class Syncer extends Emitter {
   
   // TODO: retry requests handler
   _error(err) {
-    state.log.error(err);
+    if (err === "M_UNKNOWN_TOKEN") {
+      actions.client.logout();
+    } else {    
+      console.error(err);
+    }
     this.status = "stopped";
     return null;
   }
@@ -44,15 +48,13 @@ export default class Syncer extends Emitter {
   async _loop(since) {
     const sync = await this.api.sync(since, this._controller.signal).catch((err) => this._error(err));
     if (!sync) return;
-    if (sync.error) return this._error();
-    console.log(sync)
+    if (sync.error) return this._error(sync.errcode);
     const { account_data, rooms } = sync;
     
     for (let roomId in rooms?.join ?? {}) {
       const room = rooms.join[roomId];      
 
       for (let event of room.state?.events ?? []) actions.parser.handleState(roomId, event, room.timeline.prev_batch);
-      for (let event of room.timeline?.events ?? []) actions.parser.handleEvent(roomId, event);
       for (let event of room.ephemeral?.events ?? []) actions.parser.handleEphermeral(roomId, event.type, event.content);
       for (let event of room.account_data?.events ?? []) actions.parser.handleRoomAccount(roomId, event.type, event.content);
       if  (room.unread_notifications) actions.parser.handleNotis(roomId, room.unread_notifications?.highlight_count);
@@ -72,7 +74,6 @@ export default class Syncer extends Emitter {
     
     // TODO: invited rooms
     for (let room in rooms?.invite ?? {}) {
-      console.log(room)
       this._rooms.add(room);
       this.emit("invite", room, rooms.invite[room].invite_state.events);
     }

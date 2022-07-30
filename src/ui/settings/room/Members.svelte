@@ -63,10 +63,8 @@ h1 {
 
 .member {
   display: flex;
-  align-items: center;
   padding: 8px 0;
   border-top: solid var(--color-gray) 1px;
-  cursor: pointer;
 }
 
 .member .avatar {
@@ -82,6 +80,29 @@ h1 {
   flex-direction: column;
   color: var(--fg-notice);
   margin-left: 16px;
+}
+
+.power, .menu {
+  display: flex;
+  align-items: center;
+}
+
+.menu {
+  font-size: 26px;
+  margin-left: 16px;
+  padding: 8px;
+  color: var(--fg-dim);
+  opacity: 0;
+  cursor: pointer;
+  transition: color .2s;
+}
+
+.member:hover .menu {
+  opacity: 1;
+}
+
+.menu:hover {
+  color: var(--fg-notice);
 }
 </style>
 {#if room}
@@ -99,21 +120,25 @@ h1 {
           <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>
         </div>
       {:then member}
-      <img
-        class="avatar"
-        alt="avatar for {member.name}"
-        src={missingAvs.has(member.userId) ? defaultAvatar : parseMxc(member.avatar, 40)}
-        on:error={(e) => { missingAvs.add(member.userId); e.target.src = defaultAvatar }}
-        loading="lazy"
-      />
+      <a href={missingAvs.has(member.userId) ? defaultAvatar : parseMxc(member.avatar, 40)}>
+        <img
+          class="avatar"
+          alt="avatar for {member.name}"
+          src={missingAvs.has(member.userId) ? defaultAvatar : parseMxc(member.avatar, 40)}
+          on:error={(e) => { missingAvs.add(member.userId); e.target.src = defaultAvatar }}
+          loading="lazy"
+        />
+      </a>
       <div class="name">
         {member.name}
         <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>
       </div>
       {/await}
+      <div style="margin-left: auto;"></div>
       {#if membership === "join"}
-      <div style="margin-left: auto;">{member.power}</div>
+      <div class="power">{member.power}</div>
       {/if}
+      <div class="icon menu">more_vert</div>
     </div>
     {:else}
     <p>hmmm, seems like nobody's here?</p>
