@@ -3,7 +3,8 @@ import { backOut, quadOut } from "svelte/easing";
 import Tooltip from "../../atoms/Tooltip.svelte";
 import Emoji from "../../molecules/Emoji.svelte";
 export let event;
-$: room = state.rooms.get(event.roomId);
+export let room;
+
 // i have no idea how these work but they do so /shrug lol
 // TODO: make the number animate in reverse when the count goes down
 // TODO: reuse emoji picker everywhere
@@ -14,8 +15,8 @@ function getPeople(set) {
   const ids = [...set].map(i => room.members.get(i)?.name || i);
   if (set.size === 1) return [ids[0]];
   if (set.size === 2) return [ids[0], " and ", ids[1]];
-  if (set.size < 6) return [ids.slice(0, -1).join(", "), " and ", ids[ids.length - 1]];
-  return [ids.slice(0, 6).join(", "), " and ", ids.length - 6, " others "];
+  if (set.size < 7) return [ids.slice(0, -1).join(", "), " and ", ids[ids.length - 1]];
+  return [ids.slice(0, 6).join(", "), " and ", ids.length - 5, " others "];
 }
 
 function counterIn() {

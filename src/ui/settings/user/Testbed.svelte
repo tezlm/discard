@@ -1,4 +1,5 @@
 <script>
+import Search from "../../atoms/Search.svelte";
 import Context from "../../atoms/Context.svelte";
 import { parseMxc } from "../../../util/content.js";
 let embed = {
@@ -69,6 +70,9 @@ let embed = {
 }
 </style>
 <p>testbed for random stuff</p>
+<br />
+<Search />
+<br />
 <br />
 <div class="embed">
   {#if embed["og:site_name"]}

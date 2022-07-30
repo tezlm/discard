@@ -13,6 +13,7 @@ export let input = "";
 export let textarea;
 let showEmoji = false;
 
+let room = state.focusedRoom;
 let slice = state.slice;
 let edit = state.roomState.edit;
 
@@ -22,7 +23,13 @@ function handleKeyDown(e) {
       showEmoji = false;
     } else if (reply) {
       reply = null;
-    } else return;
+    } else {
+      const lastEvent = state.roomTimelines.get($room.roomId).live.at(-1);
+      state.log.debug(`mark ${lastEvent} as read`);
+      state.rooms.get($room.roomId).readEvent = lastEvent;
+      state.slice.set(state.roomSlices.get($room.roomId));
+      state.api.sendReceipt($room.roomId, lastEvent);
+    }
     e.preventDefault();
     e.stopImmediatePropagation();
   } else if (e.key === "ArrowUp") {
@@ -148,17 +155,13 @@ async function handleUpload(file) {
   display: none;
 }
 </style>
-<div class="container">
+<div class="container" on:keydown={handleKeyDown}>
   {#if reply}
     <Reply
+      event={reply}
       onclick={() => actions.slice.jump(reply.roomId, reply.eventId)}
       onclose={() => reply = null}
     />
-    <!--
-    <div class="reply" on:click={() => actions.slice.jump(reply.roomId, reply.eventId)}>
-      <div>Replying to <b>{reply.sender}</b></div>
-      <div class="close icon" on:click={e => reply = null}>cancel</div>
-    </div>-->
   {/if}
   <div class="input" class:withreply={reply}>
     {#if showUpload}
@@ -173,4 +176,3 @@ async function handleUpload(file) {
     <EmojiButton bind:show={showEmoji} picked={(emoji, keep) => { input += emoji; keep || textarea.focus() }} />
   </div>
 </div>
-<svelte:window on:keydown={handleKeyDown} />

@@ -1,6 +1,7 @@
 <script>
 export let onclick = () => {};
 export let onclose = () => {};
+export let event;
 
 function handleClose(e) {
   e.stopImmediatePropagation();
@@ -38,7 +39,6 @@ function handleClose(e) {
 }
 </style>
 <div class="reply" on:click={onclick}>
-  <!--<div>Replying to <b>{reply.sender}</b></div>-->
-  <div>Replying to <b>someone</b></div>
+  <div>Replying to <b>{event.sender}</b></div>
   <div class="close icon" on:click={handleClose}>cancel</div>
 </div>

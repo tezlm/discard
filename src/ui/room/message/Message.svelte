@@ -243,7 +243,7 @@ time {
     {:else}
     <MessageContent {event} />
     {/if}
-    {#if event.reactions}<MessageReactions {event} />{/if}
+    {#if event.reactions}<MessageReactions {event} {room} />{/if}
   </div>
   {#if event.eventId !== $edit}
   <div class="toolbar" style:display={showReactionPicker ? "flex" : null}>

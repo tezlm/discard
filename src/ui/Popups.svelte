@@ -76,7 +76,7 @@ function handleKeyDown(e) {
 }
 </script>
 <style>
-:global(.icon.close) {
+.wrap :global(.icon.close) {
   position: absolute;
   top: 12px;
   right: 12px;
@@ -87,9 +87,11 @@ function handleKeyDown(e) {
   transition: color 0.4s;
 }
 
-:global(.icon.close:hover) {
+.wrap :global(.icon.close:hover) {
   color: var(--fg-notice);
 }
 </style>
-<svelte:component this={popups.get($current.id)} current={$current} bind:confirm={$current.confirm} />
+<div class="wrap">
+  <svelte:component this={popups.get($current.id)} current={$current} bind:confirm={$current.confirm} />
+</div>
 <svelte:window on:keydown={handleKeyDown} />

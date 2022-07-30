@@ -31,7 +31,6 @@ function handleScroll() {
   debounce = setTimeout(paginate, 20);
 }
 
-// FIXME: sometimes fails to set scroll posititon, causing jumps up on room change
 // FIXME: pagination sometimes jumps around when scrolling up
 // possibly due to messages "merging together"
 async function paginate() {
@@ -42,23 +41,22 @@ async function paginate() {
   const scrollBottom = scrollEl.scrollHeight - scrollEl.offsetHeight - scrollTop;
   const atScrollTop = scrollTop < margin + contentEl.offsetTop;
   const atScrollBottom = scrollBottom < margin + (scrollEl.scrollHeight - contentEl.offsetTop - contentEl.offsetHeight);
-    console.log(scrollTop, margin + contentEl.offsetTop, atScrollTop)
 
   if (atScrollTop && !atItemsTop) {
-    console.log("paginate backwards")
+    state.log.debug("paginate backwards");
     const childNode = contentEl.children[0];
     const scrollPos = childNode?.offsetTop;
     [atItemsTop, atItemsBottom] = (await fetchBackwards() ?? [false, false]);
-    if (childNode) queueMicrotask(() => scrollEl.scrollTop = scrollTop + childNode.offsetTop - scrollPos);
+    if (document.body.contains(childNode)) queueMicrotask(() => scrollEl.scrollTop = scrollTop + childNode.offsetTop - scrollPos);
   } else if (atScrollBottom && !atItemsBottom) {
-    console.log("paginate forwards")
+    state.log.debug("paginate forwards");
     const childNode = contentEl.children[contentEl.children.length - 1];
     const scrollPos = childNode?.offsetTop;
     [atItemsTop, atItemsBottom] = (await fetchForwards() ?? [false, false]);
     if (childNode) queueMicrotask(() => scrollEl.scrollTop = scrollTop + childNode.offsetTop - scrollPos);
   }
 
-  queueMicrotask(() => paginating = false);
+  paginating = false;
 }
 
 queueMicrotask(reset);
