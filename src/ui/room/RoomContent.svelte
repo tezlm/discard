@@ -33,7 +33,9 @@ function dividerProps(prev, ev) {
 	return {
 		unpad: shouldSplit(prev, ev),
 		unread: room.readEvent === prev.eventId,
-		newdate: prev.date.getDay() !== ev.date.getDay() ? ev.date : null,
+		newdate: prev.date.getDay() !== ev.date.getDay() ? ev.date
+			: prev.type === "m.room.create" ? ev.date
+			: null,
 	};
 }
 

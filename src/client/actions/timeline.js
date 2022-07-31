@@ -160,11 +160,17 @@ export function redact(roomId, event) {
     const slice = actions.slice.get(roomId);
     const relation = getRelation(original.content);
     if (relation?.rel_type === "m.annotation") {
-      const reactions = state.events.get(relation.event_id)?.reactions?.get(relation.key);
-      if (!reactions) return;
-      reactions.count--;
-      reactions.senders.delete(original.sender);
-      if (original.sender === state.userId) reactions.mine = null;
+      const reactions = state.events.get(relation.event_id)?.reactions;
+      const reaction = reactions?.get(relation.key);
+      if (!reaction) return;
+      reaction.count--;
+      if (reaction.count === 0) {
+        reactions.delete(relation.key);
+        if (reactions.size === 0) state.events.get(relation.event_id).reactions = null;
+      } else {
+        reaction.senders.delete(original.sender);
+        if (original.sender === state.userId) reactions.mine = null;
+      }
       slice.reslice();
       state.slice.set(slice);
     }    

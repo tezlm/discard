@@ -1,82 +1,93 @@
 <script>
 export let value = "";
 export let placeholder = "Search";
-export let width = 200;
+export let width;
 export let autofocus = false;
-export let optional = false;
-export let submitted = () => {};
+export let focus = false;
 
 function handleKeyDown(e) {
-  if (e.key === "Enter") {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    if (value || optional) submitted(value, e);
-  } else if (e.key === "Escape" && value) {
+  if (e.key === "Escape" && value) {
     e.stopImmediatePropagation();
     e.preventDefault();
     value = "";
-  }
-}
-
-function spin(_) {
-  return {
-    duration: 100,
-    css: t => `transform: rotate(${t * 90}deg)`,
-  }
-}
-
-function spinrev(_) {
-  return {
-    duration: 100,
-    css: t => `transform: rotate(${90 - t * 90}deg)`,
   }
 }
 </script>
 <style>
 .wrapper {
   display: inline-flex;
-  border-radius: 3px;
-  color: inherit;
-  background: var(--bg-spaces);
-  padding: 0 4px;
-}
-
-input {
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  width: 140px;
-  padding: 0 2px;
+  position: relative;
+  width: 160px;
   height: 24px;
-  border: none;
-  border-radius: 3px;
-  color: var(--fg-content);
+
   background: var(--bg-spaces);
-  outline: none;
+  border-radius: 4px;
+
   transition: width .2s;
 }
 
-input:focus {
-  width: 240px;
+.wrapper.focus {
+  width: 250px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 0 6px;
+
+  background: var(--bg-spaces);
+  color: var(--fg-content);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  border: none;
+  border-radius: 3px;
 }
 
 .icon {
+  padding: 0 3px;
   color: var(--fg-dim);
-  transition: transform .1s;
+  cursor: pointer;
+  transition: all .1s;
+}
+
+.search {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.close {
+  cursor: pointer;
+  transform: rotate(-90deg);
+}
+
+.close:hover {
+  color: var(--fg-notice);
 }
 </style>
-<div class="wrapper">
+<div class="wrapper" class:focus={focus || value} style:width={width + "px"}>
   <input
     type="text"
     {placeholder}
     {autofocus}
-    style:width={width + "px"}
     bind:value={value}
     on:keydown={handleKeyDown}
+    on:focus={() => focus = true}
+    on:blur={() => focus = false}
   />
-  {#if value}
-  <div class="icon close" in:spin>close</div>
-  {:else}
-  <div class="icon search" in:spinrev>search</div>
-  {/if}
+  <div
+    class="icon"
+    class:close={!!value}
+    class:search={!value}
+    on:click={() => value = ""}
+  >
+    {#if value}
+      close
+    {:else}
+      search
+    {/if}
+  </div>
 </div>

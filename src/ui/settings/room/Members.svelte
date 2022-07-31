@@ -1,4 +1,5 @@
 <script>
+import Search from "../../atoms/Search.svelte";
 import Input from "../../atoms/Input.svelte";
 import { parseMxc, defaultAvatar } from '../../../util/content.js';
 
@@ -108,7 +109,7 @@ h1 {
 {#if room}
   <div class="header">
     <h1>{members ? members.length || "No" : "Loading"} {filter ? "Filtered " : ""}{getTitle(membership)}{members.length !== 1 ? "s" : ""}</h1>
-    <div><Input small placeholder="Filter {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
+    <div><Search width={220} placeholder="Filter {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
   </div>
   {#if members}
     {#each members as member}

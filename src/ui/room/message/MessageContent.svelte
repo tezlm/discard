@@ -1,8 +1,10 @@
 <script>
 import { parseHtml } from "../../../util/html.js";
 import { parseMxc } from "../../../util/content.js";
+import { highlightAllUnder } from "prismjs";
 import fileIcon from "../../../assets/file.svg";
 export let event;
+let wrapper;
 
 $: content = event.content;
 $: type = content.msgtype;
@@ -37,6 +39,10 @@ function formatSize(size) {
   }
   return "very big";
 }
+
+queueMicrotask(() => {
+  highlightAllUnder(wrapper);
+});
 </script>
 <style>
 .sending {
@@ -132,6 +138,7 @@ img {
   class:redacted={special === "redacted" || special === "errored"}
   class:sending={special === "sending"}
   style={type === "m.image" || type === "m.video" ? dimensions.css : ""}
+  bind:this={wrapper}
 >
   {#if type === "m.image"}
   <img
