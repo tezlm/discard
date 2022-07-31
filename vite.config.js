@@ -8,9 +8,22 @@ export default defineConfig({
   root: "src",
   plugins: [svelte()],
   build: {
+    sourcemap: true,
     target: "esnext",
     outDir: "../dist",
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "emojibase-data": [
+            "emojibase-data/en/compact.json",
+            "emojibase-data/en/shortcodes/joypixels.json",
+            "emojibase-data/en/shortcodes/emojibase.json",
+          ],
+          "sanitize-html": ["sanitize-html"],
+        }
+      }
+    }
   },
   define: {
     build: {

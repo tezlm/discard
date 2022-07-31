@@ -3,7 +3,7 @@ import { get } from "svelte/store";
 import Settings from "./settings.js"
 
 export function handleAccount(type, content) {
-  if (type === "org.eu.celery.settings") state.settings = new Settings(content.data);
+  if (type === "org.eu.celery.settings") state.settings = new Settings(content);
 }
 
 export function handleRoomAccount(roomId, type, content) {

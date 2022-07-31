@@ -3,6 +3,7 @@ import twemoji from "twemoji";
 import fuzzysort from "fuzzysort";
 import shortJoypixels from "emojibase-data/en/shortcodes/joypixels.json";
 import shortEmojibase from "emojibase-data/en/shortcodes/emojibase.json";
+import emojis from "emojibase-data/en/compact.json";
 import Input from "../atoms/Input.svelte";
 const groups = parseEmoji()
 export let selected;
@@ -10,7 +11,6 @@ let search = "";
 let hover;
 
 async function parseEmoji() {
-  const { default: emojis } = await import("emojibase-data/en/compact.json");
   const groups = [[], [], [], [], [], [], [], [], [], []];
   for (let emoji of emojis) {
     if (emoji.group === 2) continue;

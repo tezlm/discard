@@ -50,7 +50,8 @@ function oninput(input) {
   function replacePing(input) {
     return input.replace(
       /@[a-z0-9-_/]+:[a-z0-9.-]+/ig,
-      (match) => `<a href="https://matrix.to/#/${match}">@${getName(match)}</a>`
+      // (match) => `<a href="https://matrix.to/#/${match}">@${getName(match)}</a>`
+      (match) => `<a href="https://matrix.to/#/${match}">${match}</a>`
     );
   }
 
@@ -173,6 +174,6 @@ async function handleUpload(file) {
     </label>
     {/if}
     <RoomTextarea {placeholder} bind:textarea={textarea} {onfile} {oninput} />
-    <EmojiButton bind:show={showEmoji} picked={(emoji, keep) => { input += emoji; keep || textarea.focus() }} />
+    <EmojiButton bind:show={showEmoji} picked={(emoji, keep) => { textarea.value += emoji; keep || textarea.focus() }} />
   </div>
 </div>

@@ -10,6 +10,7 @@ specifiers:
   idb: ^7.0.2
   linkifyjs: ^3.0.5
   marked: ^4.0.17
+  prismjs: ^1.28.0
   sanitize-html: ^2.7.0
   svelte: ^3.49.0
   twemoji: ^14.0.2
@@ -23,6 +24,7 @@ dependencies:
   idb: 7.0.2
   linkifyjs: 3.0.5
   marked: 4.0.17
+  prismjs: 1.28.0
   sanitize-html: 2.7.0
   twemoji: 14.0.2
 
@@ -473,6 +475,11 @@ packages:
       nanoid: 3.3.4
       picocolors: 1.0.0
       source-map-js: 1.0.2
+
+  /prismjs/1.28.0:
+    resolution: {integrity: sha512-8aaXdYvl1F7iC7Xm1spqSaY/OJBpYW3v+KJ+F17iYxvdc8sfjW194COK5wVhMZX45tGteiBQgdvD/nhxcRwylw==}
+    engines: {node: '>=6'}
+    dev: false
 
   /require-relative/0.8.7:
     resolution: {integrity: sha512-AKGr4qvHiryxRb19m3PsLRGuKVAbJLUD7E6eOaHkfKhwc+vSgVOCY5xNvm9EkolBKTOf0GrQAZKLimOCz81Khg==}

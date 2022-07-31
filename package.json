@@ -24,6 +24,7 @@
 		"idb": "^7.0.2",
 		"linkifyjs": "^3.0.5",
 		"marked": "^4.0.17",
+		"prismjs": "^1.28.0",
 		"sanitize-html": "^2.7.0",
 		"twemoji": "^14.0.2"
 	}

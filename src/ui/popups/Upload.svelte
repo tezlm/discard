@@ -4,9 +4,15 @@ import Button from "../atoms/Button.svelte";
 import { formatSize } from "../../util/format.js";
 export let current;
 export const confirm = current.confirm;
+let type = current.file.type.split("/")[0];
 
 function closePopup() {
   state.popup.set({ ...current, id: null });
+}
+
+async function getText(file) {
+  const text = await file.text();
+  return text.split("\n").slice(0, 10).join("\n");
 }
 </script>
 <style>
@@ -35,8 +41,10 @@ img {
       do you want to upload {current.file.name || "this file"}?
       <span class="size">({formatSize(current.file.size)})</span>
     </div>
-    {#if current.file.type.startsWith("image")}
+    {#if type === "image"}
     <img src={URL.createObjectURL(current.file)} alt={current.file.name} />
+    {:else if type === "text" || current.file.type === "application/json"}
+    <pre>{#await getText(current.file) then text}{text}{/await}</pre>
     {/if}
   </div>
   <div slot="footer">

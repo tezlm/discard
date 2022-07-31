@@ -11,7 +11,11 @@ defaultSettings.set("autojoin", true);
 
 export default class Settings extends Map {
   constructor(data) {
-    super(data);
+    if (data) {
+      super(Object.entries(data));
+    } else {
+      super();
+    }
   }
   
   get(key) {
@@ -20,6 +24,6 @@ export default class Settings extends Map {
 
   async put(key, val) {
     this.set(key, val);
-    state.api.sendAccountData(state.userId, "org.eu.celery.settings", { data: [...this.entries()] });
+    state.api.sendAccountData(state.userId, "org.eu.celery.settings", Object.fromEntries(this.entries()));
   }
 }
