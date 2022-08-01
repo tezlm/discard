@@ -23,7 +23,7 @@ export async function fetch() {
     return null;
   }
   
-  const api = new Api("https://" + homeserver, token);
+  const api = new Api(await resolveWellKnown(homeserver), token);
   const filter = await api.postFilter(userId, defaultFilter);
   api.useFilter(filter);
   state.log.matrix("starting sync");  
@@ -35,7 +35,7 @@ export async function fetch() {
 // login to the homeserver and create a new client
 export async function login({ localpart, homeserver, password }) {
   const userId = `@${localpart}:${homeserver}`;
-  const api = new Api("https://" + homeserver);
+  const api = new Api(await resolveWellKnown(homeserver));
 
   try {
     state.log.matrix("logging in");
@@ -57,6 +57,17 @@ export async function login({ localpart, homeserver, password }) {
       case "ConnectionError": throw "Invalid homeserver";
       default: throw `Unknown error (${err.name}})`;
     }
+  }
+}
+
+async function resolveWellKnown(domain) {
+  try {
+    const req = await window.fetch(`https://${domain}/.well-known/matrix/client`);
+    console.log("arst")
+    const json = await req.json();
+    return json["m.homeserver"]?.base_url;
+  } catch {
+    return "https://" + domain;
   }
 }
 
