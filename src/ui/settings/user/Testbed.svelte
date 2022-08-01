@@ -1,6 +1,6 @@
 <script>
-import Search from "../../atoms/Search.svelte";
 import Context from "../../atoms/Context.svelte";
+import Video from "../../atoms/Video.svelte";
 import { parseMxc } from "../../../util/content.js";
 let embed = {
   "url": "https://www.freecodecamp.org/news/what-is-open-graph-and-how-can-i-use-it-for-my-website/",
@@ -71,9 +71,6 @@ let embed = {
 </style>
 <p>testbed for random stuff</p>
 <br />
-<Search />
-<br />
-<br />
 <div class="embed">
   {#if embed["og:site_name"]}
   <a class="sitename" href="https://youtube.com/">{embed["og:site_name"]}</a>
@@ -137,26 +134,11 @@ let embed = {
   { label: "Copy ID", clicked: todo, icon: "terminal" },
 ]} />
 <br />
-<Context x={390} items={[
-  { label: "Add Reaction", clicked: todo, submenu: [
-    { label: "Emoji 1", clicked: todo },
-    { label: "Emoji 2", clicked: todo },
-    { label: "Emoji 3", clicked: todo },
-    { label: "Emoji 4", clicked: todo },
-  ] },
-  { label: "Reply",          clicked: todo, icon: "reply" },
-  { label: "Mark Unread",    clicked: todo, icon: "mark_chat_unread" },
-  { label: "Copy Link",      clicked: todo, icon: "link" },
-  { label: "Edit Message",   clicked: todo, icon: "edit" },
-  { label: "Delete Message", clicked: todo, icon: "delete", color: "var(--color-red)" },
-  null,
-  { label: "Copy ID",        clicked: todo, icon: "terminal" },
-]} />
-<br />
 <div class="autocomplete">
   <h3>Commands matching <b>/</b></h3>
-  <div class="option">foo</div>
-  <div class="option">bar</div>
-  <div class="option">baz</div>
+  <div class="option">/shrug [message]</div>
+  <div class="option">/kick [user] (reason)</div>
+  <div class="option">/part</div>
 </div>
 <br />
+<Video src="https://celery.eu.org/_matrix/media/r0/download/celery.eu.org/bhUcqu0YzcoOQ2rgrYESGoH8WX916EVF" />

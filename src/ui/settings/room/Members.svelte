@@ -124,7 +124,6 @@ h1 {
       <a href={missingAvs.has(member.userId) ? defaultAvatar : parseMxc(member.avatar, 40)}>
         <img
           class="avatar"
-          alt="avatar for {member.name}"
           src={missingAvs.has(member.userId) ? defaultAvatar : parseMxc(member.avatar, 40)}
           on:error={(e) => { missingAvs.add(member.userId); e.target.src = defaultAvatar }}
           loading="lazy"

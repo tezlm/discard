@@ -1,8 +1,7 @@
 <script>
 import Radio from "../../atoms/Radio.svelte";
 import Toggle from "../../atoms/Toggle.svelte";
-// TODO: live update settings
-const opts = state.settings;
+const settings = state.settings;
 </script>
 <style>
 .option {
@@ -22,25 +21,19 @@ const opts = state.settings;
     { name: "If they have a power level", id: "power"},
     { name: "Never", id: "never"}
   ]}
-  selected={opts.get("namecolors")}
-  changed={(id) => opts.put("namecolors", id)}
+  selected={$settings.get("namecolors")}
+  changed={(id) => $settings.put("namecolors", id)}
 />
 <br />
 <div class="title">Room timeline</div>
+{#each [
+  ["Show join and leaves", "showjoinleave"],
+  ["Show invites, kicks, bans, and unbans", "showmembership"],
+  ["Show name and avatar changes", "shownickavatar"],
+  ["Show room name and topic changes", "shownametopic"],
+] as [name, setting]}
 <div class="option">
-  <b>Show join and leaves</b>
-  <Toggle checked={opts.get("showjoinleave")} toggled={(val) => opts.put("showjoinleave", val)}/>
+  <b>{name}</b>
+  <Toggle checked={$settings.get(setting)} toggled={(val) => $settings.put(setting, val)}/>
 </div>
-<div class="option">
-  <b>Show invites, kicks, bans, and unbans</b>
-  <Toggle checked={opts.get("showmembership")} toggled={(val) => opts.put("showmembership", val)}/>
-</div>
-<div class="option">
-  <b>Show name and avatar changes</b>
-  <Toggle checked={opts.get("shownickavatar")} toggled={(val) => opts.put("shownickavatar", val)}/>
-</div>
-<div class="option">
-  <b>Show room name and topic changes</b>
-  <Toggle checked={opts.get("shownametopic")} toggled={(val) => opts.put("shownametopic", val)}/>
-</div>
-<br />
+{/each}

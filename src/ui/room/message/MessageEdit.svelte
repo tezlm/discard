@@ -7,6 +7,7 @@ let rows = 1;
 let input = event.content.body;
 let { edit } = state.roomState;
 let slice = state.slice;
+$: rows = Math.min(input.split("\n").length, 10);
 
 function replacePing(input) {
   return input.replace(
@@ -28,7 +29,7 @@ async function handleKeyDown(e) {
     if (textarea.selectionEnd !== 0) return;
     for (let i = $slice.events.findIndex(i => i.eventId === $edit) - 1; i >= 0; i--) {
       const event = $slice.events[i];
-      if (event.sender === state.userId) {
+      if (event.sender.userId === state.userId) {
         $edit = event.eventId;
         return;
       }
@@ -39,17 +40,13 @@ async function handleKeyDown(e) {
     if (textarea.selectionEnd !== input.length) return;
     for (let i = $slice.events.findIndex(i => i.eventId === $edit) + 1; i < $slice.events.length; i++) {
       const event = $slice.events[i];
-      if (event.sender === state.userId) {
+      if (event.sender.userId === state.userId) {
         $edit = event.eventId;
         return;
       }
     }
     $edit = null;
   }
-}
-
-function handleInput() {
-  rows = Math.min(input.split("\n").length, 10);
 }
 
 function save() {
@@ -120,7 +117,6 @@ textarea::placeholder {
     rows={rows}
     bind:this={textarea}
     bind:value={input}
-    on:input={handleInput}
     on:keydown={handleKeyDown}
   ></textarea>
 </div>

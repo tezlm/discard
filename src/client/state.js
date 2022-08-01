@@ -28,7 +28,7 @@ export default {
   rooms: new Map(),
   spaces: new Map(),
   dms: new Map(),
-  settings: new Settings(),
+  settings: writable(new Settings()),
   
   //nav
   navRooms: writable([]),

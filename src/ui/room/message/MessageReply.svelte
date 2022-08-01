@@ -2,9 +2,11 @@
 // TODO: make edits apply
 import { parseHtml } from "../../../util/html.js";
 import { parseMxc, defaultAvatar, calculateHash } from '../../../util/content.js';
+import Avatar from "../../atoms/Avatar.svelte";
 export let room, eventId;
 let missingAvs = state.missingAvatars;
 let eventPromise = state.events.fetch(room.roomId, eventId);
+let settings = state.settings;
 
 function getName(sender) {
   const member = room.members.get(sender);
@@ -12,17 +14,10 @@ function getName(sender) {
   return member.name || member.userId;
 }
 
-function getAvatar(sender) {
-  if (missingAvs.has(sender)) return defaultAvatar;
-  const member = room.members.get(sender);
-  if (!member) return defaultAvatar;
-  return member.avatar ? parseMxc(member.avatar, 16) : defaultAvatar;
-}
-
 function getColor(sender) {
   if (!sender) return;
-  if (state.settings.get("namecolors") === "never") return;
-  if (state.settings.get("namecolors") === "power" && room.power.getUser(sender.userId) === 0) return;
+  if ($settings.get("namecolors") === "never") return;
+  if ($settings.get("namecolors") === "power" && room.power.getUser(sender.userId) === 0) return;
   return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
 }
 </script>
@@ -51,11 +46,6 @@ function getColor(sender) {
   width: 30px;
 }
 
-.reply::after {
-  content: "a";
-  visibility: hidden;
-}
-
 .reply .author {
   filter: brightness(0.9);
   margin-right: .25rem;
@@ -67,11 +57,10 @@ function getColor(sender) {
 }
 
 .reply .avatar {
-  border-radius: 50%;
-  height: 16px;
-  width: 16px;
+  height: 100%;
+  display: flex;
+  align-items: center;
   margin-right: .25rem;
-  background: var(--bg-spaces);
 }
 
 .content {
@@ -114,14 +103,11 @@ function getColor(sender) {
 <div class="reply">loading</div>
 {:then event}
 <div class="reply">
-  <img 
-    class="avatar"
-    alt="avatar for {getName(event.sender)}"
-    src={getAvatar(event.sender)}
-    on:error={(e) => { missingAvs.add(event.sender); e.target.src = defaultAvatar }}
-  />
-  <span class="author" style:color={getColor(room.members.get(event.sender))}>{getName(event.sender)}</span>
-  <div class="content" on:click={() => actions.slice.jump(room.roomId, eventId)}>
+  <div class="avatar">
+    <Avatar mxc={event.sender.avatar} size={16} />
+  </div>
+  <span class="author" style:color={getColor(event.sender)}>{event.sender.name || event.sender.userId}</span>
+  <div class="content" on:click={() => actions.slice.jump(event.roomId, event.eventId)}>
     {#if event.content.format === "org.matrix.custom.html"}
       {@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n|<br.*?>/g, " ")}
     {:else}
@@ -132,4 +118,3 @@ function getColor(sender) {
 {:catch err}
 <div class="reply">error: {err}</div>
 {/await}
-

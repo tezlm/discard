@@ -12,16 +12,8 @@ let { reply, edit, input, rows, upload: fileUpload, typing } = state.roomState;
 
 const getName = id => ($room.members.get(id)?.name ?? id.replace(/^@/, ""));
 
-function replacePing(input) {
-  return input.replace(
-    /@[a-z0-9-_/]+:[a-z0-9.-]+/ig,
-    (match) => `<a href="https://matrix.to/#/${match}">@${getName(match)}</a>`
-  );
-}
-
 async function handleSend(e) {
   sendMessage(e)
-  return console.log(e)
 }
 
 async function handleKeyDown(e) {
@@ -41,54 +33,6 @@ async function handleKeyDown(e) {
         $edit = event.eventId;
         return;
       }
-    }
-  }
-}
-
-async function handleUpload(file) {
-  const status = { file, progress: 0, cancel: () => {} };
-  const roomId = $room.roomId;
-  const { promise, abort }= await state.api.uploadFile(file, ({ loaded, total }) => {
-    status.progress = loaded / total;
-    fileUpload.set(status);
-  });
-  status.cancel = abort;
-  fileUpload.set(status);
-
-  const url = await promise.catch((err) => {
-    if (err) console.error(err);
-    return null;
-  });
-  fileUpload.set(null);
-  if (!url) return;
-
-  const type = getType(file.type);
-
-  sendMessage({
-    url,
-    body: file.name,
-    msgtype: type,
-    info: {
-      mimetype: file.type,
-      size: file.size,
-      ...(type === "m.image" ? await getSize(file) : {}),
-    }
-  }, roomId);
-
-  function getSize(file) {
-    return new Promise(res => {
-      const img = new Image();
-      img.onload = () => res({ w: img.width, h: img.height });
-      img.src = URL.createObjectURL(file);
-    });
-  }
-
-  function getType(mime) {
-    switch (mime.split("/")[0]) {
-      case "image": return "m.image";
-      case "video": return "m.video";
-      case "audio": return "m.audio";
-      default: return "m.file";
     }
   }
 }
@@ -154,7 +98,6 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
     showUpload={true}
     placeholder={`Message ${$room.name}`}
     onsend={handleSend}
-    handleUpload={handleUpload}
     bind:reply={$reply}
     bind:textarea={textarea}
   />

@@ -2,7 +2,8 @@
 import Search from "../atoms/Search.svelte";
 import { parseHtml } from "../../util/html.js";
 export let room;
-let space = state.focusedSpace;
+const space = state.focusedSpace;
+const settings = state.settings;
 $: dark = $space && !room;
 
 let roomfocus = false;
@@ -51,6 +52,11 @@ let search;
   font-size: 24px;
   margin: 0 8px;
   color: var(--fg-interactive);
+  cursor: pointer;
+}
+
+.icon:hover {
+  color: var(--fg-content);
 }
 
 .roomicon {
@@ -100,6 +106,14 @@ let search;
   <div style:flex={1}></div>
   {/if}
   {#if room}
+  <div
+    class="icon"
+    style:color={$settings.get("showmemberlist") ? "var(--fg-notice)" : null}
+    on:click={() => $settings.put("showmemberlist", !$settings.get("showmemberlist")) }
+  >
+    people
+  </div>
+  <!--
   <div class="roomsearch">
     <Search bind:focus={roomfocus} bind:value={search} />
     {#if roomfocus}
@@ -111,7 +125,10 @@ let search;
     </div>
     {/if}
   </div>
+  -->
   {/if}
+  <!--
   <div class="icon">inbox</div>
   <div class="icon">help</div>
+  -->
 </div>

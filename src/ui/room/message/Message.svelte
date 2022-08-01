@@ -6,9 +6,11 @@ import MessageReactions from "./MessageReactions.svelte";
 import MessageToolbar from "./MessageToolbar.svelte";
 import Emoji from "../../molecules/Emoji.svelte";
 import User from "../../molecules/User.svelte";
+import Context from "../../atoms/Context.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
-import { parseMxc, defaultAvatar, calculateHash } from '../../../util/content.js';
+import { calculateHash } from '../../../util/content.js';
 import { quadOut } from "svelte/easing";
+import Avatar from "../../atoms/Avatar.svelte";
 
 // TODO: modularize more, don't require fetching members and stuff
 
@@ -19,13 +21,13 @@ import { quadOut } from "svelte/easing";
 export let room, event, header = false, shiftKey = false;
 
 let { edit } = state.roomState;
-let missingAvs = state.missingAvatars;
 let slice = state.slice;
+let settings = state.settings;
 $: toolbar = getToolbar(shiftKey);
-$: sender = room.members.get(event.sender) ?? {};
 
 let showReactionPicker = false;
 let showUserPopout = false;
+let contextMenu = null;
 
 function unwrapEdits(event) {
   while (event.original) event = event.original;
@@ -35,7 +37,7 @@ function unwrapEdits(event) {
 // amazing logic
 function getToolbar(shift = false) {
   const toolbar = [];
-  const fromMe = event.sender === state.userId;
+  const fromMe = event.sender.userId === state.userId;
 
   if (event.special) {
     if (event.special === "errored") toolbar.push({ name: "Retry", icon: "refresh", clicked: todo });
@@ -69,15 +71,11 @@ function getReply(content) {
   return content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
 }
 
-function getAvatar() {
-  if (missingAvs.has(sender.userId)) return defaultAvatar;
-  return sender.avatar ? parseMxc(sender.avatar, 40) : defaultAvatar;
-}
-
-function getColor(sender) {
+function getColor(sender, settings) {
+  const level = settings.get("namecolors");
   if (!sender) return;
-  if (state.settings.get("namecolors") === "never") return;
-  if (state.settings.get("namecolors") === "power" && room.power.getUser(sender.userId) === 0) return;
+  if (level === "never") return `var(--fg-content)`;
+  if (level === "power" && sender.power <= (room.power.users_default ?? 0)) return `var(--fg-content)`;
   return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
 }
 
@@ -99,6 +97,60 @@ function fly(_, props) {
     css: t => `transform: translateX(${t * props.x - props.x}px)`,
   };
 }
+
+function getContextMenu() {
+  const menu = [];
+  menu.push({ label: "Add Reaction", clicked: showPicker, submenu: [
+    { label: "thumbsup",   clicked: (e) => addReaction(e, "👍️"), icon: "👍️" },
+    { label: "thumbsdown", clicked: (e) => addReaction(e, "👎️"), icon: "👎️" },
+    { label: "eyes",       clicked: (e) => addReaction(e, "👀"), icon: "👀" },
+    { label: "sparkles",   clicked: (e) => addReaction(e, "✨"), icon: "✨" },
+    { label: "Other Reactions", icon: "add_reaction", clicked: showPicker },
+  ] });
+  if (room.power.me >= room.power.getEvent("m.room.message")) {
+    if (event.sender.userId === state.userId) menu.push({ label: "Edit Message", icon: "edit", clicked: () => state.roomState.edit.set(unwrapEdits(event).eventId) });
+    menu.push({ label: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
+  }
+  menu.push({ label: "Mark Unread", icon: "mark_chat_unread", clicked: markUnread });
+  menu.push({ label: "Copy Link",   icon: "link", clicked: () => navigator.clipboard.writeText(`https://matrix.to/#/${room.roomId}/${event.eventId}`) });
+  if ((room.power.me >= room.power.getEvent("m.room.redaction") && event.sender.userId === state.userId) || (room.power.me >= room.power.getBase("redact"))) {
+    menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) } });
+  }
+  menu.push(null);
+  menu.push({ label: "View Source", icon: "terminal", clicked: () => state.popup.set({ id: "source", event }) });
+  return menu;
+
+  function showPicker(e) {
+    e.stopImmediatePropagation();
+    contextMenu = null;
+    showReactionPicker = true;
+  }
+
+  function addReaction(e, emoji) {
+    e.stopImmediatePropagation();
+    contextMenu = null;
+    if (!event.reactions?.get(emoji)?.mine) {
+      const reaction = {
+        "m.relates_to": {
+          key: emoji,
+          rel_type: "m.annotation",
+          event_id: event.eventId,
+        },
+      };
+      state.api.sendEvent(event.roomId, "m.reaction", reaction, Math.random());  
+    }
+  }
+
+  function markUnread() {
+    const timeline = state.roomTimelines.get(room.roomId).current;
+    const index = timeline.lastIndexOf(event.eventId);
+    const lastId = timeline[index - 1] ?? event.eventId;
+    state.log.debug(`mark ${lastId} as read`);
+    state.rooms.get(room.roomId).readEvent = lastId;
+    state.slice.set(state.roomSlices.get(room.roomId));
+    state.api.sendReceipt(room.roomId, lastId);
+  }
+}
 </script>
 <style>
 .message {
@@ -110,7 +162,7 @@ function fly(_, props) {
 }
 
 .message:hover {
-  background: rgba(4,4,5,0.07);
+  background: var(--mod-darken);
 }
 
 .content {
@@ -155,11 +207,8 @@ function fly(_, props) {
   border-radius: 50%;
   height: 40px;
   width: 40px;
-  object-fit: cover;
-  background-color: var(--bg-spaces);
   box-shadow: 0 0 0 #00000022;
   cursor: pointer;
-  user-select: none;
   transition: all .2s;
 }
 
@@ -201,18 +250,13 @@ time {
   z-index: 1;
 }
 </style>
-<div class="message" on:click={handleClick}>
+<div class="message" on:click={handleClick} on:contextmenu={e => { return; e.preventDefault(); contextMenu = { x: e.clientX, y: e.clientY }}}>
   <div class="side">
     {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
     {#if header}
-    <img
-      class="avatar"
-      class:selected={showUserPopout}
-      alt="pfp for {sender.name ?? event.sender}"
-      src={getAvatar()}
-      on:click={(e) => { e.stopImmediatePropagation(); showUserPopout = !showUserPopout }}
-      on:error={(e) => { missingAvs.add(sender.userId); e.target.src = defaultAvatar }}
-    />
+    <div class="avatar" class:selected={showUserPopout} on:click={(e) => { e.stopImmediatePropagation(); showUserPopout = !showUserPopout }}>
+      <Avatar mxc={event.sender.avatar} size={40} />
+    </div>
     {:else}
     <time datetime={event.date.toISOString()}>{formatTime(event.date)}</time>
     {/if}
@@ -221,7 +265,7 @@ time {
     {#if getReply(event.content)}<MessageReply {room} eventId={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
-      <span class="author" style:color={getColor(sender)} on:click={(e) => { e.stopImmediatePropagation(); showUserPopout = !showUserPopout }}>{sender.name || event.sender}</span>
+      <span class="author" style:color={getColor(event.sender, $settings)} on:click={(e) => { e.stopImmediatePropagation(); showUserPopout = !showUserPopout }}>{event.sender.name || event.sender.userId}</span>
       {#if event.content.msgtype === "m.notice"}
       <div class="badge">bot</div>
       {/if}
@@ -231,7 +275,7 @@ time {
         style:top="{getReply(event.content) ? 24 : 0}px"
         in:fly={{ x: -15 }}
       >
-        <User user={sender} />
+        <User user={event.sender} />
       </div>
       {/if}
       <span style="margin-right: 0.25rem;"></span>
@@ -268,4 +312,7 @@ time {
   </div>
   {/if}
 </div>
-<svelte:window on:click={() => { showReactionPicker = false; showUserPopout = false }} />
+{#if contextMenu}
+<Context x={contextMenu.x} y={contextMenu.y} items={getContextMenu()} />
+{/if}
+<svelte:window on:click={() => { showReactionPicker = false; showUserPopout = false; contextMenu = null }} />

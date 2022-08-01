@@ -6,6 +6,8 @@ import fileIcon from "../../../assets/file.svg";
 export let event;
 let wrapper;
 
+// TODO: make emoji only messages bigger
+
 $: content = event.content;
 $: type = content.msgtype;
 $: edited = event.original;
@@ -40,9 +42,9 @@ function formatSize(size) {
   return "very big";
 }
 
-queueMicrotask(() => {
+$: if (wrapper) {
   highlightAllUnder(wrapper);
-});
+}
 </script>
 <style>
 .sending {
@@ -130,6 +132,11 @@ img {
   cursor: pointer;
 }
 
+.text :global([data-mx-emoticon]) {
+  height: calc(1em);
+  margin-bottom: -2px;
+}
+
 .text :global([data-mx-ping]):hover {
   background: var(--ping-bg);
 }
@@ -145,7 +152,6 @@ img {
     src={parseMxc(content.url, dimensions.width, dimensions.height)}
     alt={content.body}
     style={dimensions.css}
-    on:error={(e) => e.target.src = parseMxc(content.url) }
     on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
   />
   {:else if type === "m.video"}

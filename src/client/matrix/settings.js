@@ -1,4 +1,7 @@
+// TODO: local echo for settings?
+
 const defaultSettings = new Map();
+defaultSettings.set("showmemberlist", true);
 defaultSettings.set("namecolors", "always");
 defaultSettings.set("showjoinleave", true);
 defaultSettings.set("showmembership", true);
@@ -22,7 +25,7 @@ export default class Settings extends Map {
     return super.get(key) ?? defaultSettings.get(key);
   }
 
-  async put(key, val) {
+  put(key, val) {
     this.set(key, val);
     state.api.sendAccountData(state.userId, "org.eu.celery.settings", Object.fromEntries(this.entries()));
   }
