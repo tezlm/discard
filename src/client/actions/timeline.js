@@ -2,7 +2,7 @@
 import { format } from "../../util/events.js";
 import TimelineSet from "../matrix/timeline.js";
 
-const supportedEvents = ["m.room.create", "m.room.message", "m.reaction"];
+const supportedEvents = ["m.room.create", "m.room.message", "m.reaction", "m.room.name", "m.room.topic", "m.room.pinned_events"];
 const relations = new Map();
 
 // TODO: multiple relations
@@ -122,10 +122,6 @@ export function handle(roomId, event, toStart = false) {
     const slice = actions.slice.get(roomId);
     slice.reslice();
     if (roomId === state.focusedRoomId) state.slice.set(slice);
-  } else if(event.state_key) {
-    actions.rooms.update();
-    actions.spaces.update();
-    if (roomId === state.focusedRoomId) state.slice.set(actions.slice.get(roomId));
   } else {
     state.events.set(id, format(roomId, event));
     addToTimeline(roomId, id, toStart);
@@ -164,12 +160,11 @@ export function redact(roomId, event) {
       const reaction = reactions?.get(relation.key);
       if (!reaction) return;
       reaction.count--;
+      reaction.senders.delete(original.sender.userId);
+      if (original.sender.userId === state.userId) reaction.mine = null;
       if (reaction.count === 0) {
         reactions.delete(relation.key);
         if (reactions.size === 0) state.events.get(relation.event_id).reactions = null;
-      } else {
-        reaction.senders.delete(original.sender);
-        if (original.sender === state.userId) reactions.mine = null;
       }
       slice.reslice();
       state.slice.set(slice);

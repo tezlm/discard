@@ -13,6 +13,7 @@ export function format(roomId, raw) {
     special:    null,
     // isPing:     state.client.getPushActionsForEvent(ev).tweaks?.highlight || false, // TODO: fix
     reactions:  null,
+    unsigned:   raw.unsigned,
   };
   return event;
 }

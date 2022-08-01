@@ -10,10 +10,10 @@ const handleEvent = (item) => (e) => {
 <style>
 .toolbar {
   display: flex;
-
   border: solid var(--bg-misc) 1px;
   border-radius: 4px;
   background: var(--bg-content);
+  overflow: hidden;
   user-select: none;
 }
 
@@ -30,9 +30,7 @@ const handleEvent = (item) => (e) => {
   color: var(--fg-light);
   font-size: 20px;
   font-weight: 700;
-  text-align: center;
   cursor: pointer;
-  border-radius: 4px;
 }
 
 .button:hover {
@@ -41,7 +39,7 @@ const handleEvent = (item) => (e) => {
 }
 
 .button:active {
-  padding-top: 1px;
+  padding-top: 2px;
 }
 </style>
 <div class="toolbar">

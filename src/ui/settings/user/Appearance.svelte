@@ -28,9 +28,7 @@ const settings = state.settings;
 <div class="title">Room timeline</div>
 {#each [
   ["Show join and leaves", "showjoinleave"],
-  ["Show invites, kicks, bans, and unbans", "showmembership"],
   ["Show name and avatar changes", "shownickavatar"],
-  ["Show room name and topic changes", "shownametopic"],
 ] as [name, setting]}
 <div class="option">
   <b>{name}</b>

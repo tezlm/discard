@@ -28,7 +28,7 @@ let settings = state.settings;
 </style>
 <div class="room">
   <RoomHeader room={$room} />
-  {#if $room}
+  {#if $room && $slice}
 		<div class="content" style:flex-direction="row">
 			<div class="content">
 			  <RoomContent room={$room} slice={$slice} />
