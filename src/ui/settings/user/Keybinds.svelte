@@ -14,6 +14,8 @@ function handleKeyDown(e) {
 
   e.target.value = str;
 }
+
+// TODO: ...do something with this?
 </script>
 <style>
 .keybind input {

@@ -71,9 +71,8 @@ export function handleLeave(roomId) {
   state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
 }
 
+// TODO: optimize, don't recreate everything over and over again
 export function update() {
-  if (state.syncer.status === "starting") return;
-  
   for (let [id, data] of roomStates.entries()) {
     const formatted = formatRoom(id, data, roomAccounts.get(id));
     if (state.rooms.has(id)) {

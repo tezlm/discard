@@ -39,6 +39,6 @@ function handleClose(e) {
 }
 </style>
 <div class="reply" on:click={onclick}>
-  <div>Replying to <b>{event.sender}</b></div>
+  <div>Replying to <b>{event.sender.name || event.sender.userId}</b></div>
   <div class="close icon" on:click={handleClose}>cancel</div>
 </div>

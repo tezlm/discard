@@ -60,13 +60,13 @@ function isRead(room) {
 }
 
 .room:hover .wrapper {
-	background: rgba(79,84,92,0.4);
+	background: var(--mod-lighten);
   color: var(--fg-light);
 }
 
 .room.focused .wrapper {
 	color: var(--fg-content); 
-	background: rgba(79,84,92,0.6);
+	background: var(--mod-lightener);
 }
 
 .room.unread .wrapper {

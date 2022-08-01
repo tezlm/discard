@@ -3,6 +3,8 @@ import fuzzysort from "fuzzysort";
 import Input from "../atoms/Input.svelte";
 import Popup from "../atoms/Popup.svelte";
 let search = "";
+let highlighted = 0;
+$: rooms = getRooms(search);
 
 // TODO: highlight matches
 function getRooms(search) {
@@ -19,24 +21,58 @@ function focusRoom(room) {
   actions.rooms.focus(room);
   state.popup.set({});
 }
+
+function handleKeyDown(e) {
+  if (e.key === "ArrowDown") {
+    highlighted = Math.min(highlighted + 1, rooms.length - 1);
+  } else if (e.key === "ArrowUp") {
+    highlighted = Math.max(highlighted - 1, 0);
+  }
+}
 </script>
 <style>
+.rooms {
+  margin-top: 8px;
+}
+
+.room {
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.room .icon {
+  display: inline;
+  color: var(--fg-muted);
+  font-weight: 500;
+}
+
+.room.highlighted {
+  background: var(--mod-lighten);
+}
 </style>
 <Popup>
-  <div slot="content">
+  <div slot="content" on:keydown={handleKeyDown}>
     <div style="height: 16px"></div>
     <Input
       placeholder="Where do you want to go"
       optional
       autofocus
       bind:value={search}
-      submitted={() => focusRoom(getRooms(search)[0])}
+      submitted={() => focusRoom(rooms[0])}
     />
-    <ul>
-      {#each getRooms(search) as room}
-        <li on:click={() => focusRoom(room)}>{room.name}</li>
+    <div class="rooms">
+      {#each rooms as room, i}
+        <div
+          class="room"
+          class:highlighted={highlighted === i}
+          on:click={() => focusRoom(room)}
+          on:mouseover={() => highlighted = i}
+        >
+          <span class="icon">#</span> {room.name}
+        </div>
       {/each}
-    </ul>
+    </div>
   </div>
 </Popup>
 

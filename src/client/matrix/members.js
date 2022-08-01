@@ -2,7 +2,7 @@ export default class MemberCache extends Map {
   constructor(roomId, getPower) {
     super();
     this.roomId = roomId;
-    this.fetched = false;
+    this.request = null;
     this._getPower = () => getPower();
   }
   
@@ -23,11 +23,12 @@ export default class MemberCache extends Map {
   }
   
   async fetch() {
-    if (this.fetched) return;
-    this.fetched = true;
+    if (this.request) return this.request;
     state.log.matrix("fetch members");
-    const { chunk } = await state.api.fetchMembers(this.roomId);
-    for (let i of chunk) this.add(i);
+    const req = state.api.fetchMembers(this.roomId)
+      .then(({ chunk }) => chunk.forEach(i => this.add(i)));
+    this.request = req;
+    return req;
   }
   
   with(membership) {

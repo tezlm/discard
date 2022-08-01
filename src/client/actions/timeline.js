@@ -145,7 +145,7 @@ export function redact(roomId, event) {
   
   const [timeline, index] = state.roomTimelines.get(roomId).for(id);
   if (index) {
-    timeline.splice(index);
+    timeline.splice(index, 1);
   
     const slice = actions.slice.get(roomId);
     if (slice.end === id) slice.end = timeline.at(-1);
@@ -153,7 +153,7 @@ export function redact(roomId, event) {
     // if (slice.start === id) slice.start = timeline[0];
     
     const sliceIndex = slice.events.findIndex(i => i.eventId === id);
-    if (sliceIndex !== -1) slice.events.splice(sliceIndex);
+    if (sliceIndex !== -1) slice.events.splice(sliceIndex, 1);
     state.slice.set(slice);
   } else {
     const original = state.events.get(id);

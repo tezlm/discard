@@ -5,7 +5,7 @@ export let getDefault = () => {};
 export let scrollTop, scrollMax;
 export let items, itemKey;
 export let margin = 400;
-export let direction = "down";
+export let direction = "up";
 export let scrollEl;
 let debounce;
 let contentEl;
@@ -24,8 +24,8 @@ export function scrollTo(pos) {
 }
 
 function handleScroll() {
-  scrollTop = scrollEl.scrollTop;
-  scrollMax = scrollEl.scrollHeight - scrollEl.offsetHeight;
+  scrollTop = this.scrollTop;
+  scrollMax = this.scrollHeight - this.offsetHeight;
   if (paginating) return;
   clearTimeout(debounce);
   debounce = setTimeout(paginate, 20);

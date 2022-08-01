@@ -1,5 +1,5 @@
 <script>
-export let tip;
+export let tip = "";
 export let position = "up";
 export let style = "";
 export let color = null;

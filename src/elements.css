@@ -18,7 +18,8 @@ blockquote {
 
 code {
   background: var(--bg-rooms-members);
-  padding: 2px 2px;
+  padding: 2px;
+  border-radius: 2px;
   font: 14px/1.125rem var(--font-monospace);
 }
 

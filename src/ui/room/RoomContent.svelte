@@ -12,10 +12,8 @@ let { focused, reply, edit, upload } = state.roomState;
 let shiftKey = false;
 let scrollTop, scrollMax, scrollTo, reset;
 
-$: if (slice) {
-	refocus();
-	// reset && reset();
-}
+$: if (slice) refocus();
+$: if (room) reset && reset();
 
 // TODO: unruin this code
 function shouldSplit(prev, ev) {
@@ -104,6 +102,17 @@ onDestroy(edit.subscribe(() => {
 		setTimeout(() => element.scrollIntoView({ behavior: "smooth", block: "center" }));
 	}
 }));
+
+function getColor(id) {
+	switch(id) {
+		case "$Bte4X9IpEXwV8zw-_DykIK-IylQeNJ3mdBvwo-vxZU4": return "var(--color-yellow)";
+		case "$b09NlkmJBMxlrNuNdvrgXMAdDGOow1DTIJXc_2KRD38": return "var(--color-red)";
+		case "$0_zdKXq9EuWMHmedoTC6YeUYCVxcLIEF5w2HlKN06JM": return "var(--color-green)";
+		case "$nCXohu1GNpAtVfuHu4kaI-XHweRbH-DM4_tCOeG5Bzc": return "var(--event-focus)";
+		case "$d-rSJOticiN1K5ZFm0R_Btq1rBVpLpPFay-bcSvVyRI": return "var(--mxid-7)";
+		case "$Ou9I8b9IfQmqrbEcJYQd9y-XR_WlPsgJWjxJ-fckM2c": return "var(--bg-tooltip)";
+	}
+}
 </script>
 <style>
 .content {
@@ -126,6 +135,27 @@ onDestroy(edit.subscribe(() => {
 
 .header {
 	margin-top: 14px;
+}
+
+.highlight {
+	position: relative;
+}
+
+.highlight::before, .highlight::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	height: 100%;
+	background: var(--color);
+}
+
+.highlight::after {
+	width: 2px;
+}
+
+.highlight::before {
+	width: 100%;
+	opacity: .2;
 }
 
 .ping {
@@ -166,7 +196,7 @@ onDestroy(edit.subscribe(() => {
 	top: 0;
 	height: 100%;
 	width: 100%;
-	background: var(--event-focus-bg);	
+	background: var(--event-focus-bg);
 	animation: unfocus 1s 1s forwards;
 }
 
@@ -178,6 +208,7 @@ onDestroy(edit.subscribe(() => {
 	<Scroller
 		items={slice.events}
 		itemKey="eventId"
+    direction="down"
 		margin={300}
 		bind:scrollTop={scrollTop}
 		bind:scrollMax={scrollMax}
@@ -197,9 +228,11 @@ onDestroy(edit.subscribe(() => {
 				<div
 					class:header={shouldSplit(slice.events[index - 1], event) ? true : null}
 					class:ping={event.isPing}
+					class:highlight={true}
 					class:reply={$reply?.eventId === event.eventId}
 					class:focused={$focused === event.eventId}
 					class:editing={$edit === event.eventId}
+					style:--color={getColor(event.eventId)}
 					data-event-id={event.eventId}
 				>
 					{#if event.type === "m.room.create"}

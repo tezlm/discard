@@ -11,10 +11,12 @@ class Timeline extends Array {
   async backwards() {
     if (!this.batchEnd) return false;
     const res = await state.api.fetchMessages(this.roomId, this.batchEnd, "b");
-    for (let i of res.chunk ?? []) handle(this.roomId, i, true);
+    
     for (let i of res.state ?? []) {
       if (i.type === "m.room.member") state.rooms.get(this.roomId)?.members.add(i);
     }
+    
+    for (let i of res.chunk ?? []) handle(this.roomId, i, true);
     
     this.batchEnd = res.end;
     return true;

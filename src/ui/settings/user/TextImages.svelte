@@ -1,7 +1,7 @@
 <script>
 import Toggle from "../../atoms/Toggle.svelte";
 import Radio from "../../atoms/Radio.svelte";
-// TODO: live update settings
+let settings = state.settings;
 // TODO: dry with other settings
 </script>
 <style>
@@ -18,11 +18,11 @@ import Radio from "../../atoms/Radio.svelte";
 <div class="title">Text box</div>
 <div class="setting">
   <div>Send typing notifications</div>
-  <Toggle checked={state.settings.get("sendtyping")} toggled={(val) => state.settings.put("sendtyping", val)} />
+  <Toggle checked={$settings.get("sendtyping")} toggled={(val) => $settings.put("sendtyping", val)} />
 </div>
 <div class="setting">
   <div>Show autocomplete box</div>
-  <Toggle checked={state.settings.get("autocomplete")} toggled={(val) => state.settings.put("autocomplete", val)} />
+  <Toggle checked={$settings.get("autocomplete")} toggled={(val) => $settings.put("autocomplete", val)} />
 </div>
 <br />
 <div class="title">Show embeds</div>
@@ -32,7 +32,7 @@ import Radio from "../../atoms/Radio.svelte";
     { name: "In unencrypted rooms", id: "unencrypted" },
     { name: "Never", id: "never" },
   ]}
-  selected={state.settings.get("showembeds")}
-  changed={(id) => state.settings.put("showembeds", id)}
+  selected={$settings.get("showembeds")}
+  changed={(id) => $settings.put("showembeds", id)}
 />
 <br />

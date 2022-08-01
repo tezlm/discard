@@ -1,6 +1,6 @@
 <script>
 import Toggle from "../../atoms/Toggle.svelte";
-// TODO: live update settings
+let settings = state.settings;
 </script>
 <style>
 .setting {
@@ -14,5 +14,5 @@ import Toggle from "../../atoms/Toggle.svelte";
 </style>
 <div class="setting">
   <div>Automatically join suggested rooms</div>
-  <Toggle checked={state.settings.get("autojoin")} toggled={(val) => state.settings.put("autojoin", val)} />
+  <Toggle checked={$settings.get("autojoin")} toggled={(val) => $settings.put("autojoin", val)} />
 </div>
