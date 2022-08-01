@@ -1,11 +1,13 @@
 <script>
 import { formatDuration } from "../../util/format";
 export let src;
-export let name = "yes";
+export let name = "title";
 let started = false;
 let paused = true;
 let duration = 0;
 let currentTime = 0;
+let wrapperEl;
+let videoEl;
 
 function handlePlay() {
   started = true;
@@ -16,17 +18,25 @@ function handlePause() {
   paused = true;
 }
 
-function handleClick() {
-  if (paused) {
-    this.play();
-  } else {
-    this.pause();
-  }
-}
-
 function handleTime() {
   duration = this.duration;
   currentTime = this.currentTime;
+}
+
+function togglePlayPause() {
+  if (paused) {
+    videoEl.play();
+  } else {
+    videoEl.pause();
+  }
+}
+
+function toggleFullscreen() {
+  if (document.fullscreen) {
+    document.exitFullscreen();
+  } else {
+    wrapperEl.requestFullscreen();
+  }
 }
 </script>
 <style>
@@ -86,9 +96,40 @@ video {
   bottom: 0;
   display: flex;
   align-items: center;
-  padding: 8px;
   background: rgba(4, 4, 5, .6);
   transform: translateY(100%);
+}
+
+.controls .icon {
+  padding: 4px;
+  font-size: 22px;
+  color: var(--fg-interactive);
+}
+
+.controls .icon:hover {
+  color: var(--fg-notice);
+}
+
+.controls .icon:active {
+  transform: translateY(1px);
+}
+
+.controls .playpause {
+  margin-right: 8px;
+}
+
+.controls .bar {
+  flex: 1;
+  height: 6px;
+  background: var(--color-gray-light);
+  margin: 0 8px;
+  border-radius: 6px;
+}
+
+.controls .bar .progress {
+  background: var(--color-accent);
+  border-radius: 8px;
+  height: 6px;
 }
 
 .wrapper:hover .header,
@@ -113,7 +154,7 @@ video {
   font-weight: 500;
 }
 </style>
-<div class="wrapper">
+<div class="wrapper" bind:this={wrapperEl}>
   <div class="header" class:show={paused || !started}>
     <div>
       <div class="name">{name}</div>
@@ -126,19 +167,30 @@ video {
   <video
     {src}
     muted
+    bind:this={videoEl}
     on:play={handlePlay}
     on:pause={handlePause}
-    on:click={handleClick}
+    on:click={togglePlayPause}
     on:timeupdate={handleTime}
   />
   <div class="controls" style:visibility={started ? null : "hidden"} class:show={paused}>
-    <div class="icon">play_arrow</div>
-    <div class="icon">pause</div>
-    <div class="icon">replay</div>
+    <div class="icon playpause" on:click={togglePlayPause}>
+      {#if currentTime === duration}
+      replay
+      {:else if paused}
+      play_arrow
+      {:else}
+      pause
+      {/if}
+    </div>
     <div class="time">{formatDuration(Math.floor(currentTime))}/{formatDuration(Math.floor(duration))}</div>
     <div class="bar">
-      <div class="progress" style:width={(currentTime / duration) + "%"}></div>
+      <div class="progress" style:width={(currentTime * 100 / duration) + "%"}></div>
     </div>
+    <div class="icon">volume_up</div>
+    <div class="icon">volume_down</div>
+    <div class="icon">volume_off</div>
+    <div class="icon" on:click={toggleFullscreen}>fullscreen</div>
   </div>
   <div class="overlay">
     <div class="icon">play_circle_filled</div>

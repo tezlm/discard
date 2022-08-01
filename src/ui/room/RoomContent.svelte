@@ -6,9 +6,12 @@ import Upload from './timeline/Upload.svelte';
 import Create from './timeline/Create.svelte';
 import Placeholder from './timeline/Placeholder.svelte';
 import Message from './message/Message.svelte';
+import NameTopic from "./timeline/NameTopic.svelte";
+import Pinned from "./timeline/Pinned.svelte";
 export let room;
 export let slice;
 let { focused, reply, edit, upload } = state.roomState;
+let settings = state.settings;
 let shiftKey = false;
 let scrollTop, scrollMax, scrollTo, reset;
 
@@ -18,8 +21,9 @@ $: if (room) reset && reset();
 // TODO: unruin this code
 function shouldSplit(prev, ev) {
 	if (!prev) return true;
-	if (prev.type !== "m.room.message") return true;
-	if (prev.sender !== ev.sender) return true;
+	if (ev.type !== "m.room.message" && prev.type === "m.room.message") return true;
+	if (prev.type !== "m.room.message" && ev.type === "m.room.message") return true;
+	if (prev.sender.userId !== ev.sender.userId) return true;
 	if (ev.content["m.relates_to"]?.["m.in_reply_to"]) return true;
 	if (ev.date - prev.date > 1000 * 60 * 10) return true;
 	if (ev.date.getDay() !== prev.date.getDay()) return true;
@@ -82,6 +86,15 @@ function checkShift(e) {
   shiftKey = e.shiftKey;
 }
 
+function getHighlight(event, reply) {
+	if (reply?.eventId === event.eventId) return "var(--color-blue)";
+}
+
+function shouldRender(type, settings) {
+	if (["m.room.name", "m.room.topic"].includes(type) && !settings.get("shownametopic")) return false;
+	return true;
+}
+
 onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => reset && reset())));
 onDestroy(upload.subscribe(refocus));
 onDestroy(reply.subscribe(refocus));
@@ -102,17 +115,6 @@ onDestroy(edit.subscribe(() => {
 		setTimeout(() => element.scrollIntoView({ behavior: "smooth", block: "center" }));
 	}
 }));
-
-function getColor(id) {
-	switch(id) {
-		case "$Bte4X9IpEXwV8zw-_DykIK-IylQeNJ3mdBvwo-vxZU4": return "var(--color-yellow)";
-		case "$b09NlkmJBMxlrNuNdvrgXMAdDGOow1DTIJXc_2KRD38": return "var(--color-red)";
-		case "$0_zdKXq9EuWMHmedoTC6YeUYCVxcLIEF5w2HlKN06JM": return "var(--color-green)";
-		case "$nCXohu1GNpAtVfuHu4kaI-XHweRbH-DM4_tCOeG5Bzc": return "var(--event-focus)";
-		case "$d-rSJOticiN1K5ZFm0R_Btq1rBVpLpPFay-bcSvVyRI": return "var(--mxid-7)";
-		case "$Ou9I8b9IfQmqrbEcJYQd9y-XR_WlPsgJWjxJ-fckM2c": return "var(--bg-tooltip)";
-	}
-}
 </script>
 <style>
 .content {
@@ -163,11 +165,6 @@ function getColor(id) {
 	background: var(--event-ping-bg);
 }
 
-.reply {
-	position: relative;
-	background: var(--event-focus-bg);
-}
-
 .editing {
 	position: relative;
   background: rgba(4,4,5,0.07);
@@ -177,7 +174,7 @@ function getColor(id) {
 	position: relative;
 }
 
-.ping::after, .reply::after {
+.ping::after {
 	content: "";
 	position: absolute;
 	top: 0;
@@ -186,16 +183,7 @@ function getColor(id) {
 	background: var(--event-ping);
 }
 
-.reply::after {
-	background: var(--event-focus);
-}
-
-.focused::before {
-	content: "";
-	position: absolute;
-	top: 0;
-	height: 100%;
-	width: 100%;
+.focused {
 	background: var(--event-focus-bg);
 	animation: unfocus 1s 1s forwards;
 }
@@ -224,19 +212,23 @@ function getColor(id) {
 		<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
 		<div>
 			{#if true} <!-- so i can use const -->
-			{#if event.special !== "redacted"}
+			{#if event.special !== "redacted" && shouldRender(event.type, $settings)}
 				<div
 					class:header={shouldSplit(slice.events[index - 1], event) ? true : null}
 					class:ping={event.isPing}
-					class:highlight={true}
-					class:reply={$reply?.eventId === event.eventId}
 					class:focused={$focused === event.eventId}
 					class:editing={$edit === event.eventId}
-					style:--color={getColor(event.eventId)}
 					data-event-id={event.eventId}
+						
+					class:highlight={getHighlight(event, $reply)}
+					style:--color={getHighlight(event, $reply)}
 				>
 					{#if event.type === "m.room.create"}
 						<Create {room} />
+					{:else if event.type === "m.room.name" || event.type === "m.room.topic"}
+						<NameTopic {room} {event} />
+					{:else if event.type === "m.room.pinned_events"}
+						<Pinned {room} {event} />
 					{:else if event.type === "m.room.message"}
 					  <Message
 							{shiftKey} {room} {event}
@@ -244,9 +236,9 @@ function getColor(id) {
 						/>
 					{/if}
 				</div>
-				{#if index < slice.events.length - 1}
-					<Divider {...dividerProps(event, slice.events[index + 1])} />
-				{/if}
+			{/if}
+			{#if index < slice.events.length - 1}
+				<Divider {...dividerProps(event, slice.events[index + 1])} />
 			{/if}
 			{/if}
 		</div>
