@@ -104,6 +104,7 @@ function handleMove(e) {
 
 .wrapper .tooltip {
   position: absolute;
+  top: -6px;
   padding: 2px 8px;
   border-radius: 3px;
   font-size: 12px;
@@ -138,6 +139,7 @@ function handleMove(e) {
   class:moving
   bind:this={wrapperEl}
   on:mousedown={handleClick}
+  on:mousemove={handleMove}
 >
   <div style="position: relative; height: 100%">
     {#if vertical}

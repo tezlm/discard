@@ -3,11 +3,8 @@ import { onDestroy } from "svelte";
 import Scroller from '../molecules/Scroller.svelte';
 import Divider from './timeline/Divider.svelte';
 import Upload from './timeline/Upload.svelte';
-import Create from './timeline/Create.svelte';
 import Placeholder from './timeline/Placeholder.svelte';
-import Message from './message/Message.svelte';
-import NameTopic from "./timeline/NameTopic.svelte";
-import Pinned from "./timeline/Pinned.svelte";
+import Event from "./timeline/Event.svelte";
 export let room;
 export let slice;
 let { focused, reply, edit, upload } = state.roomState;
@@ -21,8 +18,9 @@ $: if (room) reset && reset();
 // TODO: unruin this code
 function shouldSplit(prev, ev) {
 	if (!prev) return true;
+	if (ev.type !== "m.room.message" && prev.type !== "m.room.message") return false;
 	if (ev.type !== "m.room.message" && prev.type === "m.room.message") return true;
-	if (prev.type !== "m.room.message" && ev.type === "m.room.message") return true;
+	if (ev.type === "m.room.message" && prev.type !== "m.room.message") return true;
 	if (prev.sender.userId !== ev.sender.userId) return true;
 	if (ev.content["m.relates_to"]?.["m.in_reply_to"]) return true;
 	if (ev.date - prev.date > 1000 * 60 * 10) return true;
@@ -223,18 +221,10 @@ onDestroy(edit.subscribe(() => {
 					class:highlight={getHighlight(event, $reply)}
 					style:--color={getHighlight(event, $reply)}
 				>
-					{#if event.type === "m.room.create"}
-						<Create {room} />
-					{:else if event.type === "m.room.name" || event.type === "m.room.topic"}
-						<NameTopic {room} {event} />
-					{:else if event.type === "m.room.pinned_events"}
-						<Pinned {room} {event} />
-					{:else if event.type === "m.room.message"}
-					  <Message
-							{shiftKey} {room} {event}
-							header={shouldSplit(slice.events[index - 1], event) ? true : null}
-						/>
-					{/if}
+				  <Event
+						{shiftKey} {room} {event}
+						header={shouldSplit(slice.events[index - 1], event) ? true : null}
+					/>
 				</div>
 			{/if}
 			{#if index < slice.events.length - 1}

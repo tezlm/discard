@@ -3,7 +3,6 @@ import { formatDate } from "../../../util/format.js";
 import { calculateHash } from "../../../util/content.js";
 export let room;
 export let event;
-export let header;
 let settings = state.settings;
 
 function getColor(sender, settings) {
@@ -21,10 +20,6 @@ function getColor(sender, settings) {
   white-space: pre;
   user-select: text;
   padding: 2px 0;
-}
-
-.header {
-  margin-top: 80px;
 }
 
 .icon {
@@ -53,7 +48,7 @@ time {
   margin-left: .25rem;
 }
 </style>
-<div class="change" class:header>
+<div class="change">
   <div class="icon">edit</div>
   <div>
     <span class="author" style:color={getColor(event.sender, $settings)}>

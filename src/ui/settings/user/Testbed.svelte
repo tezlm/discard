@@ -1,4 +1,5 @@
 <script>
+import Markdown from "../../molecules/Markdown.svelte";
 import Context from "../../atoms/Context.svelte";
 import { parseMxc } from "../../../util/content.js";
 let embed = {
@@ -69,6 +70,8 @@ let embed = {
 }
 </style>
 <p>testbed for random stuff</p>
+<br />
+<Markdown />
 <br />
 <div class="embed">
   {#if embed["og:site_name"]}

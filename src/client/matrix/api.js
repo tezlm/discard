@@ -134,16 +134,14 @@ export default class Api {
   }
     
   // rooms
-  createRoom({ name, topic, creator, type }) {
+  createRoom({ name, topic, creator, type, state, version = 9 }) {
     return this.fetch("POST", `/createRoom`, {
       name,
       topic,
-      power_level_content_override: {
-        users: { [creator]: 101 },
-      },
-      ...(type && {
-        creation_content: { type },
-      }),
+      room_version: version.toString(),
+      power_level_content_override: { users: { [creator]: 101 } },
+      ...(type && { creation_content: { type } }),
+      ...(state && { initial_state: state }),
     });
   }
   

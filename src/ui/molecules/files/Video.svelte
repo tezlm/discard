@@ -71,7 +71,8 @@ function handleMove() {
   display: inline-block;
   position: relative;
   overflow: hidden;
-  background: var(--color-context);
+  background: var(--bg-context);
+  background: linear-gradient(red, blue);
 
   height: 100%;
   border-radius: 3px;
@@ -166,6 +167,10 @@ video {
   transform: translateY(0);
 }
 
+.wrapper.hide {
+  cursor: none;
+}
+
 .overlay {
   position: absolute;
   display: flex;
@@ -215,8 +220,8 @@ video {
   }
 }
 </style>
-<div class="wrapper" class:hide={fullscreen} bind:this={wrapperEl} on:mousemove={handleMove}>
-  <div class="header" class:show={paused || !started || (fullscreen && fullShowDebounce)}>
+<div class="wrapper" class:hide={fullscreen && !paused && !fullShowDebounce} bind:this={wrapperEl} on:mousemove={handleMove}>
+  <div class="header" class:show={paused || !started}>
     <div class="info">
       <a class="name" href={src}>{name}</a><br />
       <span class="size">{formatSize(size)}</span>
@@ -237,7 +242,7 @@ video {
     on:timeupdate={handleTime}
     on:loadedmetadata={handleTime}
   />
-  <div class="controls" style:visibility={started ? null : "hidden"} class:show={paused || (fullscreen && fullShowDebounce)}>
+  <div class="controls" style:visibility={started ? null : "hidden"} class:show={paused}>
     <div class="icon playpause" on:click={togglePlayPause}>
       {#if currentTime > duration - .05}
       replay
