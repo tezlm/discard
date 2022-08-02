@@ -121,6 +121,10 @@ function isRead(room) {
 	color: var(--fg-light);
 }
 
+.icon:active {
+	transform: translateY(1px);
+}
+
 .pings {
 	display: flex;
 	justify-content: center;

@@ -45,7 +45,7 @@ export default class Api {
   
   // login/logout
   async login(userId, password, deviceName = "discard") {
-    const { access_token: token } = await this.fetchUnauth("POST", "/login", {
+    const res = await this.fetchUnauth("POST", "/login", {
       type: "m.login.password",
       identifier: {
         type: "m.id.user",
@@ -54,8 +54,9 @@ export default class Api {
       password: password,
       initial_device_display_name: deviceName,
     });
-    this.token = token;
-    return token;
+    if (res.error) throw res;
+    this.token = res.access_token;
+    return res.access_token;;
   }
   
   logout() {

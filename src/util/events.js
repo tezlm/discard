@@ -1,11 +1,11 @@
 export function format(roomId, raw) {
   const room = state.rooms.get(roomId);
-  if (!room) throw "theoretically unreachable?";
+  if (!room) throw `theoretically unreachable? (room id: ${roomId})`;
   if (!room.members.get(raw.sender)) console.warn("couldn't find user " + raw.sender);
   const event = {
     roomId:     roomId,
     eventId:    raw.event_id,
-    sender:     room.members.get(raw.sender) ?? {},
+    sender:     room.members.get(raw.sender) ?? { userId: raw.sender },
     stateKey:   raw.state_key,
     content:    raw.content,
     type:       raw.type,

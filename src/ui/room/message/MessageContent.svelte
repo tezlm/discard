@@ -2,7 +2,9 @@
 import { parseHtml } from "../../../util/html.js";
 import { parseMxc } from "../../../util/content.js";
 import { highlightAllUnder } from "prismjs";
-import fileIcon from "../../../assets/file.svg";
+import File from "../../molecules/files/File.svelte";
+import Audio from "../../molecules/files/Audio.svelte";
+import Video from "../../molecules/files/Video.svelte";
 export let event;
 let wrapper;
 
@@ -74,7 +76,7 @@ $: if (wrapper) {
   font-style: italic;
 }
 
-img, video, audio {
+img, audio {
   display: block;
   border-radius: 3px;
   background: var(--bg-rooms-members);
@@ -85,30 +87,10 @@ img {
   cursor: pointer;
 }
 
-.file {
-  background: var(--bg-rooms-members);
-  border: solid var(--bg-spaces) 1px;
-  border-radius: 3px;
-  display: flex;
-  padding: .5rem;
-  height: 60px;
-  width: fit-content;
-}
-
-.file > .info {
-  padding: 0 1em;
-  display: flex;
-  flex-direction: column;
-}
-
-.file > .info > .size {
-  color: var(--fg-muted);
-  font-size: .8rem;
-}
-
 .text {
   display: inline;
   word-break: break-word;
+  user-select: text;
 }
 
 .text :global(*) {
@@ -155,17 +137,11 @@ img {
     on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
   />
   {:else if type === "m.video"}
-  <video controls src={parseMxc(content.url)} alt={content.body} style={dimensions.css} />
+  <Video src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
   {:else if type === "m.audio"}
-  <audio controls src={parseMxc(content.url)} alt={content.body} />
+  <Audio src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
   {:else if type === "m.file"}
-  <div class="file">
-    <img src={fileIcon} alt="file icon" />
-    <div class="info">
-      <a href={parseMxc(content.url)}>{content.filename ?? content.body}</a><br />
-      <span class="size">{formatSize(content.info?.size)}</span>
-    </div>
-  </div>
+  <File src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
   {:else if content.format === "org.matrix.custom.html"}
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}

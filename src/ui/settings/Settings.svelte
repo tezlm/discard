@@ -55,21 +55,16 @@ nav {
 }
 
 .main {
+  flex: 1;
   display: flex;
   position: relative;
-  flex: 1;
+  justify-content: stretch;
 }
 
 .wrapper {
-  margin: 0 2em;
-  padding: 4em 0;
   flex: 1;
+  padding: 4em 2em;
   max-width: 660px;
-  min-width: 440px;
-  height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  outline: none;
 }
 
 .hidescroll {
@@ -82,8 +77,8 @@ nav {
 }
 
 .exit {
-  padding-top: 2em;
-  padding-left: 0;
+  position: sticky;
+  top: 2em;
   margin-right: 2em;
   height: fit-content;
   color: var(--fg-interactive);
@@ -125,8 +120,8 @@ h1 {
       {/each}
     </nav>
   </div>
-  <div class="main">
-    <div class="wrapper hidescroll">
+  <div class="main scroll">
+    <div class="wrapper">
       {#if !focused.raw}
       <h1>{focused.name}</h1>
       {/if}

@@ -25,10 +25,6 @@ export function handleEphermeral(roomId, type, content) {
   }
 }
 
-export function handleState(roomId, event, batch) {
-  actions.rooms.handleJoin(roomId, event, batch);
-}
-
 export function handleInvite(roomId) {
   // TODO
 }
