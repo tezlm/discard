@@ -50,7 +50,7 @@ function handleScrub(t) {
 }
 
 .controls .icon:active {
-  transform: translateY(2px);
+  transform: translateY(1px);
 }
 
 .controls .playpause {

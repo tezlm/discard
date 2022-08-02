@@ -3,7 +3,7 @@ import MessageReply from "./MessageReply.svelte";
 import MessageContent from "./MessageContent.svelte";
 import MessageEdit from "./MessageEdit.svelte";
 import MessageReactions from "./MessageReactions.svelte";
-import MessageToolbar from "./MessageToolbar.svelte";
+import MessageToolbar from "../../atoms/Toolbar.svelte";
 import Emoji from "../../molecules/Emoji.svelte";
 import User from "../../molecules/User.svelte";
 import Context from "../../atoms/Context.svelte";
@@ -158,10 +158,6 @@ function getContextMenu() {
   padding: 2px 72px 4px;
   position: relative;
   color: var(--fg-content);
-}
-
-.message:hover {
-  background: var(--mod-darken);
 }
 
 .content {

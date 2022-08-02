@@ -1,5 +1,7 @@
 <script>
 export let room;
+export let event;
+export let shiftKey;
 $: name = room.name;
 $: topic = room.topic;
 
@@ -57,4 +59,12 @@ h1 {
     <div class="icon">edit</div>
     Edit Room
   </div>
+  <!--
+  {#if shiftKey}
+  <div class="action" on:click={() => state.popup.set({ id: "source", event })}>
+    <div class="icon">terminal</div>
+    View Source
+  </div>
+  {/if}
+  -->
 </div>

@@ -113,15 +113,23 @@ async function handleUpload(file) {
     info: {
       mimetype: file.type,
       size: file.size,
-      ...(type === "m.image" ? await getSize(file) : {}),
+      ...(["m.image", "m.video"].includes(type) ? await getSize(file, type) : {}),
     }
   });
 
-  function getSize(file) {
+  function getSize(file, type) {
     return new Promise(res => {
-      const img = new Image();
-      img.onload = () => res({ w: img.width, h: img.height });
-      img.src = URL.createObjectURL(file);
+      if (type === "m.image") {
+        const img = new Image();
+        img.onload = () => res({ w: img.width, h: img.height });
+        img.src = URL.createObjectURL(file);
+      } else if (type === "m.video") {
+        const vid = document.createElement("video");
+        vid.onloadedmetadata = () => res({ w: vid.videoWidth, h: vid.videoHeight });
+        vid.src = URL.createObjectURL(file);
+      } else {
+        throw "unreachable?";
+      }
     });
   }
 

@@ -1,5 +1,5 @@
 <script>
-import Tooltip from "../../atoms/Tooltip.svelte";
+import Tooltip from "./Tooltip.svelte";
 export let items, event;
 
 const handleEvent = (item) => (e) => {

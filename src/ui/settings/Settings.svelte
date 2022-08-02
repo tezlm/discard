@@ -64,7 +64,7 @@ nav {
 .wrapper {
   flex: 1;
   padding: 4em 2em;
-  max-width: 660px;
+  max-width: 740px;
 }
 
 .hidescroll {

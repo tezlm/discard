@@ -3,6 +3,7 @@ export let type = "normal";
 export let label = "button";
 export let clicked = () => {};
 export let disabled = false;
+export let loading = false;
 $: standard = ["normal", "primary", "danger"].some(i => type.split(" ").includes(i));
 </script>
 <style>
@@ -60,6 +61,17 @@ button {
 .hollow:hover { background: var(--button-outline) }
 
 .disabled { cursor: not-allowed }
+.loading { cursor: progress }
 .standard.disabled::after { background: #00000055 }
+.standard.loading::after { background: #00000055 }
 </style>
-<button class:standard class:disabled class={type} on:click={clicked} {disabled}>{label}</button>
+<button
+  disabled={disabled || loading}
+  class={type}
+  class:standard
+  class:disabled
+  class:loading
+  on:click={clicked}
+>
+  {label}
+</button>

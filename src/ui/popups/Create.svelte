@@ -5,6 +5,7 @@ import Popup from "../atoms/Popup.svelte";
 export const confirm = create;
 export let current;
 let name = "";
+let creating = false;
 
 function capitalize(str) {
   if (!str?.length) return str;
@@ -12,11 +13,24 @@ function capitalize(str) {
 }
 
 async function create() {
+  creating = true;
+  const parentId = current.parent.roomId;
   const { room_id } = await state.api.createRoom({
     name,
     creator: state.userId,
     ...(current.type === "space" && { type: "m.space" }),
+    ...(current.parent && {
+      state: [
+        { content: { canonical: true }, type: "m.space.parent", state_key: parentId },
+        { content: { join_rule: "restricted", allow: [{ room_id: parentId, type: "m.room_membership" }] }, type: "m.room.join_rules" },
+      ],
+    }),
   });
+
+  if (parentId) {
+    state.api.sendState(parentId, "m.space.child", room_id, { auto_join: false, suggested: false, via: [room_id.match(/:.+/)[0].slice(1)] });  
+  }
+
   const interval = setInterval(() => {
     if (!state.rooms.has(room_id)) return;
     if (current.type === "space") {
@@ -49,7 +63,13 @@ async function create() {
   </div>
   <div slot="footer">
     <Button type="link" label="Cancel" clicked={() => state.popup.set({ id: null, ...current })} />
-    <Button type="primary" disabled={!name.length} label="Create {capitalize(current.type)}" clicked={create} />
+    <Button
+      type="primary"
+      disabled={!name.length}
+      loading={creating}
+      label={creating ? `Creating ${capitalize(current.type)}...` : `Create ${capitalize(current.type)}`}
+      clicked={create}
+    />
   </div>
 </Popup>
 
