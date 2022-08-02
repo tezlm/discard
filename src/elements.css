@@ -42,6 +42,25 @@ hr {
   border: solid var(--color-gray) 1px;
 }
 
+table {
+  background: var(--bg-rooms-members);
+  border: solid var(--bg-spaces) 1px;
+  border-radius: 3px;
+  border-spacing: 0;
+}
+
+td, th {
+  padding: 8px;
+}
+
+th {
+  background: var(--bg-spaces);
+}
+
+tr:nth-child(odd) {
+  background: var(--mod-darkener);
+}
+
 .title {
   color: var(--fg-light);
   font-family: var(--font-display);

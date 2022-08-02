@@ -33,7 +33,7 @@ export function formatSize(size) {
   if (!size) return "??? kb";
   let max = 1024;
   for (let unit of ["bytes", "KiB", "MiB", "GiB", "TiB"]) {
-    if (size < max) return `${Math.floor(size / (max / 1024))} ${unit}`;
+    if (size < max) return `${Math.floor(size / (max / 102400)) / 100} ${unit}`;
     max *= 1024;
   }
   return "very big";

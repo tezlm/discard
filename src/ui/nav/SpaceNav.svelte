@@ -56,6 +56,10 @@ function allRead(spaceId) {
   border-radius: 35%;
 }
 
+.space:active img {
+  transform: translateY(1px);
+}
+
 .space.focused img {
   border-radius: 35%;
 }

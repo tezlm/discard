@@ -158,7 +158,6 @@ function getContextMenu() {
   padding: 2px 72px 4px;
   position: relative;
   color: var(--fg-content);
-  user-select: text;
 }
 
 .message:hover {
@@ -172,9 +171,10 @@ function getContextMenu() {
 
 .author {
 	font-weight: 500;
-	cursor: pointer;
   display: inline-block;
   height: 22px;
+  user-select: text;
+	cursor: pointer;
 }
 
 .author:hover {
@@ -221,6 +221,7 @@ time {
   font-size: 11px;
   font-family: var(--font-display);
   text-align: right;
+  user-select: text;
   display: none;
 }
 

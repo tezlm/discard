@@ -50,11 +50,9 @@ export async function login({ localpart, homeserver, password }) {
     start(api, syncer, userId);
     state.log.matrix("starting sync");
   } catch(err) {
-    state.log.error(err);
-    switch(err.name) {
+    switch(err.errcode) {
       case "M_FORBIDDEN": throw "Incorrect username or password";
       case "M_USER_DEACTIVATED": throw "User was deactivated";
-      case "ConnectionError": throw "Invalid homeserver";
       default: throw `Unknown error (${err.name}})`;
     }
   }
@@ -63,7 +61,6 @@ export async function login({ localpart, homeserver, password }) {
 async function resolveWellKnown(domain) {
   try {
     const req = await window.fetch(`https://${domain}/.well-known/matrix/client`);
-    console.log("arst")
     const json = await req.json();
     return json["m.homeserver"]?.base_url;
   } catch {
@@ -77,6 +74,8 @@ function start(api, syncer, userId) {
   state.userId = userId;
   state.scene.set("loading");
   
+  syncer.on("join", (roomId, state, batch) => actions.rooms.handleJoin(roomId, state, batch));
+  syncer.on("state", (roomId, state) => actions.rooms.handleState(roomId, state));
   syncer.on("timeline", (roomId, event) => actions.timeline.handle(roomId, event, false));
 }
 

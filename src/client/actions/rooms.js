@@ -31,11 +31,14 @@ export function handleAccount(roomId, type, content) {
   }
 }
 
-export function handleJoin(roomId, event, batch) {
-  const isNew = !roomStates.has(roomId);
-  if (isNew) roomStates.set(roomId, []);
-  if (!state.roomTimelines.has(roomId)) state.roomTimelines.set(roomId, new TimelineSet(roomId, batch));
-  
+export function handleJoin(roomId, events, batch) {
+  roomStates.set(roomId, events);
+  state.roomTimelines.set(roomId, new TimelineSet(roomId, batch));  
+  update();
+  actions.spaces.update();
+}
+
+export function handleState(roomId, event) {
   const roomState = roomStates.get(roomId);
   const index = roomState.findIndex(i => i.type === event.type && i.state_key === event.state_key);
   if (index >= 0) {
@@ -46,7 +49,7 @@ export function handleJoin(roomId, event, batch) {
   
   if (event.type === "m.room.member") state.rooms.get(roomId)?.members.add(event);
   update();
-  if (isNew || event.type === "m.space.child") actions.spaces.update();
+  if (event.type === "m.space.child") actions.spaces.update();
 }
 
 export function handleInvite(roomId, event) {

@@ -1,6 +1,5 @@
 <script>
 import Context from "../../atoms/Context.svelte";
-import Video from "../../atoms/Video.svelte";
 import { parseMxc } from "../../../util/content.js";
 let embed = {
   "url": "https://www.freecodecamp.org/news/what-is-open-graph-and-how-can-i-use-it-for-my-website/",
@@ -141,4 +140,3 @@ let embed = {
   <div class="option">/part</div>
 </div>
 <br />
-<Video src="https://celery.eu.org/_matrix/media/r0/download/celery.eu.org/bhUcqu0YzcoOQ2rgrYESGoH8WX916EVF" />
