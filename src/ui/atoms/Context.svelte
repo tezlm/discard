@@ -1,17 +1,20 @@
 <script>
-// in the future this wont exist (wrapper instead)
-// TODO: close context menu on outside click
-export let toplevel = true;
-
 export let items = [];
-export let width = 180;
-export let x = 10;
-export let y = 10;
+export let width;
+let menuEl;
+
+function tooRight(menuEl) {
+  if (!menuEl) return;
+  const rect = menuEl.getBoundingClientRect();
+  return rect.width * 2 + rect.left > window.innerWidth;
+}
 </script>
 <style>
 .menu {
   left: 10%;
   padding: 6px 8px;
+  min-width: 180px;
+  max-width: 240px;
   background: var(--bg-context);
   border-radius: 4px;
   box-shadow: var(--shadow-popup);
@@ -19,14 +22,15 @@ export let y = 10;
 }
 
 .item {
+  position: relative;
   padding: 6px 8px;
-  border-radius: 2px;
-  cursor: pointer;
+  margin: 2px 0;
+  height: 32px;
   color: var(--fg-interactive);
   font-size: 14px;
   font-weight: 500;
-  min-height: 32px;
-  margin: 2px 0;
+  border-radius: 2px;
+  cursor: pointer;
 }
 
 .item:hover {
@@ -35,6 +39,7 @@ export let y = 10;
 }
 
 .icon {
+  margin-left: 8px;
   float: right;
 }
 
@@ -50,39 +55,43 @@ export let y = 10;
   position: absolute;
   z-index: 1;
   top: -8px;
+  padding: 0 12px;
+}
+
+.submenu:not(.right) {
   left: calc(100%);
-  padding-left: 12px;
+}
+
+.submenu.right {
+  right: calc(100%);
 }
 
 .item:hover > .submenu {
   visibility: visible;
 }
 </style>
-<div
-  class="menu"
-  style:position={toplevel && "fixed"}
-  style:width={width + "px"}
-  style:left={toplevel && x + "px"}
-  style:top={toplevel && y + "px"}
->
+<div class="menu" style:width={width + "px"} bind:this={menuEl}>
 {#each items as item}
   {#if item}
     <div
       class="item"
       style:color={item.color}
       on:click={item.clicked}
-      style="position: relative"
     >
-      {item.label}
-      {#if item.submenu}
-      <div class="icon">navigate_next</div>
-      <div class="submenu">
-        <svelte:self items={item.submenu} toplevel={false} />
-      </div>
-      {:else if item.icon}
-      <div class="icon">{item.icon}</div>
+      {#if item.component}
+        <svelte:component this={item.component} />
+      {:else}
+        {item.label}
+        {#if item.submenu}
+        <div class="icon">navigate_next</div>
+        <div class="submenu" class:right={tooRight(menuEl)}>
+          <svelte:self items={item.submenu} />
+        </div>
+        {:else if item.icon}
+        <div class="icon">{item.icon}</div>
+        {/if}
       {/if}
-    </div>
+      </div>
   {:else}
     <div class="spacer"></div>
   {/if}

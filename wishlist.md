@@ -20,7 +20,14 @@ varying levels of difficulty
 - [x] view members by memberships
 - [x] send reactions
 - [x] member popout
+- [x] members list
+- [x] make settings save
 - [-] space home
+- [-] notifications
+- [-] context menus
+- [-] rich input
+- [ ] slash commands
+- [ ] user/command autocomplete
 - [ ] add/remove rooms from spaces
 - [ ] organize spaces/rooms
 - [ ] join room
@@ -30,21 +37,14 @@ varying levels of difficulty
 - [ ] jump to latest
 - [ ] file too big warning
 - [ ] drag and drop to upload file
-- [ ] members list
-- [ ] make settings save
 - [ ] invite people
 - [ ] ban/kick people
-- [ ] context menus
 - [ ] dms
 - [ ] e2ee
 - [ ] custom emoji
 - [ ] threads
 - [ ] voice channels
 - [ ] link embeds
-- [ ] slash commands
-- [ ] rich input
-- [ ] user/command autocomplete
-- [ ] notifications
 - [x] nitor
 
 ## 100% completion

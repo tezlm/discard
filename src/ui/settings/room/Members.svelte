@@ -49,6 +49,28 @@ async function getMember(member) {
   users.set(member.userId, data);
   return data;
 }
+
+function getContextMenu(member) {
+  const name = member.name || member.userId;
+  return [
+    { label: "Profile", clicked: todo, icon: "person" },
+    { label: "Mention", clicked: todo, icon: "notifications" },
+    { label: "Message", clicked: todo, icon: "message" },
+    { label: "Block",   clicked: todo, icon: "block" },
+    null,
+    { label: "Remove Messages",  clicked: () => state.popup.set({ id: "deleterecent", room, member }), icon: "delete",        color: "var(--color-red)" },
+    { label: `Kick ${name}`,     clicked: () => state.popup.set({ id: "kick",         room, member }), icon: "person_remove", color: "var(--color-red)" },
+    { label: `Ban ${name}`,      clicked: () => state.popup.set({ id: "ban",          room, member }), icon: "person_remove", color: "var(--color-red)" },
+    null,
+    { label: "Power",   clicked: todo, submenu: [] },
+    null,
+    { label: "Copy ID", clicked: copy(member.userId), icon: "terminal" },
+  ];
+
+	function copy(text) {
+		return () => navigator.clipboard.writeText(text);
+	}
+}
 </script>
 <style>
 .header {
@@ -113,7 +135,7 @@ h1 {
   </div>
   {#if members}
     {#each members as member}
-    <div class="member" on:click={() => showPopup(member)}>
+    <div class="member" on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getContextMenu(member), x: e.clientX, y: e.clientY })}>
       {#await getMember(member)}
         <div class="avatar"></div>
         <div class="name">
@@ -138,7 +160,7 @@ h1 {
       {#if membership === "join"}
       <div class="power">{member.power}</div>
       {/if}
-      <div class="icon menu">more_vert</div>
+      <div class="icon menu" on:click|stopPropagation={e => state.context.set({ items: getContextMenu(member), x: e.clientX, y: e.clientY })}>more_vert</div>
     </div>
     {:else}
     <p>hmmm, seems like nobody's here?</p>

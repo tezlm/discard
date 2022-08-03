@@ -27,17 +27,35 @@ let embed = {
   box-shadow: var(--shadow-popup);
   overflow: hidden scroll;
   padding: 8px;
-  min-width: 430px;
-  max-width: 800px;
+  max-height: 300px;
 }
 
 .option {
+  display: flex;
+  align-items: center;
   border-radius: 5px;
   padding: 8px;
 }
 
 .option:hover {
   background: var(--bg-content);
+}
+
+.option .name::before {
+  content: "/";
+  margin-right: 8px;
+  font-weight: 700;
+  color: var(--fg-dim);
+}
+
+.option .name {
+  font-weight: 500;
+}
+
+.option .description {
+  color: var(--fg-dim);
+  font-size: 14px;
+  margin-left: auto;
 }
 
 .embed {
@@ -87,59 +105,55 @@ let embed = {
 </div>
 <br />
 <br />
-<div on:contextmenu={(e) => {
-  e.preventDefault();
-  // TODO: split out into state and actions
-  // TODO: if context menu is too low down, move it up
-  context = {
-    x: e.x,
-    y: e.y,
-  };
-}}>
-  right click
-</div>
-<br />
-<Context items={[
-  { label: "Profile", clicked: todo, icon: "person" },
-  { label: "Mention", clicked: todo, icon: "notifications" },
-  { label: "Message", clicked: todo, icon: "message" },
-  { label: "Block",   clicked: todo, icon: "block" },
-  null,
-  { label: "Remove Messages", clicked: () => state.popup.set({ id: "deleterecent", room: { roomId: null }, member: { name: "yes" } }), icon: "delete",        color: "var(--color-red)" },
-  { label: "Kick [user]",     clicked: () => state.popup.set({ id: "kick",         room: { roomId: null }, member: { name: "yes" } }), icon: "person_remove", color: "var(--color-red)" },
-  { label: "Ban [user]",      clicked: () => state.popup.set({ id: "ban",          room: { roomId: null }, member: { name: "yes" } }), icon: "person_remove", color: "var(--color-red)" },
-  null,
-  { label: "Power",   clicked: todo, submenu: [] },
-  null,
-  { label: "Copy ID", clicked: todo, icon: "terminal" },
-]} />
-<br />
-<Context x={200} items={[
-  { label: "Mark As Read",  clicked: todo, icon: "done" },
-  { label: "Notifications", clicked: todo, submenu: [
-    { label: "Foo", clicked: todo },
-    { label: "Bar", clicked: todo },
-    { label: "Baz", clicked: todo },
-  ] },
-  null,
-  { label: "Settings", clicked: todo, submenu: [
-    { label: "Foo", clicked: todo },
-    { label: "Bar", clicked: todo },
-    { label: "Baz", clicked: todo },
-  ] },
-  null,
-  { label: "Invite",    clicked: todo, icon: "person_add", color: "var(--color-accent)" },
-  { label: "Copy Link", clicked: todo, icon: "link" },
-  null,
-  { label: "Leave",   clicked: todo, icon: "logout", color: "var(--color-red)" },
-  null,
-  { label: "Copy ID", clicked: todo, icon: "terminal" },
-]} />
-<br />
-<div class="autocomplete">
-  <h3>Commands matching <b>/</b></h3>
-  <div class="option">/shrug [message]</div>
-  <div class="option">/kick [user] (reason)</div>
-  <div class="option">/part</div>
+<div class="autocomplete scroll">
+  <div class="title">Commands</div>
+  <div class="option">
+    <div class="name">shrug</div>
+    <div class="description">Prepends ¯\_(ツ)_/¯ to your message</div>
+  </div>
+  <div class="option">
+    <div class="name">me</div>
+    <div class="description">Sends your text with emphasis</div>
+  </div>
+  <div class="option">
+    <div class="name">part</div>
+    <div class="description">Leave the room</div>
+  </div>
+  <div class="option">
+    <div class="name">join</div>
+    <div class="description">Join a room</div>
+  </div>
+  <div class="option">
+    <div class="name">invite</div>
+    <div class="description">Invite someone to the room</div>
+  </div>
+  <div class="option">
+    <div class="name">kick</div>
+    <div class="description">Kick someone from the room</div>
+  </div>
+  <div class="option">
+    <div class="name">ban</div>
+    <div class="description">Ban someone from the room</div>
+  </div>
+  <div class="option">
+    <div class="name">msg</div>
+    <div class="description">Message someone</div>
+  </div>
+  <div class="option">
+    <div class="name">plain</div>
+    <div class="description">Send a message without formatting</div>
+  </div>
+  <div class="option">
+    <div class="name">html</div>
+    <div class="description">Send a message as html</div>
+  </div>
+  <div class="option">
+    <div class="name">spoiler</div>
+    <div class="description">Send a message as a spoiler</div>
+  </div>
+  <div class="option">
+    <div class="name">nick</div>
+    <div class="description">Change your nickname for this room</div>
+  </div>
 </div>
 <br />

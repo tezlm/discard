@@ -21,7 +21,7 @@ const views = [
   { view: Members,     name: "Bans",        icon: "person_remove",    raw: true, props: { membership: "ban" }},
   { view: Members,     name: "Invites",     icon: "person_add_alt_1", raw: true, props: { membership: "invite" }},
   null,
-  { clicked: () => state.popup.set({ id: "leave", type: "room", room: $room, confirm: () => queueMicrotask(todo) }), name: "Leave Room", color: "var(--color-red)", icon: "logout" },
+  { clicked: () => state.popup.set({ id: "leave", type: "room", room: $room }), name: "Leave Room", color: "var(--color-red)", icon: "logout" },
 ];
 </script>
 <Settings {views} options={{ room }} />
