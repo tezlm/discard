@@ -57,6 +57,12 @@ function handleScrub(t) {
   margin-right: 8px;
 }
 
+.slider {
+  flex: 1;
+  display: flex;
+  min-width: 150px;
+}
+
 .time {
   display: flex;
   align-items: center;
@@ -77,7 +83,7 @@ function handleScrub(t) {
       {/if}
     </div>
     <div class="time">{formatDuration(Math.floor(currentTime))}/{formatDuration(Math.floor(duration))}</div>
-    <div style="min-width: 150px; display: flex;">
+    <div class="slider">
       <Slider value={currentTime} max={duration} changed={handleScrub} />
     </div>
     <Volume bind:volume={volume} bind:muted={muted} />

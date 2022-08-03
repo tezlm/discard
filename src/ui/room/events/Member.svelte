@@ -19,26 +19,27 @@ function getAction(event) {
   const prev = event.unsigned?.prev_content ?? {};
   const changes = diff(content, prev);
   if (changes.size === 0 || changes.has("membership")) return getMembership(content.membership, prev.membership, event);
-  if (changes.has("avatar_url")) return "changed their avatar";
+  if (changes.has("avatar_url")) return ["person", "changed their avatar"];
   // TODO: make displayname bold
-  if (changes.has("displayname")) return "changed their display name to " + content.displayname;
-  return "did something";
+  if (changes.has("displayname")) return ["person", "changed their display name to " + (content.displayname ?? event.sender.userId)];
+  return ["help", "did something"];
 }
 
 function getMembership(current = "leave", old = "leave", event) {
   // you probably cant do "xyz themself", but why not have them
+  const self = event.sender.userId === event.stateKey;
   if (current === "leave") {
-    if (old === "ban") return event.sender === event.stateKey ? "unbanned themself" : "was unbanned";
-    return event.sender === event.stateKey ? "left the room" : "was kicked";
+    if (old === "ban") return self ? "unbanned themself" : "was unbanned";
+    return ["person_remove", self ? "left the room" : "was kicked"];
   } else if (current === "invite") {
-    return event.sender === event.stateKey ? "invited themself to the room" : "was invited to the room";
+    return ["person_add", self ? "invited themself to the room" : "was invited to the room"];
   } else if (current === "join") {
-    if (old === "join") return "did nothing";
-    return "joined the room";
+    if (old === "join") return ["help", "did nothing"];
+    return ["person_add", "joined the room"];
   } else if (current === "ban") {
-    return "was banned from the room";
+    return ["person_remove", "was banned from the room"];
   }
-  return "changed their membership";
+  return ["person", "changed their membership"];
 }
 
 function getColor(sender, settings) {
@@ -84,12 +85,12 @@ time {
 }
 </style>
 <div class="change">
-  <div class="icon">person</div>
+  <div class="icon">{getAction(event)[0]}</div>
   <div>
     <span class="author" style:color={getColor(victim, $settings)}>
       {victim.name || victim.userId}
     </span>
-    {getAction(event)}
+    {getAction(event)[1]}
     {#if event.sender.userId !== event.stateKey}
     by 
     <span class="author" style:color={getColor(event.sender, $settings)}>

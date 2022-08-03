@@ -26,7 +26,7 @@ if (current.room.type === "room") {
 <Popup>
   <h2 slot="header">Ban {current.member.name}?</h2>
   <div slot="content">
-    {#if options.length}
+    {#if options.length > 1}
     <div class="title">Ban scope</div>
     <Dropdown {options} />
     {/if}

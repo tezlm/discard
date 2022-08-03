@@ -6,7 +6,6 @@ import MessageReactions from "./MessageReactions.svelte";
 import MessageToolbar from "../../atoms/Toolbar.svelte";
 import Emoji from "../../molecules/Emoji.svelte";
 import User from "../../molecules/User.svelte";
-import Context from "../../atoms/Context.svelte";
 import { formatDate, formatTime } from "../../../util/format.js";
 import { calculateHash } from '../../../util/content.js';
 import { quadOut } from "svelte/easing";
@@ -23,11 +22,11 @@ export let room, event, header = false, shiftKey = false;
 let { edit } = state.roomState;
 let slice = state.slice;
 let settings = state.settings;
+let showToolbar = false;
 $: toolbar = getToolbar(shiftKey);
 
 let showReactionPicker = false;
 let showUserPopout = false;
-let contextMenu = null;
 
 function unwrapEdits(event) {
   while (event.original) event = event.original;
@@ -61,10 +60,15 @@ function getToolbar(shift = false) {
         toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
       }
     }
-    toolbar.push({ name: "More", icon: "more_vert", clicked: todo });
+    toolbar.push({ name: "More", icon: "more_vert", clicked: showMore });
   }
 
   return toolbar;
+
+  function showMore(e) {
+    queueMicrotask(() => showToolbar = true);
+    state.context.set({ items: getContextMenu(), x: e.clientX, y: e.clientY });
+  }
 }
 
 function getReply(content) {
@@ -120,15 +124,11 @@ function getContextMenu() {
   menu.push({ label: "View Source", icon: "terminal", clicked: () => state.popup.set({ id: "source", event }) });
   return menu;
 
-  function showPicker(e) {
-    e.stopImmediatePropagation();
-    contextMenu = null;
-    showReactionPicker = true;
+  function showPicker() {
+    setTimeout(() => showReactionPicker = true);
   }
 
-  function addReaction(e, emoji) {
-    e.stopImmediatePropagation();
-    contextMenu = null;
+  function addReaction(_, emoji) {
     if (!event.reactions?.get(emoji)?.mine) {
       const reaction = {
         "m.relates_to": {
@@ -150,6 +150,28 @@ function getContextMenu() {
     state.slice.set(state.roomSlices.get(room.roomId));
     state.api.sendReceipt(room.roomId, lastId);
   }
+}
+
+function getUserMenu() {
+  const name = event.sender.name || event.sender.userId;
+  return [
+    { label: "Profile", clicked: todo, icon: "person" },
+    { label: "Mention", clicked: todo, icon: "notifications" },
+    { label: "Message", clicked: todo, icon: "message" },
+    { label: "Block",   clicked: todo, icon: "block" },
+    null,
+    { label: "Remove Messages",  clicked: () => state.popup.set({ id: "deleterecent", room, member: event.sender }), icon: "delete",        color: "var(--color-red)" },
+    { label: `Kick ${name}`,     clicked: () => state.popup.set({ id: "kick",         room, member: event.sender }), icon: "person_remove", color: "var(--color-red)" },
+    { label: `Ban ${name}`,      clicked: () => state.popup.set({ id: "ban",          room, member: event.sender }), icon: "person_remove", color: "var(--color-red)" },
+    null,
+    { label: "Power",   clicked: todo, submenu: [] },
+    null,
+    { label: "Copy ID", clicked: copy(event.sender.userId), icon: "terminal" },
+  ];
+
+	function copy(text) {
+		return () => navigator.clipboard.writeText(text);
+	}
 }
 </script>
 <style>
@@ -247,11 +269,11 @@ time {
   z-index: 1;
 }
 </style>
-<div class="message" on:click={handleClick} on:contextmenu={e => { return; e.preventDefault(); contextMenu = { x: e.clientX, y: e.clientY }}}>
+<div class="message" on:click={handleClick} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getContextMenu(), x: e.clientX, y: e.clientY })}>
   <div class="side">
     {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
     {#if header}
-    <div class="avatar" class:selected={showUserPopout} on:click={(e) => { e.stopImmediatePropagation(); showUserPopout = !showUserPopout }}>
+    <div class="avatar" class:selected={showUserPopout} on:click|stopPropagation={() => showUserPopout = !showUserPopout} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>
       <Avatar mxc={event.sender.avatar} size={40} />
     </div>
     {:else}
@@ -262,7 +284,7 @@ time {
     {#if getReply(event.content)}<MessageReply {room} eventId={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
-      <span class="author" style:color={getColor(event.sender, $settings)} on:click={(e) => { e.stopImmediatePropagation(); showUserPopout = !showUserPopout }}>{event.sender.name || event.sender.userId}</span>
+      <span class="author" style:color={getColor(event.sender, $settings)} on:click|stopPropagation={() => showUserPopout = !showUserPopout} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>{event.sender.name || event.sender.userId}</span>
       {#if event.content.msgtype === "m.notice"}
       <div class="badge">bot</div>
       {/if}
@@ -287,7 +309,7 @@ time {
     {#if event.reactions}<MessageReactions {event} {room} />{/if}
   </div>
   {#if event.eventId !== $edit}
-  <div class="toolbar" style:display={showReactionPicker ? "flex" : null}>
+  <div class="toolbar" style:display={showReactionPicker || showToolbar ? "flex" : null}>
     {#if showReactionPicker}
     <div class="reaction-picker" in:fly={{ x: 15 }}>
       <Emoji selected={(emoji, keep) => {
@@ -305,11 +327,8 @@ time {
       }} />
     </div>
     {/if}
-    <MessageToolbar items={toolbar} {event} />
+    <MessageToolbar items={toolbar} />
   </div>
   {/if}
 </div>
-{#if contextMenu}
-<Context x={contextMenu.x} y={contextMenu.y} items={getContextMenu()} />
-{/if}
-<svelte:window on:click={() => { showReactionPicker = false; showUserPopout = false; contextMenu = null }} />
+<svelte:window on:click={() => { showReactionPicker = false; showUserPopout = false; showToolbar = false }} />

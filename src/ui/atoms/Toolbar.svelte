@@ -1,10 +1,10 @@
 <script>
 import Tooltip from "./Tooltip.svelte";
-export let items, event;
+export let items;
 
 const handleEvent = (item) => (e) => {
   e.stopImmediatePropagation();
-  item.clicked(event);
+  item.clicked(e);
 };
 </script>
 <style>

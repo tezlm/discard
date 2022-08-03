@@ -98,8 +98,8 @@ export default class Api {
     return this.fetch("POST", `/rooms/${encode(roomId)}/read_markers`, { "m.fully_read": eventId });
   }
   
-  sendTyping() {
-    return this.fetch("PUT", `/rooms/${encode(roomId)}/typing/${encode(eventId)}`, content);
+  sendTyping(roomId, userId, content) {
+    return this.fetch("PUT", `/rooms/${encode(roomId)}/typing/${encode(userId)}`, content);
   }
   
   sendAccountData(userId, type, data) {

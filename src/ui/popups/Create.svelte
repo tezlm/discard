@@ -14,12 +14,12 @@ function capitalize(str) {
 
 async function create() {
   creating = true;
-  const parentId = current.parent.roomId;
+  const parentId = current.parent?.roomId;
   const { room_id } = await state.api.createRoom({
     name,
     creator: state.userId,
     ...(current.type === "space" && { type: "m.space" }),
-    ...(current.parent && {
+    ...(parentId && {
       state: [
         { content: { canonical: true }, type: "m.space.parent", state_key: parentId },
         { content: { join_rule: "restricted", allow: [{ room_id: parentId, type: "m.room_membership" }] }, type: "m.room.join_rules" },

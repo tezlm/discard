@@ -72,7 +72,6 @@ function handleMove() {
   position: relative;
   overflow: hidden;
   background: var(--bg-context);
-  background: linear-gradient(red, blue);
 
   height: 100%;
   border-radius: 3px;
@@ -161,10 +160,13 @@ video {
 }
 
 .wrapper:not(.hide):hover .header,
+.header.show {
+  transform: translateY(-1px);
+}
+
 .wrapper:not(.hide):hover .controls,
-.header.show,
 .controls.show {
-  transform: translateY(0);
+  transform: translateY(1px);
 }
 
 .wrapper.hide {

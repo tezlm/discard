@@ -24,6 +24,50 @@ function isRead(room) {
 		return null;
 	}
 }
+
+function getContextMenu(room) {
+	return [
+	  { label: "Mark As Read",  clicked: markRead, icon: "done" },
+	  { label: "Notifications", clicked: todo, submenu: [
+	    { label: "Default",      clicked: todo, icon: "radio_button_checked" },
+	    { label: "All Messages", clicked: todo, icon: "radio_button_unchecked" },
+	    { label: "Mentions",     clicked: todo, icon: "radio_button_unchecked" },
+	    { label: "Nothing",      clicked: todo, icon: "radio_button_unchecked" },
+	  ] },
+	  null,
+	  { label: "Settings", clicked: openSettings(room), icon: "settings" /* submenu: [
+	    { label: "Foo", clicked: todo },
+	    { label: "Bar", clicked: todo },
+	    { label: "Baz", clicked: todo },
+	  ]*/ },
+	  null,
+	  { label: "Invite",    clicked: () => state.popup.set({ id: "invite", type: "room", room }), icon: "person_add", color: "var(--color-accent)" },
+	  { label: "Copy Link", clicked: copy(`https://matrix.to/#/${room.roomId}`), icon: "link" },
+	  null,
+	  { label: "Leave",   clicked: () => state.popup.set({ id: "leave", type: "room", room }), icon: "logout", color: "var(--color-red)" },
+	  null,
+	  { label: "Copy ID", clicked: copy(room.roomId), icon: "terminal" },
+	];
+
+	function markRead() {
+	  const lastEvent = state.roomTimelines.get(room.roomId).live.at(-1);
+	  state.log.debug(`mark ${lastEvent} as read`);
+	  state.rooms.get(room.roomId).readEvent = lastEvent;
+	  if (state.focusedRoomId === room.roomId) state.slice.set(state.roomSlices.get(room.roomId));
+	  state.api.sendReceipt(room.roomId, lastEvent);
+	}
+
+	function copy(text) {
+		return () => navigator.clipboard.writeText(text);
+	}
+}
+
+function openSettings(room) {
+	return () => {
+		state.selectedRoom.set(room);
+		state.scene.set("room-settings");	
+	};
+}
 </script>
 <style>
 .nav {
@@ -144,52 +188,56 @@ function isRead(room) {
   display: block;
 }
 </style>
-	<div class="nav scroll" tabindex=-1>
-		<div class="spacer"></div>
-	  <div
-			class={$focusedRoom ? "room home" : "room home focused"}
-			on:click={() => actions._rooms.focus(null)}>
-			<div class="wrapper">
-				<div class="icon">home</div>
-				<div class="name">Home</div>
-			</div>
+<div class="nav scroll" tabindex=-1>
+	<div class="spacer"></div>
+  <div
+		class={$focusedRoom ? "room home" : "room home focused"}
+		on:click={() => actions._rooms.focus(null)}
+	>
+		<div class="wrapper">
+			<div class="icon">home</div>
+			<div class="name">Home</div>
 		</div>
-		{#if !$focusedSpace}
-	  <div
-			class="room"
-			on:click={() => state.popup.set({ id: "create", type: "room" })}>
-			<div class="wrapper">
-				<div class="icon">add</div>
-				<div class="name">Create Room</div>
-			</div>
-		</div>
-		{/if}
-		{#each $navRooms as room}
-	  <div
-			class="room"
-			class:focused={$focusedRoom?.roomId === room.roomId}
-			class:unread={!isRead(room)}
-			on:click={() => actions._rooms.focus(room)}>
-			<div class="wrapper">
-				<div class="icon">#</div>
-				<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
-				<div class="spacer"></div>
-				{#if room.pings}<div class="pings">{room.pings}</div>{/if}
-				{#if room.power.me >= room.power.getBase("invite") || room.joinRule === "public"}
-				<div class="settings" on:click={(e) => { e.stopImmediatePropagation(); state.popup.set({ id: "invite", type: "room", room }) }}>
-					<Tooltip tip="Send Invite">
-						<span class="icon">person_add</span>
-					</Tooltip>
-				</div>
-				{/if}
-				<div class="settings" on:click={(e) => { e.stopImmediatePropagation(); state.selectedRoom.set(room); state.scene.set("room-settings") }}>
-					<Tooltip tip="Edit Room">
-						<span class="icon">settings</span>
-					</Tooltip>
-				</div>
-				<div style="width: 4px"></div>
-			</div>
-		</div>
-		{/each}
-		<div class="spacer"></div>
 	</div>
+	{#if !$focusedSpace}
+  <div
+		class="room"
+		on:click={() => state.popup.set({ id: "create", type: "room" })}
+	>
+		<div class="wrapper">
+			<div class="icon">add</div>
+			<div class="name">Create Room</div>
+		</div>
+	</div>
+	{/if}
+	{#each $navRooms as room}
+  <div
+		class="room"
+		class:focused={$focusedRoom?.roomId === room.roomId}
+		class:unread={!isRead(room)}
+		on:click={() => actions._rooms.focus(room)}
+		on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getContextMenu(room), x: e.clientX, y: e.clientY })}
+	>
+		<div class="wrapper">
+			<div class="icon">#</div>
+			<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
+			<div class="spacer"></div>
+			{#if room.pings}<div class="pings">{room.pings}</div>{/if}
+			{#if room.power.me >= room.power.getBase("invite") || room.joinRule === "public"}
+			<div class="settings" on:click|stopPropagation={(e) => state.popup.set({ id: "invite", type: "room", room })}>
+				<Tooltip tip="Send Invite">
+					<span class="icon">person_add</span>
+				</Tooltip>
+			</div>
+			{/if}
+			<div class="settings" on:click|stopPropagation={openSettings(room)}>
+				<Tooltip tip="Edit Room">
+					<span class="icon">settings</span>
+				</Tooltip>
+			</div>
+			<div style="width: 4px"></div>
+		</div>
+	</div>
+	{/each}
+	<div class="spacer"></div>
+</div>
