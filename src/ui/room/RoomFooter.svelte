@@ -52,6 +52,7 @@ async function sendMessage(content, roomId = $room.roomId) {
   // state.client.sendReadReceipt($room.timeline.find(i => i.getId() === event_id)); // FIXME: flash of unread on message send
 }
 
+$: if ($input) textarea?.focus();
 onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus())));
 onDestroy(reply.subscribe(() => queueMicrotask(() => textarea?.focus())));
 onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus())));
@@ -98,6 +99,7 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
     showUpload={true}
     placeholder={`Message ${$room.name}`}
     onsend={handleSend}
+    bind:input={$input}
     bind:reply={$reply}
     bind:textarea={textarea}
   />

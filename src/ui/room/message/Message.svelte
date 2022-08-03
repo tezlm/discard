@@ -19,7 +19,7 @@ import Avatar from "../../atoms/Avatar.svelte";
 
 export let room, event, header = false, shiftKey = false;
 
-let { edit } = state.roomState;
+let { edit, input } = state.roomState;
 let slice = state.slice;
 let settings = state.settings;
 let showToolbar = false;
@@ -155,14 +155,14 @@ function getContextMenu() {
 function getUserMenu() {
   const name = event.sender.name || event.sender.userId;
   return [
-    { label: "Profile", clicked: todo, icon: "person" },
-    { label: "Mention", clicked: todo, icon: "notifications" },
-    { label: "Message", clicked: todo, icon: "message" },
-    { label: "Block",   clicked: todo, icon: "block" },
+    { label: "Profile", icon: "person",        clicked: todo },
+    { label: "Mention", icon: "notifications", clicked: () => $input += event.sender.userId },
+    { label: "Message", icon: "message",       clicked: todo },
+    { label: "Block",   icon: "block",         clicked: todo },
     null,
-    { label: "Remove Messages",  clicked: () => state.popup.set({ id: "deleterecent", room, member: event.sender }), icon: "delete",        color: "var(--color-red)" },
-    { label: `Kick ${name}`,     clicked: () => state.popup.set({ id: "kick",         room, member: event.sender }), icon: "person_remove", color: "var(--color-red)" },
-    { label: `Ban ${name}`,      clicked: () => state.popup.set({ id: "ban",          room, member: event.sender }), icon: "person_remove", color: "var(--color-red)" },
+    { label: "Remove Messages", icon: "delete",        color: "var(--color-red)", clicked: () => state.popup.set({ id: "deleterecent", room, member: event.sender }) },
+    { label: `Kick ${name}`,    icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "kick",         room, member: event.sender }) },
+    { label: `Ban ${name}`,     icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "ban",          room, member: event.sender }) },
     null,
     { label: "Power",   clicked: todo, submenu: [] },
     null,
