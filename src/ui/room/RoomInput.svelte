@@ -51,7 +51,7 @@ function oninput(input) {
     function getName(id) {
       const member = $room.members.get(id);
       if (!member) return id;
-      return member.name ? ("@" + member.name) : member.userId;
+      return "@" + (member.name ?? member.userId).replace(/^@/, "");
     }
 
     return input.replace(
@@ -189,7 +189,7 @@ async function handleUpload(file) {
       </div>
     </label>
     {/if}
-    <RoomTextarea {placeholder} bind:textarea={textarea} {onfile} {oninput} />
+    <RoomTextarea {placeholder} bind:input={input} bind:textarea={textarea} {onfile} {oninput} />
     <EmojiButton bind:show={showEmoji} picked={(emoji, keep) => { textarea.value += emoji; keep || textarea.focus() }} />
   </div>
 </div>

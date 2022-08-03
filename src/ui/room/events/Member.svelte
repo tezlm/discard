@@ -9,7 +9,11 @@ $: victim = room.members.get(event.stateKey) ?? { userId: event.stateKey };
 function diff(content, prev) {
   const keys = new Set();
   for (let key of new Set([...Object.keys(content), ...Object.keys(prev)])) {
-    if (content[key] !== prev[key]) keys.add(key);
+    if (content[key] && prev[key] && typeof content[key] === "object" && typeof prev[key] === "object") {
+      if (diff(content[key], prev[key]).size) keys.add(key);
+    } else if (content[key] !== prev[key]) {
+      keys.add(key);
+    }
   }
   return keys;
 }
