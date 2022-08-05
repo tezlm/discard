@@ -57,6 +57,8 @@ function handleKeyDown(e) {
     } else if(!$current.id) {
       state.popup.set({ id: "switcher" });
     }
+    e.preventDefault();
+    e.stopPropagation();
     return;
   }
 
@@ -72,7 +74,7 @@ function handleKeyDown(e) {
 
   closePopup();
   e.preventDefault();
-  e.stopImmediatePropagation();
+  e.stopPropagation();
 }
 </script>
 <style>

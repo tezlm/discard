@@ -1,6 +1,7 @@
 // import { Store } from "../matrix/store.js";
 import Api from "../matrix/api.js";
 import Syncer from "../matrix/syncer.js";
+import Settings from "../matrix/settings.js"
 
 const defaultFilter = {
   room: {
@@ -77,6 +78,11 @@ function start(api, syncer, userId) {
   syncer.on("join", (roomId, state, batch) => actions.rooms.handleJoin(roomId, state, batch));
   syncer.on("state", (roomId, state) => actions.rooms.handleState(roomId, state));
   syncer.on("timeline", (roomId, event) => actions.timeline.handle(roomId, event, false));
+  syncer.on("accountData", (type, content) => {
+    if (type === "org.eu.celery.settings") state.settings.set(new Settings(content));
+    state.accountDataRef.set(type, content);
+    state.accountData.set(state.accountDataRef);
+  });
 }
 
 export async function logout() {

@@ -5,6 +5,7 @@ import NameTopic from "../events/NameTopic.svelte";
 import Member from "../events/Member.svelte";
 import Pinned from "../events/Pinned.svelte";
 import Message from "../message/Message.svelte";
+import ExtensibleMessage from "../message/ExtensibleMessage.svelte";
 export let shiftKey;
 export let header;
 export let room;
@@ -60,6 +61,10 @@ function getToolbar(event, shiftKey) {
 		<Pinned {room} {event} />
 	{:else if event.type === "m.room.message"}
 	  <Message {room} {event} {header} {shiftKey} />
+	<!-- TODO: extensible events. maybe split out different `Message` types?
+	{:else if ["m.message", "m.notice", "m.emote", "m.file"].includes(event.type)}
+	  <ExtensibleMessage {room} {event} {header} {shiftKey} />
+	-->
 	{/if}
 	{#if !["m.room.create", "m.room.message"].includes(event.type)}
   <div class="toolbar">
