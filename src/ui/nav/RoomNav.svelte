@@ -219,8 +219,9 @@ function openSettings(room) {
 		on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getContextMenu(room), x: e.clientX, y: e.clientY })}
 	>
 		<div class="wrapper">
-			<div class="icon">#</div>
-			<div class="name">{room.name.toLowerCase().replace(/ /g, "-")}</div>
+			<!-- TODO: get and use better room icon -->
+			<div class="icon" style="font-family: var(--font-display)">#</div>
+			<div class="name">{room.name.toLowerCase().replace(/ /g, "-").replace(/^#/, "")}</div>
 			<div class="spacer"></div>
 			{#if room.pings}<div class="pings">{room.pings}</div>{/if}
 			{#if room.power.me >= room.power.getBase("invite") || room.joinRule === "public"}

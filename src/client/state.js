@@ -29,6 +29,8 @@ export default {
   spaces: new Map(),
   dms: new Map(),
   settings: writable(new Settings()),
+  accountData: writable(new Map()),
+  accountDataRef: new Map(),
   
   //nav
   navRooms: writable([]),

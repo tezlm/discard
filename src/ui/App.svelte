@@ -5,6 +5,7 @@ import LoginRegister from './scenes/LoginRegister.svelte';
 import UserSettings from './scenes/UserSettings.svelte';
 import SpaceSettings from './scenes/SpaceSettings.svelte';
 import RoomSettings from './scenes/RoomSettings.svelte';
+import Goose from './scenes/Goose.svelte';
 import Popups from './Popups.svelte';
 import ContextMenus from './ContextMenus.svelte';
 import { quadInOut, quartInOut } from 'svelte/easing';
@@ -70,6 +71,8 @@ main > div {
   <div class="settings" transition:ease><SpaceSettings /></div>
   {:else if $scene === "room-settings"}
   <div class="settings" transition:ease><RoomSettings /></div>
+  {:else if $scene === "goose"}
+  <div class="settings" transition:ease><Goose /></div>
   {:else if $scene === "auth"}
   <LoginRegister />
   {:else if $scene !== "chat"}
