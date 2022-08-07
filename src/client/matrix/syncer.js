@@ -84,7 +84,7 @@ export default class Syncer extends Emitter {
     }
     
     for (let event of account_data?.events ?? []) {
-      actions.parser.handleAccount(event.type, event.content);
+      this.emit("accountData", event.type, event.content);
     }
     
     if (this.status === "starting") {

@@ -85,15 +85,16 @@ tr:nth-child(odd) {
   scrollbar-gutter: stable;
 }
 
-.scroll::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 3px;
+  height: 3px;
   background: var(--bg-rooms-members);
 }
 
-.scroll::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background: var(--bg-spaces);
 }
 
-.scroll::-webkit-scrollbar-button {
+::-webkit-scrollbar-button {
   display: none;
 }

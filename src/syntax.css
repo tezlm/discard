@@ -1,6 +1,8 @@
 code .token.comment   { color: #a3a6aa }
 code .token.number    { color: #d2a6ff }
+code .token.boolean   { color: #d2a6ff }
 code .token.string    { color: #aad94c }
+code .token.property  { color: #ffb454 }
 code .token.operator  { color: #f29668 }
 code .token.keyword   { color: #ff8f40 }
 code .token.function  { color: #ffb454 }

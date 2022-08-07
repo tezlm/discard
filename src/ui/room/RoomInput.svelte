@@ -63,11 +63,22 @@ function oninput(input) {
   // bootleg commands ftw!
   if (input === "/shrug") input = "¯\\\\\\_(ツ)\\_/¯";
 
+  input = input.trim();
+
+  const html = marked(replacePing(input)).trim();
   onsend({
-    body: input.trim(),
+    body: input,
     format: "org.matrix.custom.html",
-    formatted_body: marked(replacePing(input.trim())).trim(),
+    formatted_body: html,
     msgtype: "m.text",
+
+    // extensible events!
+    // "org.matrix.msc1767.message": [
+    //   { mimetype: "text/plain", body: input },
+    //   { mimetype: "text/html",  body: html  },
+    // ],
+    "m.text": input,
+    "m.html": html,
   });
 }
 
@@ -105,16 +116,29 @@ async function handleUpload(file) {
   if (!url) return;
 
   const type = getType(file.type);
+  const info = {
+    mimetype: file.type,
+    size: file.size,
+    ...(["m.image", "m.video"].includes(type) ? await getSize(file, type) : {}),
+  };
 
   onsend({
     url,
     body: file.name,
     msgtype: type,
-    info: {
+    info,
+    
+    "m.file": {
+      url,
+      name: file.name,
       mimetype: file.type,
       size: file.size,
-      ...(["m.image", "m.video"].includes(type) ? await getSize(file, type) : {}),
-    }
+    },
+    ...(type === "m.image" && { "m.image": { width: info.w, height: info.h } }),
+    ...(type === "m.video" && { "m.video": { width: info.w, height: info.h, duration: info.d } }),
+    // "m.thumbnail": { width: info.w, height: info.h },
+    // "m.caption": [{ m.message-like object }],
+    "m.text": file.name,
   });
 
   function getSize(file, type) {
@@ -125,7 +149,8 @@ async function handleUpload(file) {
         img.src = URL.createObjectURL(file);
       } else if (type === "m.video") {
         const vid = document.createElement("video");
-        vid.onloadedmetadata = () => res({ w: vid.videoWidth, h: vid.videoHeight });
+        // info.d doesnt officially exist, but makes implementing extensible events easier
+        vid.onloadedmetadata = () => res({ w: vid.videoWidth, h: vid.videoHeight, d: vid.duration });
         vid.src = URL.createObjectURL(file);
       } else {
         throw "unreachable?";
