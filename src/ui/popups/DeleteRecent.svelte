@@ -37,7 +37,7 @@ let selected = "1h";
   <h2 slot="header">Remove messages from {current.member.name}?</h2>
   <div slot="content">
     {#if scopes.length}
-    <div class="title">Kick scope</div>
+    <div class="title">Delete scope</div>
     <Dropdown options={scopes} />
     {/if}
     <div class="title">Delete everything from the</div>

@@ -1,7 +1,8 @@
 <script>
 import Markdown from "../../molecules/Markdown.svelte";
-import Context from "../../atoms/Context.svelte";
+import Autocomplete from "../../molecules/Autocomplete.svelte";
 import { parseMxc } from "../../../util/content.js";
+let input = "";
 let embed = {
   "url": "https://www.freecodecamp.org/news/what-is-open-graph-and-how-can-i-use-it-for-my-website/",
   "og:site_name": "freeCodeCamp.org",
@@ -21,43 +22,6 @@ let embed = {
 }
 </script>
 <style>
-.autocomplete {
-  background: var(--bg-rooms-members);
-  border-radius: 5px;
-  box-shadow: var(--shadow-popup);
-  overflow: hidden scroll;
-  padding: 8px;
-  max-height: 300px;
-}
-
-.option {
-  display: flex;
-  align-items: center;
-  border-radius: 5px;
-  padding: 8px;
-}
-
-.option:hover {
-  background: var(--bg-content);
-}
-
-.option .name::before {
-  content: "/";
-  margin-right: 8px;
-  font-weight: 700;
-  color: var(--fg-dim);
-}
-
-.option .name {
-  font-weight: 500;
-}
-
-.option .description {
-  color: var(--fg-dim);
-  font-size: 14px;
-  margin-left: auto;
-}
-
 .embed {
   display: inline-block;
   background: var(--bg-rooms-members);
@@ -89,7 +53,11 @@ let embed = {
 </style>
 <p>testbed for random stuff</p>
 <br />
-<Markdown />
+<Markdown bind:content={input} />
+<br />
+{#if input[0] === "/"}
+<Autocomplete {input} />
+{/if}
 <br />
 <div class="embed">
   {#if embed["og:site_name"]}
@@ -103,57 +71,3 @@ let embed = {
   <img src={parseMxc(embed["og:image"])} on:click={() => state.popup.set({ id: "attachment", url: parseMxc(embed["og:image"]) })}/>
   {/if}
 </div>
-<br />
-<br />
-<div class="autocomplete scroll">
-  <div class="title">Commands</div>
-  <div class="option">
-    <div class="name">shrug</div>
-    <div class="description">Prepends ¯\_(ツ)_/¯ to your message</div>
-  </div>
-  <div class="option">
-    <div class="name">me</div>
-    <div class="description">Sends your text with emphasis</div>
-  </div>
-  <div class="option">
-    <div class="name">part</div>
-    <div class="description">Leave the room</div>
-  </div>
-  <div class="option">
-    <div class="name">join</div>
-    <div class="description">Join a room</div>
-  </div>
-  <div class="option">
-    <div class="name">invite</div>
-    <div class="description">Invite someone to the room</div>
-  </div>
-  <div class="option">
-    <div class="name">kick</div>
-    <div class="description">Kick someone from the room</div>
-  </div>
-  <div class="option">
-    <div class="name">ban</div>
-    <div class="description">Ban someone from the room</div>
-  </div>
-  <div class="option">
-    <div class="name">msg</div>
-    <div class="description">Message someone</div>
-  </div>
-  <div class="option">
-    <div class="name">plain</div>
-    <div class="description">Send a message without formatting</div>
-  </div>
-  <div class="option">
-    <div class="name">html</div>
-    <div class="description">Send a message as html</div>
-  </div>
-  <div class="option">
-    <div class="name">spoiler</div>
-    <div class="description">Send a message as a spoiler</div>
-  </div>
-  <div class="option">
-    <div class="name">nick</div>
-    <div class="description">Change your nickname for this room</div>
-  </div>
-</div>
-<br />
