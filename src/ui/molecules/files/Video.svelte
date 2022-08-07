@@ -225,7 +225,7 @@ video {
 <div class="wrapper" class:hide={fullscreen && !paused && !fullShowDebounce} bind:this={wrapperEl} on:mousemove={handleMove}>
   <div class="header" class:show={paused || !started}>
     <div class="info">
-      <a class="name" href={src}>{name}</a><br />
+      <a class="name" href={src}>{name}</a>
       <span class="size">{formatSize(size)}</span>
     </div>
     <a class="download" href={src} download={name}>
