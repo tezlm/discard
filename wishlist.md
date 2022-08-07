@@ -2,49 +2,73 @@
 
 varying levels of difficulty
 
-- [x] login/logout
-- [x] view messages
-- [x] send messages
-- [x] create room
-- [x] edit messages
-- [x] delete messages
-- [x] reply to messages
-- [x] settings menu
-- [x] open attachments in popup
-- [x] view homeserver stats
-- [x] send files
-- [x] paste in files
-- [x] emoji picker
-- [x] markdown
-- [x] user colors
-- [x] view members by memberships
-- [x] send reactions
-- [x] member popout
-- [x] members list
-- [x] make settings save
-- [-] space home
-- [-] notifications
-- [-] context menus
+- [ ] account mangement
+  - [x] login/logout
+  - [ ] register
+  - [ ] guests
+  - [ ] (future) oidc
+- [x] messages
+  - [x] view messages
+  - [x] send message
+  - [x] edit message
+  - [x] delete message
+  - [x] reply to message
+  - [x] emoji picker
+  - [x] markdown
+- [ ] attachments
+  - [x] send files
+  - [x] paste in files
+  - [x] open attachments in popup
+  - [x] image/video dimentions
+  - [ ] file too big warning
+  - [ ] drag and drop to upload file
+- [x] reactions
+- [ ] members
+  - [x] member popout
+  - [ ] members list (need member popout for list)
+- [ ] settings
+  - [x] make them save
+  - [ ] appearance/theme settings
+  - [ ] room settings
+  - [ ] space rooms
+- [ ] notifications
+  - [ ] show # of unread messages
+  - [ ] mentions list/inbox
+  - [ ] highlight mentions
 - [-] rich input
-- [ ] slash commands
-- [ ] user/command autocomplete
-- [ ] add/remove rooms from spaces
-- [ ] organize spaces/rooms
-- [ ] join room
-- [ ] room invite list
-- [ ] jump to older replys
-- [ ] jump to unread
-- [ ] jump to latest
-- [ ] file too big warning
-- [ ] drag and drop to upload file
-- [ ] invite people
-- [ ] ban/kick people
+  - [ ] slash commands
+  - [ ] user/command autocomplete
+  - [ ] room autocomplete?
+- [ ] spaces
+  - [-] space home
+  - [ ] add/remove rooms from spaces
+  - [ ] show correct order of rooms
+  - [ ] order top level spaces
+- [ ] rooms
+  - [x] create room
+  - [x] leave room
+  - [ ] join room
+  - [ ] room invite list
+  - [ ] invite people
+  - [ ] ban/kick people
+- [ ] timeline
+  - [ ] jump to reply
+  - [ ] jump to unread
+  - [ ] jump to latest
+  - [ ] link embeds
+  - [ ] room embeds
+  - [ ] better m.room.member
+  - [ ] show other state events
+  - [ ] (future) use extensible events
+- [ ] qol/misc
+  - [x] user colors
+  - [x] view members by memberships
+  - [x] view homeserver stats
+- [x] context menus
 - [ ] dms
 - [ ] e2ee
-- [ ] custom emoji
 - [ ] threads
 - [ ] voice channels
-- [ ] link embeds
 - [x] nitor
 
 ## 100% completion
@@ -54,6 +78,11 @@ in maintenence mode and only recieve bugfixes
 
 ## >100% completion
 
-things that i don't want, but other people might
+not essential to discard, but could be nice to have
 
-- [ ] stickers
+- [ ] stickers/saved images
+- [ ] custom emoji
+- [ ] subscribe to policy lists
+- [ ] display for other room types?
+  - [ ] m.policy rooms
+  - [ ] custom long form room type

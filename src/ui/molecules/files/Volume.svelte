@@ -57,7 +57,7 @@ let moving = false;
 }
 
 .icon:active {
-  transform: translateY(2px);
+  transform: translateY(1px);
 }
 </style>
 <div class="volume" class:moving>
