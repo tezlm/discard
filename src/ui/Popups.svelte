@@ -2,6 +2,7 @@
 // TODO: move emoji picker and user popout here
 // TODO: there has to be a cleaner way of doing this
 import Todo from "./popups/Todo.svelte";
+import Error from "./popups/Error.svelte";
 import Logout from "./popups/Logout.svelte";
 import Switcher from "./popups/Switcher.svelte";
 import Source from "./popups/Source.svelte";
@@ -19,6 +20,7 @@ import DeleteRecent from "./popups/DeleteRecent.svelte";
 
 const popups = new Map();
 popups.set("todo", Todo);
+popups.set("error", Error);
 popups.set("logout", Logout);
 popups.set("switcher", Switcher);
 popups.set("source", Source);
