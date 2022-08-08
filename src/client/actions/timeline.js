@@ -2,7 +2,12 @@
 import { format } from "../../util/events.js";
 import TimelineSet from "../matrix/timeline.js";
 
-const supportedEvents = ["m.room.create", "m.room.message", "m.reaction", "m.room.name", "m.room.topic", "m.room.pinned_events", "m.room.member"];
+const supportedEvents = [
+  "m.room.create", "m.room.name", "m.room.topic", "m.room.pinned_events", "m.room.canonical_alias",
+  "m.room.message", "m.sticker",
+  "m.reaction", "m.room.member",
+];
+
 const relations = new Map();
 
 // TODO: multiple relations

@@ -5,6 +5,7 @@ export let room;
 export let event;
 let settings = state.settings;
 $: victim = room.members.get(event.stateKey) ?? { userId: event.stateKey };
+$: action = getAction(event);
 
 function diff(content, prev) {
   const keys = new Set();
@@ -23,27 +24,25 @@ function getAction(event) {
   const prev = event.unsigned?.prev_content ?? {};
   const changes = diff(content, prev);
   if (changes.size === 0 || changes.has("membership")) return getMembership(content.membership, prev.membership, event);
-  if (changes.has("avatar_url")) return ["person", "changed their avatar"];
-  // TODO: make displayname bold
-  if (changes.has("displayname")) return ["person", "changed their display name to " + (content.displayname ?? event.sender.userId)];
-  return ["help", "did something"];
+  if (changes.has("avatar_url"))  return { icon: "person", type: "avatar" };
+  if (changes.has("displayname")) return { icon: "person", type: "displayname", name: content.displayname || event.sender.userId };
+  return { icon: "help", type: "something" };
 }
 
 function getMembership(current = "leave", old = "leave", event) {
-  // you probably cant do "xyz themself", but why not have them
   const self = event.sender.userId === event.stateKey;
   if (current === "leave") {
-    if (old === "ban") return self ? "unbanned themself" : "was unbanned";
-    return ["person_remove", self ? "left the room" : "was kicked"];
+    if (old === "ban") return { icon: "person", type: "unban" };
+    return { icon: "west", color: self ? null : "var(--color-red)", type: self ? "leave" : "kick" };
   } else if (current === "invite") {
-    return ["person_add", self ? "invited themself to the room" : "was invited to the room"];
+    return { icon: "east", color: "var(--color-accent)", type: "invite" };
   } else if (current === "join") {
-    if (old === "join") return ["help", "did nothing"];
-    return ["person_add", "joined the room"];
+    if (old === "join") return { icon: "help", type: "noop" };
+    return { icon: "east", color: "var(--color-green)", type: "join" };
   } else if (current === "ban") {
-    return ["person_remove", "was banned from the room"];
+    return { icon: "west", color: "var(--color-red)", type: "ban" };
   }
-  return ["person", "changed their membership"];
+  return { icon: "person", type: "membership" };
 }
 
 function getColor(sender, settings) {
@@ -53,6 +52,19 @@ function getColor(sender, settings) {
   if (level === "power" && sender.power <= (room.power.users_default ?? 0)) return `var(--fg-content)`;
   return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
 }
+
+function getJoinMessage(event) {
+  const messages = [
+    ["", " just slid into the room"],
+    ["a wild ", " appeared"],
+    ["", " hopped into the room"],
+    ["", " suddenly materialized"],
+    ["and then, ", " spawned in"],
+    ["big ", " showed up"],
+    ["", " just landed"],
+  ];
+  return messages[calculateHash(event.eventId) % messages.length];
+}
 </script>
 <style>
 .change {
@@ -60,6 +72,7 @@ function getColor(sender, settings) {
   align-items: center;
   user-select: text;
   padding: 2px 0;
+  color: var(--fg-light);
 }
 
 .icon {
@@ -69,16 +82,13 @@ function getColor(sender, settings) {
 }
 
 .author {
+  color: var(--fg-content);
   font-weight: 700;
   cursor: pointer;
 }
 
 .author:hover {
   text-decoration: underline;
-}
-
-.name {
-  color: var(--fg-notice);
 }
 
 time {
@@ -89,12 +99,37 @@ time {
 }
 </style>
 <div class="change">
-  <div class="icon">{getAction(event)[0]}</div>
+  <div class="icon" style:color={action.color}>{action.icon}</div>
   <div>
+    {#if action.type !== "join"}
     <span class="author" style:color={getColor(victim, $settings)}>
       {victim.name || victim.userId}
     </span>
-    {getAction(event)[1]}
+    {/if}
+    {#if action.type === "something"}
+      did something
+    {:else if action.type === "avatar"}
+      changed their avatar
+    {:else if action.type === "displayname"}
+      changed their name to <b style:color="var(--fg-content)">{action.name}</b>
+    {:else if action.type === "join"}
+      {@const [before, after] = getJoinMessage(event)}
+      {before}<span class="author" style:color={getColor(victim, $settings)}>{victim.name || victim.userId}</span>{after}
+    {:else if action.type === "invite"}
+      was invited by
+    {:else if action.type === "leave"}
+      left the room
+    {:else if action.type === "kick"}
+      was kicked by
+    {:else if action.type === "ban"}
+      was banned by
+    {:else if action.type === "unban"}
+      was unbanned by
+    {:else if action.type === "noop"}
+      did nothing
+    {:else}
+      {action}
+    {/if}
     {#if event.sender.userId !== event.stateKey}
     by 
     <span class="author" style:color={getColor(event.sender, $settings)}>

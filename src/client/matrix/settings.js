@@ -27,4 +27,10 @@ export default class Settings extends Map {
     this.set(key, val);
     state.api.sendAccountData(state.userId, "org.eu.celery.settings", Object.fromEntries(this.entries()));
   }
+  
+  /*
+  // convert into store?
+  subscribe() {}
+  set(val) {}
+  */
 }

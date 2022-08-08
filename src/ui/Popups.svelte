@@ -9,6 +9,7 @@ import Source from "./popups/Source.svelte";
 import Create from "./popups/Create.svelte";
 import Info from "./popups/Info.svelte";
 import Leave from "./popups/Leave.svelte";
+import AddExisting from "./popups/AddExisting.svelte";
 import Upload from "./popups/Upload.svelte";
 import Attachment from "./popups/Attachment.svelte";
 import Nickname from "./popups/Nickname.svelte";
@@ -29,6 +30,7 @@ popups.set("source", Source);
 popups.set("create", Create);
 popups.set("info", Info);
 popups.set("leave", Leave);
+popups.set("addexisting", AddExisting);
 
 // files
 popups.set("upload", Upload);
@@ -49,7 +51,7 @@ $: if ($current.id) {
 }
 
 function closePopup() {
-  state.popup.set({ ...$current, id: null });
+  setTimeout(() => state.popup.set({ ...$current, id: null }));
 }
 
 function handleKeyDown(e) {
@@ -60,7 +62,6 @@ function handleKeyDown(e) {
       state.popup.set({ id: "switcher" });
     }
     e.preventDefault();
-    e.stopPropagation();
     return;
   }
 
@@ -76,7 +77,6 @@ function handleKeyDown(e) {
 
   closePopup();
   e.preventDefault();
-  e.stopPropagation();
 }
 </script>
 <style>

@@ -11,7 +11,7 @@ let wrapper;
 // TODO: make emoji only messages bigger
 
 $: content = event.content;
-$: type = content.msgtype;
+$: type = content.msgtype ?? event.type;
 $: edited = event.original;
 $: special = event.special;
 $: dimensions = parseDimensions(content.info?.thumbnail_info ?? content.info);
@@ -133,6 +133,15 @@ img {
   <img
     src={parseMxc(content.url, dimensions.width, dimensions.height)}
     alt={content.body}
+    title={content.body}
+    style={dimensions.css}
+    on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
+  />
+  {:else if type === "m.sticker"}
+  <img
+    src={parseMxc(content.url, dimensions.width, dimensions.height)}
+    alt={content.body}
+    title={content.body}
     style={dimensions.css}
     on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
   />
