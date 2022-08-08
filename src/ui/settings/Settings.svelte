@@ -6,6 +6,7 @@ let popup = state.popup;
 // TODO: categories
 
 function handleKeyDown(e) {
+  console.log($popup);
   if (e.key === "Escape" && !$popup.id) {
     state.scene.set("chat");
   }

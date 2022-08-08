@@ -131,8 +131,10 @@ function getContextMenu(space) {
   <span>{$focusedSpace ? $focusedSpace?.name ?? "unknown" : "Home"}</span>
   {#if $focusedSpace && showMenu}
   <div class="menu" transition:zoomIn>
+      <!--
       <div class="item" on:click={() => { state.selectedRoom.set($focusedSpace); state.scene.set("goose") }}><span class="color-nitor">Space Goose</span></div>
       <div class="spacer"></div>
+      -->
       {#if $focusedSpace.power.me >= $focusedSpace.power.getBase("invite") || $focusedSpace.joinRule === "public"}
       <div class="item" on:click={() => showPopup("invite", { room: $focusedSpace })}><span class="color-accent">Invite People</span></div>
       <div class="spacer"></div>
@@ -142,7 +144,7 @@ function getContextMenu(space) {
       {#if $focusedSpace.power.me >= $focusedSpace.power.getState("m.space.child")}
       <div class="item" on:click={() => showPopup("create", { type: "room", parent: $focusedSpace })}>Create Room</div>
       <div class="item" on:click={() => showPopup("create", { type: "space", parent: $focusedSpace })}>Create Subspace</div>
-      <div class="item" on:click={todo}>Add Existing Room</div>
+      <div class="item" on:click={() => showPopup("addexisting", { parent: $focusedSpace })}>Add Existing Room</div>
       <div class="spacer"></div>
       {/if}
       <div class="item" on:click={() => showPopup("leave", { room: $focusedSpace })}><span class="color-red">Leave Space</span></div>
