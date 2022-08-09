@@ -18,7 +18,7 @@ $: queueMicrotask(() => {
 <style>
 .menu {
   position: fixed;
-  z-index: 10;
+  z-index: 20;
 }
 </style>
 <div class="menu" bind:this={menuEl} style:left="{x}px" style:top="{y}px">

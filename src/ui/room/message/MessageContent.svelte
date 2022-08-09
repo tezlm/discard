@@ -2,6 +2,7 @@
 import { parseHtml } from "../../../util/html.js";
 import { parseMxc } from "../../../util/content.js";
 import { highlightAllUnder } from "prismjs";
+import Button from "../../atoms/Button.svelte";
 import File from "../../molecules/files/File.svelte";
 import Audio from "../../molecules/files/Audio.svelte";
 import Video from "../../molecules/files/Video.svelte";
@@ -76,7 +77,7 @@ $: if (wrapper) {
   font-style: italic;
 }
 
-img, audio {
+img {
   display: block;
   border-radius: 3px;
   background: var(--bg-rooms-members);
@@ -90,7 +91,6 @@ img {
 .text {
   display: inline;
   word-break: break-word;
-  user-select: text;
 }
 
 .text :global(*) {
@@ -122,8 +122,31 @@ img {
 .text :global([data-mx-ping]):hover {
   background: var(--ping-bg);
 }
+
+.sticker-popout {
+  position: absolute;
+  left: 128px;
+  top: 24px;
+
+  display: inline-flex;
+  width: 300px;
+  padding: 16px;
+  background: var(--bg-context);
+  border-radius: 8px;
+  box-shadow: var(--shadow-popup);
+}
+
+.sticker-popout > img {
+  margin-right: 16px;
+}
+
+.sticker-popout > div {
+  display: flex;
+  flex-direction: column;
+}
 </style>
 <div
+  class="content"
   class:redacted={special === "redacted" || special === "errored"}
   class:sending={special === "sending"}
   style={type === "m.image" || type === "m.video" ? dimensions.css : ""}
@@ -145,12 +168,33 @@ img {
     style={dimensions.css}
     on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
   />
+  <!--
+  <div class="sticker-popout">
+    <img
+      src={parseMxc(content.url, dimensions.width, dimensions.height)}
+      alt={content.body}
+      title={content.body}
+      style={dimensions.css}
+      on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
+    />
+    <div>
+      <b>{content.body}</b>
+      <span>maybe some additional metadata or info can be here...</span>
+      <div style="height:16px"></div>
+      <Button label="steal" type="primary" clicked={todo} />
+    </div>
+  </div>
+  -->
   {:else if type === "m.video"}
   <Video src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
   {:else if type === "m.audio"}
-  <Audio src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
+  <div style="display: inline-block">
+    <Audio src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
+  </div>
   {:else if type === "m.file"}
-  <File src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
+  <div style="display: inline-block">
+    <File src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
+  </div>
   {:else if content.format === "org.matrix.custom.html"}
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}

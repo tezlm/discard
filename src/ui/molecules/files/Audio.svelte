@@ -43,6 +43,7 @@ function handleScrub(t) {
   padding: 4px;
   font-size: 22px;
   color: var(--fg-interactive);
+  cursor: pointer;
 }
 
 .controls .icon:hover {

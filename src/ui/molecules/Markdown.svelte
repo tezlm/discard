@@ -1,4 +1,5 @@
 <script>
+// TODO: undo/redo
 export let content = "";
 let html = "";
 let editorEl;
@@ -65,17 +66,25 @@ function handlePaste(e) {
   queueMicrotask(() => setCursorPos(editorEl, pos + text.length));
 }
 
-function handleInput() {
-  const pos = getCursorPos(editorEl);
-  html = parseMarkdown(content);
-  queueMicrotask(() => setCursorPos(editorEl, pos));  
+function handleInput(e) {
+  if (e.inputType === "insertLineBreak") {
+    setTimeout(() => console.log(content, html))
+    // const pos = getCursorPos(editorEl);
+    // content = content.slice(0, pos) + "\n" + content.slice(pos);
+    // html = parseMarkdown(content).replace(/\n$/, "") + "\n";
+    // queueMicrotask(() => setCursorPos(editorEl, pos + 1));
+  } else {
+    const pos = getCursorPos(editorEl);
+    html = parseMarkdown(content);
+    queueMicrotask(() => setCursorPos(editorEl, pos));
+  }
 }
 </script>
 <style>
 .editor {
   background: var(--mod-lighten);
   padding: 4px;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .editor :global(.dim) {

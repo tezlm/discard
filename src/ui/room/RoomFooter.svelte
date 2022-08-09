@@ -94,6 +94,8 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
   <div class="input disabled"><div class="center">{$room.tombstone?.body ?? "This room has been replaced"}</div></div>
   {:else if $room.power?.getEvent("m.room.message") > $room.power?.me}
   <div class="input disabled"><div class="center">You can't send messages here</div></div>
+  {:else if $room.state.find(i => i.type === "m.room.encryption")}
+  <div class="input disabled"><div class="center">You can't send messages in a e2ee room yet</div></div>
   {:else}
   <RoomInput
     showUpload={true}

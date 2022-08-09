@@ -2,12 +2,15 @@
 export let items = [];
 export let width;
 let menuEl;
+let right = false;
 
 function tooRight(menuEl) {
   if (!menuEl) return;
   const rect = menuEl.getBoundingClientRect();
   return rect.width * 2 + rect.left > window.innerWidth;
 }
+
+$: if (items) setTimeout(() => right = tooRight(menuEl));
 </script>
 <style>
 .menu {
@@ -22,6 +25,7 @@ function tooRight(menuEl) {
 }
 
 .item {
+  display: flex;
   position: relative;
   padding: 6px 8px;
   margin: 2px 0;
@@ -39,8 +43,8 @@ function tooRight(menuEl) {
 }
 
 .icon {
-  margin-left: 8px;
-  float: right;
+  padding-left: 8px;
+  margin-left: auto;
 }
 
 .spacer {
@@ -84,7 +88,7 @@ function tooRight(menuEl) {
         {item.label}
         {#if item.submenu}
         <div class="icon">navigate_next</div>
-        <div class="submenu" class:right={tooRight(menuEl)}>
+        <div class="submenu" class:right>
           <svelte:self items={item.submenu} />
         </div>
         {:else if item.icon}

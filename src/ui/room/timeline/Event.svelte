@@ -31,6 +31,7 @@ function getToolbar(event, shiftKey) {
 <style>
 .event {
 	position: relative;
+	user-select: text;
 }
 
 .event:not(.create):hover {

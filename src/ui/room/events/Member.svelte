@@ -55,13 +55,13 @@ function getColor(sender, settings) {
 
 function getJoinMessage(event) {
   const messages = [
-    ["", " just slid into the room"],
+    ["", " slid into the room"],
     ["a wild ", " appeared"],
     ["", " hopped into the room"],
     ["", " suddenly materialized"],
-    ["and then, ", " spawned in"],
-    ["big ", " showed up"],
+    ["big ", " just showed up"],
     ["", " just landed"],
+    ["", " arrived in time for the party"],
   ];
   return messages[calculateHash(event.eventId) % messages.length];
 }
