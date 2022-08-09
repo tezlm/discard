@@ -1,18 +1,11 @@
 <script>
 // TODO: make edits apply
 import { parseHtml } from "../../../util/html.js";
-import { parseMxc, defaultAvatar, calculateHash } from '../../../util/content.js';
+import { calculateHash } from '../../../util/content.js';
 import Avatar from "../../atoms/Avatar.svelte";
 export let room, eventId;
-let missingAvs = state.missingAvatars;
 let eventPromise = state.events.fetch(room.roomId, eventId);
 let settings = state.settings;
-
-function getName(sender) {
-  const member = room.members.get(sender);
-  if (!member) return sender;
-  return member.name || member.userId;
-}
 
 function getColor(sender) {
   if (!sender) return;

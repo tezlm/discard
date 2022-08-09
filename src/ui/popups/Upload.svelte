@@ -1,6 +1,8 @@
 <script>
 import Popup from "../atoms/Popup.svelte";
 import Button from "../atoms/Button.svelte";
+import Video from "../molecules/files/Video.svelte";
+import Audio from "../molecules/files/Audio.svelte";
 import { formatSize } from "../../util/format.js";
 export let current;
 export const confirm = current.confirm;
@@ -16,6 +18,11 @@ async function getText(file) {
 }
 </script>
 <style>
+.content {
+  max-width: 440px;
+  max-height: 440px;
+}
+
 .info {
   margin-bottom: 1em;
   margin-top: -8px;
@@ -36,13 +43,17 @@ img {
 </style>
 <Popup>
   <h2 slot="header">Upload file</h2>
-  <div slot="content">
+  <div slot="content" class="content">
     <div class="info">
       do you want to upload {current.file.name || "this file"}?
       <span class="size">({formatSize(current.file.size)})</span>
     </div>
     {#if type === "image"}
     <img src={URL.createObjectURL(current.file)} alt={current.file.name} />
+    {:else if type === "video"}
+    <Video src={URL.createObjectURL(current.file)} name={current.file.name} size={current.file.size} />
+    {:else if type === "audio"}
+    <Audio src={URL.createObjectURL(current.file)} name={current.file.name} size={current.file.size} />
     {:else if type === "text" || current.file.type === "application/json"}
     <pre>{#await getText(current.file) then text}{text}{/await}</pre>
     {/if}

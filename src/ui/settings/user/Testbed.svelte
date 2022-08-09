@@ -55,7 +55,7 @@ let embed = {
 <br />
 <Markdown bind:content={input} />
 <br />
-{#if input[0] === "/"}
+{#if input[0] === "/" || input[0] === "@"}
 <Autocomplete {input} />
 {/if}
 <br />

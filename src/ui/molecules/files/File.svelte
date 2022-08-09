@@ -8,7 +8,7 @@ export let size = 0;
 </script>
 <style>
 .file {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   padding: .5rem;
   background: var(--bg-rooms-members);

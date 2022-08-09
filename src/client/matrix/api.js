@@ -110,6 +110,19 @@ export default class Api {
   redactEvent(roomId, eventId, content, txnId) {
     return this.fetch("PUT", `/rooms/${encode(roomId)}/redact/${encode(eventId)}/${encode(txnId)}`, content);
   }
+  
+  // e2ee
+  uploadKeys(keys) {
+    return this.fetch("POST", "/keys/upload", keys);
+  }
+  
+  queryKeys(keys) {
+    return this.fetch("POST", "/keys/query", keys);
+  }
+  
+  claimKeys(keys) {
+    return this.fetch("PUT", "/keys/claim", keys);
+  }
 
   // files
   uploadFile(file, progress) {

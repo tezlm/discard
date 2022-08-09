@@ -68,7 +68,6 @@ function handleMove() {
 </script>
 <style>
 .wrapper {
-  display: inline-block;
   position: relative;
   overflow: hidden;
   background: var(--bg-context);
