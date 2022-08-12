@@ -49,6 +49,7 @@ export default class Syncer extends Emitter {
     const sync = await this.api.sync(since, this._controller.signal).catch((err) => this._error(err));
     if (!sync) return;
     if (sync.error) return this._error(sync.errcode);
+    console.log(sync)
     const { account_data, rooms } = sync;
     
     for (let roomId in rooms?.join ?? {}) {

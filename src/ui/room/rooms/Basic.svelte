@@ -1,10 +1,10 @@
 <script>
 import { onDestroy } from "svelte";
-import Scroller from '../molecules/Scroller.svelte';
-import Divider from './timeline/Divider.svelte';
-import Upload from './timeline/Upload.svelte';
-import Placeholder from './timeline/Placeholder.svelte';
-import Event from "./timeline/Event.svelte";
+import Scroller from '../../molecules/Scroller.svelte';
+import Divider from '../timeline/Divider.svelte';
+import Upload from '../timeline/Upload.svelte';
+import Placeholder from '../timeline/Placeholder.svelte';
+import Event from "../timeline/Event.svelte";
 export let room;
 export let slice;
 let { focused, reply, edit, upload } = state.roomState;

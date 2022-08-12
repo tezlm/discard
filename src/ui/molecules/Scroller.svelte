@@ -1,4 +1,7 @@
 <script>
+// considering there is only one place that uses/needs this (room content), this may just be a useless abstraction
+// this could be combined with room content to make a room timeline scroller instead
+// TODO: consider refactoring?
 export let fetchBackwards = async () => {};
 export let fetchForwards = async () => {};
 export let getDefault = () => {};

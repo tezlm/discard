@@ -31,7 +31,7 @@ if (current.room.type === "room") {
     <Dropdown {options} />
     {/if}
     <div class="title">Reason for Kick</div>
-    <Textarea />
+    <Textarea placeholder="they disagree with my opinion" />
   </div>
   <div slot="footer">
     <Button type="link" label="Nevermind!" clicked={() => state.popup.set({ ...current, id: null })} />

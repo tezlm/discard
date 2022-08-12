@@ -82,6 +82,7 @@ export function update() {
       const old = state.rooms.get(id);
       Object.assign(old, {
         ...formatted,
+        pings: old.pings,
         members: old.members,
       });
     } else {

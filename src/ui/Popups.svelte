@@ -6,6 +6,7 @@ import Error from "./popups/Error.svelte";
 import Logout from "./popups/Logout.svelte";
 import Switcher from "./popups/Switcher.svelte";
 import Source from "./popups/Source.svelte";
+import DevRoom from "./popups/DevRoom.svelte";
 import Create from "./popups/Create.svelte";
 import Info from "./popups/Info.svelte";
 import Leave from "./popups/Leave.svelte";
@@ -25,6 +26,7 @@ popups.set("error", Error);
 popups.set("logout", Logout);
 popups.set("switcher", Switcher);
 popups.set("source", Source);
+popups.set("dev-room", DevRoom);
 
 // rooms
 popups.set("create", Create);
@@ -80,7 +82,8 @@ function handleKeyDown(e) {
 }
 </script>
 <style>
-.wrap :global(.icon.close) {
+.wrap :global(h2 > .icon.close),
+.wrap :global(h3 > .icon.close) {
   position: absolute;
   top: 12px;
   right: 12px;

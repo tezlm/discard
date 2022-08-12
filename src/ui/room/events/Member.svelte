@@ -131,7 +131,6 @@ time {
       {action}
     {/if}
     {#if event.sender.userId !== event.stateKey}
-    by 
     <span class="author" style:color={getColor(event.sender, $settings)}>
       {event.sender.name || event.sender.userId}
     </span>

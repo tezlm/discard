@@ -43,7 +43,7 @@ let selected = "1h";
     <div class="title">Delete everything from the</div>
     <Dropdown options={since} bind:selected={selected} />
     <div class="title">Reason for deletion</div>
-    <Textarea />
+    <Textarea placeholder="they disagree with my opinion" />
   </div>
   <div slot="footer">
     <Button type="link" label="Nevermind!" clicked={() => state.popup.set({ ...current, id: null })} />

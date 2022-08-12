@@ -167,7 +167,19 @@ export default class Api {
   }
   
   // memers
-  inviteMember() { throw "TODO" }
-  kickMember() { throw "TODO" }
-  banMember() { throw "TODO" }
+  inviteMember(roomId, userId, reason) {
+    return this.fetch("POST", `/rooms/${encode(roomId)}/invite`, { user_id: userId, reason });    
+  }
+  
+  kickMember(roomId, userId, reason) {
+    return this.fetch("POST", `/rooms/${encode(roomId)}/kick`, { user_id: userId, reason });    
+  }
+  
+  banMember(roomId, userId, reason) {
+    return this.fetch("POST", `/rooms/${encode(roomId)}/ban`, { user_id: userId, reason });    
+  }
+  
+  unbanMember(roomId, userId, reason) {
+    return this.fetch("POST", `/rooms/${encode(roomId)}/unban`, { user_id: userId, reason });    
+  }
 }

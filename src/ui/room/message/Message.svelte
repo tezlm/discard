@@ -269,7 +269,7 @@ time {
   z-index: 1;
 }
 </style>
-<div class="message" on:click={handleClick} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getContextMenu(), x: e.clientX, y: e.clientY })}>
+<div class="message" on:click={handleClick} on:contextmenu|stopPropagation={e => { if (e.target.tagName === "A") return; e.preventDefault(); state.context.set({ items: getContextMenu(), x: e.clientX, y: e.clientY }) }}>
   <div class="side">
     {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
     {#if header}

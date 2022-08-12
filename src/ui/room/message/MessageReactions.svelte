@@ -1,5 +1,6 @@
 <script>
 import { backOut, quadOut } from "svelte/easing";
+import { parseMxc } from "../../../util/content";
 import Tooltip from "../../atoms/Tooltip.svelte";
 import Emoji from "../../molecules/Emoji.svelte";
 export let event;
@@ -77,7 +78,7 @@ function handleClick(mine, key) {
 
   color: var(--fg-notice);
   background: var(--bg-rooms-members);
-  border: solid var(--bg-rooms-members) 1px; 
+  border: solid var(--bg-rooms-members) 1px;
   border-radius: 8px;
   cursor: pointer;
   transition: all .1s;
@@ -91,6 +92,7 @@ function handleClick(mine, key) {
 .key, .spacer, .count {
   display: inline-block;
   margin: 0 2px;
+  height: 16px;
 }
 
 .spacer {
@@ -136,7 +138,7 @@ function handleClick(mine, key) {
 }
 </style>
 <div class="reactions">
-{#each [...event.reactions.entries()] as [key, { count, mine, senders }]}
+{#each [...event.reactions.entries()] as [key, { count, mine, senders, shortcode }]}
   {#if count}
   <Tooltip>
     <span slot="tip">
@@ -147,10 +149,19 @@ function handleClick(mine, key) {
         <span class="dim">{part}</span>
       {/if}
       {/each}
-      <span class="dim">reacted with</span> {key}
+      <span class="dim">reacted with</span>
+      {#if shortcode}
+        <span class="dim">:</span>{shortcode}<span class="dim">:</span>
+      {:else}
+        {key}
+      {/if}
     </span>
     <div class="reaction" class:self={mine} on:click={() => handleClick(mine, key)}>
-      <div class="key">{key}</div>
+      {#if key.startsWith("mxc://")}
+        <img class="key" src={parseMxc(key, 16)}>
+      {:else}      
+        <div class="key">{key}</div>
+      {/if}
       {#key count}
         <div class="count" in:counterIn out:counterOut>
         {count}
