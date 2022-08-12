@@ -69,6 +69,20 @@ function getContextMenu(space) {
 		return () => navigator.clipboard.writeText(text);
 	}
 }
+
+function getHomeContextMenu() {
+	return [
+	  // { label: "Mark As Read",  clicked: markRead, icon: "done" },
+	  { label: "Create Room",  clicked: () => state.popup.set({ id: "create", type: "room" }),  icon: "tag" },
+	  { label: "Create Space", clicked: () => state.popup.set({ id: "create", type: "space" }), icon: "folder" },
+	  null,
+	  { label: "Settings", clicked: () => state.scene.set("user-settings"), icon: "settings" /* submenu: [
+	    { label: "Foo", clicked: todo },
+	    { label: "Bar", clicked: todo },
+	    { label: "Baz", clicked: todo },
+	  ]*/ },
+	];
+}
 </script>
 <style>
 .nav {
@@ -153,6 +167,7 @@ function getContextMenu(space) {
         class={$focusedSpace ? "space" : "space selected"}
         src={"https://celery.eu.org/_matrix/media/r0/download/celery.eu.org/Wm9T9Nnch8IUQsVaJAInkaoVsgCJlmGx"}
         on:click={() => actions.spaces.focus(null)}
+    		on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getHomeContextMenu(), x: e.clientX, y: e.clientY })}
       />
     </Tooltip>
   </div>

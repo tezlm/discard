@@ -215,6 +215,10 @@ async function handleUpload(file) {
     </label>
     {/if}
     <RoomTextarea {placeholder} bind:input={input} bind:textarea={textarea} {onfile} {oninput} />
-    <EmojiButton bind:show={showEmoji} picked={(emoji, keep) => { textarea.value += emoji; keep || textarea.focus() }} />
+    <!--
+    <div class="icon" style="font-size: 28px; color: var(--fg-light)">gif_box</div>
+    <div class="icon" style="font-size: 28px; margin-left: 8px; color: var(--fg-light)">sticky_note_2</div>
+    -->
+    <EmojiButton bind:show={showEmoji} picked={(emoji, keep) => { input += emoji; keep || textarea.focus() }} />
   </div>
 </div>

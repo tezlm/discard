@@ -80,7 +80,7 @@ $: if (wrapper) {
 img {
   display: block;
   border-radius: 3px;
-  background: var(--bg-rooms-members);
+  /* background: var(--bg-rooms-members); */
   margin: 4px 0;
 }
 
@@ -161,11 +161,12 @@ img {
     on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
   />
   {:else if type === "m.sticker"}
+  <!-- note that this will fetch the full res sticker, which might not be ideal -->
   <img
-    src={parseMxc(content.url, dimensions.width, dimensions.height)}
+    src={parseMxc(content.url)}
     alt={content.body}
     title={content.body}
-    style={dimensions.css}
+    style="width: 128px"
     on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
   />
   <!--
@@ -206,7 +207,7 @@ img {
   {:else if content.body}
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}
-    {@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"), { linkify: true })}
+    {@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/\n/g, "<br />"), { linkify: true })}
     {#if edited}
     <span class="edited">(edited)</span>
     {/if}

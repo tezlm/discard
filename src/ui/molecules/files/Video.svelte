@@ -77,8 +77,10 @@ function handleMove() {
 }
 
 video {
+  display: block;
+  margin: 0 auto;
   height: 100%;
-  width: 100%;
+  max-width: 100%;
   object-fit: contain;
 }
 
@@ -86,6 +88,7 @@ video {
   position: absolute;
   width: 100%;
   transition: transform .2s;
+  user-select: none;
 }
 
 .header {
@@ -93,17 +96,20 @@ video {
   display: flex;
   padding: 16px;
   transform: translateY(-100%);
-  background: linear-gradient(0deg,transparent,rgba(0,0,0,.9));
+  background: linear-gradient(0deg, transparent, rgba(0, 0, 0, .9));
 }
 
 .info {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .info .name {
   font-weight: 500;
   color: var(--fg-content);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .info .size {
@@ -221,7 +227,7 @@ video {
   }
 }
 </style>
-<div class="wrapper" class:hide={fullscreen && !paused && !fullShowDebounce} bind:this={wrapperEl} on:mousemove={handleMove}>
+<div class="wrapper" title={name} class:hide={fullscreen && !paused && !fullShowDebounce} bind:this={wrapperEl} on:mousemove={handleMove}>
   <div class="header" class:show={paused || !started}>
     <div class="info">
       <a class="name" href={src}>{name}</a>

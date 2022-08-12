@@ -117,7 +117,7 @@ export function handle(roomId, event, toStart = false) {
     } else if (relation.rel_type === "m.annotation") {
       const key = relation.key;
       if (!original.reactions) original.reactions = new Map();
-      if (!original.reactions.has(key)) original.reactions.set(key, { count: 0, senders: new Set(), mine: null });
+      if (!original.reactions.has(key)) original.reactions.set(key, { count: 0, senders: new Set(), mine: null, shortcode: event.content.shortcode });
       const reaction = original.reactions.get(relation.key);
       if (event.sender === state.userId) reaction.mine = id;
       reaction.senders.add(event.sender);

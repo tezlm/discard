@@ -1,21 +1,16 @@
 <script>
-import Button from "../atoms/Button.svelte";
-import Input from "../atoms/Input.svelte";
-// import Tooltip from "../atoms/Tooltip.svelte";
-import { parseHtml } from "../../util/html.js";
-import { parseMxc } from "../../util/content.js";
-let space = state.focusedSpace;
+import Input from "../../atoms/Input.svelte";
+import { parseHtml } from "../../../util/html.js";
+import { parseMxc } from "../../../util/content.js";
+export let room;
 let members = false;
 
-// TODO: split user home and space home into separate files
-
 $: {
-  if ($space?.members.fetched) {
-    members = $space.members.with("join");  
+  if (room.members.fetched) {
+    members = room.members.with("join");  
   } else {
-    members = false;
-    $space?.members.fetch().then(() => {
-      members = $space.members.with("join");  
+    room.members.fetch().then(() => {
+      members = room.members.with("join");  
     });  
   }
 }
@@ -36,10 +31,6 @@ function formatJoinRule(rule) {
   padding: 32px;
   overflow-y: scroll;
   background: #2c2e33;
-}
-
-.home {
-  background: none;
 }
 
 .main {
@@ -99,8 +90,7 @@ function formatJoinRule(rule) {
   justify-content: center;
 }
 </style>
-<div class="content" class:home={!$space}>
-  {#if $space}
+<div class="content">
   <div class="main"> 
     <h3>Rooms</h3>
     <div style="height: 16px"></div>
@@ -112,15 +102,15 @@ function formatJoinRule(rule) {
   </div>
   <div class="side">
     <div class="header">
-      <img src={parseMxc($space.avatar)} />
+      <img src={parseMxc(room.avatar)} />
       <div style:height="24px"></div>
-      <h1>{$space.name}</h1>
+      <h1>{room.name}</h1>
       <div class="info">
-        {formatJoinRule($space.joinRule)} space ·
+        {formatJoinRule(room.joinRule)} space ·
         {members?.length ?? "???"} {members?.length === 1 ? "member" : "members"} ·
-        <a href="#" on:click={(e) => { e.preventDefault(); state.selectedRoom.set($space); state.scene.set("space-settings") }}>edit</a>
+        <a href="#" on:click={(e) => { e.preventDefault(); state.selectedRoom.set(room); state.scene.set("space-settings") }}>edit</a>
       </div>
-      <div class="topic">{@html $space.topic ? parseHtml($space.topic, { linkify: true }) : "<i>no topic</i>"}</div>
+      <div class="topic">{@html room.topic ? parseHtml(room.topic, { linkify: true }) : "<i>no topic</i>"}</div>
     </div>
     <div>
       <h3>Active now</h3>
@@ -132,10 +122,4 @@ function formatJoinRule(rule) {
       </ul>
     </div>
   </div>
-  {:else}
-  <div>
-    <Button type="normal" label="Create Space" clicked={() => state.popup.set({ id: "create", type: "space" })} />
-    <Button type="primary" label="Create Room" clicked={() => state.popup.set({ id: "create", type: "room" })} />
-  </div>
-  {/if}
 </div>

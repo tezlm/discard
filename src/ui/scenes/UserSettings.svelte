@@ -11,6 +11,7 @@ import TextImages from '../settings/user/TextImages.svelte';
 import RoomsSpaces from '../settings/user/RoomsSpaces.svelte';
 import Notifications from '../settings/user/Notifications.svelte';
 import Keybinds from '../settings/user/Keybinds.svelte';
+import Language from '../settings/user/Language.svelte';
 // Language
 
 import Changelog from '../settings/user/Changelog.svelte';
@@ -29,7 +30,7 @@ const views = [
   { view: RoomsSpaces,   name: "Rooms and Spaces",     icon: "grid_3x3" },
   { view: Notifications, name: "Notifications",        icon: "notifications" },
   { view: Keybinds,      name: "Keybinds",             icon: "keyboard" },
-  { view: null,          name: "Language",             icon: "language" },
+  { view: Language,      name: "Language",             icon: "language" },
   null,
   { view: Testbed,       name: "Testbed",              icon: "code" },
   { view: Changelog,     name: "Changelog",            icon: "assignment" },

@@ -65,6 +65,7 @@ nav {
   flex: 1;
   padding: 4em 2em;
   max-width: 740px;
+  user-select: text;
 }
 
 .hidescroll {

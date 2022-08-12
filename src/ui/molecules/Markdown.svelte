@@ -51,7 +51,8 @@ function parseMarkdown(str) {
     .replace(/>/g, "&lt;")
     .replace(/^\/(\S*)/g, '<b><span class="dim">/</span>$1</b>')
     .replace(/([@#!])(\S+?):(\S+)/g, '<span data-mx-ping>$1$2:$3</span>')
-    // .replace(/^(#{1,6})(.+)/g, header)
+    .replace(/^(#{1,6})(.+)/g, header)
+    .replace(/\n/g, "<br />")
     // .replace(/`(.+?)`/g, '<span class="dim">`</span><code>$1</code><span class="dim">`</span>')
     // .replace(/([@#!])(\S+?):(\S+)/g, '<span data-mx-ping>$1$2:$3</span>')
     // .replace(/([*_]{1,3})(.+?)\1/g, boldItalic)
@@ -68,17 +69,18 @@ function handlePaste(e) {
 
 function handleInput(e) {
   if (e.inputType === "insertLineBreak") {
-    setTimeout(() => console.log(content, html))
-    // const pos = getCursorPos(editorEl);
-    // content = content.slice(0, pos) + "\n" + content.slice(pos);
-    // html = parseMarkdown(content).replace(/\n$/, "") + "\n";
-    // queueMicrotask(() => setCursorPos(editorEl, pos + 1));
+    const pos = getCursorPos(editorEl);
+    content = content.slice(0, pos) + "\n" + content.slice(pos);
+    html = parseMarkdown(content);
+    queueMicrotask(() => setCursorPos(editorEl, pos + 1));
   } else {
     const pos = getCursorPos(editorEl);
     html = parseMarkdown(content);
     queueMicrotask(() => setCursorPos(editorEl, pos));
   }
 }
+
+$: console.log("new content:", JSON.stringify({ content, html }))
 </script>
 <style>
 .editor {

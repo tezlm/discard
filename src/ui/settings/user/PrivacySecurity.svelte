@@ -39,8 +39,16 @@ h3 {
 <div class="devices">
 {#each res.devices as device}
 <div class="device">
-  <div><span class="big" class:dim={!device.display_name}>{device.display_name}</span> <span class="small dim">({device.device_id})</span></div>
-  <span class="small"><span class="dim">Last seen</span> {formatDate(new Date(device.last_seen_ts))} <span class="dim">at</span> {device.last_seen_ip}</span>
+  <div>
+    <span class="big" class:dim={!device.display_name}>{device.display_name}</span>
+    <span class="small dim">({device.device_id})</span>
+  </div>
+  <span class="small">
+    <span class="dim">Last seen</span>
+    {formatDate(new Date(device.last_seen_ts))}
+    <span class="dim">at</span>
+    {device.last_seen_ip}
+  </span>
 </div>
 {/each}
 </div>

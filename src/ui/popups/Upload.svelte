@@ -43,20 +43,22 @@ img {
 </style>
 <Popup>
   <h2 slot="header">Upload file</h2>
-  <div slot="content" class="content">
+  <div slot="content" style="max-width: 440px">
     <div class="info">
       do you want to upload {current.file.name || "this file"}?
       <span class="size">({formatSize(current.file.size)})</span>
     </div>
-    {#if type === "image"}
-    <img src={URL.createObjectURL(current.file)} alt={current.file.name} />
-    {:else if type === "video"}
-    <Video src={URL.createObjectURL(current.file)} name={current.file.name} size={current.file.size} />
-    {:else if type === "audio"}
-    <Audio src={URL.createObjectURL(current.file)} name={current.file.name} size={current.file.size} />
-    {:else if type === "text" || current.file.type === "application/json"}
-    <pre>{#await getText(current.file) then text}{text}{/await}</pre>
-    {/if}
+    <div class="content">
+      {#if type === "image"}
+      <img src={URL.createObjectURL(current.file)} alt={current.file.name} />
+      {:else if type === "video"}
+      <Video src={URL.createObjectURL(current.file)} name={current.file.name} size={current.file.size} />
+      {:else if type === "audio"}
+      <Audio src={URL.createObjectURL(current.file)} name={current.file.name} size={current.file.size} />
+      {:else if type === "text" || current.file.type === "application/json"}
+      <pre>{#await getText(current.file) then text}{text}{/await}</pre>
+      {/if}
+    </div>
   </div>
   <div slot="footer">
     <Button type="link" label="Nevermind" clicked={closePopup} />

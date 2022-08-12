@@ -1,12 +1,18 @@
 <script>
-import RoomContent from './RoomContent.svelte';
 import RoomFooter from './RoomFooter.svelte';
 import RoomHeader from './RoomHeader.svelte';
-import RoomHome from './RoomHome.svelte';
 import RoomMembers from './RoomMembers.svelte';
+
+import BasicRoom from './rooms/Basic.svelte';
+import SpaceRoom from './rooms/Space.svelte';
+import HomeRoom from './rooms/Home.svelte';
+import UnknownRoom from './rooms/Unknown.svelte';
+
 let room = state.focusedRoom;
+let space = state.focusedSpace;
 let slice = state.slice;
 let settings = state.settings;
+$: type = $room?.state.find(i => i.type === "m.room.create")?.content.type;
 </script>
 <style>
 .room {
@@ -30,15 +36,23 @@ let settings = state.settings;
   <RoomHeader room={$room} />
   {#if $room && $slice}
 		<div class="content" style:flex-direction="row">
-			<div class="content">
-			  <RoomContent room={$room} slice={$slice} />
-			  <RoomFooter />
-			</div>
+			{#if !type}
+				<div class="content">
+				  <BasicRoom room={$room} slice={$slice} />
+				  <RoomFooter />
+				</div>
+			<!-- {:else if type === "m.space"} -->
+			<!-- {:else if type === "m.policy"} -->
+			{:else}
+				<UnknownRoom room={$room} />
+			{/if}
 			{#if $settings.get("showmemberlist")}
 			<RoomMembers room={$room} />
 			{/if}
 		</div>
+  {:else if $space}
+	  <SpaceRoom room={$space} />
   {:else}
-	  <RoomHome />
+	  <HomeRoom />
   {/if}
 </div>

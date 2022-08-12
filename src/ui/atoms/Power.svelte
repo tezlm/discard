@@ -49,7 +49,7 @@ function handleKeyDown(e) {
 }
 
 input {
-  border: none;  
+  border: none;
   outline: none;
   padding: 4px;
   border-radius: 3px;

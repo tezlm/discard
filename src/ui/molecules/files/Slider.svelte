@@ -4,11 +4,11 @@ export let max;
 export let tooltipify;
 export let changed;
 export let vertical = false;
-export let moving = false;
+let moving = false;
 let select = 0;
 let wrapperEl;
 
-function handleClick(e) {
+function handleFocus(e) {
   moving = true;
   handleMove(e);
 }
@@ -138,7 +138,7 @@ function handleMove(e) {
   class:vertical
   class:moving
   bind:this={wrapperEl}
-  on:mousedown={handleClick}
+  on:mousedown={handleFocus}
   on:mousemove={handleMove}
 >
   <div style="position: relative; height: 100%">

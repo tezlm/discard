@@ -47,6 +47,7 @@ function getContextMenu(room) {
 	  { label: "Leave",   clicked: () => state.popup.set({ id: "leave", type: "room", room }), icon: "logout", color: "var(--color-red)" },
 	  null,
 	  { label: "Copy ID", clicked: copy(room.roomId), icon: "terminal" },
+	  { label: "Dev Tools", clicked: () => state.popup.set({ id: "dev-room", room }) },
 	];
 
 	function markRead() {
@@ -161,11 +162,11 @@ function openSettings(room) {
 	padding: 6px 2px;
 }
 
-.icon:hover {
+.settings .icon:hover {
 	color: var(--fg-light);
 }
 
-.icon:active {
+.settings .icon:active {
 	transform: translateY(1px);
 }
 
@@ -242,3 +243,11 @@ function openSettings(room) {
 	{/each}
 	<div class="spacer"></div>
 </div>
+<svelte:window on:keydown={(e) => {
+	// TODO: move into proper keybind handler
+	if (!(e.altKey && !e.ctrlKey && !e.shiftKey) || (e.key !== "ArrowUp" && e.key !== "ArrowDown")) return;
+	const rooms = state.spaces.get(state.focusedSpaceId ?? "orphanRooms");
+	const idx = rooms.findIndex(i => i.roomId === state.focusedRoomId);
+	const newRoom = rooms[(idx + (e.key === "ArrowUp" ? -1 : 1) + rooms.length) % rooms.length];
+	actions.rooms.focus(newRoom);
+}} />

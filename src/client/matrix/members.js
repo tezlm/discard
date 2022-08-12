@@ -25,8 +25,9 @@ export default class MemberCache extends Map {
   async fetch() {
     if (this.request) return this.request;
     state.log.matrix("fetch members");
+    // TODO: don't update rooms on every member!
     const req = state.api.fetchMembers(this.roomId)
-      .then(({ chunk }) => chunk.forEach(i => this.add(i)));
+      .then(({ chunk }) => chunk.forEach(i => actions.rooms.handleState(this.roomId, i)));
     this.request = req;
     return req;
   }

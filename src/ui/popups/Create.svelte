@@ -56,13 +56,13 @@ async function create() {
 }
 </style>
 <Popup>
-  <h3 slot="header">Create {capitalize(current.type)} <div class="close icon" on:click={() => state.popup.set({ id: null, ...current })}>close</div></h3>
+  <h3 slot="header">Create {capitalize(current.type)} <div class="close icon" on:click={() => state.popup.set({ ...current, id: null })}>close</div></h3>
   <div slot="content" style="display: flex; flex-direction: column">
     <span class="title">{capitalize(current.type)} Name</span>
     <Input placeholder="awesome-{current.type}" bind:value={name} submitted={create} autofocus />
   </div>
   <div slot="footer">
-    <Button type="link" label="Cancel" clicked={() => state.popup.set({ id: null, ...current })} />
+    <Button type="link" label="Cancel" clicked={() => state.popup.set({ ...current, id: null })} />
     <Button
       type="primary"
       disabled={!name.length}

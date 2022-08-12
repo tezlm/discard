@@ -1,7 +1,7 @@
 <script>
 export let options;
 export let selected;
-export let changed;
+export let changed = () => {};
 
 function select(option) {
   selected = option;
