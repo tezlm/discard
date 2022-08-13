@@ -44,6 +44,8 @@ span {
 idk
 <br>
 <br>
+here is a keybind: <kbd>ctrl+shift+z</kbd> and <kbd>alt+y</kbd> and some more text
+<br>
 <span>Copy</span>
 <div class="keybind">
   <input on:keydown={handleKeyDown}>

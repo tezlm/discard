@@ -5,12 +5,13 @@ export function format(roomId, raw) {
   const event = {
     roomId:     roomId,
     eventId:    raw.event_id,
-    sender:     room.members.get(raw.sender) ?? { userId: raw.sender },
+    sender:     room.members.get(raw.sender) ?? { userId: raw.sender, fallback: true },
     stateKey:   raw.state_key,
     content:    raw.content,
     type:       raw.type,
     date:       new Date(raw.origin_server_ts),
     special:    null,
+    // flags:    null, // TODO `new Set()` for flags (redacted, sending, errored, ping)
     // isPing:     state.client.getPushActionsForEvent(ev).tweaks?.highlight || false, // TODO: fix
     reactions:  null,
     unsigned:   raw.unsigned,

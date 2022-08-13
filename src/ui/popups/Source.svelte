@@ -1,5 +1,6 @@
 <script>
 import Popup from "../atoms/Popup.svelte";
+import { highlight } from "prismjs";
 export let current;
 
 function closePopup() {
@@ -26,6 +27,6 @@ pre {
   <h3 slot="header">View source <div class="close icon" on:click={closePopup}>close</div></h3>
   <div slot="content">
     <p>note: this is discard's internal event representation, and not matrix's. <a class="copy" on:click={copyId}>copy id</a></p><br />
-    <pre>{JSON.stringify(current.event, null, 2)}</pre>
+    <pre><code>{@html highlight(JSON.stringify(current.event, null, 4), Prism.languages.js, "json")}</code></pre>
   </div>
 </Popup>

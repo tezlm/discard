@@ -66,6 +66,7 @@ varying levels of difficulty
   - [x] view homeserver stats
 - [x] context menus
 - [ ] dms
+- [ ] router (change title/hash/favicon)
 - [ ] e2ee
 - [ ] threads
 - [ ] voice channels
