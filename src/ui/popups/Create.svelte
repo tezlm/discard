@@ -34,7 +34,9 @@ async function create() {
   const interval = setInterval(() => {
     if (!state.rooms.has(room_id)) return;
     if (current.type === "space") {
-      actions.spaces.focus(state.rooms.get(room_id));
+      if (!current.parent) {
+        actions.spaces.focus(state.rooms.get(room_id));
+      }
     } else {
       actions._rooms.focus(state.rooms.get(room_id));  
     }

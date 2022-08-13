@@ -1,10 +1,10 @@
 <script>
 export let value;
 export let max;
-export let tooltipify;
 export let changed;
+export let tooltipify = null;
 export let vertical = false;
-let moving = false;
+export let moving = false;
 let select = 0;
 let wrapperEl;
 

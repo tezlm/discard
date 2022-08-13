@@ -50,6 +50,7 @@ function getContextMenu(space) {
 	  { label: "Leave",   clicked: () => state.popup.set({ id: "leave", type: "space", room: space }), icon: "logout", color: "var(--color-red)" },
 	  null,
 	  { label: "Copy ID", clicked: copy(space.roomId), icon: "terminal" },
+	  { label: "Dev Tools", clicked: () => state.popup.set({ id: "dev-room", room: space }) },
 	];
 
 	// function markRead() {
@@ -155,7 +156,7 @@ function getHomeContextMenu() {
 
 .separator {
   background: var(--color-gray);
-  height: 2px;
+  min-height: 2px;
   width: 32px;
   margin: 4px 0 0;
 }

@@ -6,20 +6,16 @@ export let room;
 let members = false;
 
 $: {
-  if (room.members.fetched) {
-    members = room.members.with("join");  
-  } else {
-    room.members.fetch().then(() => {
-      members = room.members.with("join");  
-    });  
-  }
+  room.members.fetch().then(() => {
+    members = room.members.with("join", false);
+  });  
 }
   
 function formatJoinRule(rule) {
   switch(rule) {
-    case "public": return "Public";
-    case "invite": return "Private";
-    case "restricted": return "Restricted";
+    case "public": return "Public space";
+    case "invite": return "Private space";
+    case "restricted": return "Subspace";
   }
 }
 </script>
@@ -102,11 +98,11 @@ function formatJoinRule(rule) {
   </div>
   <div class="side">
     <div class="header">
-      <img src={parseMxc(room.avatar)} />
+      <img src={parseMxc(room.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"} />
       <div style:height="24px"></div>
       <h1>{room.name}</h1>
       <div class="info">
-        {formatJoinRule(room.joinRule)} space ·
+        {formatJoinRule(room.joinRule)} ·
         {members?.length ?? "???"} {members?.length === 1 ? "member" : "members"} ·
         <a href="#" on:click={(e) => { e.preventDefault(); state.selectedRoom.set(room); state.scene.set("space-settings") }}>edit</a>
       </div>

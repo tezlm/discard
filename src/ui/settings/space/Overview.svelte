@@ -80,7 +80,8 @@ h1 {
   <div class="section" style="flex-direction: row">
     <div class="avatar">
       <div class="uploader">
-        <img src={parseMxc($room.avatar)} />
+        <!-- TODO: generate default avatars -->
+        <img src={parseMxc($room.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"} />
         <div class="remove">Remove</div>
       </div>
       <div class="side">
@@ -99,6 +100,6 @@ h1 {
   </div>
   <div class="section">
     <div class="title">Developers</div>
-    <p><b>Room Id:</b> <span style="user-select: all">{$room.roomId}</span></p>
+    <p><b>Room Id:</b> <code style="user-select: all">{$room.roomId}</code></p>
   </div>
 </div>

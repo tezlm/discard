@@ -1,6 +1,6 @@
 import { writable, get } from "svelte/store";
 import TimelineSet from "../matrix/timeline.js";
-import { formatRoom } from "../../util/rooms.js";
+import { Room } from "../../util/rooms.js";
 
 const roomStates = new Map();
 const roomAccounts = new Map();
@@ -77,16 +77,14 @@ export function handleLeave(roomId) {
 // TODO: optimize, don't recreate everything over and over again
 export function update() {
   for (let [id, data] of roomStates.entries()) {
-    const formatted = formatRoom(id, data, roomAccounts.get(id));
     if (state.rooms.has(id)) {
-      const old = state.rooms.get(id);
-      Object.assign(old, {
-        ...formatted,
-        pings: old.pings,
-        members: old.members,
-      });
+      const room = state.rooms.get(id);
+      room.state = data;
+      room.readEvent = roomAccounts.get(id)?.get("m.fully_read")?.event_id ?? null;
     } else {
-      state.rooms.set(id, formatted);
+      const room = new Room(id, data);
+      room.readEvent = roomAccounts.get(id)?.get("m.fully_read")?.event_id ?? null;
+      state.rooms.set(id, room);
     }
     state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
   }

@@ -16,7 +16,7 @@ blockquote {
   padding-left: 12px;
 }
 
-code {
+code, kbd {
   background: var(--bg-rooms-members);
   padding: 2px;
   border-radius: 2px;
@@ -34,6 +34,18 @@ pre {
   color: var(--fg-light);
   
   overflow-x: scroll;
+}
+
+kbd {
+  display: inline-block;
+  box-shadow: 0 2px 0 var(--bg-spaces);
+  transform: translateY(-1px);
+  cursor: pointer;
+}
+
+kbd:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 0 var(--bg-spaces);
 }
 
 hr {
