@@ -79,8 +79,8 @@ async function handleSubmit(value, e) {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow-popup);
+  user-select: none;
 }
-
 
 .header {
   grid-column: 1/3;

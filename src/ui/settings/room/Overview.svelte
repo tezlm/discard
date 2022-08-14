@@ -1,7 +1,12 @@
 <script>
 import Input from "../../atoms/Input.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
+import Confirm from "../Confirm.svelte";
 export let room;
+let name = $room?.name ?? "";
+let topic = $room?.topic ?? "";
+$: changed = (name !== ($room?.name ?? ""))
+  || (topic !== ($room?.topic ?? ""));
 </script>
 <style>
 .section {
@@ -22,11 +27,19 @@ export let room;
 <div>
   <div class="section">
     <div class="title">Room Name</div>
-    <Input value={$room?.name ?? "error"} placeholder="amazing-room" readonly={$room.power.me < $room.power.getState("m.room.name")} />
+    <Input
+      bind:value={name}
+      placeholder="amazing-room"
+      readonly={$room.power.me < $room.power.getState("m.room.name")}
+    />
   </div>
   <div class="section">
     <div class="title">Room Topic</div>
-    <Textarea value={$room?.topic ?? ""} placeholder="what an amazing room" readonly={$room.power.me < $room.power.getState("m.room.topic")} />
+    <Textarea
+      bind:value={topic}
+      placeholder="what an amazing room"
+      readonly={$room.power.me < $room.power.getState("m.room.topic")}
+    />
   </div>
   <div class="section">
     <div class="title">Developers</div>
@@ -34,3 +47,6 @@ export let room;
     <p><b>Room Version:</b> <code style="user-select: all">{$room.state.find(i => i.type === "m.room.create")?.content.room_version ?? "no m.room.create!"}</code></p>
   </div>
 </div>
+{#if changed}
+<Confirm />
+{/if}

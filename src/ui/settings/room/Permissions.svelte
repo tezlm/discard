@@ -1,5 +1,6 @@
 <script>
 import Power from "../../atoms/Power.svelte";
+import Confirm from "../Confirm.svelte";
 export let room;
 $: perms = $room.power;
 
@@ -21,6 +22,8 @@ const descriptions = {
   default:  "Everyone's default power level.",
   ping:     "The minimum power required to ping everyone. Set this to something high if this room is public.",
   rooms:    "The minimum power required to add/remove rooms to this space.",
+  history:  "The minimum power required to change history visibility",
+  encrypt:  "The minimum power required to enable end to end encryption",
 };
 
 function getItems() {
@@ -42,6 +45,11 @@ function getItems() {
       { name: "Default Power",   id: "default",  power: perms.users_default ?? 0 },
       { name: "Manage Power",    id: "power",    power: perms.getState("m.room.power_levels") },
       { name: "Manage Settings", id: "perms",    power: perms.state_default ?? 50 },
+      { category: "????" },
+      { name: "Change Avatar",   id: "avatar",   power: perms.getState("m.room.avatar") },
+      { name: "Upgrade Room",    id: "upgrade",  power: perms.getState("m.room.tombstone") },
+      { name: "History",         id: "history",  power: perms.getState("m.room.history_visibility") },
+      { name: "Encrypt",         id: "encrypt",  power: perms.getState("m.room.encryption") },
     ];
   } else {
     return [
@@ -59,7 +67,11 @@ function getItems() {
       { name: "Default Power",   id: "default",  power: perms.users_default ?? 0 },
       { name: "Manage Power",    id: "power",    power: perms.getState("m.room.power_levels") },
       { name: "Manage Settings", id: "perms",    power: perms.state_default ?? 50 },
-    ];  
+      { category: "????" },
+      { name: "Upgrade Room",    id: "upgrade",  power: perms.getState("m.room.tombstone") },
+      { name: "History",         id: "history",  power: perms.getState("m.room.history_visibility") },
+      { name: "Encrypt",         id: "encrypt",  power: perms.getState("m.room.encryption") },
+    ];
   }
 }
 </script>
@@ -105,30 +117,21 @@ function getItems() {
       <h5 class="title">{item.name}</h5>
       <div class="description">{descriptions[item.id]}</div>
     </div>
-    <div style="margin-left: auto">
-      <Power
-        value={item.power}
-        max={perms.me}
-        disabled={perms.me < perms.getState("m.room.power_levels") || perms.me < item.power}
-        changed={(p) => { modified[item.power === p ? "delete" : "add"](item.id); isModified = modified.size }}
-      />
+    <div style="flex: 1">
     </div>
+    <Power
+      value={item.power}
+      max={perms.me}
+      disabled={perms.me < perms.getState("m.room.power_levels") || perms.me < item.power}
+      changed={(p) => { modified[item.power === p ? "delete" : "add"](item.id); isModified = modified.size }}
+    />
   </div>
 {/if}
 {/each}
-<br>
-<b>useful in other clients but not (currently?) here</b>
-<p style="user-select: none;">should i keep them?</p>
-<p>change room avatar: {perms.getState("m.room.avatar")}</p>
-<p>upgrade room: {perms.getState("m.room.tombstone")}</p>
-<p>change history visibility: {perms.getState("m.room.history_visibility")}</p>
-<p>enable encryption: {perms.getState("m.room.encryption")}</p>
-{#if isModified}
-  <!--
-    "careful you have unsaved changes"
-    TODO: reset, prevent leaving if unsaved changes
-  -->
-{/if}
 {:else}
 <p>permissions failed to load!</p>
+{/if}
+<div style="padding: 1em"></div>
+{#if isModified}
+<Confirm />
 {/if}

@@ -94,7 +94,7 @@ function getContextMenu(room) {
   <div class="icon chevron" class:expanded>chevron_right</div>
   <div class="title">{room.name}</div>
   <div style="flex: 1"></div>
-  <Tooltip tip="create room">
+  <Tooltip tip="Create Room">
     <div class="icon add" on:click|stopPropagation={() => state.popup.set({ id: "create", type: "room", parent: room })}>add</div>
   </Tooltip>
   <div style="width: 14px"></div>

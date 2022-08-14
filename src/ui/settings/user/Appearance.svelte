@@ -10,10 +10,10 @@ const settings = state.settings;
   margin-bottom: 8px;
 }
 </style>
-<div class="preview">
-  <!-- TODO: preview message -->
-</div>
-<br />
+<pre>
+TODO: preview messages
+</pre>
+<div style="height: 1em"></div>
 <div class="title">User colors</div>
 <Radio
   options={[
@@ -24,7 +24,7 @@ const settings = state.settings;
   selected={$settings.get("namecolors")}
   changed={(id) => $settings.put("namecolors", id)}
 />
-<br />
+<div style="height: 1em"></div>
 <div class="title">Room timeline</div>
 {#each [
   ["Show join and leaves", "showjoinleave"],

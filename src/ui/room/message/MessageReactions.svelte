@@ -65,6 +65,7 @@ function handleClick(mine, key) {
   display: flex;
   position: relative;
   align-items: center;
+  flex-wrap: wrap;
   margin-top: 4px;
   user-select: none;
 }

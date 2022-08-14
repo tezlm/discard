@@ -4,11 +4,12 @@ export let label = "button";
 export let clicked = () => {};
 export let disabled = false;
 export let loading = false;
-$: standard = ["normal", "primary", "danger"].some(i => type.split(" ").includes(i));
+$: standard = ["normal", "primary", "good", "warn", "danger"].some(i => type.split(" ").includes(i));
 </script>
 <style>
 button {
   position: relative;
+  display: inline-block;
   font: inherit;
   border-radius: 3px;
   border: none;
@@ -43,8 +44,14 @@ button {
   height: 40px;
 }
 
+.small {
+  padding: 6px 16px;
+}
+
 .normal { background: var(--bg-misc) }
 .primary { background: var(--color-accent) }
+.good { background: var(--color-green) }
+.warn { background: var(--color-yellow) }
 .danger { background: var(--color-red) }
 
 .link {

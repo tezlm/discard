@@ -62,6 +62,10 @@ function handleResize() {
 }
 
 function handleKeyDown(e) {
+  if (e.key === "Escape") {
+		// e.stopPropagation();
+		// scrollTo && scrollTo(-1);
+	}
   // if (e.key === "Escape") {
   //   if ($edit) {
   //     edit.set(null);

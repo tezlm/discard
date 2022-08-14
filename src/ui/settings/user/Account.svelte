@@ -35,9 +35,17 @@ let { userId, users } = state;
     <span class="big">{users.get(userId).name}</span>
     <span>{userId}</span>
   </div>
+  <hr />
 </div>
-<br><br>
-<Button type="primary" label="Change password" clicked={todo} /><br><br>
-<Button type="primary" label="Change email" clicked={todo} /><br><br>
-<Button type="primary" label="Change phone number" clicked={todo} /><br><br>
-<Button type="danger" label="Disable account" clicked={todo} /><br><br>
+<div style="height: 1em"></div>
+<hr />
+<div style="height: 1em"></div>
+<div>
+  <Button type="primary" label="Change password" clicked={todo} />
+  <div style="height: 1em"></div>
+  <Button type="primary" label="Change email" clicked={todo} />
+  <div style="height: 1em"></div>
+  <Button type="primary" label="Change phone number" clicked={todo} />
+  <div style="height: 1em"></div>
+  <Button type="danger" label="Disable account" clicked={todo} />
+</div>

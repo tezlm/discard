@@ -182,4 +182,8 @@ export default class Api {
   unbanMember(roomId, userId, reason) {
     return this.fetch("POST", `/rooms/${encode(roomId)}/unban`, { user_id: userId, reason });    
   }
+  
+  fetchUrlPreview(url, ts) {
+  	return this.fetch("GET", `preview_url?url=${encode(url)}&ts=${encode(ts)}`);
+  }
 }
