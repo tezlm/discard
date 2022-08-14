@@ -5,10 +5,6 @@ export function handleRoomAccount(roomId, type, content) {
   actions.rooms.handleAccount(roomId, type, content);
 }
 
-export function handleEvent(roomId, event, toStart) {
-  actions.timeline.handle(roomId, event, toStart);
-}
-
 export function handleEphermeral(roomId, type, content) {
   if (type !== "m.typing") return;
   

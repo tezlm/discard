@@ -38,7 +38,7 @@ async function create() {
         actions.spaces.focus(state.rooms.get(room_id));
       }
     } else {
-      actions._rooms.focus(state.rooms.get(room_id));  
+      actions.rooms.focus(state.rooms.get(room_id));  
     }
     state.popup.set({ type: current.type });
     clearInterval(interval);

@@ -3,7 +3,12 @@ import { parseMxc } from "../../../util/content.js";
 import Input from "../../atoms/Input.svelte";
 import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
+import Confirm from "../Confirm.svelte";
 export let room;
+let name = $room?.name ?? "";
+let topic = $room?.topic ?? "";
+$: changed = (name !== ($room?.name ?? ""))
+  || (topic !== ($room?.topic ?? ""));
 </script>
 <style>
 h1 {
@@ -91,15 +96,26 @@ h1 {
     </div>
     <div class="name">
       <div class="title">Space Name</div>
-      <Input value={$room.name} placeholder="excellent-space" readonly={$room.power.me < $room.power.getState("m.room.name")} />
+      <Input
+        bind:value={name}
+        placeholder="amazing-room"
+        readonly={$room.power.me < $room.power.getState("m.room.name")}
+      />
     </div>
   </div>
   <div class="section">
     <div class="title">Space Topic</div>
-    <Textarea value={$room.topic ?? ""} placeholder="what an excellent space" readonly={$room.power.me < $room.power.getState("m.room.topic")} />
+    <Textarea
+      bind:value={topic}
+      placeholder="what an amazing room"
+      readonly={$room.power.me < $room.power.getState("m.room.topic")}
+    />
   </div>
   <div class="section">
     <div class="title">Developers</div>
     <p><b>Room Id:</b> <code style="user-select: all">{$room.roomId}</code></p>
   </div>
 </div>
+{#if changed}
+<Confirm />
+{/if}

@@ -76,6 +76,7 @@ export function handle(roomId, event, toStart = false) {
   if (event.type === "m.room.redaction" && !toStart) return redact(roomId, event);
   if (!supportedEvents.includes(event.type)) return;
   if (event.unsigned?.redacted_because) return;
+  if (state.roomTimelines.get(roomId).for(event.event_id)[0]) return;
   const id = event.event_id;
   
   // event echo, update local status

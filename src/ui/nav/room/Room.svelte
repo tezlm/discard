@@ -130,11 +130,10 @@ function openSettings(room) {
 <Item
 	{focused}
 	unread={!isRead(room)}
-	clicked={() => actions._rooms.focus(room)}
+	clicked={() => actions.rooms.focus(room)}
 	getContext={() => getContextMenu(room)}
 >
-	<!-- TODO: get and use better room icon -->
-	<div class="icon room-icon" style="font-family: var(--font-display)">#</div>
+	<div class="icon room-icon">tag</div>
 	<div class="name">{room.name.toLowerCase().replace(/ /g, "-").replace(/^#/, "")}</div>
 	<div class="spacer"></div>
 	{#if room.pings}<div class="pings">{room.pings}</div>{/if}

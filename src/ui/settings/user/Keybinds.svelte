@@ -41,21 +41,23 @@ span {
   margin: 6px 0;
 }
 </style>
-idk
-<br>
-<br>
-here is a keybind: <kbd>ctrl+shift+z</kbd> and <kbd>alt+y</kbd> and some more text
-<br>
-<span>Copy</span>
-<div class="keybind">
-  <input on:keydown={handleKeyDown}>
+<div>
+  idk
+  <br>
+  <br>
+  here is a keybind: <kbd>ctrl+shift+z</kbd> and <kbd>alt+y</kbd> and some more text
+  <br>
+  <span>Copy</span>
+  <div class="keybind">
+    <input on:keydown={handleKeyDown}>
+  </div>
+  <br /><span>Paste</span>
+  <div class="keybind">
+    <input on:keydown={handleKeyDown}>
+  </div>
+  <br /><span>Edit Message</span>
+  <div class="keybind">
+    <input on:keydown={handleKeyDown}>
+  </div>
+  <br />
 </div>
-<br /><span>Paste</span>
-<div class="keybind">
-  <input on:keydown={handleKeyDown}>
-</div>
-<br /><span>Edit Message</span>
-<div class="keybind">
-  <input on:keydown={handleKeyDown}>
-</div>
-<br />

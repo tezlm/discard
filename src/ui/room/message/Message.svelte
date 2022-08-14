@@ -48,7 +48,7 @@ function getToolbar(shift = false) {
     if (room.power.me >= room.power.getEvent("m.room.message")) {
       toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
     }
-    toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "source", event }) });
+    toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
   } else {
     if (room.power.me >= room.power.getEvent("m.reaction")) {
       toolbar.push({ name: "React", icon: "add_reaction", clicked: () => showReactionPicker = !showReactionPicker });
@@ -104,13 +104,18 @@ function fly(_, props) {
 
 function getContextMenu() {
   const menu = [];
-  menu.push({ label: "Add Reaction", clicked: showPicker, submenu: [
-    { label: "thumbsup",   clicked: (e) => addReaction(e, "👍️"), icon: "👍️" },
-    { label: "thumbsdown", clicked: (e) => addReaction(e, "👎️"), icon: "👎️" },
-    { label: "eyes",       clicked: (e) => addReaction(e, "👀"), icon: "👀" },
-    { label: "sparkles",   clicked: (e) => addReaction(e, "✨"), icon: "✨" },
-    { label: "Other Reactions", icon: "add_reaction", clicked: showPicker },
-  ] });
+  if (room.power.me >= room.power.getEvent("m.room.reaction")) {
+    menu.push({ label: "Add Reaction", clicked: showPicker, submenu: [
+      { label: "thumbsup",   clicked: (e) => addReaction(e, "👍️"), icon: "👍️" },
+      { label: "thumbsdown", clicked: (e) => addReaction(e, "👎️"), icon: "👎️" },
+      { label: "eyes",       clicked: (e) => addReaction(e, "👀"), icon: "👀" },
+      { label: "sparkles",   clicked: (e) => addReaction(e, "✨"), icon: "✨" },
+      { label: "Other Reactions", icon: "add_reaction", clicked: showPicker },
+    ] });
+  }
+  if (event.reactions?.size) {
+    menu.push({ label: "Reactions", icon: "emoji_emotions", clicked: () => state.popup.set({ id: "reactions", event }) });
+  }
   if (room.power.me >= room.power.getEvent("m.room.message")) {
     if (event.sender.userId === state.userId) menu.push({ label: "Edit Message", icon: "edit", clicked: () => state.roomState.edit.set(unwrapEdits(event).eventId) });
     menu.push({ label: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
@@ -121,7 +126,7 @@ function getContextMenu() {
     menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) } });
   }
   menu.push(null);
-  menu.push({ label: "View Source", icon: "terminal", clicked: () => state.popup.set({ id: "source", event }) });
+  menu.push({ label: "View Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
   return menu;
 
   function showPicker() {

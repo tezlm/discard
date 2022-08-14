@@ -166,7 +166,7 @@ img {
     src={parseMxc(content.url)}
     alt={content.body}
     title={content.body}
-    style="width: 128px"
+    style={dimensions.css}
     on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
   />
   <!--

@@ -20,7 +20,7 @@ let focusedRoom = state.focusedRoom;
 	padding: 6px 0;
 }
 </style>
-<Item focused={!$focusedRoom?.roomId} clicked={() => actions._rooms.focus(null)}>
+<Item focused={!$focusedRoom?.roomId} clicked={() => actions.rooms.focus(null)}>
 	<div class="icon">home</div>
 	<div class="name">Home</div>
 </Item>

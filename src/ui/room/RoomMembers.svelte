@@ -47,7 +47,7 @@ async function fetchList(room) {
   overflow: hidden;
 }
 </style>
-<div class="members scroll">
+<div class="members scroll" tabindex="-1">
   {#await fetchList(room) then items}
     {#each items as member}
       {#if member.title}

@@ -24,7 +24,7 @@ let settings = state.settings;
   <div>Show autocomplete box</div>
   <Toggle checked={$settings.get("autocomplete")} toggled={(val) => $settings.put("autocomplete", val)} />
 </div>
-<br />
+<div style="height: 1em"></div>
 <div class="title">Show embeds</div>
 <Radio
   options={[

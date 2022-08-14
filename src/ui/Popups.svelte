@@ -5,14 +5,18 @@ import Todo from "./popups/Todo.svelte";
 import Error from "./popups/Error.svelte";
 import Logout from "./popups/Logout.svelte";
 import Switcher from "./popups/Switcher.svelte";
-import Source from "./popups/Source.svelte";
-import DevRoom from "./popups/DevRoom.svelte";
+
 import Create from "./popups/Create.svelte";
 import Info from "./popups/Info.svelte";
 import Leave from "./popups/Leave.svelte";
 import AddExisting from "./popups/AddExisting.svelte";
+import DevRoom from "./popups/DevRoom.svelte";
+import Reactions from "./popups/Reactions.svelte";
+import DevEvent from "./popups/DevEvent.svelte";
+
 import Upload from "./popups/Upload.svelte";
 import Attachment from "./popups/Attachment.svelte";
+
 import Nickname from "./popups/Nickname.svelte";
 import Member from "./popups/Member.svelte";
 import Invite from "./popups/Invite.svelte";
@@ -25,14 +29,17 @@ popups.set("todo", Todo);
 popups.set("error", Error);
 popups.set("logout", Logout);
 popups.set("switcher", Switcher);
-popups.set("source", Source);
-popups.set("dev-room", DevRoom);
 
 // rooms
 popups.set("create", Create);
 popups.set("info", Info);
 popups.set("leave", Leave);
 popups.set("addexisting", AddExisting);
+popups.set("dev-room", DevRoom);
+
+// events
+popups.set("reactions", Reactions);
+popups.set("dev-event", DevEvent);
 
 // files
 popups.set("upload", Upload);

@@ -52,13 +52,13 @@ let embed = {
 }
 </style>
 <p>testbed for random stuff</p>
-<br />
+<div style="height: 1em"></div>
 <Markdown bind:content={input} />
-<br />
+<div style="height: 1em"></div>
 {#if input[0] === "/" || input[0] === "@"}
 <Autocomplete {input} />
 {/if}
-<br />
+<div style="height: 1em"></div>
 <div class="embed">
   {#if embed["og:site_name"]}
   <a class="sitename" href="https://youtube.com/">{embed["og:site_name"]}</a>

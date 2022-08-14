@@ -12,9 +12,10 @@ const isOrphan = [...getIds("orphanRooms"), ...getIds("orphanSpaces")].includes(
   Enabling end to end encryption prevents servers from reading messages. Enabling e2ee is irreversable. Enabling e2ee is not suggested for public rooms.
 </p>
 <div style="height: 12px"></div>
-<Button type="hollow" label="Enable e2ee" clicked={todo} />
-<br />
-<br />
+<div>
+  <Button type="hollow" label="Enable e2ee" clicked={todo} />
+</div>
+<div style="height: 1em"></div>
 <div class="title">Access</div>
 <Radio selected={"invite"} options={[
   { id: "invite",     name: "Invite-only", detail: "Members must be invited to this room." },
@@ -22,7 +23,7 @@ const isOrphan = [...getIds("orphanRooms"), ...getIds("orphanSpaces")].includes(
   { id: "public",     name: "Public",      detail: "Anyone can join this room." },
   { id: "published",  name: "Published",   detail: "Public, and published to the room directory." },
 ]} />
-<br />
+<div style="height: 1em"></div>
 <div class="title">Message History</div>
 <Radio selected={"member"} options={[
   { id: "world",  name: "Everyone", detail: "Includes guests. Good for public rooms.", color: "var(--color-accent)" },

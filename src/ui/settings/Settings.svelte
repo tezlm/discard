@@ -62,8 +62,11 @@ nav {
 }
 
 .wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
   flex: 1;
-  padding: 4em 2em;
+  padding: 4em 2em 0;
   max-width: 740px;
   user-select: text;
 }
