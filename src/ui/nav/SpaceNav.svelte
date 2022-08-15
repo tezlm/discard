@@ -4,8 +4,17 @@ import { parseMxc } from "../../util/content.js";
 let focusedSpace = state.focusedSpace;
 let navSpaces = state.navSpaces;
 let spaces = state.spaces;
+let pushRules = state.pushRules;
+
+function isMuted(room) {
+	const rule = $pushRules.rules.find(i => i.id === room.roomId);
+	if (!rule) return false;
+	return rule.actions.includes("dont_notify");
+}
 
 function isRead(room) {
+  if (isMuted(room)) return true;
+
 	const timeline = state.roomTimelines.get(room.roomId).live;
 	if (!timeline.length) return true;
 	const lastMessage = timeline.at(-1);

@@ -1,6 +1,9 @@
 <script>
 import Button from "../atoms/Button.svelte";
 import { fly } from "svelte/transition";
+export let save;
+export let cancel = todo;
+
 // TODO: actual in/out animation
 </script>
 <style>
@@ -34,7 +37,7 @@ import { fly } from "svelte/transition";
     <div class="label">
       Careful, you have unsaved changes!
     </div>
-    <Button type="link small" label="Cancel" clicked={todo} />
-    <Button type="good small" label="Save Changes" clicked={todo} />
+    <Button type="link small" label="Cancel" clicked={cancel} />
+    <Button type="good small" label="Save Changes" clicked={save} />
   </div>
 </div>

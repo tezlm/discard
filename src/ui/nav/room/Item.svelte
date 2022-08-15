@@ -1,6 +1,7 @@
 <script>
 export let focused = false;
 export let unread = false;
+export let muted = false;
 export let clicked = () => {};
 export let getContext = () => null;
 
@@ -30,6 +31,10 @@ function handleContextMenu(e) {
 	font-size: 16px;
 	font-weight: 500;
 	cursor: pointer;
+}
+
+.item.muted .content {
+	color: var(--color-gray-light); 
 }
 
 .item:hover .content {
@@ -63,7 +68,7 @@ function handleContextMenu(e) {
 	display: block;
 }
 </style>
-<div class="item" class:focused class:unread on:click={clicked} on:contextmenu={handleContextMenu}>
+<div class="item" class:focused class:unread class:muted on:click={clicked} on:contextmenu={handleContextMenu}>
   <div class="content">
     <slot></slot>
   </div>

@@ -13,7 +13,7 @@ let wrapper;
 
 $: content = event.content;
 $: type = content.msgtype ?? event.type;
-$: edited = event.original;
+$: edited = event.flags.has("edited");
 $: special = event.special;
 $: dimensions = parseDimensions(content.info?.thumbnail_info ?? content.info);
 

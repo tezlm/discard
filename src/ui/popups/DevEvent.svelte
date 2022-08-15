@@ -11,6 +11,8 @@ function copyId(e) {
   e.preventDefault();
   navigator.clipboard.writeText(current.event.eventId);
 }
+
+console.log(current.event)
 </script>
 <style>
 .copy {
@@ -26,7 +28,10 @@ pre {
 <Popup>
   <h3 slot="header">View source <div class="close icon" on:click={closePopup}>close</div></h3>
   <div slot="content">
-    <p>note: this is discard's internal event representation, and not matrix's. <a class="copy" on:click={copyId}>copy id</a></p><br />
-    <pre><code>{@html highlight(JSON.stringify(current.event, null, 4), Prism.languages.js, "json")}</code></pre>
+    {#if current.event.flags.size}
+      <p>discard message flags: {[...current.event.flags].join(", ")}</p>
+      <br />
+    {/if}
+    <pre><code>{@html highlight(JSON.stringify(current.event.raw, null, 4), Prism.languages.js, "json")}</code></pre>
   </div>
 </Popup>

@@ -31,6 +31,7 @@ export default {
   settings: writable(new Settings()),
   accountData: writable(new Map()),
   accountDataRef: new Map(),
+  pushRules: writable({ parse: () => false }),
   
   //nav
   navRooms: writable([]),

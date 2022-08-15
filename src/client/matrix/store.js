@@ -1,11 +1,11 @@
 import { openDB, deleteDB } from "idb";
-import { format } from "../../util/events.js";
+import Event from "../../util/events.js";
 
 // TODO: persist?
 class Events extends Map {
-  async fetch(roomId, eventId) {
+  async fetch(room, eventId) {
     if (this.has(eventId)) return this.get(eventId);
-    const event = format(roomId, await state.api.fetchEvent(roomId, eventId));
+    const event = new Event(room, await state.api.fetchEvent(room.roomId, eventId));
     this.set(eventId, event);
     return event;
   }

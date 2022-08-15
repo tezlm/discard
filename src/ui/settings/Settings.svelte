@@ -1,9 +1,16 @@
 <script>
+import Confirm from "./Confirm.svelte";
 export let views, options;
 let focused = views[0];
 let popup = state.popup;
+let save = null;
 
 // TODO: categories
+
+function handleClick(view) {
+  if (save) return alert("unsaved changes"); // TODO: replace with animation
+  view.clicked ? view.clicked() : focused = view;
+}
 
 function handleKeyDown(e) {
   if (e.key === "Escape" && !$popup.id) {
@@ -110,9 +117,9 @@ h1 {
 <div class="settings">
   <div class="sidebar hidescroll">
     <nav>
-      {#each views as view, i}
+      {#each views as view}
         {#if view}
-        <div on:click={() => view.clicked ? view.clicked() : focused = view} class="item" class:selected={view === focused} style:color={view.color}>
+        <div on:click={() => handleClick(view)} class="item" class:selected={view === focused} style:color={view.color}>
           {view.name}
           {#if view.icon}
           <div class="icon">{view.icon}</div>
@@ -129,7 +136,10 @@ h1 {
       {#if !focused.raw}
       <h1>{focused.name}</h1>
       {/if}
-      <svelte:component this={focused.view} {...options} {...focused.props} />
+      <svelte:component this={focused.view} {...options} {...focused.props} bind:save={save} />
+      {#if save}
+      <Confirm {save} />
+      {/if}
     </div>
     <div class="exit" on:click={() => state.scene.set("chat")}>ESC</div>
   </div>

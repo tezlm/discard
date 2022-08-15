@@ -19,7 +19,7 @@ function getToolbar(event, shiftKey) {
     if (event.special === "errored") toolbar.push({ name: "Retry", icon: "refresh", clicked: todo });
     toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
   } else if (shiftKey){
-		toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "source", event }) });
+		toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
 	} else if (room.power.me >= room.power.getEvent("m.reaction")) {
     toolbar.push({ name: "React", icon: "add_reaction", clicked: todo });
     toolbar.push({ name: "More", icon: "more_vert", clicked: todo });
