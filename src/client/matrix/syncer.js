@@ -49,6 +49,7 @@ export default class Syncer extends Emitter {
     const sync = await this.api.sync(since, this._controller.signal).catch((err) => this._error(err));
     if (!sync) return;
     if (sync.error) return this._error(sync.errcode);
+    
     const { account_data, rooms } = sync;
     
     for (let roomId in rooms?.join ?? {}) {
@@ -64,8 +65,12 @@ export default class Syncer extends Emitter {
         this._rooms.add(roomId);
         this.emit("join", roomId, room.state?.events ?? [], room.timeline.prev_batch);
       }
+
+      for (let event of room.timeline?.events ?? []) {
+        this.emit("timeline", roomId, event);
+        if (typeof event.state_key !== "undefined") this.emit("state", roomId, event);
+      }
       
-      for (let event of room.timeline?.events ?? []) this.emit("timeline", roomId, event);
       for (let event of room.ephemeral?.events ?? []) this.emit("ephermeral", roomId, event);
       for (let event of room.account_data?.events ?? []) this.emit("roomAccountData", roomId, event);
       if  (room.unread_notifications) this.emit("unread", roomId, room.unread_notifications);

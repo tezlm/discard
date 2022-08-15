@@ -6,6 +6,11 @@ export let muted;
 let focusedRoom = state.focusedRoom;
 $: focused= $focusedRoom?.roomId === room.roomId;
 
+function getName(room) {
+	// return room.name.toLowerCase().replace(/ /g, "-").replace(/^#/, "");
+	return room.name;
+}
+
 function isRead(room) {
 	if (muted) return true;
 
@@ -137,7 +142,7 @@ function openSettings(room) {
 	getContext={() => getContextMenu(room)}
 >
 	<div class="icon room-icon">tag</div>
-	<div class="name">{room.name.toLowerCase().replace(/ /g, "-").replace(/^#/, "")}</div>
+	<div class="name">{getName(room)}</div>
 	<div class="spacer"></div>
 	{#if room.pings}<div class="pings">{room.pings}</div>{/if}
 	{#if room.power.me >= room.power.getBase("invite") || room.joinRule === "public"}

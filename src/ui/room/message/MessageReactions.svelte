@@ -4,7 +4,6 @@ import { parseMxc } from "../../../util/content";
 import Tooltip from "../../atoms/Tooltip.svelte";
 import Emoji from "../../molecules/Emoji.svelte";
 export let event;
-export let room;
 
 // i have no idea how these work but they do so /shrug lol
 // TODO: make the number animate in reverse when the count goes down
@@ -12,12 +11,27 @@ export let room;
 
 let showPicker = false;
 
-function getPeople(set) {
-  const ids = [...set].map(i => room.members.get(i)?.name || i);
-  if (set.size === 1) return [ids[0]];
-  if (set.size === 2) return [ids[0], " and ", ids[1]];
-  if (set.size < 7) return [ids.slice(0, -1).join(", "), " and ", ids[ids.length - 1]];
-  return [ids.slice(0, 6).join(", "), " and ", ids.length - 5, " others "];
+function formatPeople(events) {
+  const names = events.map(i => escapeHtml(i.sender.name));
+  if (names.length === 1) return names[0];
+  if (names.length === 2) return `${names[0]} ${l("and")} ${names[1]}`;
+  if (names.length < 7) return `${names.slice(0, -1).join(l(", "))} ${l("and")} ${names.at(-1)}`;
+  return `${names.slice(0, 6).join(l(", "))} ${l("and")} ${names.length - 5} ${l("others")}`;
+
+  function l(str) {
+    return `<span class="dim">${str}</span>`;
+  }
+
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+}
+
+function getMine(events) {
+  return events.find(i => i.sender.userId === state.userId);
 }
 
 function counterIn() {
@@ -47,7 +61,7 @@ function fly() {
 function handleClick(mine, key) {
   // instantly respond with reaction?
   if (mine) {
-    state.api.redactEvent(event.roomId, mine);
+    state.api.redactEvent(event.roomId, mine.eventId);
   } else {
     const reaction = {
       "m.relates_to": {
@@ -127,7 +141,7 @@ function handleClick(mine, key) {
   opacity: 1;
 }
 
-.dim {
+:global(.dim) {
   color: var(--fg-dim);
 }
 
@@ -139,41 +153,33 @@ function handleClick(mine, key) {
 }
 </style>
 <div class="reactions">
-{#each [...event.reactions.entries()] as [key, { count, mine, senders, shortcode }]}
-  {#if count}
+{#each [...event.reactions.entries()] as [key, events]}
   <Tooltip>
     <span slot="tip">
-      {#each getPeople(senders) as part, i}
-      {#if i % 2 === 0}
-        {part}
-      {:else}
-        <span class="dim">{part}</span>
-      {/if}
-      {/each}
+      {@html formatPeople(events)}
       <span class="dim">reacted with</span>
-      {#if shortcode}
-        <span class="dim">:</span>{shortcode}<span class="dim">:</span>
+      {#if events[0].shortcode}
+        <span class="dim">:</span>{events[0].shortcode}<span class="dim">:</span>
       {:else}
         {key}
       {/if}
     </span>
-    <div class="reaction" class:self={mine} on:click={() => handleClick(mine, key)}>
+    <div class="reaction" class:self={getMine(events)} on:click={() => handleClick(getMine(events), key)}>
       {#if key.startsWith("mxc://")}
         <img class="key" src={parseMxc(key, 16)}>
-      {:else}      
+      {:else}
         <div class="key">{key}</div>
       {/if}
-      {#key count}
+      {#key events.length}
         <div class="count" in:counterIn out:counterOut>
-        {count}
+        {events.length}
         </div>
       {/key}
       <div class="spacer">
-      {count}
+      {events.length}
       </div>
     </div>
   </Tooltip>
-  {/if}
 {/each}
 <div class="add">
   <div class="icon" class:show={showPicker} on:click={(e) => { e.stopImmediatePropagation(); showPicker = !showPicker }}>add_reaction</div>

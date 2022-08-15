@@ -10,6 +10,8 @@ let view = null;
 function closePopup() {
   state.popup.set({ ...current, id: null });
 }
+
+console.log(current.room);
 </script>
 <Popup>
   <h2 slot="header">{current.room.name} <div class="close icon" on:click={closePopup}>close</div></h2>

@@ -17,7 +17,13 @@ export default class Event {
   
   get content()  {
     const edit = this.relations.find(i => i.content["m.relates_to"]?.rel_type === "m.replace");
-    return edit?.content.new_content ?? this.raw.content;
+    if (edit) {
+      return {
+        ...edit?.content["m.new_content"],
+        "m.relates_to": this.raw.content["m.relates_to"],
+      };
+    }
+    return this.raw.content;
   }
   
   get roomId()   { return this.room.roomId }
@@ -27,7 +33,4 @@ export default class Event {
   get stateKey() { return this.raw.state_key }
   get date()     { return new Date(this.raw.origin_server_ts) }
   get unsigned() { return this.raw.unsigned }
-  /*
-    // isPing:     state.client.getPushActionsForEvent(ev).tweaks?.highlight || false, // TODO: fix
-  */
 }
