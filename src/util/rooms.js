@@ -21,7 +21,6 @@ export class Room {
     this.state.push(event);
   }
   
-  // NO
   getState(type, key = "") {
     return this.state.find(i => i.type === type && i.state_key === key);
   }
@@ -43,5 +42,10 @@ export class Room {
       getState: (name) => power.state?.[name]  ?? power.state_default  ?? 50,
       getUser:  (id)   => power.users?.[id]    ?? power.users_default  ?? 0,
     }
+  }
+  
+  // use this instead?
+  get id() {
+    return this.roomId;
   }
 }

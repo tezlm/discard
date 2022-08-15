@@ -1,7 +1,8 @@
 // import { Store } from "../matrix/store.js";
 import Api from "../matrix/api.js";
 import Syncer from "../matrix/syncer.js";
-import Settings from "../matrix/settings.js"
+import Settings from "../matrix/settings.js";
+import PushRules from "../../util/push.js";
 
 const defaultFilter = {
   room: {
@@ -76,11 +77,12 @@ function start(api, syncer, userId) {
   state.scene.set("loading");
   
   syncer.on("join", (roomId, state, batch) => actions.rooms.handleJoin(roomId, state, batch));
-  syncer.on("invite", (roomId, state) => console.log(roomId, state));
+  // syncer.on("invite", (roomId, state) => console.log(roomId, state));
   syncer.on("state", (roomId, state) => actions.rooms.handleState(roomId, state));  
   syncer.on("timeline", (roomId, event) => actions.timeline.handle(roomId, event, false));
   syncer.on("accountData", (type, content) => {
     if (type === "org.eu.celery.settings") state.settings.set(new Settings(content));
+    if (type === "m.push_rules") state.pushRules.set(new PushRules(content.global));
     state.accountDataRef.set(type, content);
     state.accountData.set(state.accountDataRef);
   });

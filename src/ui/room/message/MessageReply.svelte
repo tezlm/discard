@@ -4,7 +4,7 @@ import { parseHtml } from "../../../util/html.js";
 import { calculateHash } from '../../../util/content.js';
 import Avatar from "../../atoms/Avatar.svelte";
 export let room, eventId;
-let eventPromise = state.events.fetch(room.roomId, eventId);
+let eventPromise = state.events.fetch(room, eventId);
 let settings = state.settings;
 
 function getColor(sender) {

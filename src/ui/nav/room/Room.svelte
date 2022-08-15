@@ -2,10 +2,13 @@
 import Item from "./Item.svelte";
 import Tooltip from "../../atoms/Tooltip.svelte";
 export let room;
+export let muted;
 let focusedRoom = state.focusedRoom;
 $: focused= $focusedRoom?.roomId === room.roomId;
 
 function isRead(room) {
+	if (muted) return true;
+
 	const timeline = state.roomTimelines.get(room.roomId).live;
 	if (!timeline.length) return true;
 	const lastMessage = timeline.at(-1);
@@ -72,7 +75,6 @@ function openSettings(room) {
 <style>
 .room-icon {
 	position: absolute;
-	color: var(--fg-dim); 
 	font-size: 20px;
 	margin-left: -2px;
 	padding: 6px 0;
@@ -129,6 +131,7 @@ function openSettings(room) {
 </style>
 <Item
 	{focused}
+	{muted}
 	unread={!isRead(room)}
 	clicked={() => actions.rooms.focus(room)}
 	getContext={() => getContextMenu(room)}

@@ -11,6 +11,7 @@ let { focused, reply, edit, upload } = state.roomState;
 let settings = state.settings;
 let shiftKey = false;
 let scrollTop, scrollMax, scrollTo, reset;
+let pushRules = state.pushRules;
 
 $: if (slice) refocus();
 $: if (room) reset && reset();
@@ -95,6 +96,14 @@ function getHighlight(event, reply) {
 function shouldRender(type, settings) {
 	if (["m.room.name", "m.room.topic"].includes(type) && !settings.get("shownametopic")) return false;
 	return true;
+}
+
+function shouldPing(event) {
+	const parsed = $pushRules.parse(event);
+	if (!parsed) return false;
+	const highlight = parsed.actions.find(i => i.set_tweak === "highlight");
+	if (!highlight) return false;
+	return highlight.value !== false;
 }
 
 onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => reset && reset())));
@@ -217,11 +226,10 @@ onDestroy(edit.subscribe(() => {
 			{#if event.special !== "redacted" && shouldRender(event.type, $settings)}
 				<div
 					class:header={shouldSplit(slice.events[index - 1], event) ? true : null}
-					class:ping={event.isPing}
+					class:ping={shouldPing(event)}
 					class:focused={$focused === event.eventId}
 					class:editing={$edit === event.eventId}
 					data-event-id={event.eventId}
-						
 					class:highlight={getHighlight(event, $reply)}
 					style:--color={getHighlight(event, $reply)}
 				>

@@ -6,6 +6,13 @@ import Category from "./room/Category.svelte";
 let focusedSpace = state.focusedSpace;
 let focusedRoom = state.focusedRoom;
 let navRooms = state.navRooms;
+let pushRules = state.pushRules;
+
+function isMuted(room) {
+	const rule = $pushRules.rules.find(i => i.id === room.roomId);
+	if (!rule) return false;
+	return rule.actions.includes("dont_notify");
+}
 </script>
 <style>
 .nav {
@@ -32,7 +39,7 @@ let navRooms = state.navRooms;
 		{#if room.type === "space"}
 		<Category {room} />
 		{:else}
-		<Room {room} />
+		<Room {room} muted={isMuted(room)} />
 		{/if}
 	{/each}
 	<div class="spacer"></div>

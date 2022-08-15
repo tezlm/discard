@@ -1,5 +1,6 @@
+import "../../util/push.js";
 // this module handles the recieved events from sync
-import { format } from "../../util/events.js";
+import Event from "../../util/events.js";
 import TimelineSet from "../matrix/timeline.js";
 
 const supportedEvents = [
@@ -55,14 +56,16 @@ function addToTimeline(roomId, eventId, toStart = false) {
 
 export function send(roomId, type, content) {
   const id = `~${Math.random().toString(36).slice(2)}`;
+  const room = state.rooms.get(roomId);
   
-  const temp = format(roomId, {
+  const temp = new Event(room, {
     event_id:         id,
     sender:           state.userId,
     origin_server_ts: new Date(),
     type,
     content,
   });
+  temp.flags.add("sending");
   temp.special = "sending";
   state.events.set(id, temp);
   addToTimeline(roomId, id);
@@ -78,14 +81,16 @@ export function handle(roomId, event, toStart = false) {
   if (event.unsigned?.redacted_because) return;
   if (state.roomTimelines.get(roomId).for(event.event_id)[0]) return;
   const id = event.event_id;
+  const room = state.rooms.get(roomId);
   
   // event echo, update local status
   if (event.unsigned?.transaction_id) {
     const tx = event.unsigned.transaction_id;
     const original = state.events.get(tx);
     if (original) {
-      original.eventId = id;
+      original.raw = event;
       original.special = null;
+      original.flags.delete("sending");
       state.events.set(id, original);
       
       const timeline = getTimeline(roomId);
@@ -106,15 +111,7 @@ export function handle(roomId, event, toStart = false) {
     const original = state.events.get(relation.event_id);
     if (!original) return queueRelation(relation.event_id, event);
     if (relation.rel_type === "m.replace") {
-        // TODO: invert current method of edits
-        // instead of replacing with an edit event with `original`
-        // keep the original with `edit`
-        state.events.set(relation.event_id, {
-          ...format(roomId, event),
-          content: { ...original.content, ...event.content["m.new_content"] },
-          eventId: original.eventId, // this is why the todo exists
-          original,
-        });
+      original.parseRelation(new Event(room, event));
     } else if (relation.rel_type === "m.annotation") {
       const key = relation.key;
       if (!original.reactions) original.reactions = new Map();
@@ -124,12 +121,12 @@ export function handle(roomId, event, toStart = false) {
       reaction.senders.add(event.sender);
       reaction.count++;
     }
-    state.events.set(id, format(roomId, event));
+    state.events.set(id, new Event(room, event));
     const slice = actions.slice.get(roomId);
     slice.reslice();
     if (roomId === state.focusedRoomId) state.slice.set(slice);
   } else {
-    state.events.set(id, format(roomId, event));
+    state.events.set(id, new Event(room, event));
     addToTimeline(roomId, id, toStart);
     actions.rooms.update();
     actions.spaces.update();
