@@ -24,9 +24,9 @@ function getRelation(content) {
   }
 }
 
-function queueRelation(id, event) {
+function queueRelation(id, event, toStart) {
   if (!relations.has(id)) relations.set(id, []);
-  relations.get(id).push(event);
+  relations.get(id)[toStart ? "unshift" : "push"](event);
 }
 
 function getTimeline(roomId) {
@@ -79,7 +79,7 @@ export function handle(roomId, event, toStart = false) {
   if (event.type === "m.room.redaction" && !toStart) return redact(roomId, event);
   if (!supportedEvents.includes(event.type)) return;
   if (event.unsigned?.redacted_because) return;
-  if (state.roomTimelines.get(roomId).for(event.event_id)[0]) return;
+  if (state.events.has(event.event_id)) return;
   const id = event.event_id;
   const room = state.rooms.get(roomId);
   
@@ -109,17 +109,14 @@ export function handle(roomId, event, toStart = false) {
   const relation = getRelation(event.content);
   if (relation) {
     const original = state.events.get(relation.event_id);
-    if (!original) return queueRelation(relation.event_id, event);
+    if (!original) return queueRelation(relation.event_id, event, toStart);
     if (relation.rel_type === "m.replace") {
       original.parseRelation(new Event(room, event));
     } else if (relation.rel_type === "m.annotation") {
       const key = relation.key;
       if (!original.reactions) original.reactions = new Map();
-      if (!original.reactions.has(key)) original.reactions.set(key, { count: 0, senders: new Set(), mine: null, shortcode: event.content.shortcode });
-      const reaction = original.reactions.get(relation.key);
-      if (event.sender === state.userId) reaction.mine = id;
-      reaction.senders.add(event.sender);
-      reaction.count++;
+      if (!original.reactions.has(key)) original.reactions.set(key, []);
+      original.reactions.get(relation.key).push(new Event(room, event));
     }
     state.events.set(id, new Event(room, event));
     const slice = actions.slice.get(roomId);
@@ -159,15 +156,13 @@ export function redact(roomId, event) {
     const slice = actions.slice.get(roomId);
     const relation = getRelation(original.content);
     if (relation?.rel_type === "m.annotation") {
-      const reactions = state.events.get(relation.event_id)?.reactions;
-      const reaction = reactions?.get(relation.key);
-      if (!reaction) return;
-      reaction.count--;
-      reaction.senders.delete(original.sender.userId);
-      if (original.sender.userId === state.userId) reaction.mine = null;
-      if (reaction.count === 0) {
+      const rel = state.events.get(relation.event_id);
+      const reactions = rel?.reactions;
+      const idx = reactions?.get(relation.key).indexOf(original);
+      if (idx >= 0) reactions?.get(relation.key).splice(idx, 1);
+      if (reaction.size === 0) {
         reactions.delete(relation.key);
-        if (reactions.size === 0) state.events.get(relation.event_id).reactions = null;
+        if (reactions.size === 0) rel.reactions = null;
       }
       slice.reslice();
       state.slice.set(slice);

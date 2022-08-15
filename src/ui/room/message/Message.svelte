@@ -134,7 +134,7 @@ function getContextMenu() {
   }
 
   function addReaction(_, emoji) {
-    if (!event.reactions?.get(emoji)?.mine) {
+    if (!event.reactions?.get(emoji)?.find(i => i.sender.userId === state.userId)) {
       const reaction = {
         "m.relates_to": {
           key: emoji,
@@ -311,14 +311,14 @@ time {
     {:else}
     <MessageContent {event} />
     {/if}
-    {#if event.reactions}<MessageReactions {event} {room} />{/if}
+    {#if event.reactions}<MessageReactions {event} />{/if}
   </div>
   {#if event.eventId !== $edit}
   <div class="toolbar" style:display={showReactionPicker || showToolbar ? "flex" : null}>
     {#if showReactionPicker}
     <div class="reaction-picker" in:fly={{ x: 15 }}>
       <Emoji selected={(emoji, keep) => {
-        if (!event.reactions?.get(emoji)?.mine && emoji) {
+        if (!event.reactions?.get(emoji)?.find(i => i.sender.userId === state.userId) && emoji) {
           const reaction = {
             "m.relates_to": {
               key: emoji,

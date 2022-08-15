@@ -2,6 +2,8 @@ import { writable } from "svelte/store";
 import Store from "./matrix/store.js";
 import Settings from "./matrix/settings.js";
 
+// TODO: reset state on logout
+
 const store = new Store();
 await store.init();
 

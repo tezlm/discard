@@ -130,6 +130,7 @@ onDestroy(edit.subscribe(() => {
 <style>
 .content {
 	flex: 1;
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	justify-content: end;
@@ -203,7 +204,18 @@ onDestroy(edit.subscribe(() => {
 	100% { background: none }
 }
 </style>
-<div class="content" style:display={room ? null : "none"}>
+<div class="content" style:display={room ? null : "none"}><!--
+	<div style="position: absolute; top: 0; left: 0; width: 100%; z-index: 1">
+		<div style="background: var(--bg-misc); padding: 8px; display:flex; align-items: center">
+			This room is archived
+			<div style="padding: 4px 8px ; border-radius: 4px;background:var(--bg-content); margin-left: auto;">
+				unarchive
+			</div>
+		</div>
+		<div style="background: var(--color-accent); margin: 0 16px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; padding: 4px 12px; font-size: 14px; font-weight: 500; cursor: pointer;">
+			5 new messages
+		</div>
+	</div>-->
 	<Scroller
 		items={slice.events}
 		itemKey="eventId"
