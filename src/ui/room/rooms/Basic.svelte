@@ -219,7 +219,7 @@ onDestroy(edit.subscribe(() => {
 	<Scroller
 		items={slice.events}
 		itemKey="eventId"
-    direction="down"
+    direction="up"
 		margin={300}
 		bind:scrollTop={scrollTop}
 		bind:scrollMax={scrollMax}

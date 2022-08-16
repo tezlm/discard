@@ -52,7 +52,7 @@ $: if($navRooms) room = state.focusedRoom;
 		  <SpaceRoom room={$space} />
 			<!-- {:else if type === "m.policy"} -->
 			{:else if type === "org.eu.celery.room.media"}
-				<MediaRoom room={$room} />
+				<MediaRoom room={$room} slice={$slice} />
 			{:else if type === "org.eu.celery.room.forum"}
 				<ForumRoom room={$room} />
 			{:else}

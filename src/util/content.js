@@ -14,7 +14,7 @@ export const colors = [
 
 export function parseMxc(mxc, thumbSize) {
   if (!mxc) return null;
-  let replacer = `${state.api.baseUrl}/_matrix/media/r0/thumbnail/$1/$2`;
+  let replacer = `${state.api.baseUrl}/_matrix/media/r0/${thumbSize ? "thumbnail" : "download"}/$1/$2`;
   if (thumbSize) replacer += `?height=${thumbSize}&width=${thumbSize}`;
   return mxc.replace(/mxc:\/\/([^/]+)\/(.+)/, replacer);
 }

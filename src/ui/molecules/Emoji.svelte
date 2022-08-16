@@ -115,6 +115,7 @@ async function handleSubmit(value, e) {
 }
 
 .emoji {
+  font-size: 30px;
   height: 40px;
   width: 40px;
   padding: 4px;

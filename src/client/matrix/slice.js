@@ -55,7 +55,7 @@ export default class Slice {
     if (startIdx < 0) this.reset();
     
     const eventCount = count * 2;
-    const newStart = Math.min(Math.max(startIdx + count, 0), timeline.length - count - 1);
+    const newStart = Math.max(Math.min(startIdx + count, timeline.length - count - 1), 0);
     const newEnd = Math.min(newStart + eventCount, timeline.length - 1);
      
     state.log.ui(`now viewing [${newStart}..${newEnd}] of ${timeline.length}`);
