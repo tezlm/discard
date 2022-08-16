@@ -22,6 +22,11 @@ function getColor(sender, settings) {
   padding: 2px 0;
 }
 
+.content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .icon {
   color: var(--fg-muted);
   font-size: 22px;
@@ -50,7 +55,7 @@ time {
 </style>
 <div class="change">
   <div class="icon">edit</div>
-  <div>
+  <div class="content">
     <span class="author" style:color={getColor(event.sender, $settings)}>
       {event.sender.name || event.sender.userId}
     </span>

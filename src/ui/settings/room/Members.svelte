@@ -1,10 +1,8 @@
 <script>
 import Search from "../../atoms/Search.svelte";
-import Input from "../../atoms/Input.svelte";
-import { parseMxc, defaultAvatar } from '../../../util/content.js';
+import Avatar from "../../atoms/Avatar.svelte";
 
 export let room, membership;
-let missingAvs = state.missingAvatars;
 let users = state.users;
 
 let allMembers = false;
@@ -18,19 +16,6 @@ $: setTimeout(async () => {
 
 $: if (allMembers) {
   members = allMembers.filter(i => i.name.includes(filter) || i.userId.includes(filter));
-}
-
-function showPopup(member) {
-  const power = $room.power;
-  state.popup.set({
-    id: "member",
-    membership,
-    member,
-    room: $room,
-    canBan: power.me > power.getUser(member.userId) && power.me >= power.getBase("ban"),
-    canKick: power.me > power.getUser(member.userId) && power.me >= power.getBase("kick"),
-    canInvite: power.me > power.getUser(member.userId) && power.me >= power.getBase("invite"),
-  });
 }
 
 function getTitle(membership) {
@@ -90,14 +75,6 @@ h1 {
   border-top: solid var(--color-gray) 1px;
 }
 
-.member .avatar {
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-  background: var(--bg-spaces);
-  color: transparent;
-}
-
 .member .name {
   display: flex;
   flex-direction: column;
@@ -143,14 +120,7 @@ h1 {
           <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>
         </div>
       {:then member}
-      <a href={missingAvs.has(member.userId) ? defaultAvatar : parseMxc(member.avatar, 40)}>
-        <img
-          class="avatar"
-          src={missingAvs.has(member.userId) ? defaultAvatar : parseMxc(member.avatar, 40)}
-          on:error={(e) => { missingAvs.add(member.userId); e.target.src = defaultAvatar }}
-          loading="lazy"
-        />
-      </a>
+      <Avatar user={member} size={40} />
       <div class="name">
         {member.name}
         <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>

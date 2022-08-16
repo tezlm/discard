@@ -1,10 +1,8 @@
 <script>
 import Tooltip from "../atoms/Tooltip.svelte";
-import { parseMxc, defaultAvatar } from '../../util/content.js';
+import Avatar from "../atoms/Avatar.svelte";
 let { userId, users } = state;
 let copyCount = 0, copyText = getCopyText();
-
-let missingAvs = state.missingAvatars;
 
 function getCopyText() {
 	switch(copyCount) {
@@ -46,14 +44,17 @@ async function getProfile() {
 }
 </script>
 <style>
+.wrapper > div {
+	display: flex;
+	background: var(--bg-misc);
+	padding: 8px;
+	border-bottom: solid var(--bg-spaces) 1px;
+}
+
 .user {
 	display: flex;
 	align-items: center;
-	margin-top: auto;
-	background: var(--bg-misc);
-	width: 100%;
 	height: 52px;
-	padding: 8px;
 }
 
 .user .icon {
@@ -75,20 +76,14 @@ async function getProfile() {
 }
 
 .user .avatar {
-	height: 32px;
-	width: 32px;
 	cursor: pointer;
-	border-radius: 50%;
 	margin-right: 8px;
 }
 
 .offline {
-	background: var(--bg-misc);
-	color: var(--color-red);
-	border-bottom: solid var(--bg-spaces) 1px;
-	padding: 8px;
-	text-align: center;
+	justify-content: center;
 	font-weight: bold;
+	color: var(--color-red);
 }
 
 .info {
@@ -113,27 +108,33 @@ async function getProfile() {
 	text-overflow: ellipsis;
 }
 </style>
-{#if !navigator.onLine}
-<div class="offline">Offline!</div>
-{/if}
-<div class="user">
-	{#await getProfile()}
-		loading
-	{:then profile}
-	<img
-		class="avatar"
-		alt="your avatar"
-		src={missingAvs.has(userId) ? defaultAvatar : parseMxc(profile.avatar, 30) ?? defaultAvatar}
-    on:error={(e) => { missingAvs.add(userId); e.target.src = defaultAvatar }}
-	/>
-	<div class="info" on:click={handleCopyClick} on:mouseleave={resetCopy}>
-		<Tooltip tip={copyText} color={copyCount > 0 ? "var(--color-green)" : null}>
-			<div class="displayname">{profile.name}</div>
-			<div class="userid">{userId}</div>
+<div class="wrapper">
+	{#if !navigator.onLine}
+	<div class="offline">Offline!</div>
+	{/if}
+	{#if false}
+	<div class="voice">
+		<div class="icon">volume_up</div>
+		Connected
+		<div class="icon">cancel</div>
+	</div>
+	{/if}
+	<div class="user">
+		{#await getProfile()}
+			loading
+		{:then profile}
+		<div class="avatar">
+			<Avatar user={profile} size={32} />
+		</div>
+		<div class="info" on:click={handleCopyClick} on:mouseleave={resetCopy}>
+			<Tooltip tip={copyText} color={copyCount > 0 ? "var(--color-green)" : null}>
+				<div class="displayname">{profile.name}</div>
+				<div class="userid">{userId}</div>
+			</Tooltip>
+		</div>
+		{/await}
+		<Tooltip tip="User Settings" style="height: 30px">
+			<span class="icon" on:click={() => state.scene.set("user-settings")}>settings</span>
 		</Tooltip>
 	</div>
-	{/await}
-	<Tooltip tip="User Settings" style="height: 30px">
-		<span class="icon" on:click={() => state.scene.set("user-settings")}>settings</span>
-	</Tooltip>
 </div>

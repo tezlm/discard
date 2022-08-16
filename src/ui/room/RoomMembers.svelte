@@ -23,6 +23,7 @@ async function fetchList(room) {
 
 .wrapper {
   padding: 1px 8px;
+  cursor: pointer;
 }
 
 .member {
@@ -31,7 +32,6 @@ async function fetchList(room) {
   height: 42px;
   padding: 4px 8px;
   border-radius: 4px;
-  cursor: pointer;
 }
 
 .wrapper:hover > .member {
@@ -53,9 +53,9 @@ async function fetchList(room) {
       {#if member.title}
         <div class="title">{member.title}</div>
       {:else}
-        <div class="wrapper">
+        <div class="wrapper" on:click={() => state.popup.set({ id: "user", user: member })}>
           <div class="member">
-            <Avatar mxc={member.avatar} size={32} />
+            <Avatar user={member} size={32} />
             <div class="name">{member.name || member.userId}</div>
           </div>
         </div>

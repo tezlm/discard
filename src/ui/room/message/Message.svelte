@@ -279,7 +279,7 @@ time {
     {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
     {#if header}
     <div class="avatar" class:selected={showUserPopout} on:click|stopPropagation={() => showUserPopout = !showUserPopout} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>
-      <Avatar mxc={event.sender.avatar} size={40} />
+      <Avatar user={event.sender} size={40} />
     </div>
     {:else}
     <time datetime={event.date.toISOString()}>{formatTime(event.date)}</time>

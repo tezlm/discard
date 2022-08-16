@@ -193,6 +193,7 @@ img {
     <Audio src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
   </div>
   {:else if type === "m.file"}
+  <!-- TODO: preview text files -->
   <div style="display: inline-block">
     <File src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
   </div>

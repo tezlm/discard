@@ -1,6 +1,6 @@
 <script>
 import Button from "../../atoms/Button.svelte";
-import { parseMxc, defaultAvatar } from "../../../util/content.js";
+import Avatar from "../../atoms/Avatar.svelte";
 let { userId, users } = state;
 </script>
 <style>
@@ -9,13 +9,6 @@ let { userId, users } = state;
   border-radius: 6px;
   padding: 1em;
   display: flex;
-}
-
-.account > img {
-  border-radius: 50%;
-  height: 72px;
-  width: 72px;
-  margin-right: 1em;
 }
 
 .account > .details {
@@ -30,7 +23,8 @@ let { userId, users } = state;
 }
 </style>
 <div class="account">
-  <img src={parseMxc(users.get(userId).avatar) ?? defaultAvatar} alt="your avatar" />
+  <Avatar user={users.get(userId)} size={72} />
+  <div style="margin-left: 1em"></div>
   <div class="details">
     <span class="big">{users.get(userId).name}</span>
     <span>{userId}</span>

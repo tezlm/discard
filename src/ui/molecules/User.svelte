@@ -1,16 +1,6 @@
 <script>
-import { parseMxc, defaultAvatar } from "../../util/content.js";
+import Avatar from "../atoms/Avatar.svelte";
 export let user;
-
-let missingAvs = state.missingAvatars;
-function getAvatar(size) {
-  if (missingAvs.has(user.userId)) return;
-  if (!user.avatar) {
-    missingAvs.has(user.userId);
-    return defaultAvatar;
-  };
-  return parseMxc(user.avatar, size);
-}
 </script>
 <style>
 .popout {
@@ -25,13 +15,6 @@ function getAvatar(size) {
   display: flex;
   align-items: start;
   justify-content: space-between;
-}
-
-.top img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
 }
 
 .top .icon {
@@ -58,14 +41,7 @@ function getAvatar(size) {
 </style>
 <div class="popout">
   <div class="top">
-    <a href={getAvatar()}>
-      <img
-        class="avatar"
-        alt="pfp for {user.name}"
-        src={getAvatar(80)}
-        on:error={(e) => { missingAvs.add(user.userId); e.target.src = defaultAvatar }}
-      />
-    </a>
+    <Avatar {user} size={80} />
     <div class="icon">more_vert</div>
   </div>
   <h3>{user.name}</h3>

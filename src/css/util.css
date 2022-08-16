@@ -1,0 +1,41 @@
+.title {
+  color: var(--fg-light);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.icon {
+  font-family: "Material Icons";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.scroll {
+  overflow: hidden auto;
+  scrollbar-color: var(--bg-spaces) var(--bg-rooms-members);
+  scrollbar-gutter: stable;
+}
+
+.scroll.thin {
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+  background: var(--bg-rooms-members);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-spaces);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}

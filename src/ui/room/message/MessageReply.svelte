@@ -97,7 +97,7 @@ function getColor(sender) {
 {:then event}
 <div class="reply">
   <div class="avatar">
-    <Avatar mxc={event.sender.avatar} size={16} />
+    <Avatar user={event.sender} size={16} />
   </div>
   <span class="author" style:color={getColor(event.sender)}>{event.sender.name || event.sender.userId}</span>
   <div class="content" on:click={() => actions.slice.jump(event.roomId, event.eventId)}>

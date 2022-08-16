@@ -1,7 +1,8 @@
 <script>
-import EmojiButton from "./input/EmojiButton.svelte";
-import RoomTextarea from "./input/RoomTextarea.svelte";
 import Reply from "./input/Reply.svelte";
+import Autocomplete from "../molecules/Autocomplete.svelte";
+import RoomTextarea from "./input/RoomTextarea.svelte";
+import EmojiButton from "./input/EmojiButton.svelte";
 import { marked } from "marked";
 
 export let onsend;
@@ -169,6 +170,10 @@ async function handleUpload(file) {
 }
 </script>
 <style>
+.container {
+  position: relative;
+}
+
 .input {
   display: flex;
   min-height: 44px;
@@ -196,8 +201,19 @@ async function handleUpload(file) {
 .upload input {
   display: none;
 }
+
+.autocomplete {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  width: 100%;
+}
 </style>
 <div class="container" on:keydown={handleKeyDown}>
+  {#if false}
+  <div class="autocomplete">
+    <Autocomplete />
+  </div>
+  {/if}
   {#if reply}
     <Reply
       event={reply}

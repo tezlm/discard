@@ -16,7 +16,6 @@ let pushRules = state.pushRules;
 $: if (slice) refocus();
 $: if (room) reset && reset();
 
-// TODO: unruin this code
 function shouldSplit(prev, ev) {
 	if (!prev) return true;
 	if (ev.type !== "m.room.message" && prev.type !== "m.room.message") return false;
@@ -94,7 +93,8 @@ function getHighlight(event, reply) {
 }
 
 function shouldRender(type, settings) {
-	if (["m.room.name", "m.room.topic"].includes(type) && !settings.get("shownametopic")) return false;
+	// joinleave, nickavatar
+	// if (["m.room.name", "m.room.topic"].includes(type) && !settings.get("shownametopic")) return false;
 	return true;
 }
 
