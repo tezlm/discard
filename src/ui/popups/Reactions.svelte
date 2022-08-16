@@ -85,9 +85,8 @@ $: selected = [...reacts.keys()][0];
     </div>
     <div class="main scroll">
       {#each reacts.get(selected) as event}
-        <!-- TODO: sender display name/avatar -->
         <div class="sender">
-          <Avatar size={24} mxc={event.sender.avatar} />
+          <Avatar size={24} user={event.sender} />
           <div class="name">{event.sender.name}</div>
         </div>
       {/each}

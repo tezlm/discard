@@ -8,11 +8,18 @@ import SpaceRoom from './rooms/Space.svelte';
 import HomeRoom from './rooms/Home.svelte';
 import UnknownRoom from './rooms/Unknown.svelte';
 
+// hmmm...
+import MediaRoom from './rooms/Media.svelte';
+import ForumRoom from './rooms/Forum.svelte';
+
 let room = state.focusedRoom;
 let space = state.focusedSpace;
 let slice = state.slice;
 let settings = state.settings;
 $: type = $room?.state.find(i => i.type === "m.room.create")?.content.type;
+
+let navRooms = state.navRooms;
+$: if($navRooms) room = state.focusedRoom;
 </script>
 <style>
 .room {
@@ -41,8 +48,13 @@ $: type = $room?.state.find(i => i.type === "m.room.create")?.content.type;
 				  <BasicRoom room={$room} slice={$slice} />
 				  <RoomFooter />
 				</div>
-			<!-- {:else if type === "m.space"} -->
+			{:else if type === "m.space"}
+		  <SpaceRoom room={$space} />
 			<!-- {:else if type === "m.policy"} -->
+			{:else if type === "org.eu.celery.room.media"}
+				<MediaRoom room={$room} />
+			{:else if type === "org.eu.celery.room.forum"}
+				<ForumRoom room={$room} />
 			{:else}
 				<UnknownRoom room={$room} />
 			{/if}

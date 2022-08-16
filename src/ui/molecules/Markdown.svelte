@@ -51,7 +51,7 @@ function parseMarkdown(str) {
     .replace(/>/g, "&lt;")
     .replace(/^\/(\S*)/g, '<b><span class="dim">/</span>$1</b>')
     .replace(/([@#!])(\S+?):(\S+)/g, '<span data-mx-ping>$1$2:$3</span>')
-    .replace(/^(#{1,6})(.+)/g, header)
+    // .replace(/^(#{1,6})(.+)/g, header)
     .replace(/\n/g, "<br />")
     // .replace(/`(.+?)`/g, '<span class="dim">`</span><code>$1</code><span class="dim">`</span>')
     // .replace(/([@#!])(\S+?):(\S+)/g, '<span data-mx-ping>$1$2:$3</span>')

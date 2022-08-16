@@ -31,13 +31,14 @@ h3 {
 {:else}
 <p>This session doesn't support end-to-end encryption</p>
 {/if}
-<br /><br />
+<div style="height: 16px"></div>
 <h3>Sessions</h3>
 {#await state.api.fetch("GET", "/devices")}
 <p>Loading sessions...</p>
 {:then res}
 <div class="devices">
 {#each res.devices as device}
+<!-- TODO: rename and log out sessions -->
 <div class="device">
   <div>
     <span class="big" class:dim={!device.display_name}>{device.display_name}</span>

@@ -40,6 +40,8 @@ function getContextMenu(room) {
 	    { label: "All Messages", clicked: todo, icon: "radio_button_unchecked" },
 	    { label: "Mentions",     clicked: todo, icon: "radio_button_unchecked" },
 	    { label: "Nothing",      clicked: todo, icon: "radio_button_unchecked" },
+			null,
+	    { label: "Suppress @room", clicked: todo },
 	  ] },
 	  null,
 	  { label: "Settings", clicked: openSettings(room), icon: "settings" /* submenu: [
@@ -75,6 +77,15 @@ function openSettings(room) {
 		state.selectedRoom.set(room);
 		state.scene.set("room-settings");	
 	};
+}
+
+function getIcon(room) {
+	const type = room.getState("m.room.create")?.content.type;
+	if (type === "org.eu.celery.room.media") return "image";
+	if (type === "org.eu.celery.room.forum") return "message";
+	if (type === "io.element.video") return "volume_up";
+	if (!type) return "tag";
+	return "help";
 }
 </script>
 <style>
@@ -141,7 +152,7 @@ function openSettings(room) {
 	clicked={() => actions.rooms.focus(room)}
 	getContext={() => getContextMenu(room)}
 >
-	<div class="icon room-icon">tag</div>
+	<div class="icon room-icon">{getIcon(room)}</div>
 	<div class="name">{getName(room)}</div>
 	<div class="spacer"></div>
 	{#if room.pings}<div class="pings">{room.pings}</div>{/if}

@@ -18,7 +18,8 @@ import Upload from "./popups/Upload.svelte";
 import Attachment from "./popups/Attachment.svelte";
 
 import Nickname from "./popups/Nickname.svelte";
-import Member from "./popups/Member.svelte";
+// import Member from "./popups/Member.svelte";
+import User from "./popups/User.svelte";
 import Invite from "./popups/Invite.svelte";
 import Ban from "./popups/Ban.svelte";
 import Kick from "./popups/Kick.svelte";
@@ -46,8 +47,9 @@ popups.set("upload", Upload);
 popups.set("attachment", Attachment);
 
 // member stuff
-popups.set("member", Member);
-popups.set("nickname", Nickname);
+// popups.set("member", Member);
+popups.set("user", User);
+// popups.set("nickname", Nickname);
 popups.set("invite", Invite);
 popups.set("ban", Ban);
 popups.set("kick", Kick);

@@ -5,7 +5,8 @@ import Popup from "../atoms/Popup.svelte";
 export let current;
 
 function closePopup() {
-  state.popup.set({ ...$current, id: null });
+  // state.popup.set({ ...$current, id: null });
+  state.popup.set({ id: null });
 }
 </script>
 <Popup>

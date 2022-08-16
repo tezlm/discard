@@ -59,9 +59,9 @@ function fly() {
 }
 
 function handleClick(mine, key) {
-  // instantly respond with reaction?
+  // instantly respond with reaction/local echo?
   if (mine) {
-    state.api.redactEvent(event.roomId, mine.eventId);
+    state.api.redactEvent(mine.roomId, mine.eventId);
   } else {
     const reaction = {
       "m.relates_to": {
@@ -158,7 +158,7 @@ function handleClick(mine, key) {
     <span slot="tip">
       {@html formatPeople(events)}
       <span class="dim">reacted with</span>
-      {#if events[0].shortcode}
+      {#if events[0]?.shortcode}
         <span class="dim">:</span>{events[0].shortcode}<span class="dim">:</span>
       {:else}
         {key}
