@@ -108,7 +108,7 @@ export async function focus(room) {
   
 	state.focusedRoomId = room?.roomId ?? null;
 	state.focusedRoom.set(room);
-  state.log.debug("set room for" + room?.roomId);
+  state.log.debug("set room for " + room?.roomId);
   
   if (room) {
   	if (!states.has(room.roomId)) states.set(room.roomId, getDefaultState());
@@ -120,7 +120,7 @@ export async function focus(room) {
     
     const timeline = state.roomTimelines.get(room.roomId).live;
     if (!timeline.length) await timeline.backwards();
-    state.log.debug("set slice for" + room?.roomId);
+    state.log.debug("set slice for " + room?.roomId);
     state.slice.set(actions.slice.get(room.roomId));
   }
 

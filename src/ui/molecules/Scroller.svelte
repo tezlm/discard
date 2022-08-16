@@ -8,7 +8,7 @@ export let getDefault = () => {};
 export let scrollTop, scrollMax;
 export let items, itemKey;
 export let margin = 400;
-export let direction = "up";
+export let direction = "down";
 export let scrollEl;
 let debounce;
 let contentEl;
@@ -17,7 +17,7 @@ let paginating = false;
 
 export function reset() {
   [atItemsTop, atItemsBottom] = getDefault();
-  if (direction === "down") {
+  if (direction === "up") {
     queueMicrotask(() => scrollEl && (scrollEl.scrollTop = scrollEl.scrollHeight));
   }
 }
@@ -84,10 +84,10 @@ queueMicrotask(reset);
   <slot name="placeholder-start" />
   {/if}
   
-  <div class="items" bind:this={contentEl}>
-  {#each items as item, i (item[itemKey])}
-  <slot data={item} index={i} />
-  {/each}
+  <div bind:this={contentEl}>
+    {#each items as item, i (item[itemKey])}
+    <slot data={item} index={i} />
+    {/each}
   </div>
   
   {#if atItemsBottom}

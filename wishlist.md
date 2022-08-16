@@ -6,7 +6,7 @@ varying levels of difficulty
   - [x] login/logout
   - [ ] register
   - [ ] guests
-  - [ ] (future) oidc
+  - [ ] (future) replace with oidc
 - [x] messages
   - [x] view messages
   - [x] send message
@@ -25,7 +25,7 @@ varying levels of difficulty
 - [x] reactions
 - [ ] members
   - [x] member popout
-  - [ ] members list (need member popout for list)
+  - [x] members list
 - [ ] settings
   - [x] make them save
   - [ ] appearance/theme settings
@@ -34,7 +34,7 @@ varying levels of difficulty
 - [ ] notifications
   - [ ] show # of unread messages
   - [ ] mentions list/inbox
-  - [ ] highlight mentions
+  - [x] highlight mentions
 - [-] rich input
   - [ ] slash commands
   - [ ] user/command autocomplete
@@ -44,6 +44,7 @@ varying levels of difficulty
   - [ ] add/remove rooms from spaces
   - [ ] show correct order of rooms
   - [ ] order top level spaces
+  - [x] display sub-spaces
 - [ ] rooms
   - [x] create room
   - [x] leave room
@@ -84,6 +85,9 @@ not essential to discard, but could be nice to have
 - [ ] stickers/saved images
 - [ ] custom emoji
 - [ ] subscribe to policy lists
-- [ ] display for other room types?
-  - [ ] m.policy rooms
-  - [ ] custom long form room type
+- [ ] display for other room types
+  - [ ] m.policy
+  - [ ] long form
+  - [ ] forum
+  - [-] media
+  - [ ] documents  

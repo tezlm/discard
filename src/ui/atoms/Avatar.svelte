@@ -1,7 +1,6 @@
 <script>
-import { parseMxc, generateAvatar, defaultAvatar } from "../../util/content.js";
+import { parseMxc, generateAvatar } from "../../util/content.js";
 export let user;
-export let mxc;
 export let size;
 let missing = state.missingAvatars;
 
