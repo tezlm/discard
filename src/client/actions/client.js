@@ -66,7 +66,7 @@ async function resolveWellKnown(domain) {
     const json = await req.json();
     return json["m.homeserver"]?.base_url;
   } catch {
-    return "http://" + domain + ":6167";
+    return "https://" + domain;
   }
 }
 

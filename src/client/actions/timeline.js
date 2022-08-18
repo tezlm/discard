@@ -5,7 +5,8 @@ import TimelineSet from "../matrix/timeline.js";
 
 const supportedEvents = [
   "m.room.create", "m.room.name", "m.room.topic", "m.room.pinned_events", "m.room.canonical_alias",
-  "m.room.message", "m.sticker",
+  "m.room.encryption", "m.room.encrypted",
+  "m.sticker", "m.room.message",
   "m.reaction", "m.room.member",
 ];
 

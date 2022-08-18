@@ -140,6 +140,7 @@ function getContextMenu(space) {
       <div class="spacer"></div>
       {/if}
       <div class="item" on:click={() => { state.selectedRoom.set($focusedSpace); state.scene.set("space-settings") }}>Space Settings</div>
+      <div class="item" on:click={todo}>Notification Settings</div>
       <div class="spacer"></div>
       {#if $focusedSpace.power.me >= $focusedSpace.power.getState("m.space.child")}
       <div class="item" on:click={() => showPopup("create", { type: "room", parent: $focusedSpace })}>Create Room</div>

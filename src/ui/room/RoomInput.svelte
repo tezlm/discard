@@ -78,8 +78,8 @@ function oninput(input) {
     //   { mimetype: "text/plain", body: input },
     //   { mimetype: "text/html",  body: html  },
     // ],
-    "m.text": input,
-    "m.html": html,
+    // "m.text": input,
+    // "m.html": html,
   });
 }
 
@@ -129,14 +129,14 @@ async function handleUpload(file) {
     msgtype: type,
     info,
     
-    "m.file": {
-      url,
-      name: file.name,
-      mimetype: file.type,
-      size: file.size,
-    },
-    ...(type === "m.image" && { "m.image": { width: info.w, height: info.h } }),
-    ...(type === "m.video" && { "m.video": { width: info.w, height: info.h, duration: info.d } }),
+    // "m.file": {
+    //   url,
+    //   name: file.name,
+    //   mimetype: file.type,
+    //   size: file.size,
+    // },
+    // ...(type === "m.image" && { "m.image": { width: info.w, height: info.h } }),
+    // ...(type === "m.video" && { "m.video": { width: info.w, height: info.h, duration: info.d } }),
     // "m.thumbnail": { width: info.w, height: info.h },
     // "m.caption": [{ m.message-like object }],
     "m.text": file.name,

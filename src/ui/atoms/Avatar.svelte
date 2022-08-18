@@ -6,7 +6,7 @@ let missing = state.missingAvatars;
 
 function getAvatar() {
   if (!user.avatar) return generateAvatar(user.userId);
-  return missing.has(user.userId) ? generateAvatar(user.userId) : parseMxc(mxc, size);
+  return missing.has(user.userId) ? generateAvatar(user.userId) : parseMxc(user.avatar, size);
 }
 
 function handleError(e) {

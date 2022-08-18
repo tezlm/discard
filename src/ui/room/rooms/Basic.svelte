@@ -14,7 +14,6 @@ let scrollTop, scrollMax, scrollTo, reset;
 let pushRules = state.pushRules;
 
 $: if (slice) refocus();
-$: if (room) reset && reset();
 
 function shouldSplit(prev, ev) {
 	if (!prev) return true;

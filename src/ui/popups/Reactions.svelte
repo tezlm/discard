@@ -2,6 +2,7 @@
 import Popup from "../atoms/Popup.svelte";
 import Tooltip from "../atoms/Tooltip.svelte";
 import Avatar from "../atoms/Avatar.svelte";
+import { parseMxc } from "../../util/content.js";
 export let current;
 $: reacts = current.event.reactions ?? new Map();
 $: selected = [...reacts.keys()][0];
@@ -37,6 +38,7 @@ $: selected = [...reacts.keys()][0];
 
 .reaction .emoji {
   margin: 0 4px;
+  height: 1em;
 }
 
 .reaction:hover {
@@ -72,13 +74,21 @@ $: selected = [...reacts.keys()][0];
   <div slot="content" class="content">
     <div class="side scroll">
       {#each [...reacts.entries()] as [key, events]}
-        <Tooltip tip="todo: shortcode" position="left">
+        <Tooltip position="left">
           <div slot="tip">
-            <!-- TOOD: actual shortcode, not just emoji -->
-            <span class="dim">:</span>{events[0].shortcode ?? key}<span class="dim">:</span>
+            {#if key.startsWith("mxc://")}
+              <span class="dim">:</span>{events[0]?.content.shortcode}<span class="dim">:</span>
+            {:else}
+              {key}
+            {/if}
           </div>
           <div class="reaction" class:selected={selected === key} on:click={() => selected = key}>
-            <span class="emoji">{key}</span>{events.length}
+            {#if key.startsWith("mxc://")}
+              <img class="emoji" src={parseMxc(key, 16)}>
+            {:else}
+              <span class="emoji">{key}</span>
+            {/if}
+            <span style="">{events.length}</span>
           </div>
         </Tooltip>
       {/each}

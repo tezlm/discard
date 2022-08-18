@@ -26,9 +26,9 @@ function closePopup() {
     <p>userid entry (discord doesnt have this though)</p>
     <UserId />
     <br />
-    {#if current.room.state.find(i => i.type === "m.room.canonical_alias")?.content?.alias && current.room.joinRule === "public"}
+    {#if current.room.getState("m.room.canonical_alias")?.content.alias && current.room.joinRule === "public"}
       <div class="title">Or, send a link</div>
-      <Input value={"https://matrix.to/#/" + encodeURIComponent(current.room.state.find(i => i.type === "m.room.canonical_alias").content.alias)} autofocus />
+      <Input value={"https://matrix.to/#/" + encodeURIComponent(current.room.getState("m.room.canonical_alias")?.content.alias ?? current.room.roomId)} autofocus />
     {/if}
   </div>
 </Popup>

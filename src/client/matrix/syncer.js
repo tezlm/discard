@@ -1,3 +1,19 @@
+/*
+syncer statuses
+- "stopped": the syncer isn't doing anything
+- "starting": the syncer is doing an initial sync
+- "syncing": the syncer is active and polling for events
+- "restarting": the syncer is starting again after a stop
+
+events:
+- "timeline": a new timeline event
+- "ephermeral": a new ephermeral event
+- "state": a state change
+- "join": when a room is joined
+- "leave": when a room is left
+- "invite": when room invite is sent
+*/
+
 class Emitter {
   constructor() {
     this._listeners = new Map();
@@ -30,26 +46,46 @@ export default class Syncer extends Emitter {
     super();
     this.api = api;
     this.status = "stopped";
+    this._backoff = 1;
     this._controller = new AbortController();
     this._rooms = new Set();
   }
   
-  // TODO: retry requests handler
   _error(err) {
     if (err === "M_UNKNOWN_TOKEN") {
       actions.client.logout();
-    } else {    
+      this.status = "stopped";
+      return null;
+    } else {
       console.error(err);
-    }
-    this.status = "stopped";
-    return null;
-  }
+      this.status = "stopped";
+      // setTimeout(() => {});
+      return null;
+    }    
+  }  
   
   async _loop(since) {
     const sync = await this.api.sync(since, this._controller.signal).catch((err) => this._error(err));
     if (!sync) return;
     if (sync.error) return this._error(sync.errcode);
     
+    this._process(sync);
+    
+    if (this.status === "starting") {
+      this.status = "syncing";
+      state.log.matrix("ready");
+      actions.rooms.update();
+      actions.spaces.update();
+      state.scene.set("chat");
+    } else if (this.status === "restarting") {
+      this.status = "syncing";
+      this._backoff = 1;
+    }
+    
+    this._loop(sync.next_batch);
+  }
+  
+  _process(sync) {
     const { account_data, rooms } = sync;
     
     for (let roomId in rooms?.join ?? {}) {
@@ -91,15 +127,6 @@ export default class Syncer extends Emitter {
     for (let event of account_data?.events ?? []) {
       this.emit("accountData", event.type, event.content);
     }
-    
-    if (this.status === "starting") {
-      this.status = "syncing";
-      state.log.matrix("ready");
-      actions.rooms.update();
-      actions.spaces.update();
-      state.scene.set("chat");
-    }
-    this._loop(sync.next_batch);
   }
   
   start(since) {

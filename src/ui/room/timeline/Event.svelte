@@ -1,11 +1,14 @@
 <script>
 import Toolbar from "../../atoms/Toolbar.svelte";
+import MessageReactions from "../message/MessageReactions.svelte";
+
 import Create from "../events/Create.svelte";
 import NameTopic from "../events/NameTopic.svelte";
 import Member from "../events/Member.svelte";
 import Pinned from "../events/Pinned.svelte";
 import Alias from "../events/Alias.svelte";
 import Message from "../message/Message.svelte";
+
 export let shiftKey;
 export let header;
 export let room;
@@ -67,10 +70,17 @@ function getToolbar(event, shiftKey) {
 	<!-- TODO: extensible events.
 	{:else if ["m.message", "m.notice", "m.emote", "m.file"].includes(event.type)}
 	-->
+	{:else}
+		unknown event type {event.type}
 	{/if}
 	{#if !["m.room.create", "m.room.message", "m.sticker"].includes(event.type)}
-  <div class="toolbar">
-	  <Toolbar items={getToolbar(event, shiftKey)} {event} />
-	</div>
+	  <div class="toolbar">
+		  <Toolbar items={getToolbar(event, shiftKey)} {event} />
+		</div>
 	{/if}
+	<!-- TODO: move reactions and reply here
+  {#if event.reactions}
+		<MessageReactions {event} />
+	{/if}
+	-->
 </div>
