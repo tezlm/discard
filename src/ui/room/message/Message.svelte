@@ -314,7 +314,7 @@ time {
     {#if event.reactions}<MessageReactions {event} />{/if}
   </div>
   {#if event.eventId !== $edit}
-  <div class="toolbar" style:display={showReactionPicker || showToolbar ? "flex" : null}>
+  <div class="toolbar" style:display={showReactionPicker ? "flex" : null}>
     {#if showReactionPicker}
     <div class="reaction-picker" in:fly={{ x: 15 }}>
       <Emoji selected={(emoji, keep) => {

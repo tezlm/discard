@@ -51,7 +51,7 @@ function getContextMenu(room) {
 	  ]*/ },
 	  null,
 	  { label: "Invite",    clicked: () => state.popup.set({ id: "invite", type: "room", room }), icon: "person_add", color: "var(--color-accent)" },
-	  { label: "Copy Link", clicked: copy(`https://matrix.to/#/${room.roomId}`), icon: "link" },
+	  { label: "Copy Link", clicked: copy(`https://matrix.to/#/${encodeURIComponent(room.getState("m.room.canonical_alias")?.content.alias ?? room.roomId)}`), icon: "link" },
 	  null,
 	  { label: "Leave",   clicked: () => state.popup.set({ id: "leave", type: "room", room }), icon: "logout", color: "var(--color-red)" },
 	  null,

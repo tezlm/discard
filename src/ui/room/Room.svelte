@@ -16,7 +16,7 @@ let room = state.focusedRoom;
 let space = state.focusedSpace;
 let slice = state.slice;
 let settings = state.settings;
-$: type = $room?.state.find(i => i.type === "m.room.create")?.content.type;
+$: type = $room?.getState("m.room.create")?.content.type;
 
 let navRooms = state.navRooms;
 $: if($navRooms) room = state.focusedRoom;

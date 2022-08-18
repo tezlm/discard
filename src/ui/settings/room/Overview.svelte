@@ -58,6 +58,6 @@ $: {
   <div class="section">
     <div class="title">Developers</div>
     <p><b>Room Id:</b> <code style="user-select: all">{$room?.roomId}</code></p>
-    <p><b>Room Version:</b> <code style="user-select: all">{$room.state.find(i => i.type === "m.room.create")?.content.room_version ?? "no m.room.create!"}</code></p>
+    <p><b>Room Version:</b> <code style="user-select: all">{$room.getState("m.room.create")?.content.room_version ?? "no m.room.create!"}</code></p>
   </div>
 </div>

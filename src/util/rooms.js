@@ -12,6 +12,11 @@ export class Room {
     this.members = new MemberCache(this);
     for (let event of state) this._handleState(event);
     this.readEvent = accountData?.get("m.fully_read")?.event_id ?? null;
+    
+    // TODO
+    // i would love to use notifications, but need both private read receipts to work and to be able to move read marker backwards
+    // this.notifications = { pings: 0, unread: 0 };
+    // this.timelineSet = ...;
   }
   
   _handleState(event) {
@@ -24,6 +29,10 @@ export class Room {
   getState(type, key = "") {
     return this.state.find(i => i.type === type && i.state_key === key);
   }
+  
+  // TODO
+  // async sendState(type, key, content) {}
+  // async sendEvent(type, content, txnid) {}
   
   get name()      { return this.getState("m.room.name")?.content?.name ?? "unknown room" }
   get topic()     { return this.getState("m.room.topic")?.content?.topic }

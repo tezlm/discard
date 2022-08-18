@@ -107,7 +107,7 @@ function handleClick(mine, key) {
 .key, .spacer, .count {
   display: inline-block;
   margin: 0 2px;
-  height: 16px;
+  height: 1em;
 }
 
 .spacer {
@@ -158,8 +158,8 @@ function handleClick(mine, key) {
     <span slot="tip">
       {@html formatPeople(events)}
       <span class="dim">reacted with</span>
-      {#if events[0]?.shortcode}
-        <span class="dim">:</span>{events[0].shortcode}<span class="dim">:</span>
+      {#if key.startsWith("mxc://")}
+        <span class="dim">:</span>{events[0].content.shortcode}<span class="dim">:</span>
       {:else}
         {key}
       {/if}

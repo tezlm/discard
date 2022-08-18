@@ -1,6 +1,7 @@
 <script>
 import Radio from "../../atoms/Radio.svelte";
 import Button from "../../atoms/Button.svelte";
+import Toggle from "../../atoms/Toggle.svelte";
 export let room;
 // TODO: disabled tooltip
 // TODO: make this work, live update
@@ -19,12 +20,28 @@ $: history_visibility = $room.getState("m.room.history_visibility")?.content.his
 </div>
 <div style="margin: 1em"></div>
 <div class="title">Access</div>
+<!-- TODO: redo this
+- allow editing which spaces allow restricted
+- you can enable knocking for public and published rooms? (entire knocking system seems strange)
+- separate option for knocking?
+  - public + knock is unintuitive since it still would allow everyone to join
+- should i keep published as a separate option or allow publishing invite-only/restricted rooms to room directory
+-->
 <Radio selected={"invite"} options={[
   { id: "invite",     name: "Invite-only", detail: "Members must be invited to this room.", disabled: true },
   { id: "restricted", name: "Restricted",  detail: "Any member part of this space can join.", disabled: isOrphan, disabled: true },
   { id: "public",     name: "Public",      detail: "Anyone can join this room.", disabled: true },
   { id: "published",  name: "Published",   detail: "Public, and published to the room directory.", disabled: true },
 ]} />
+<div style="margin-top: 8px">
+  <div style="display: flex; justify-content: space-between">
+    Allow knocking
+    <Toggle />
+  </div>
+  <div style="color: var(--fg-muted)">
+    Knocking allows users to request to join this room.
+  </div>
+</div>
 <div style="margin: 1em"></div>
 <div class="title">Message History</div>
 <Radio selected={history_visibility} options={[

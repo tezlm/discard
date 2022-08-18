@@ -3,6 +3,7 @@ export default class MemberCache extends Map {
     super();
     this.room = room;
     this.request = null;
+    this._sortCache = new Map();
   }
   
   add(event) {
@@ -19,6 +20,7 @@ export default class MemberCache extends Map {
       reason: cont.reason ?? null,
       date: new Date(event.origin_server_ts),
     });
+    this._sortCache.delete(cont.membership);
   }
   
   async fetch() {
@@ -29,15 +31,14 @@ export default class MemberCache extends Map {
     return this.request;
   }
   
-  with(membership, sort = true) {
+  with(membership) {
+    if (this._sortCache.has(membership)) return this._sortCache.get(membership);
     const cmp = (a, b) => a > b ? 1 : a < b ? -1 : 0;
-    if (sort) {
-      return [...this.values()]
+    const members = [...this.values()]
         .filter(i => i.membership === membership)
         .sort((a, b) => cmp(a.name, b.name))
-        .sort((a, b) => cmp(b.power, a.power));    
-    } else {
-      return [...this.values()].filter(i => i.membership === membership);
-    }
+        .sort((a, b) => cmp(b.power, a.power));
+    this._sortCache.set(membership, members);
+    return members;
   }
 }

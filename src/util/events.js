@@ -1,29 +1,41 @@
 export default class Event {
   constructor(room, raw) {
     this.room = room;
-    this.raw = raw;
+    this.raw = raw;   
     
-    this.special = null;
-    this.flags = new Set(); // TODO `new Set()` for flags (redacted, sending, errored, ping)
-    this.reactions = null;
-    this.relations = []; // TODO: what am i doing
+    this.flags = new Set();
+    this.reactions = null; // move to getter?
+    this.relations = [];
+    
+    this._content = null;
+    this._contentDirty = true;
   }
 
-  // use this to parse edits/reactions?  
+  // use this to parse edits/reactions?
   parseRelation(event) {
     this.relations.unshift(event);
     this.flags.add("edited");
+    this._contentDirty = true;
   }
   
-  get content()  {
+  // should handle edits, e2ee, and legacy events
+  get content() {
+    if (!this._contentDirty) return this._content;
+    let content;
+    
     const edit = this.relations.find(i => i.content["m.relates_to"]?.rel_type === "m.replace");
     if (edit) {
-      return {
+      content = {
         ...edit?.content["m.new_content"],
         "m.relates_to": this.raw.content["m.relates_to"],
       };
+    } else {
+      content = this.raw.content;
     }
-    return this.raw.content;
+    
+    this._content = content;
+    this._contentDirty = false;
+    return content;
   }
   
   get roomId()   { return this.room.roomId }
