@@ -26,10 +26,17 @@ console.log(current.room);
       {#each current.room.state.filter(i => i.type === "m.room.member").filter(i => JSON.stringify(i).includes(filter)) as event}
         <pre><code>{@html highlight(JSON.stringify(event, null, 4), Prism.languages.js, "json")}</code></pre>
       {/each}
+    {:else if view === "account"}
+      <Search width={500} bind:value={filter} />
+      {#each [...current.room.accountData.entries()].filter(i => i[0].includes(filter)) as data}
+        <div class="title" style="margin-top: 1em">{data[0]}</div>
+        <pre><code>{@html highlight(JSON.stringify(data[1], null, 4), Prism.languages.js, "json")}</code></pre>
+      {/each}
     {:else}
       <div>room id: <code style="user-select: all">{current.room.roomId}</code></div><br />
       <Button label="Room State" clicked={() => view = "state"}/>
       <Button label="Room Members" clicked={() => view = "members"}/>
+      <Button label="Account Data" clicked={() => view = "account"}/>
     {/if}
   </div>
   <div slot="footer">

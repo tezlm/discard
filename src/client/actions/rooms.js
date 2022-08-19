@@ -3,7 +3,6 @@ import TimelineSet from "../matrix/timeline.js";
 import { Room } from "../../util/rooms.js";
 
 const roomStates = new Map();
-const roomAccounts = new Map();
 
 // maybe rename the 2 roomStates? (matrix state and discard state)
 // TODO: lazy loading
@@ -22,8 +21,8 @@ const roomAccounts = new Map();
 // TODO: cleanup, set directly on room
 export function handleAccount(roomId, type, content) {
   state.log.debug(`set ${type} to ${JSON.stringify(content)} in ${roomId}`);
-  if (!roomAccounts.has(roomId)) roomAccounts.set(roomId, new Map());
-  roomAccounts.get(roomId).set(type, content);
+  if (!state.rooms.has(roomId)) return state.log.warn(`couldn't find room ${roomId} (set accountData)`);
+  state.rooms.get(roomId).accountData.set(type, content);
   
   if (type === "m.fully_read") {
     update();
@@ -39,15 +38,8 @@ export function handleJoin(roomId, events, batch) {
 }
 
 export function handleState(roomId, event) {
-  const roomState = roomStates.get(roomId);
-  const index = roomState.findIndex(i => i.type === event.type && i.state_key === event.state_key);
-  if (index >= 0) {
-    roomState[index] = event;
-  } else {
-    roomState.push(event);
-  }  
-  
-  if (event.type === "m.room.member") state.rooms.get(roomId)?.members.add(event);
+  const room = state.rooms.get(roomId);
+  room.handleState(event);  
   update();
   if (event.type === "m.space.child") actions.spaces.update();
 }
@@ -80,10 +72,8 @@ export function update() {
     if (state.rooms.has(id)) {
       const room = state.rooms.get(id);
       room.state = data;
-      room.readEvent = roomAccounts.get(id)?.get("m.fully_read")?.event_id ?? null;
     } else {
       const room = new Room(id, data);
-      room.readEvent = roomAccounts.get(id)?.get("m.fully_read")?.event_id ?? null;
       state.rooms.set(id, room);
     }
     state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));

@@ -1,3 +1,4 @@
+<svelte:options immutable />
 <script>
 import Tooltip from "./Tooltip.svelte";
 export let items;

@@ -5,8 +5,8 @@ import LoginRegister from './scenes/LoginRegister.svelte';
 import UserSettings from './scenes/UserSettings.svelte';
 import SpaceSettings from './scenes/SpaceSettings.svelte';
 import RoomSettings from './scenes/RoomSettings.svelte';
-import Goose from './scenes/Goose.svelte';
 import Popups from './Popups.svelte';
+import Popouts from './Popouts.svelte';
 import ContextMenus from './ContextMenus.svelte';
 import { quadInOut, quartInOut } from 'svelte/easing';
 let scene = state.scene;
@@ -27,15 +27,22 @@ function ease() {
   }
 }
 
+function handleClick(e) {
+  const ping = e.target.getAttribute("data-mx-ping");
+  if (ping) {
+    state.popup.set({ id: "user", userId: ping });
+  }
+}
+
 scene.subscribe(() => {
   state.log.ui("switch scene to " + $scene);
+  location.hash = "/" + $scene; // TODO: better routing
 });
 </script>
 <style>
 main {
   display: flex;
   height: 100vh;
-  user-select: none;
 }
 
 main > div {
@@ -60,6 +67,19 @@ main > div {
 .chat.hide {
   transform: scale(0.9);
 }
+
+.layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+.layer-1 { z-index: 1 }
+.layer-2 { z-index: 2 }
+.layer-3 { z-index: 3 }
 </style>
 <main>
   {#if $scene !== "loading" && $scene !== "auth"}
@@ -71,13 +91,19 @@ main > div {
   <div class="settings" transition:ease><SpaceSettings /></div>
   {:else if $scene === "room-settings"}
   <div class="settings" transition:ease><RoomSettings /></div>
-  {:else if $scene === "goose"}
-  <div class="settings" transition:ease><Goose /></div>
   {:else if $scene === "auth"}
   <LoginRegister />
   {:else if $scene !== "chat"}
   <div class="loading" transition:opacity><Loading /></div>
   {/if}
 </main>
-<Popups />
-<ContextMenus />
+<div class="layer layer-1">
+  <Popups />
+</div>
+<div class="layer layer-2">
+  <Popouts />
+</div>
+<div class="layer layer-3">
+  <ContextMenus />
+</div>
+<svelte:window on:click={handleClick} />

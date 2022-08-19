@@ -1,3 +1,4 @@
+<svelte:options immutable />
 <script>
 import Slider from "./Slider.svelte";
 import Volume from "./Volume.svelte";
@@ -8,6 +9,8 @@ export let name = "title";
 export let size;
 let started = false;
 let paused = true;
+// TODO: refactor?
+// let state = "pristine" | "playing" | "paused" | "finished"
 let duration = 1;
 let currentTime = 0;
 let volume = 1;

@@ -13,7 +13,7 @@ class Timeline extends Array {
     const res = await state.api.fetchMessages(this.roomId, this.batchEnd, "b");
     
     for (let i of res.state ?? []) {
-      if (i.type === "m.room.member") state.rooms.get(this.roomId)?.members.add(i);
+      state.rooms.get(this.roomId)?.handleState(i);
     }
     
     for (let i of res.chunk ?? []) handle(this.roomId, i, true);

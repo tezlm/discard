@@ -77,8 +77,7 @@ export default class Api {
   }
   
   fetchMembers(roomId) {
-    // TODO: conduit seems to fetch all users anyway?
-    return this.fetch("GET", `/rooms/${encode(roomId)}/members?not_membership=leave`);
+    return this.fetch("GET", `/rooms/${encode(roomId)}/members`);
   }
   
   fetchUser(userId) {

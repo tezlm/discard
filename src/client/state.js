@@ -4,6 +4,8 @@ import Settings from "./matrix/settings.js";
 
 // TODO: reset state on logout
 
+
+// persist state
 const store = new Store();
 await store.init();
 
@@ -14,16 +16,17 @@ const log = {
   error: (info) => console.error("%c[error]%c " + info, "font-weight: bold; color: red", ""),
 };
 
-export default {
+const state = {
   api: null,
   syncer: null,
   userId: null,
   store: store,
   log: log,
-  scene: writable(null),
   
-  // objects
+  // layers
+  scene: writable({}),
   popup: writable({}),
+  popout: writable({}),
   context: writable({}),
   
   // data
@@ -57,3 +60,7 @@ export default {
   missingAvatars: new Set(),
   users: new Map(),
 };
+
+// setInterval(() => store.save(state), 1000 * 5);
+
+export default state;

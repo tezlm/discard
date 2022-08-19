@@ -48,6 +48,23 @@
   --mxid-8: #2ecc71;
 }
 
+/* TODO: light mode (and custom themes in general)
+:root {
+  --bg-content: #ffffff;
+  --bg-rooms-members: #f2f3f5;
+  --bg-spaces: #e3e5e8;
+  --bg-misc: #ebedef;
+  --bg-tooltip: #ffffff;
+  --bg-context: red;
+  --fg-notice: rgb(6, 6, 7);
+  --fg-content: rgb(46, 51, 56);
+  --fg-light: red;
+  --fg-dim: rgb(46, 51, 56);
+  --fg-muted: red;
+  --fg-interactive: red;
+}
+*/
+
 * {
   padding: 0;
   margin: 0;

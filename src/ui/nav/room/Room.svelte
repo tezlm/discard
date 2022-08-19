@@ -62,7 +62,7 @@ function getContextMenu(room) {
 	function markRead() {
 	  const lastEvent = state.roomTimelines.get(room.roomId).live.at(-1);
 	  state.log.debug(`mark ${lastEvent} as read`);
-	  state.rooms.get(room.roomId).readEvent = lastEvent;
+	  state.rooms.get(room.roomId).accountData.set("m.fully_read", lastEvent);
 	  if (state.focusedRoomId === room.roomId) state.slice.set(state.roomSlices.get(room.roomId));
 	  state.api.sendReceipt(room.roomId, lastEvent);
 	}

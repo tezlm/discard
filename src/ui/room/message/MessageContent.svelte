@@ -13,8 +13,6 @@ let wrapper;
 
 $: content = event.content;
 $: type = content.msgtype ?? event.type;
-$: edited = event.flags.has("edited");
-$: special = event.special;
 $: dimensions = parseDimensions(content.info?.thumbnail_info ?? content.info);
 
 function parseDimensions(info) {
@@ -106,21 +104,32 @@ img {
 }
 
 .text :global([data-mx-ping]) {
-  color: var(--fg-notice);
+  position: relative;
+  color: var(--color-accent);
   font-weight: 500;
-  background: var(--ping-bgalpha);
   padding: 0 2px;
-  border-radius: 3px;
   cursor: pointer;
+}
+
+.text :global([data-mx-ping]::after) {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 3px;
+  background: var(--color-accent);
+  opacity: .1;
+}
+
+.text :global([data-mx-ping]:hover::after) {
+  opacity: .2;
 }
 
 .text :global([data-mx-emoticon]) {
   height: calc(1em);
   margin-bottom: -2px;
-}
-
-.text :global([data-mx-ping]):hover {
-  background: var(--ping-bg);
 }
 
 .sticker-popout {
@@ -147,8 +156,8 @@ img {
 </style>
 <div
   class="content"
-  class:redacted={special === "redacted" || special === "errored"}
-  class:sending={special === "sending"}
+  class:redacted={event.flags?.has("redacted") || event.flags?.has("errored")}
+  class:sending={event.flags?.has("sending")}
   style={type === "m.image" || type === "m.video" ? dimensions.css : ""}
   bind:this={wrapper}
 >
@@ -201,7 +210,7 @@ img {
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}
     {@html parseHtml(content.formatted_body.trim()).trim()}
-    {#if edited}
+    {#if event.flags?.has("edited")}
     <span class="edited">(edited)</span>
     {/if}
   </div>
@@ -209,7 +218,7 @@ img {
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}
     {@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/\n/g, "<br />"), { linkify: true })}
-    {#if edited}
+    {#if event.flags?.has("edited")}
     <span class="edited">(edited)</span>
     {/if}
   </div>

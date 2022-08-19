@@ -1,6 +1,8 @@
 <script>
 import { onMount } from "svelte";
 import Video from "../../molecules/files/Video.svelte";
+import File from "../../molecules/files/File.svelte";
+import Audio from "../../molecules/files/Audio.svelte";
 import MessageReactions from '../message/MessageReactions.svelte';
 import { parseMxc } from "../../../util/content";
 export let room;
@@ -169,7 +171,7 @@ onMount(paginate);
   flex: 1;
   display: grid;
   /* todo: find out how to auto-fit items */
-  grid-template-columns: repeat(4, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
   grid-auto-rows: 300px;
   padding: 8px;
   background: #2c2e33;
@@ -241,6 +243,10 @@ onMount(paginate);
       {:else if type === "m.video"}
         <!-- extensible events have a lot of different places for file size, need to check them all -->
         <Video src={parseMxc(content.url)} size={content.info.size} name={content.body} />
+      {:else if type === "m.audio"}
+        <Audio src={parseMxc(content.url)} size={content.info.size} name={content.body} />
+      {:else if type === "m.file"}
+        <File src={parseMxc(content.url)} size={content.info.size} name={content.body} />
       {/if}
       {#if event.reactions}
       <MessageReactions {event} />

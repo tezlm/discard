@@ -2,6 +2,17 @@
 import Popup from "../atoms/Popup.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 export let current;
+const users = state.users;
+
+// FIXME: it shows the content twice on close?
+
+async function getProfile(userId) {
+  if (users.has(userId)) return users.get(userId);
+	const { avatar_url, displayname } = await state.api.fetchUser(userId);
+	const data = { avatar: avatar_url, name: displayname || userId, userId };
+	users.set(userId, data);
+	return data;
+}
 </script>
 <style>
 .content {
@@ -17,8 +28,7 @@ export let current;
   display: flex;
   align-items: center;
   height: 100px;
-  padding: 8px;
-  margin: 0;
+  padding: 8px 12px;
   background: var(--bg-rooms-members);
 }
 
@@ -30,15 +40,20 @@ export let current;
 </style>
 <Popup raw>
   <div slot="content" class="content">
+    {#await getProfile(current.userId)}
+    loading...
+    {:then user}
     <div class="header">
-      <Avatar size={72} user={current.user} />
+      <Avatar link size={72} {user} />
       <div style="margin-left: 12px;">
-        <h2>{current.user.name}</h2>
-        <span>{current.user.userId}</span>
+        <h2>{user.name}</h2>
+        <span>{user.userId}</span>
       </div>
     </div>
     <div class="info">
-      more text here, foo bar baz
+      more text here, foo bar baz<br />
+      even more text here<br />
     </div>
+  {/await}
   </div>
 </Popup>
