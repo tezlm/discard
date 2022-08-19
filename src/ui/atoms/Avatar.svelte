@@ -1,8 +1,12 @@
+<svelte:options immutable />
 <script>
+// TODO: properly handle per-room avatars
 import { parseMxc, generateAvatar } from "../../util/content.js";
 export let user;
 export let size;
+export let link = false;
 let missing = state.missingAvatars;
+let avatar = getAvatar();
 
 function getAvatar() {
   if (!user.avatar) return generateAvatar(user.userId);
@@ -22,12 +26,14 @@ function handleError(e) {
   user-select: none;
 }
 </style>
-<img
-  class="avatar"
-  alt="shutup a11y"
-  loading="lazy"
-  style:height={size + "px"}
-  style:width={size + "px"}
-  src={getAvatar()}
-  on:error={handleError}
-/>
+<svelte:element this={link ? "a" : "div"} href={link ? avatar : null}>
+  <img
+    class="avatar"
+    alt={"avatar for " + user.name ?? user.userId}
+    loading="lazy"
+    style:height={size + "px"}
+    style:width={size + "px"}
+    src={getAvatar()}
+    on:error={handleError}
+  />
+</svelte:element>

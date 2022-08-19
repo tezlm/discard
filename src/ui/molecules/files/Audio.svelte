@@ -9,6 +9,7 @@ export let size = 0;
 let audioEl;
 let duration = 1;
 let currentTime = 0;
+// let state = "pristine" | "playing" | "paused" | "finished"
 let paused = true;
 let muted = false;
 let volume = 1;
@@ -61,7 +62,6 @@ function handleScrub(t) {
 .slider {
   flex: 1;
   display: flex;
-  min-width: 150px;
 }
 
 .time {

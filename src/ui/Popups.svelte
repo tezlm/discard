@@ -91,6 +91,10 @@ function handleKeyDown(e) {
 }
 </script>
 <style>
+.wrap {
+  pointer-events: auto;
+}
+
 .wrap :global(h2 > .icon.close),
 .wrap :global(h3 > .icon.close) {
   position: absolute;

@@ -59,7 +59,7 @@ varying levels of difficulty
   - [ ] link embeds
   - [ ] room embeds
   - [ ] better m.room.member
-  - [ ] show other state events
+  - [-] show other state events
   - [ ] (future) use extensible events
 - [ ] qol/misc
   - [x] user colors

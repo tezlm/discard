@@ -1,10 +1,12 @@
 <script>
 import Button from "../atoms/Button.svelte";
 import Input from "../atoms/Input.svelte";
+import Textarea from "../atoms/Textarea.svelte";
 import Popup from "../atoms/Popup.svelte";
 export const confirm = create;
 export let current;
 let name = "";
+let topic = null;
 let creating = false;
 
 function capitalize(str) {
@@ -17,6 +19,7 @@ async function create() {
   const parentId = current.parent?.roomId;
   const { room_id } = await state.api.createRoom({
     name,
+    topic,
     creator: state.userId,
     ...(current.type === "space" && { type: "m.space" }),
     ...(parentId && {
@@ -62,6 +65,8 @@ async function create() {
   <div slot="content" style="display: flex; flex-direction: column">
     <span class="title">{capitalize(current.type)} Name</span>
     <Input placeholder="awesome-{current.type}" bind:value={name} submitted={create} autofocus />
+    <span class="title" style="margin-top: 1em">{capitalize(current.type)} Topic </span>
+    <Textarea placeholder="optional topic for your {current.type}" bind:value={topic} />
   </div>
   <div slot="footer">
     <Button type="link" label="Cancel" clicked={() => state.popup.set({ ...current, id: null })} />

@@ -73,7 +73,6 @@ async function handleSubmit(value, e) {
   display: grid;
   grid-template-columns: 48px auto;
   grid-template-rows: 64px auto 48px;
-  background: blue;
   height: 420px;
   width: 420px;
   border-radius: 8px;
@@ -88,6 +87,25 @@ async function handleSubmit(value, e) {
   box-shadow: var(--shadow-header);
   z-index: 1;
   padding: 16px;
+}
+
+.categories {
+  grid-row: 2/4;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+  background: var(--bg-spaces);
+}
+
+.categories .icon {
+  font-size: 24px;
+  margin: 4px 0;
+  color: var(--fg-interactive);
+  cursor: pointer;
+}
+
+.categories .icon:hover {
+  color: var(--fg-notice);
 }
 
 .emojis {
@@ -150,7 +168,17 @@ async function handleSubmit(value, e) {
       escaped={() => selected(null, false)}
     />
   </div>
-  <div style="grid-row: 2/4; background: var(--bg-spaces)"></div>
+  <div class="categories">
+    <div class="icon">emoji_emotions</div>
+    <div class="icon">emoji_people</div>
+    <div class="icon">park</div>
+    <div class="icon">emoji_food_beverage</div>
+    <div class="icon">snowmobile</div>
+    <div class="icon">emoji_events</div>
+    <div class="icon">emoji_objects</div>
+    <div class="icon">emoji_symbols</div>
+    <div class="icon">flag</div>
+  </div>
   <div class="emojis">
     {#await getFiltered(search)}
       <div style="display: flex; align-items: center; justify-content: center; width 100%; height: 100%">getting emoji...</div>

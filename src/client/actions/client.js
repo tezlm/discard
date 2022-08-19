@@ -85,6 +85,7 @@ function start(api, syncer, userId) {
     if (type === "m.push_rules") state.pushRules.set(new PushRules(content.global));
     state.accountDataRef.set(type, content);
     state.accountData.set(state.accountDataRef);
+    state.store.account.put(type, content);
   });
 }
 

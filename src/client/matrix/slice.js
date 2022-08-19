@@ -45,6 +45,7 @@ export default class Slice {
     this.start = timeline[newStart];
     this.end = timeline[newEnd];
     this.events = timeline.slice(newStart, newEnd + 1).map(i => state.events.get(i));
+    if (this.events.indexOf(undefined) >= 0) state.log.error("missing event!")
   }
   
   async forwards(count = 50) {

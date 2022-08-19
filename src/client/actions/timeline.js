@@ -13,6 +13,7 @@ const supportedEvents = [
 const relations = new Map();
 
 // TODO: multiple relations
+// TODO: what does this code even do i forgot
 function getRelation(content) {
   const relation = content["m.relates_to"];
   if (!relation) return null;
@@ -67,30 +68,29 @@ export function send(roomId, type, content) {
     content,
   });
   temp.flags.add("sending");
-  temp.special = "sending";
   state.events.set(id, temp);
   addToTimeline(roomId, id);
   
-  state.rooms.get(roomId).readEvent = id;
+  state.rooms.get(roomId).accountData.set("m.fully_read", id);
   state.slice.set(state.roomSlices.get(roomId));
   state.api.sendEvent(roomId, type, content, id);
 }
 
-export function handle(roomId, event, toStart = false) {
-  if (event.type === "m.room.redaction" && !toStart) return redact(roomId, event);
-  if (!supportedEvents.includes(event.type)) return;
-  if (event.unsigned?.redacted_because) return;
-  if (state.events.has(event.event_id)) return;
-  const id = event.event_id;
+export function handle(roomId, raw, toStart = false) {
+  if (raw.type === "m.room.redaction" && !toStart) return redact(roomId, raw);
+  if (!supportedEvents.includes(raw.type)) return;
+  
+  const id = raw.event_id;
+  if (state.events.has(raw.event_id)) return;
   const room = state.rooms.get(roomId);
   
   // event echo, update local status
-  if (event.unsigned?.transaction_id) {
-    const tx = event.unsigned.transaction_id;
+  if (raw.unsigned?.transaction_id) {
+    const tx = raw.unsigned.transaction_id;
     const original = state.events.get(tx);
     if (original) {
-      original.raw = event;
-      original.special = null;
+      state.log.matrix(`successfully sent to ${id} in ${roomId} (for ${tx})`);
+      original.raw = raw;
       original.flags.delete("sending");
       state.events.set(id, original);
       
@@ -100,36 +100,49 @@ export function handle(roomId, event, toStart = false) {
       timeline[index] = id;
       if (index === timeline.length - 1) slice.end = id;
       
-      state.rooms.get(roomId).readEvent = id;
+      state.rooms.get(roomId).accountData.set("m.fully_read", id)
       state.api.sendReceipt(roomId, id);
       if (roomId === state.focusedRoomId) state.slice.set(slice);
       return;
     }
   }
   
-  const relation = getRelation(event.content);
+  const event = new Event(room, raw);
+  const relation = getRelation(raw.content);
   if (relation) {
     const original = state.events.get(relation.event_id);
-    if (!original) return queueRelation(relation.event_id, event, toStart);
-    if (relation.rel_type === "m.replace") {
-      original.parseRelation(new Event(room, event));
-    } else if (relation.rel_type === "m.annotation") {
-      const key = relation.key;
-      if (!original.reactions) original.reactions = new Map();
-      if (!original.reactions.has(key)) original.reactions.set(key, []);
-      original.reactions.get(relation.key).push(new Event(room, event));
+    if (original) {
+      if (relation.rel_type === "m.replace") {
+        original.parseRelation(event);
+      } else if (relation.rel_type === "m.annotation") {
+        const key = relation.key;
+        if (!original.reactions) original.reactions = new Map();
+        if (!original.reactions.has(key)) original.reactions.set(key, []);
+        original.reactions.get(relation.key).push(event);
+      }
+    } else {
+      return queueRelation(relation.event_id, event, toStart);      
     }
-    state.events.set(id, new Event(room, event));
+    state.events.set(id, event);
     const slice = actions.slice.get(roomId);
     slice.reslice();
     if (roomId === state.focusedRoomId) state.slice.set(slice);
   } else {
-    state.events.set(id, new Event(room, event));
+    state.events.set(id, event);
     addToTimeline(roomId, id, toStart);
     actions.rooms.update();
     actions.spaces.update();
     if (relations.has(id)) {
-      for (let relation of relations.get(id)) handle(roomId, relation);
+      for (let relation of relations.get(id)) {
+        if (relation.rel_type === "m.replace") {
+          event.parseRelation(relation);
+        } else if (relation.rel_type === "m.annotation") {
+          const key = relation.key;
+          if (!event.reactions) event.reactions = new Map();
+          if (!event.reactions.has(key)) event.reactions.set(key, []);
+          event.reactions.get(relation.key).push(event);
+        }
+      }
       relations.delete(id);
     }
   }
@@ -152,7 +165,7 @@ export function redact(roomId, event) {
     const sliceIndex = slice.events.findIndex(i => i.eventId === id);
     if (sliceIndex !== -1) slice.events.splice(sliceIndex, 1);
     state.slice.set(slice);
-  } else {
+  } else if (state.events.has(id)) {
     const original = state.events.get(id);
     const slice = actions.slice.get(roomId);
     const relation = getRelation(original.content);
@@ -167,8 +180,8 @@ export function redact(roomId, event) {
       if (reactions.size === 0) rel.reactions = null;
       slice.reslice();
       state.slice.set(slice);
-    }    
-  }
-  
-  state.events.delete(id);
+    }
+    
+    state.events.delete(id);  
+  }  
 }

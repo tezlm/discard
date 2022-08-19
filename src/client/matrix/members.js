@@ -6,7 +6,7 @@ export default class MemberCache extends Map {
     this._sortCache = new Map();
   }
   
-  add(event) {
+  handle(event) {
     const id = event.state_key;
     const cont = event.content;
     const power = this.room.power;
@@ -20,6 +20,17 @@ export default class MemberCache extends Map {
       reason: cont.reason ?? null,
       date: new Date(event.origin_server_ts),
     });
+    
+    // a bit faster than throwing away the whole cache for $membership
+    const oldMembership = event.unsigned.prev_content?.membership;
+    if (oldMembership) {
+      const sorted = this._sortCache.get(oldMembership);
+      if (sorted) {
+        const idx = sorted.findIndex(i => i.userId === id);
+        if (idx >= 0) sorted.splice(idx, 1);
+      }
+    }
+    
     this._sortCache.delete(cont.membership);
   }
   
@@ -27,7 +38,7 @@ export default class MemberCache extends Map {
     if (this.request) return this.request;
     state.log.matrix("fetch members");
     this.request = state.api.fetchMembers(this.room.roomId)
-      .then(({ chunk }) => chunk.forEach(i => this.add(i)));
+      .then(({ chunk }) => chunk.forEach(i => this.room.handleState(i)));
     return this.request;
   }
   

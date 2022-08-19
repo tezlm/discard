@@ -1,9 +1,11 @@
 <script>
+// seems to re-render on *every* message
 import Avatar from "../atoms/Avatar.svelte";
 export let room;
 
 async function fetchList(room) {
   if (!room.request) await room.members.fetch();
+  console.log("fetch", room.members.with("join"))
   const members = room.members.with("join");
   return [{ title: `members - ${members.length}`}, ...members];
 }
@@ -52,7 +54,7 @@ async function fetchList(room) {
       {#if member.title}
         <div class="title">{member.title}</div>
       {:else}
-        <div class="wrapper" on:click={() => state.popup.set({ id: "user", user: member })}>
+        <div class="wrapper" on:click={() => state.popup.set({ id: "user", userId: member.userId })}>
           <div class="member">
             <Avatar user={member} size={32} />
             <div class="name">{member.name || member.userId}</div>

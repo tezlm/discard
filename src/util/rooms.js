@@ -1,17 +1,14 @@
 import MemberCache from "../client/matrix/members.js";
 
 // this is just a 1:1 mapping of createRoom for now
-export class Room {
-  roomId = null;
-  state = [];
-  members = null;
-  pings = 0;
-  
-  constructor(roomId, state, accountData) {
+export class Room {  
+  constructor(roomId, state) {
     this.roomId = roomId;
+    this.state = [];
+    this.accountData = new Map();
     this.members = new MemberCache(this);
-    for (let event of state) this._handleState(event);
-    this.readEvent = accountData?.get("m.fully_read")?.event_id ?? null;
+    this.pings = 0;    
+    for (let event of state) this.handleState(event);
     
     // TODO
     // i would love to use notifications, but need both private read receipts to work and to be able to move read marker backwards
@@ -19,10 +16,12 @@ export class Room {
     // this.timelineSet = ...;
   }
   
-  _handleState(event) {
-    const oldIdx = this.state.findIndex(i => i.type === event.type && i.state_key === event.state_key);
-    if (oldIdx !== -1) this.state.splice(oldIdx, 1);
-    if (event.type === "m.room.member") this.members.add(event);
+  handleState(event, skipCheck = false) {
+    if (!skipCheck) {
+      const oldIdx = this.state.findIndex(i => i.type === event.type && i.state_key === event.state_key);
+      if (oldIdx !== -1) this.state.splice(oldIdx, 1);      
+    }
+    if (event.type === "m.room.member") this.members.handle(event);
     this.state.push(event);
   }
   
@@ -51,6 +50,10 @@ export class Room {
       getState: (name) => power.state?.[name]  ?? power.state_default  ?? 50,
       getUser:  (id)   => power.users?.[id]    ?? power.users_default  ?? 0,
     }
+  }
+  
+  get readEvent() {
+    return this.accountData?.get("m.fully_read")?.event_id ?? null;
   }
   
   // use this instead?

@@ -5,10 +5,25 @@ import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
 import Confirm from "../Confirm.svelte";
 export let room;
+export let save;
+
 let name = $room?.name ?? "";
 let topic = $room?.topic ?? "";
-$: changed = (name !== ($room?.name ?? ""))
-  || (topic !== ($room?.topic ?? ""));
+$: {
+  let nameChanged = name !== ($room?.name ?? "");
+  let topicChanged = topic !== ($room?.topic ?? "");
+  if (nameChanged || topicChanged) {
+    save = async () => {
+      const proms = [];
+      if (nameChanged) proms.push(state.api.sendState($room.roomId, "m.room.name", "", { name }));
+      if (topicChanged) proms.push(state.api.sendState($room.roomId, "m.room.topic", "", { topic }));
+      await Promise.all(proms);
+      save = null;
+    }
+  } else {
+    save = null;
+  }
+}
 </script>
 <style>
 h1 {
@@ -117,6 +132,3 @@ h1 {
     <p><b>Room Version:</b> <code style="user-select: all">{$room.getState("m.room.create")?.content.room_version ?? "no m.room.create!"}</code></p>
   </div>
 </div>
-{#if changed}
-<Confirm />
-{/if}

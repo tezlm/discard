@@ -1,3 +1,4 @@
+<svelte:options immutable />
 <script>
 export let tip = "";
 export let position = "up";

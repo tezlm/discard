@@ -1,3 +1,4 @@
+<svelte:options immutable />
 <script>
 import Slider from "./Slider.svelte";
 export let volume;

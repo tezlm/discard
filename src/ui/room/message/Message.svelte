@@ -87,7 +87,7 @@ function handleClick(e) {
   if (e.altKey) {
     const prev = $slice.events[$slice.events.findIndex(i => i.eventId === event.eventId) - 1];
     if (prev) {
-      room.readEvent = prev.eventId;
+      room.accountData.set("m.fully_read", { event_id: prev.eventId });
       state.slice.set(state.roomSlices.get(state.focusedRoomId));
       state.api.sendReceipt(event.roomId, prev.eventId);
     }
@@ -151,7 +151,7 @@ function getContextMenu() {
     const index = timeline.lastIndexOf(event.eventId);
     const lastId = timeline[index - 1] ?? event.eventId;
     state.log.debug(`mark ${lastId} as read`);
-    state.rooms.get(room.roomId).readEvent = lastId;
+    state.rooms.get(room.roomId).accountData.set("m.fully_read", { event_id: lastId });
     state.slice.set(state.roomSlices.get(room.roomId));
     state.api.sendReceipt(room.roomId, lastId);
   }
@@ -289,7 +289,7 @@ time {
     {#if getReply(event.content)}<MessageReply {room} eventId={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
-      <span class="author" style:color={getColor(event.sender, $settings)} on:click|stopPropagation={() => showUserPopout = !showUserPopout} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>{event.sender.name || event.sender.userId}</span>
+      <span class="author" style:color={getColor(event.sender, $settings)} on:click|stopPropagation={() => state.popup.set({ id: "user", userId: event.sender.userId })} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>{event.sender.name || event.sender.userId}</span>
       {#if event.content.msgtype === "m.notice"}
       <div class="badge">bot</div>
       {/if}

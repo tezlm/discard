@@ -4,6 +4,7 @@ import { parseMxc } from "../../../util/content";
 import Tooltip from "../../atoms/Tooltip.svelte";
 import Emoji from "../../molecules/Emoji.svelte";
 export let event;
+// let popout = state.popout;
 
 // i have no idea how these work but they do so /shrug lol
 // TODO: make the number animate in reverse when the count goes down
@@ -94,7 +95,7 @@ function handleClick(mine, key) {
   color: var(--fg-notice);
   background: var(--bg-rooms-members);
   border: solid var(--bg-rooms-members) 1px;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all .1s;
 }

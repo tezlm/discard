@@ -103,8 +103,10 @@ function getColor(sender) {
   <div class="content" on:click={() => actions.slice.jump(event.roomId, event.eventId)}>
     {#if event.content.format === "org.matrix.custom.html"}
       {@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n|<br.*?>/g, " ")}
-    {:else}
+    {:else if event.content.body}
       {event.content.body.replace(/\n/g, " ")}
+    {:else}
+      <i style="color: var(--fg-muted)">failed to render event</i>
     {/if}
   </div>
 </div>

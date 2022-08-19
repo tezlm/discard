@@ -90,10 +90,6 @@ export default class Syncer extends Emitter {
     
     for (let roomId in rooms?.join ?? {}) {
       const room = rooms.join[roomId];      
-
-      for (let event of room.ephemeral?.events ?? []) actions.parser.handleEphermeral(roomId, event.type, event.content);
-      for (let event of room.account_data?.events ?? []) actions.parser.handleRoomAccount(roomId, event.type, event.content);
-      if  (room.unread_notifications) actions.parser.handleNotis(roomId, room.unread_notifications?.highlight_count);
     
       if (this._rooms.has(roomId)) {
         for (let event of room.state?.events ?? []) this.emit("state", roomId, event);
@@ -107,9 +103,12 @@ export default class Syncer extends Emitter {
         if (typeof event.state_key !== "undefined") this.emit("state", roomId, event);
       }
       
-      for (let event of room.ephemeral?.events ?? []) this.emit("ephermeral", roomId, event);
-      for (let event of room.account_data?.events ?? []) this.emit("roomAccountData", roomId, event);
-      if  (room.unread_notifications) this.emit("unread", roomId, room.unread_notifications);
+      // for (let event of room.ephemeral?.events ?? []) this.emit("ephermeral", roomId, event);
+      // for (let event of room.account_data?.events ?? []) this.emit("roomAccountData", roomId, event);
+      for (let event of room.ephemeral?.events ?? []) actions.parser.handleEphermeral(roomId, event.type, event.content);
+      for (let event of room.account_data?.events ?? []) actions.parser.handleRoomAccount(roomId, event.type, event.content);
+      if  (room.unread_notifications) actions.parser.handleNotis(roomId, room.unread_notifications?.highlight_count);
+      // if  (room.unread_notifications) this.emit("unread", roomId, room.unread_notifications);
     }
     
     // TODO: invited rooms
