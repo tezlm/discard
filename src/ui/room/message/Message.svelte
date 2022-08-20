@@ -38,8 +38,10 @@ function getToolbar(shift = false) {
   const toolbar = [];
   const fromMe = event.sender.userId === state.userId;
 
-  if (event.special) {
-    if (event.special === "errored") toolbar.push({ name: "Retry", icon: "refresh", clicked: todo });
+  if (event.flags?.has("errored")) {
+    toolbar.push({ name: "Retry", icon: "refresh", clicked: todo });
+    toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
+  } else if (event.flags?.has("sending")) {
     toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
   } else if (shift && !showReactionPicker) {
     if (fromMe || room.power.me >= room.power.getBase("redact")) {

@@ -5,7 +5,7 @@ import TimelineSet from "../matrix/timeline.js";
 
 const supportedEvents = [
   "m.room.create", "m.room.name", "m.room.topic", "m.room.pinned_events", "m.room.canonical_alias",
-  "m.room.encryption", "m.room.encrypted",
+  // "m.room.encryption", "m.room.encrypted",
   "m.sticker", "m.room.message",
   "m.reaction", "m.room.member",
 ];
@@ -121,6 +121,7 @@ export function handle(roomId, raw, toStart = false) {
         original.reactions.get(relation.key).push(event);
       }
     } else {
+      console.log("queuing relation")
       return queueRelation(relation.event_id, event, toStart);      
     }
     state.events.set(id, event);

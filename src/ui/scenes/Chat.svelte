@@ -9,12 +9,17 @@ import UserMenu from '../user/UserMenu.svelte';
 .nav {
   display: flex;
   flex-direction: column;
+	width: 240px;
 }
 </style>
-<SpaceNav />
-<div class="nav">
-  <SpaceHeader />
-  <RoomNav />
+<div style="display: flex; flex-direction: column;">
+  <div style="display: flex; flex-direction: row; flex: 1; height: 0">
+    <SpaceNav />
+    <div class="nav">
+      <SpaceHeader />
+      <RoomNav />
   <UserMenu />
+    </div>
+  </div>
 </div>
 <Room />

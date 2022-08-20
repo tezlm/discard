@@ -167,7 +167,7 @@ function handleClick(mine, key) {
     </span>
     <div class="reaction" class:self={getMine(events)} on:click={() => handleClick(getMine(events), key)}>
       {#if key.startsWith("mxc://")}
-        <img class="key" src={parseMxc(key, 16)}>
+        <img class="key" src={parseMxc(key)}>
       {:else}
         <div class="key">{key}</div>
       {/if}

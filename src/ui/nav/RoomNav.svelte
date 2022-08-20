@@ -19,7 +19,6 @@ function isMuted(room) {
 	flex: 1;
   background: var(--bg-rooms-members);
   color: var(--fg-content);
-	width: 240px;
 	display: flex;
 	flex-direction: column;
   scrollbar-width: thin;

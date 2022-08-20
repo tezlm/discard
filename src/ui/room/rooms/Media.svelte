@@ -3,6 +3,7 @@ import { onMount } from "svelte";
 import Video from "../../molecules/files/Video.svelte";
 import File from "../../molecules/files/File.svelte";
 import Audio from "../../molecules/files/Audio.svelte";
+import Text from "../../molecules/files/Text.svelte";
 import MessageReactions from '../message/MessageReactions.svelte';
 import { parseMxc } from "../../../util/content";
 export let room;
@@ -246,7 +247,12 @@ onMount(paginate);
       {:else if type === "m.audio"}
         <Audio src={parseMxc(content.url)} size={content.info.size} name={content.body} />
       {:else if type === "m.file"}
-        <File src={parseMxc(content.url)} size={content.info.size} name={content.body} />
+        {@const mime = event.content.info?.mimetype}
+        {#if /text\//.test(mime) || mime === "application/json"}
+          <Text src={parseMxc(content.url)} size={content.info.size} name={content.body} />
+        {:else}
+          <File src={parseMxc(content.url)} size={content.info.size} name={content.body} />
+        {/if}
       {/if}
       {#if event.reactions}
       <MessageReactions {event} />

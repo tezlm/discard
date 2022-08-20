@@ -5,7 +5,6 @@ export let room;
 
 async function fetchList(room) {
   if (!room.request) await room.members.fetch();
-  console.log("fetch", room.members.with("join"))
   const members = room.members.with("join");
   return [{ title: `members - ${members.length}`}, ...members];
 }
@@ -50,7 +49,7 @@ async function fetchList(room) {
 </style>
 <div class="members scroll" tabindex="-1">
   {#await fetchList(room) then items}
-    {#each items as member}
+    {#each items as member (member.userId)}
       {#if member.title}
         <div class="title">{member.title}</div>
       {:else}
