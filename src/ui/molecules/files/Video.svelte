@@ -11,8 +11,7 @@ let started = false;
 let paused = true;
 // TODO: refactor?
 // let state = "pristine" | "playing" | "paused" | "finished"
-let duration = 1;
-let currentTime = 0;
+let duration = 1, currentTime = 0;
 let volume = 1;
 let muted = false;
 let wrapperEl;
@@ -27,11 +26,6 @@ function handlePlay() {
 
 function handlePause() {
   paused = true;
-}
-
-function handleTime() {
-  duration = this.duration;
-  currentTime = this.currentTime;
 }
 
 function togglePlayPause() {
@@ -54,10 +48,8 @@ function toggleFullscreen() {
 
 function handleScrub(selected) {
   if (selected > duration - .5) {
-    videoEl.currentTime = videoEl.duration;
     currentTime = duration;
   } else {
-    videoEl.currentTime = selected;
     currentTime = selected;
   }
 }
@@ -245,12 +237,12 @@ video {
     alt={name}
     bind:muted={muted}
     bind:volume={volume}
+    bind:duration={duration}
+    bind:currentTime={currentTime}
     bind:this={videoEl}
     on:play={handlePlay}
     on:pause={handlePause}
     on:click={togglePlayPause}
-    on:timeupdate={handleTime}
-    on:loadedmetadata={handleTime}
   />
   <div class="controls" style:visibility={started ? null : "hidden"} class:show={paused}>
     <div class="icon playpause" on:click={togglePlayPause}>

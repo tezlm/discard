@@ -84,7 +84,7 @@ $: selected = [...reacts.keys()][0];
           </div>
           <div class="reaction" class:selected={selected === key} on:click={() => selected = key}>
             {#if key.startsWith("mxc://")}
-              <img class="emoji" src={parseMxc(key, 16)}>
+              <img class="emoji" src={parseMxc(key)}>
             {:else}
               <span class="emoji">{key}</span>
             {/if}

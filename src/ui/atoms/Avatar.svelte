@@ -6,11 +6,10 @@ export let user;
 export let size;
 export let link = false;
 let missing = state.missingAvatars;
-let avatar = getAvatar();
 
-function getAvatar() {
+function getAvatar(crop = true) {
   if (!user.avatar) return generateAvatar(user.userId);
-  return missing.has(user.userId) ? generateAvatar(user.userId) : parseMxc(user.avatar, size);
+  return missing.has(user.userId) ? generateAvatar(user.userId) : parseMxc(user.avatar, crop ? size : null);
 }
 
 function handleError(e) {
@@ -26,7 +25,7 @@ function handleError(e) {
   user-select: none;
 }
 </style>
-<svelte:element this={link ? "a" : "div"} href={link ? avatar : null}>
+<svelte:element this={link ? "a" : "div"} href={link ? getAvatar(false) : null}>
   <img
     class="avatar"
     alt={"avatar for " + user.name ?? user.userId}

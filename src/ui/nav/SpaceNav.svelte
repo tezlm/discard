@@ -170,6 +170,26 @@ function getHomeContextMenu() {
   width: 32px;
   margin: 4px 0 0;
 }
+
+.pings {
+  position: absolute;
+  bottom: 0;
+  right: -8px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 20px;
+	min-width: 20px;
+	margin-right: 4px;
+
+	background: var(--color-red);
+	border: solid var(--bg-spaces) 3px;
+	color: var(--fg-notice);
+	font-size: 12px;
+	font-weight: 700;
+	border-radius: 50%;
+}
 </style>
 <div class="nav scroll">
   <div class="space" class:selected={$focusedSpace === null}>
@@ -184,6 +204,7 @@ function getHomeContextMenu() {
   </div>
   <div class="separator"></div>
 	{#each $navSpaces as space}
+  {@const pings = spaces.get(space.roomId).reduce((pings, room) => pings + room.pings, 0)}
   <div
     class="space"
     class:focused={$focusedSpace?.roomId === space.roomId}
@@ -197,6 +218,9 @@ function getHomeContextMenu() {
       />
       <b slot="tip">{space?.name ?? "unknown..."}</b>
     </Tooltip>
+    {#if pings}
+      <div class="pings">{pings}</div>
+    {/if}    
   </div>
 	{/each}
 </div>

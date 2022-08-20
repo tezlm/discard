@@ -46,3 +46,28 @@ export default class Event {
   get date()     { return new Date(this.raw.origin_server_ts) }
   get unsigned() { return this.raw.unsigned }
 }
+
+// TODO: a way to get relations
+// have to parse/handle multiple ways of relations
+/*
+{
+  "m.relates_to": {
+    "rel_type": "m.type",
+    "event_id": "$eventid"
+  }
+}
+
+{
+  "m.relates_to": {
+    "m.type": {
+      "event_id": "$eventid"
+    }
+  }
+}
+
+{
+  "m.relations": [
+    { "rel_type": "m.type", "event_id": "$eventid" }
+  ]
+}
+*/

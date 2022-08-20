@@ -34,9 +34,14 @@ function handleClick(e) {
   }
 }
 
+let focusedRoom = state.focusedRoom;
 scene.subscribe(() => {
   state.log.ui("switch scene to " + $scene);
-  location.hash = "/" + $scene; // TODO: better routing
+  location.hash = `/${$scene}/${$focusedRoom?.roomId ?? ""}`; // TODO: better routing
+});
+
+focusedRoom.subscribe(() => {
+  location.hash = `/${$scene}/${$focusedRoom?.roomId ?? ""}`; // TODO: better routing
 });
 </script>
 <style>

@@ -6,6 +6,7 @@ import Button from "../../atoms/Button.svelte";
 import File from "../../molecules/files/File.svelte";
 import Audio from "../../molecules/files/Audio.svelte";
 import Video from "../../molecules/files/Video.svelte";
+import Text from "../../molecules/files/Text.svelte";
 export let event;
 let wrapper;
 
@@ -202,9 +203,13 @@ img {
     <Audio src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
   </div>
   {:else if type === "m.file"}
-  <!-- TODO: preview text files -->
+  {@const mime = content.info?.mimetype}
   <div style="display: inline-block">
-    <File src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
+    {#if /text\//.test(mime) || mime === "application/json"  || mime === "application/x-javascript"}
+      <Text src={parseMxc(content.url)} size={content.info.size} name={content.filename ?? content.body} />
+    {:else}
+      <File src={parseMxc(content.url)} size={content.info.size} name={content.filename ?? content.body} {mime} />
+    {/if}
   </div>
   {:else if content.format === "org.matrix.custom.html"}
   <div class="text" class:emote={type === "m.emote"}>

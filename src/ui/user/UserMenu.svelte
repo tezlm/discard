@@ -47,7 +47,7 @@ async function getProfile() {
 .wrapper > div {
 	display: flex;
 	background: var(--bg-misc);
-	padding: 8px;
+	padding: 0 8px;
 	border-bottom: solid var(--bg-spaces) 1px;
 }
 
@@ -91,21 +91,27 @@ async function getProfile() {
 	cursor: pointer;
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
+}
+
+.displayname, .userid {
+	overflow-x: hidden;
+	text-overflow: ellipsis;
 }
 
 .displayname {
 	font-weight: 600;
-	line-height: 1;
 	font-family: var(--font-display);
 	font-size: 0.9em;
 	text-overflow: ellipsis;
+	line-height: 16px;
 }
 
 .userid {
 	color: var(--fg-light);
 	font-size: 0.8em;
-	line-height: 1;
 	text-overflow: ellipsis;
+	line-height: 14px;
 }
 </style>
 <div class="wrapper">
@@ -133,6 +139,14 @@ async function getProfile() {
 			</Tooltip>
 		</div>
 		{/await}
+		<!--
+		<Tooltip tip="User Settings" style="height: 30px">
+			<span class="icon" on:click={() => state.scene.set("user-settings")}>mic</span>
+		</Tooltip>
+		<Tooltip tip="User Settings" style="height: 30px">
+			<span class="icon" on:click={() => state.scene.set("user-settings")}>headset</span>
+		</Tooltip>
+		-->
 		<Tooltip tip="User Settings" style="height: 30px">
 			<span class="icon" on:click={() => state.scene.set("user-settings")}>settings</span>
 		</Tooltip>

@@ -7,8 +7,7 @@ export let src;
 export let name = "title";
 export let size = 0;
 let audioEl;
-let duration = 1;
-let currentTime = 0;
+let duration = 1, currentTime = 0;
 // let state = "pristine" | "playing" | "paused" | "finished"
 let paused = true;
 let muted = false;
@@ -22,13 +21,7 @@ function togglePlayPause() {
   }
 }
 
-function handleTime() {
-  duration = this.duration;
-  currentTime = this.currentTime;
-}
-
 function handleScrub(t) {
-  audioEl.currentTime = t;
   currentTime = t;
 }
 </script>
@@ -94,10 +87,10 @@ function handleScrub(t) {
     alt={name}
     bind:muted={muted}
     bind:volume={volume}
+    bind:duration={duration}
+    bind:currentTime={currentTime}
     bind:this={audioEl}
     on:play={() => paused = false}
     on:pause={() => paused = true}
-    on:timeupdate={handleTime}
-    on:loadedmetadata={handleTime}
   />
 </File>
