@@ -1,12 +1,21 @@
 <script>
-// seems to re-render on *every* message
+// seems to re-render on *every* message, due to the way `room` is updated?
+// TODO: automatically load/unload members on scroll
+import Button from "../atoms/Button.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 export let room;
+let count = 20;
 
 async function fetchList(room) {
   if (!room.request) await room.members.fetch();
   const members = room.members.with("join");
   return [{ title: `members - ${members.length}`}, ...members];
+}
+
+let oldId = null;
+$: if (room.roomId !== oldId) {
+  count = 20;
+  oldId = room.roomId;
 }
 </script>
 <style>
@@ -49,10 +58,11 @@ async function fetchList(room) {
 </style>
 <div class="members scroll" tabindex="-1">
   {#await fetchList(room) then items}
-    {#each items as member (member.userId)}
+    {#each items.slice(0, count) as member (member.userId)}
       {#if member.title}
         <div class="title">{member.title}</div>
       {:else}
+        <!-- TODO: open members popout instead of user popup -->
         <div class="wrapper" on:click={() => state.popup.set({ id: "user", userId: member.userId })}>
           <div class="member">
             <Avatar user={member} size={32} />
@@ -61,5 +71,8 @@ async function fetchList(room) {
         </div>
       {/if}
     {/each}
+    {#if count < items.length}
+    <Button label="more" type="link big" clicked={() => count += 20} />
+    {/if}
   {/await}
 </div>

@@ -7,14 +7,10 @@ export let current;
 let filter = "";
 let view = null;
 
-function closePopup() {
-  state.popup.set({ ...current, id: null });
-}
-
 console.log(current.room);
 </script>
-<Popup>
-  <h2 slot="header">{current.room.name} <div class="close icon" on:click={closePopup}>close</div></h2>
+<Popup showClose>
+  <h2 slot="header">{current.room.name}</h2>
   <div slot="content" class="scroll" style="max-height: min(50vh, 800px); max-width: 800px">
     {#if view === "state"}
       <Search width={500} bind:value={filter} />

@@ -115,7 +115,8 @@ export default class TimelineSet {
     // no timeline, make a new one    
     const timeline = new Timeline(start, end);
     for (let i of events_before.reverse().concat([event, ...events_after])) {
-      // FIXME: aaaaaaaaaaaaaaaaa
+      // FIXME: make `handle` modify the timeline we want
+      // this blocks anything that relies on "jump to xyz" (unread, reply)
       // handleEvent(i, timeline);
       handle(this.roomId, i);
     }

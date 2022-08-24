@@ -27,6 +27,14 @@ function ease() {
   }
 }
 
+function easeRev() {
+  return {
+    duration: 300,
+    easing: quartInOut,
+    css: t => `transform: scale(${.9 + (t / 10)})`,
+  }
+}
+
 function handleClick(e) {
   const ping = e.target.getAttribute("data-mx-ping");
   if (ping) {
@@ -57,14 +65,6 @@ main > div {
   height: 100%;
 }
 
-.loading {
-  z-index: 10;
-}
-
-.settings {
-  z-index: 5;
-}
-
 .chat {
   transition: transform 300ms ease-in-out;
 }
@@ -72,6 +72,9 @@ main > div {
 .chat.hide {
   transform: scale(0.9);
 }
+
+.settings { z-index: 1 }
+.loading { z-index: 2 }
 
 .layer {
   position: fixed;
@@ -82,11 +85,15 @@ main > div {
   pointer-events: none;
 }
 
-.layer-1 { z-index: 1 }
-.layer-2 { z-index: 2 }
-.layer-3 { z-index: 3 }
+.layer-1 { z-index: 10 }
+.layer-2 { z-index: 20 }
+.layer-3 { z-index: 30 }
 </style>
 <main>
+  <!--
+  {#if $scene === "chat"}
+  <div class="chat" transition:easeRev><Chat /></div>
+  -->
   {#if $scene !== "loading" && $scene !== "auth"}
   <div class="chat" class:hide={$scene !== "chat"}><Chat /></div>
   {/if}
@@ -102,13 +109,8 @@ main > div {
   <div class="loading" transition:opacity><Loading /></div>
   {/if}
 </main>
-<div class="layer layer-1">
-  <Popups />
-</div>
-<div class="layer layer-2">
-  <Popouts />
-</div>
-<div class="layer layer-3">
-  <ContextMenus />
-</div>
+<div class="layer layer-1"><Popups /></div>
+<div class="layer layer-2"><Popouts /></div>
+<!-- TODO: building the emoji picker is quite heavy, move to its own layer? -->
+<div class="layer layer-3"><ContextMenus /></div>
 <svelte:window on:click={handleClick} />

@@ -2,7 +2,12 @@
 // should only be used in src/Popups.svelte
 import { quadOut } from 'svelte/easing';
 export let raw = false;
+export let showClose = false;
 let current = state.popup;
+
+function closePopup() {
+  state.popup.set({ ...current, id: null });
+}
 
 function card() {
   return {
@@ -73,9 +78,23 @@ function opacity() {
   border-bottom-right-radius: 5px;
   padding: 16px;
 }
+
+.close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 28px;
+  font-weight: normal;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition: color 0.4s;
+}
 </style>
-<div class="background" on:click={() => state.popup.set({ ...$current, id: null })} transition:opacity>
+<div class="background" on:click={closePopup} transition:opacity>
   <div class="card" on:click={e => e.stopPropagation()} class:raw transition:card>
+    {#if showClose}
+      <div class="icon close" on:click={closePopup}>close</div>
+    {/if}
     {#if raw}
       <slot name="content"></slot>
     {:else}

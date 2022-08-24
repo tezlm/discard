@@ -3,6 +3,10 @@ import Button from "../atoms/Button.svelte";
 import Input from "../atoms/Input.svelte";
 import Textarea from "../atoms/Textarea.svelte";
 import Popup from "../atoms/Popup.svelte";
+
+import Toggle from "../atoms/Toggle.svelte";
+import Dropdown from "../atoms/Dropdown.svelte";
+
 export const confirm = create;
 export let current;
 let name = "";
@@ -48,33 +52,35 @@ async function create() {
   }, 10);
 }
 </script>
-<style>
-.close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  font-size: 28px;
-  font-weight: normal;
-  color: var(--fg-muted);
-  cursor: pointer;
-  transition: color 0.4s;
-}
-</style>
-<Popup>
-  <h3 slot="header">Create {capitalize(current.type)} <div class="close icon" on:click={() => state.popup.set({ ...current, id: null })}>close</div></h3>
+<Popup showClose>
+  <!--<h2 slot="header" style="text-align: center">Customize {capitalize(current.type)}</h2>-->
+  <h3 slot="header">Create {capitalize(current.type)}</h3>
   <div slot="content" style="display: flex; flex-direction: column">
+    <!--
+    <div style="margin-bottom: 1em; max-width: 440px; text-align: center">
+      Customize your {capitalize(current.type)} with an name, topic, and avatar. You can always change these later.
+    </div>
+    <img src="https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg" style="height: 80px; width: 80px; border-radius: 50%; margin: 0 auto"/>
+    -->
     <span class="title">{capitalize(current.type)} Name</span>
     <Input placeholder="awesome-{current.type}" bind:value={name} submitted={create} autofocus />
     <span class="title" style="margin-top: 1em">{capitalize(current.type)} Topic </span>
     <Textarea placeholder="optional topic for your {current.type}" bind:value={topic} />
+    <!-- TODO: multiple part dialogs, move this into "privacy and security"
+    <span class="title" style="margin-top: 1em">Room visibility</span>
+    <Dropdown options={[["Private", "invite"], ["Restricted", "restricted"], ["Public", "public"]]} />
+    <span class="title" style="margin-top: 1em">Enable end to end encryption</span>
+    <Toggle />
+    -->
   </div>
   <div slot="footer">
     <Button type="link" label="Cancel" clicked={() => state.popup.set({ ...current, id: null })} />
+      <!-- label={creating ? `Creating ${capitalize(current.type)}...` : `Create ${capitalize(current.type)}`} -->
     <Button
       type="primary"
       disabled={!name.length}
       loading={creating}
-      label={creating ? `Creating ${capitalize(current.type)}...` : `Create ${capitalize(current.type)}`}
+      label="Next"
       clicked={create}
     />
   </div>

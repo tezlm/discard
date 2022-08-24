@@ -6,14 +6,11 @@ export class Room {
     this.roomId = roomId;
     this.state = [];
     this.accountData = new Map();
-    this.members = new MemberCache(this);
-    this.pings = 0;    
-    for (let event of state) this.handleState(event);
+    this.members = new MemberCache(this);    
+    this.notifications = { pings: 0, unread: 0 }; // i would love to use the notification count more, but need both private read receipts to work and to be able to move read marker backwards
+    // this.timelineSet = ...; // TODO: maybe?
     
-    // TODO
-    // i would love to use notifications, but need both private read receipts to work and to be able to move read marker backwards
-    // this.notifications = { pings: 0, unread: 0 };
-    // this.timelineSet = ...;
+    for (let event of state) this.handleState(event);    
   }
   
   handleState(event, skipCheck = false) {

@@ -4,11 +4,15 @@ import Tooltip from "../../atoms/Tooltip.svelte";
 export let room;
 export let muted;
 let focusedRoom = state.focusedRoom;
+let dms = state.dms;
 $: focused= $focusedRoom?.roomId === room.roomId;
 
+// move dm status into the room object?
 function getName(room) {
+	if (!dms.has(room.roomId)) return room.name;
 	// return room.name.toLowerCase().replace(/ /g, "-").replace(/^#/, "");
-	return room.name;
+	const other = dms.get(room.roomId);
+	return other.name ?? other.userId;
 }
 
 function isRead(room) {
@@ -84,7 +88,13 @@ function getIcon(room) {
 	if (type === "org.eu.celery.room.media") return "image";
 	if (type === "org.eu.celery.room.forum") return "message";
 	if (type === "io.element.video") return "volume_up";
-	if (!type) return "tag";
+	if (dms.has(room.roomId)) return "person";
+	if (!type) {
+		// if ((room.power.users_default ?? 0)< room.power.getEvent("m.room.message")) {
+		// 	return "campaign";
+		// }
+		return "tag";
+	}
 	return "help";
 }
 </script>
@@ -155,7 +165,7 @@ function getIcon(room) {
 	<div class="icon room-icon">{getIcon(room)}</div>
 	<div class="name">{getName(room)}</div>
 	<div class="spacer"></div>
-	{#if room.pings}<div class="pings">{room.pings}</div>{/if}
+	{#if room.notifications.pings}<div class="pings">{room.notifications.pings}</div>{/if}
 	{#if room.power.me >= room.power.getBase("invite") || room.joinRule === "public"}
 	<div class="settings hover" class:focused on:click|stopPropagation={(e) => state.popup.set({ id: "invite", type: "room", room })}>
 		<Tooltip tip="Send Invite">

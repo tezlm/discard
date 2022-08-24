@@ -1,12 +1,7 @@
 <script>
-import Button from "../atoms/Button.svelte";
 import Popup from "../atoms/Popup.svelte";
 import { highlight } from "prismjs";
 export let current;
-
-function closePopup() {
-  state.popup.set({ ...current, id: null });
-}
 
 function copyId() {
   navigator.clipboard.writeText(current.event.eventId);
@@ -25,8 +20,8 @@ pre {
   max-height: 50vh;
 }
 </style>
-<Popup>
-  <h3 slot="header">View source <div class="close icon" on:click={closePopup}>close</div></h3>
+<Popup showClose>
+  <h3 slot="header">View source</h3>
   <div slot="content">
     <a class="copy" on:click|preventDefault={copyId}>copy event id</a>
     {#if current.event.flags.size}

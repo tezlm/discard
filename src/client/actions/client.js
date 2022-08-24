@@ -78,9 +78,17 @@ function start(api, syncer, userId) {
   
   syncer.on("join", (roomId, state, batch) => actions.rooms.handleJoin(roomId, state, batch));
   // syncer.on("invite", (roomId, state) => console.log(roomId, state));
+  syncer.on("leave", (roomId) => actions.rooms.handleLeave(roomId));
+  
   syncer.on("state", (roomId, state) => actions.rooms.handleState(roomId, state));  
   syncer.on("timeline", (roomId, event) => actions.timeline.handle(roomId, event, false));
-  syncer.on("accountData", (type, content) => {
+  // syncer.on("timeline", (roomId, event) => actions.timeline.handle(roomId, event, false));
+  
+  syncer.on("roomAccountData", (roomId, { type, content }) => {
+    actions.rooms.handleAccount(roomId, type, content);
+  });
+  
+  syncer.on("accountData", ({ type, content }) => {
     if (type === "org.eu.celery.settings") state.settings.set(new Settings(content));
     if (type === "m.push_rules") state.pushRules.set(new PushRules(content.global));
     state.accountDataRef.set(type, content);
