@@ -12,7 +12,9 @@ export default class Event {
   }
 
   // use this to parse edits/reactions?
+  // TODO: only used to parse edits currently
   parseRelation(event) {
+    if (event.sender.userId !== this.sender.userId) return;
     this.relations.unshift(event);
     this.flags.add("edited");
     this._contentDirty = true;

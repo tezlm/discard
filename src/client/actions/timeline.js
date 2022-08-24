@@ -14,14 +14,17 @@ const relations = new Map();
 
 // TODO: multiple relations
 // TODO: what does this code even do i forgot
+// TODO: move code into event
+// FIXME: sometimes replies are dropped
+const skip = ["m.in_reply_to", "net.maunium.reply"];
 function getRelation(content) {
   const relation = content["m.relates_to"];
   if (!relation) return null;
-  if (relation.rel_type && relation.rel_type !== "m.in_reply_to") {
+  if (relation.rel_type && !skip.includes(relation.rel_type)) {
     return relation;
   } else {
     const type = Object.keys(relation)?.[0];
-    if (!type || type === "m.in_reply_to") return null;
+    if (!type || skip.includes(type)) return null;
     return { rel_type: type, ...relation[type] };
   }
 }
@@ -77,7 +80,7 @@ export function send(roomId, type, content) {
 }
 
 export function handle(roomId, raw, toStart = false) {
-  if (raw.type === "m.room.redaction" && !toStart) return redact(roomId, raw);
+  if (raw.type === "m.room.redaction") return toStart ? null : redact(roomId, raw);
   if (!supportedEvents.includes(raw.type)) return;
   
   const id = raw.event_id;
@@ -111,6 +114,7 @@ export function handle(roomId, raw, toStart = false) {
   const relation = getRelation(raw.content);
   if (relation) {
     const original = state.events.get(relation.event_id);
+    console.log("handle relation of rel_type", relation.rel_type)
     if (original) {
       if (relation.rel_type === "m.replace") {
         original.parseRelation(event);

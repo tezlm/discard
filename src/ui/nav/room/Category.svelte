@@ -36,7 +36,7 @@ function getContextMenu(room) {
 	function markRead() {
 	  const lastEvent = state.roomTimelines.get(room.roomId).live.at(-1);
 	  state.log.debug(`mark ${lastEvent} as read`);
-	  state.rooms.get(room.roomId).readEvent = lastEvent;
+	  state.rooms.get(room.roomId).accountData.set("m.fully_read", lastEvent);
 	  if (state.focusedRoomId === room.roomId) state.slice.set(state.roomSlices.get(room.roomId));
 	  state.api.sendReceipt(room.roomId, lastEvent);
 	}
@@ -93,11 +93,13 @@ function getContextMenu(room) {
 <div class="category" on:click={() => expanded = !expanded} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getContextMenu(room), x: e.clientX, y: e.clientY })}>
   <div class="icon chevron" class:expanded>chevron_right</div>
   <div class="title">{room.name}</div>
+  {#if room.power.me >= room.power.getState("m.space.child")}
   <div style="flex: 1"></div>
   <Tooltip tip="Create Room">
     <div class="icon add" on:click|stopPropagation={() => state.popup.set({ id: "create", type: "room", parent: room })}>add</div>
   </Tooltip>
   <div style="width: 14px"></div>
+  {/if}
 </div>
 {#if expanded}
 {#each rooms as room}

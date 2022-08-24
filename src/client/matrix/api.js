@@ -111,6 +111,10 @@ export default class Api {
   }
   
   // e2ee
+  toDevice(type, content, txnId) {
+    return this.fetch("POST", `/sendToDevice/${encode(type)}/${encode(txnId)}`, content);
+  }
+  
   uploadKeys(keys) {
     return this.fetch("POST", "/keys/upload", keys);
   }

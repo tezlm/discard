@@ -41,7 +41,10 @@ async function getProfile(userId) {
 <Popup raw>
   <div slot="content" class="content">
     {#await getProfile(current.userId)}
-    loading...
+      <div class="header">
+        <h2>loading..</h2>
+      </div>
+      <div class="info"></div>
     {:then user}
     <div class="header">
       <Avatar link size={72} {user} />

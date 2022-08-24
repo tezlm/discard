@@ -1,9 +1,5 @@
 // this module handles the recieved data from sync
-import { get } from "svelte/store";
-
-export function handleRoomAccount(roomId, type, content) {
-  actions.rooms.handleAccount(roomId, type, content);
-}
+// TODO: move into client with syncer listeners
 
 export function handleEphermeral(roomId, type, content) {
   if (type !== "m.typing") return;
@@ -16,19 +12,14 @@ export function handleEphermeral(roomId, type, content) {
   }
 }
 
-export function handleInvite(roomId) {
-  // TODO
-}
-
-export function handleLeave(roomId) {
-  actions.rooms.handleLeave(roomId);
-}
-
-export function handleNotis(roomId, pings) {
+export function handleNotis(roomId, content) {
   const room = state.rooms.get(roomId);
   if (room) {
-    room.pings = pings;
-    const space = get(state.focusedSpace)?.roomId ?? "orphanRooms";
+    room.notifications = {
+      pings: content.highlight_count,
+      unread: content.notification_count,
+    };
+    const space = state.focusedSpaceId ?? "orphanRooms";
     state.navRooms.set(state.spaces.get(space));
   }
 }

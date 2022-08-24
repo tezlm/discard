@@ -17,7 +17,7 @@ import DevEvent from "./popups/DevEvent.svelte";
 import Upload from "./popups/Upload.svelte";
 import Attachment from "./popups/Attachment.svelte";
 
-import Nickname from "./popups/Nickname.svelte";
+// import Nickname from "./popups/Nickname.svelte";
 // import Member from "./popups/Member.svelte";
 import User from "./popups/User.svelte";
 import Invite from "./popups/Invite.svelte";

@@ -3,10 +3,6 @@ import UserId from "../atoms/UserId.svelte";
 import Input from "../atoms/Input.svelte";
 import Popup from "../atoms/Popup.svelte";
 export let current;
-
-function closePopup() {
-  state.popup.set({ ...current, id: null });
-}
 </script>
 <style>
 .split {
@@ -16,7 +12,7 @@ function closePopup() {
 }
 </style>
 <Popup>
-  <h3 slot="header">Invite friends to {current.room.name} <div class="close icon" on:click={closePopup}>close</div></h3>
+  <h3 slot="header">Invite friends to {current.room.name}</h3>
   <div slot="content">
     <b>ideas</b>
     <p>search box</p>

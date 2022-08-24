@@ -18,7 +18,7 @@ import UserMenu from '../user/UserMenu.svelte';
     <div class="nav">
       <SpaceHeader />
       <RoomNav />
-  <UserMenu />
+      <UserMenu />
     </div>
   </div>
 </div>

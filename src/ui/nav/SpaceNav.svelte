@@ -179,9 +179,10 @@ function getHomeContextMenu() {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 20px;
-	min-width: 20px;
+	height: 22px;
+	min-width: 22px;
 	margin-right: 4px;
+  padding: 4px;
 
 	background: var(--color-red);
 	border: solid var(--bg-spaces) 3px;
@@ -204,7 +205,7 @@ function getHomeContextMenu() {
   </div>
   <div class="separator"></div>
 	{#each $navSpaces as space}
-  {@const pings = spaces.get(space.roomId).reduce((pings, room) => pings + room.pings, 0)}
+  {@const pings = spaces.get(space.roomId).reduce((pings, room) => pings + room.notifications.pings, 0)}
   <div
     class="space"
     class:focused={$focusedSpace?.roomId === space.roomId}

@@ -64,7 +64,7 @@ export default class Store {
       state: room.state,
       roomId: room.roomId,
       accountData: [...room.accountData.entries()],
-      pings: room.pings,
+      notifications: room.notifications,
     });
     // for (let [id, event] of state.events) this.events.put(id, {
     //   roomId: event.roomId,
