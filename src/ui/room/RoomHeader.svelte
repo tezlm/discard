@@ -2,9 +2,18 @@
 import Search from "../atoms/Search.svelte";
 import { parseHtml } from "../../util/html.js";
 export let room;
-const space = state.focusedSpace;
-const settings = state.settings;
+let space = state.focusedSpace;
+let settings = state.settings;
 $: dark = $space && !room;
+
+// move dm status into the room object?
+let dms = state.dms;
+function getName(room) {
+	if (!dms.has(room.roomId)) return room.name;
+	// return room.name.toLowerCase().replace(/ /g, "-").replace(/^#/, "");
+	const other = dms.get(room.roomId);
+	return other.name ?? other.userId;
+}
 
 let roomfocus = false;
 let search;
@@ -46,7 +55,7 @@ let search;
   flex: 1;
 }
 
-.icon {
+.icon, .roomicon {
   font-size: 24px;
   margin: 0 8px;
   color: var(--fg-interactive);
@@ -92,9 +101,13 @@ let search;
 </style>
 <div class="header" class:dark={dark}>
   {#if room}
-  <span class="roomicon icon">tag</span>
+    {#if dms.has(room.roomId)}
+    <span class="roomicon" style="font-family: var(--font-display)">@</span>
+    {:else}
+    <span class="roomicon icon">tag</span>
+    {/if}
   {/if}
-  <span class="name">{room ? room.name : "Home"}</span>
+  <span class="name">{room ? getName(room) : "Home"}</span>
   {#if room?.topic}
   <div class="spacer"></div>
   <div class="topic" on:click={() => state.popup.set({ id: "info", head: room.name, body: parseHtml(room.topic, { linkify: true }), html: true })}>

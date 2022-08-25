@@ -6,6 +6,7 @@ import RoomMembers from './RoomMembers.svelte';
 import BasicRoom from './rooms/Basic.svelte';
 import SpaceRoom from './rooms/Space.svelte';
 import HomeRoom from './rooms/Home.svelte';
+import Unverified from "./rooms/Unverified.svelte";
 import UnknownRoom from './rooms/Unknown.svelte';
 
 // hmmm...
@@ -43,13 +44,15 @@ $: if($navRooms) room = state.focusedRoom;
   <RoomHeader room={$room} />
   {#if $room && $slice}
 		<div class="content" style:flex-direction="row">
-			{#if !type}
+			{#if $room.getState("m.room.encryption")}
+				<Unverified room={$room} />
+			{:else if !type}
 				<div class="content">
 				  <BasicRoom room={$room} slice={$slice} />
 				  <RoomFooter />
 				</div>
 			{:else if type === "m.space"}
-		  <SpaceRoom room={$space} />
+			  <SpaceRoom room={$space} />
 			<!-- {:else if type === "m.policy"} -->
 			{:else if type === "org.eu.celery.room.media"}
 				<MediaRoom room={$room} slice={$slice} />

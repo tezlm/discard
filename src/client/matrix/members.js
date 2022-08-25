@@ -22,7 +22,7 @@ export default class MemberCache extends Map {
     });
     
     // a bit faster than throwing away the whole cache for $membership
-    const oldMembership = event.unsigned.prev_content?.membership;
+    const oldMembership = event.unsigned?.prev_content?.membership;
     if (oldMembership) {
       const sorted = this._sortCache.get(oldMembership);
       if (sorted) {
