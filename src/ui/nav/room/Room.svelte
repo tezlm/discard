@@ -2,7 +2,7 @@
 import Item from "./Item.svelte";
 import Tooltip from "../../atoms/Tooltip.svelte";
 export let room;
-export let muted;
+export let muted = false;
 let focusedRoom = state.focusedRoom;
 let dms = state.dms;
 $: focused= $focusedRoom?.roomId === room.roomId;

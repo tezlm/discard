@@ -75,7 +75,7 @@ function getToolbar(event, shiftKey) {
 	{/if}
 	{#if !["m.room.create", "m.room.message", "m.sticker"].includes(event.type)}
 	  <div class="toolbar">
-		  <Toolbar items={getToolbar(event, shiftKey)} {event} />
+		  <Toolbar items={getToolbar(event, shiftKey)} />
 		</div>
 	{/if}
 	<!-- TODO: move reactions and reply here

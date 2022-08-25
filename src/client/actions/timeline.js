@@ -3,13 +3,6 @@ import "../../util/push.js";
 import Event from "../../util/events.js";
 import TimelineSet from "../matrix/timeline.js";
 
-const supportedEvents = [
-  "m.room.create", "m.room.name", "m.room.topic", "m.room.pinned_events", "m.room.canonical_alias",
-  // "m.room.encryption", "m.room.encrypted",
-  "m.sticker", "m.room.message",
-  "m.reaction", "m.room.member",
-];
-
 const relations = new Map();
 
 // TODO: multiple relations
@@ -81,7 +74,6 @@ export function send(roomId, type, content) {
 
 export function handle(roomId, raw, toStart = false) {
   if (raw.type === "m.room.redaction") return toStart ? null : redact(roomId, raw);
-  if (!supportedEvents.includes(raw.type)) return;
   
   const id = raw.event_id;
   if (state.events.has(raw.event_id)) return;
@@ -114,7 +106,6 @@ export function handle(roomId, raw, toStart = false) {
   const relation = getRelation(raw.content);
   if (relation) {
     const original = state.events.get(relation.event_id);
-    console.log("handle relation of rel_type", relation.rel_type)
     if (original) {
       if (relation.rel_type === "m.replace") {
         original.parseRelation(event);
@@ -125,7 +116,6 @@ export function handle(roomId, raw, toStart = false) {
         original.reactions.get(relation.key).push(event);
       }
     } else {
-      console.log("queuing relation")
       return queueRelation(relation.event_id, event, toStart);      
     }
     state.events.set(id, event);
