@@ -17,7 +17,7 @@ let focusedRoom = state.focusedRoom;
 	margin-left: 1.5em;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	padding: 6px 0;
+	padding: 6px 0;	
 }
 </style>
 <Item focused={!$focusedRoom?.roomId} clicked={() => actions.rooms.focus(null)}>

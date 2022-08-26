@@ -103,7 +103,7 @@ time {
   <div class="icon" style:color={action.color}>{action.icon}</div>
   <div>
     {#if action.type !== "join"}
-    <span class="author" style:color={getColor(victim, $settings)}>
+    <span class="author" style:color={getColor(victim, $settings)} data-mx-ping={victim.userId}>
       {victim.name || victim.userId}
     </span>
     {/if}
@@ -115,7 +115,7 @@ time {
       changed their name to <b style:color="var(--fg-content)">{action.name}</b>
     {:else if action.type === "join"}
       {@const [before, after] = getJoinMessage(event)}
-      {before}<span class="author" style:color={getColor(victim, $settings)}>{victim.name || victim.userId}</span>{after}
+      {before}<span class="author" style:color={getColor(victim, $settings)} data-mx-ping={victim.userId}>{victim.name || victim.userId}</span>{after}
     {:else if action.type === "invite"}
       was invited by
     {:else if action.type === "disinvite"}
@@ -134,7 +134,7 @@ time {
       {action}
     {/if}
     {#if event.sender.userId !== event.stateKey}
-    <span class="author" style:color={getColor(event.sender, $settings)}>
+    <span class="author" style:color={getColor(event.sender, $settings)} data-mx-ping={victim.userId}>
       {event.sender.name || event.sender.userId}
     </span>
     {/if}

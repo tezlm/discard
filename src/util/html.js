@@ -25,6 +25,7 @@ const permittedTagToAttributes = {
   img: ["width", "height", "alt", "title", "src", "data-mx-emoticon"],
   o: ["start"],
   code: ["class"],
+	ol: ["start"],
 };
 
 function transformFontSpanTags(tagName, attribs) {
