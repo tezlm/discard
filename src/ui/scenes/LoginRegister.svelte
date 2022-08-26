@@ -8,9 +8,7 @@ let localpart, homeserver, password;
 let form;
 let error;
 
-async function handleSubmit(e) {
-  e.preventDefault && e.preventDefault();
-
+async function handleSubmit() {
   for (let input of form.querySelectorAll("input")) {
     if (!input.value) return input.focus();
   }
@@ -80,7 +78,7 @@ h5, .spacer {
         <h1>Welcome back!</h1>
         <span>We're so excited to see you again!</span>
       </div>
-      <form on:submit={handleSubmit} bind:this={form}>
+      <form on:submit|preventDefault={handleSubmit} bind:this={form}>
         <h5 class="title">User Id</h5>
         <UserId bind:localpart={localpart} bind:homeserver={homeserver} />
         <h5 class="title">Password</h5>

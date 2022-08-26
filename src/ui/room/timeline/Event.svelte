@@ -71,7 +71,7 @@ function getToolbar(event, shiftKey) {
 	{:else if ["m.message", "m.notice", "m.emote", "m.file"].includes(event.type)}
 	-->
 	{:else}
-		unknown event type {event.type}
+		unknown event type {event.type} from {event.sender.name || event.sender.userId}
 	{/if}
 	{#if !["m.room.create", "m.room.message", "m.sticker"].includes(event.type)}
 	  <div class="toolbar">
