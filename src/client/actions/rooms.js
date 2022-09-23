@@ -24,9 +24,9 @@ export function handleAccount(roomId, type, content) {
   if (!state.rooms.has(roomId)) return state.log.warn(`couldn't find room ${roomId} (set accountData)`);
   state.rooms.get(roomId).accountData.set(type, content);
   
-  if (type === "m.fully_read") {
+  if (type === "m.fully_read" && state.syncer.status !== "starting") {
     update();
-    actions.spaces.update();
+    // actions.spaces.update();
   }
 }
 
@@ -34,14 +34,16 @@ export function handleJoin(roomId, events, batch) {
   roomStates.set(roomId, events);
   state.roomTimelines.set(roomId, new TimelineSet(roomId, batch));  
   update();
-  actions.spaces.update();
+  // actions.spaces.update();
 }
 
 export function handleState(roomId, event) {
   const room = state.rooms.get(roomId);
-  room.handleState(event);  
-  update();
-  if (event.type === "m.space.child") actions.spaces.update();
+  room.handleState(event);
+  if (state.syncer.status !== "starting") {
+    update();
+    // if (event.type === "m.space.child") actions.spaces.update();    
+  }
 }
 
 export function handleInvite(roomId, event) {
@@ -61,7 +63,7 @@ export function handleLeave(roomId) {
   }
   roomStates.delete(roomId);
   state.rooms.delete(roomId);
-  actions.spaces.update();
+  // actions.spaces.update();
   update();
   state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
 }
@@ -71,7 +73,7 @@ export function update() {
   for (let [id, data] of roomStates.entries()) {
     if (state.rooms.has(id)) {
       const room = state.rooms.get(id);
-      room.state = data;
+      for (let ev of data) room.handleState(ev, true);
     } else {
       const room = new Room(id, data);
       state.rooms.set(id, room);

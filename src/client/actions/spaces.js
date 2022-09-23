@@ -14,8 +14,9 @@ export function update() {
     if (room.type !== "space") continue;
     const children = room.state
       .filter(i => i.type === "m.space.child" && i.content.via)
-      .filter(i => state.rooms.has(i.state_key))
-      .map(i => ({ event: i, room: state.rooms.get(i.state_key) }))
+      .filter(i => state.rooms.has(i.stateKey))
+      .map(i => ({ event: i, room: state.rooms.get(i.stateKey) }))
+      .map(i => ({ ...i, name: i.room.name, type: i.room.type }))
       .sort(orderSpaces)
       .map(i => i.room);
     children.forEach(i => inSpaces.add(i.roomId));
@@ -28,14 +29,14 @@ export function update() {
 	
   state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
   state.navSpaces.set(state.spaces.get("orphanSpaces"));
-    
+  
   function orderSpaces(a, b) {
     const cmp = (a, b) => a > b ? 1 : a < b ? -1 : 0;
-    if (a.room.type === "space" && b.room.type !== "space") return 1;
-    if (a.room.type !== "space" && b.room.type === "space") return -1;
+    if (a.type === "space" && b.type !== "space") return 1;
+    if (a.type !== "space" && b.type=== "space") return -1;
     return cmp(a.event.order, b.event.order)
-      || cmp(a.room.name, b.room.name)
-      || cmp(a.event.origin_server_ts, b.event.origin_server_ts)
+      || cmp(a.name, b.name)
+      || cmp(a.event.date, b.event.date)
       || cmp(a.room.roomId, b.room.roomId);
   }
 }

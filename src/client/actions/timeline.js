@@ -125,8 +125,10 @@ export function handle(roomId, raw, toStart = false) {
   } else {
     state.events.set(id, event);
     addToTimeline(roomId, id, toStart);
-    actions.rooms.update();
-    actions.spaces.update();
+    // if (state.api.status === "syncing") {
+    //   actions.rooms.update();
+    //   actions.spaces.update();
+    // }
     if (relations.has(id)) {
       for (let relation of relations.get(id)) {
         if (relation.rel_type === "m.replace") {
