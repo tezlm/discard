@@ -7,9 +7,9 @@ export default class MemberCache extends Map {
   }
   
   handle(event) {
-    const id = event.state_key;
+    const id = event.stateKey;
     const cont = event.content;
-    const power = this.room.power;
+    const power = this.room._powerCache ?? this.room.power;
     this.set(id, {
       userId: id,
       roomId: this.roomId,
@@ -18,7 +18,7 @@ export default class MemberCache extends Map {
       power: power.getUser(id),
       membership: cont.membership,
       reason: cont.reason ?? null,
-      date: new Date(event.origin_server_ts),
+      date: event.date,
     });
     
     // a bit faster than throwing away the whole cache for $membership
