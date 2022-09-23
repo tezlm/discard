@@ -16,7 +16,7 @@ function getAvatar(user, crop = true) {
 }
 
 function handleError(e) {
-  missing.add(user.userId ?? user.roomId);
+  missing.add(user.userId ?? user.roomId ?? user.id);
   e.target.src = getAvatar();
 }
 </script>

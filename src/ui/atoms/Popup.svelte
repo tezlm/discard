@@ -9,6 +9,7 @@ function closePopup() {
   state.popup.set({ ...current, id: null });
 }
 
+// FIXME: popup animation broke somehow?
 function card() {
   return {
     duration: 200,
