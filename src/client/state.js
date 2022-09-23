@@ -12,6 +12,7 @@ await store.init();
 const log = {
   ui: (info) => console.info("%c[discard]%c " + info, "font-weight: bold; color: magenta", ""),
   matrix: (info) => console.info("%c[discount]%c " + info, "font-weight: bold; color: yellow", ""),
+  warn: (info) => console.info("%c[warn]%c " + info, "font-weight: bold; color: yellow", ""),
   debug: (info) => console.info("%c[debug]%c " + info, "font-weight: bold; color: turquoise", ""),
   error: (info) => console.error("%c[error]%c " + info, "font-weight: bold; color: red", ""),
 };

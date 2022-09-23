@@ -95,10 +95,17 @@ function start(api, syncer, userId) {
     state.accountData.set(state.accountDataRef);
     state.store.account.put(type, content);
   });
+  
+  syncer.on("ready", () => {
+    state.log.matrix("ready");
+    actions.rooms.update();
+    actions.spaces.update();
+    state.scene.set("chat");
+  });
 }
 
 export async function logout() {
-  state.syncer.stop();
+  // state.syncer.stop();
   state.api.logout();
   localStorage.removeItem("token");
   state.scene.set("auth");
