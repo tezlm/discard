@@ -7,10 +7,12 @@ import Logout from "./popups/Logout.svelte";
 import Switcher from "./popups/Switcher.svelte";
 
 import Create from "./popups/Create.svelte";
+import Join from "./popups/Join.svelte";
 import Info from "./popups/Info.svelte";
 import Leave from "./popups/Leave.svelte";
 import AddExisting from "./popups/AddExisting.svelte";
 import DevRoom from "./popups/DevRoom.svelte";
+
 import Reactions from "./popups/Reactions.svelte";
 import DevEvent from "./popups/DevEvent.svelte";
 
@@ -33,6 +35,7 @@ popups.set("switcher", Switcher);
 
 // rooms
 popups.set("create", Create);
+popups.set("join", Join);
 popups.set("info", Info);
 popups.set("leave", Leave);
 popups.set("addexisting", AddExisting);

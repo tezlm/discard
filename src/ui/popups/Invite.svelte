@@ -1,5 +1,5 @@
 <script>
-import UserId from "../atoms/UserId.svelte";
+import IdInput from "../atoms/IdInput.svelte";
 import Input from "../atoms/Input.svelte";
 import Popup from "../atoms/Popup.svelte";
 export let current;
@@ -20,7 +20,7 @@ export let current;
     <br />
     <br />
     <p>userid entry (discord doesnt have this though)</p>
-    <UserId />
+    <IdInput kind="user" />
     <br />
     {#if current.room.getState("m.room.canonical_alias")?.content.alias && current.room.joinRule === "public"}
       <div class="title">Or, send a link</div>

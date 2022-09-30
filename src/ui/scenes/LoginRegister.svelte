@@ -1,7 +1,7 @@
 <script>
 import Input from "../atoms/Input.svelte";
 import Button from "../atoms/Button.svelte";
-import UserId from "../atoms/UserId.svelte";
+import IdInput from "../atoms/IdInput.svelte";
 import shrekImg from "../../assets/shrek.jpg";
 let type = "login";
 let localpart, homeserver, password;
@@ -80,7 +80,7 @@ h5, .spacer {
       </div>
       <form on:submit|preventDefault={handleSubmit} bind:this={form}>
         <h5 class="title">User Id</h5>
-        <UserId bind:localpart={localpart} bind:homeserver={homeserver} />
+        <IdInput kind="user" bind:localpart={localpart} bind:homeserver={homeserver} />
         <h5 class="title">Password</h5>
         <Input type="password" placeholder="verysecurepassword" bind:value={password} submitted={handleSubmit} />
         <div class="spacer"></div>

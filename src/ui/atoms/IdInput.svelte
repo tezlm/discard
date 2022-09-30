@@ -1,17 +1,24 @@
-<script>
+<script lang="ts">
 export let localpart = "";
 export let homeserver = "";
-let localpartEl, homeserverEl;
+export let kind: "user" | "alias" | "room" = "user";
+let localpartEl: HTMLInputElement, homeserverEl: HTMLInputElement;
+
+const symbols = {
+  "user": "@",
+  "room": "!",
+  "alias": "#",
+};
 
 function update() {
-  if (homeserver?.startsWith("@")) {
+  if (homeserver?.startsWith(symbols[kind])) {
     const [newLocal, newServer] = homeserver.slice(1).split(":");
     if (newLocal) localpart = newLocal;
     homeserver = newServer;
-    localpartEl.focus(); 
+    localpartEl.focus();
   }
 
-  localpart  = localpart?.replace(/^@*/, "");
+  localpart  = localpart?.replace(new RegExp(`^${symbols[kind]}*`), "");
   if (localpart?.includes(":"))  {
     const [newLocal, newServer] = localpart.split(":");
     localpart = newLocal;
@@ -64,7 +71,7 @@ input:nth-child(4) {
 }
 </style>
 <div class="userid">
-  <span>@</span>
+  <span>{symbols[kind]}</span>
   <input id="localpart"  bind:value={localpart}  bind:this={localpartEl}  on:input={update} placeholder="cool-id" />
   <span>:</span>
   <input id="homeserver" bind:value={homeserver} bind:this={homeserverEl} on:input={update} placeholder="example.org" />

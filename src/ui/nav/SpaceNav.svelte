@@ -85,7 +85,7 @@ function getHomeContextMenu() {
 	  // { label: "Mark As Read",  clicked: markRead, icon: "done" },
 	  { label: "Create Room",  clicked: () => state.popup.set({ id: "create", type: "room" }),  icon: "tag" },
 	  { label: "Create Space", clicked: () => state.popup.set({ id: "create", type: "space" }), icon: "folder" },
-	  { label: "Join", clicked: todo, icon: "add" },
+	  { label: "Join",         clicked: () => state.popup.set({ id: "join" }), icon: "add" },
 	  null,
 	  { label: "Settings", clicked: () => state.scene.set("user-settings"), icon: "settings" /* submenu: [
 	    { label: "Foo", clicked: todo },
