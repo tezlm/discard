@@ -39,7 +39,7 @@ export function handleJoin(roomId, events, batch) {
 
 export function handleState(roomId, event) {
   const room = state.rooms.get(roomId);
-  room.handleState(event);
+  room?.handleState(event);
   if (state.syncer.status !== "starting") {
     update();
     // if (event.type === "m.space.child") actions.spaces.update();    

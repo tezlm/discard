@@ -21,8 +21,7 @@ export class Room {
     this._powerCache = null;
   }
   
-  handleState(raw, skipCheck = false) {
-    const event = new Event(this, raw);
+  handleState(event, skipCheck = false) {
     if (!skipCheck || true) {
       const oldIdx = this.state.findIndex(i => i.type === event.type && i.stateKey === event.stateKey);
       if (oldIdx !== -1) this.state.splice(oldIdx, 1);

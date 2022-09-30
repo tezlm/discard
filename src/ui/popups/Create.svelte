@@ -75,12 +75,11 @@ async function create() {
   </div>
   <div slot="footer">
     <Button type="link" label="Cancel" clicked={() => state.popup.set({ ...current, id: null })} />
-      <!-- label={creating ? `Creating ${capitalize(current.type)}...` : `Create ${capitalize(current.type)}`} -->
     <Button
       type="primary"
       disabled={!name.length}
       loading={creating}
-      label="Next"
+      label={creating ? `Creating ${capitalize(current.type)}...` : `Create ${capitalize(current.type)}`}
       clicked={create}
     />
   </div>
