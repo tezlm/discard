@@ -14,7 +14,6 @@ async function fetchList(room) {
 
 let oldId = null;
 $: if (room.roomId !== oldId) {
-  console.log(room);
   count = 20;
   oldId = room.roomId;
 }

@@ -1,5 +1,4 @@
 import MemberCache from "../client/matrix/members.js";
-import Event from "./events.js";
 
 // this is just a 1:1 mapping of createRoom for now
 export class Room {

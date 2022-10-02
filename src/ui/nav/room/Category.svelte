@@ -89,7 +89,7 @@ function getContextMenu(room) {
   color: var(--fg-content);
 }
 </style>
-<div style="height: 14px"></div>
+<div style="min-height: 14px"></div>
 <div class="category" on:click={() => expanded = !expanded} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getContextMenu(room), x: e.clientX, y: e.clientY })}>
   <div class="icon chevron" class:expanded>chevron_right</div>
   <div class="title">{room.name}</div>

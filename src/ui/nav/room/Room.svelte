@@ -90,9 +90,13 @@ function getIcon(room) {
 	if (type === "io.element.video") return "volume_up";
 	if (dms.has(room.roomId)) return "person";
 	if (!type) {
-		// if ((room.power.users_default ?? 0)< room.power.getEvent("m.room.message")) {
-		// 	return "campaign";
-		// }
+		if ((room.power.users_default ?? 0) < room.power.getEvent("m.room.message")) {
+			// return "campaign";
+			// return "satellite_alt";
+			// return "newspaper";
+			// return "feed";
+		}
+		// return "numbers";
 		return "tag";
 	}
 	return "help";
