@@ -2,7 +2,7 @@
 import File from "./File.svelte";
 import Slider from "./Slider.svelte";
 import Volume from "./Volume.svelte";
-import { formatDuration } from "../../../util/format.js";
+import { formatDuration } from "../../../util/format.ts";
 export let src;
 export let name = "title";
 export let size = 0;

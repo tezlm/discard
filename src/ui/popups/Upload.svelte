@@ -3,7 +3,7 @@ import Popup from "../atoms/Popup.svelte";
 import Button from "../atoms/Button.svelte";
 import Video from "../molecules/files/Video.svelte";
 import Audio from "../molecules/files/Audio.svelte";
-import { formatSize } from "../../util/format.js";
+import { formatSize } from "../../util/format.ts";
 export let current;
 export const confirm = current.confirm;
 let type = current.file.type.split("/")[0];

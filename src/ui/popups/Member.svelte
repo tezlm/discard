@@ -2,7 +2,7 @@
 // UNUSED: will be removed later
 import Popup from "../atoms/Popup.svelte";
 import Button from "../atoms/Button.svelte";
-import { formatDate } from "../../util/format.js";
+import { formatDate } from "../../util/format.ts";
 export let current;
 $: member = current.member;
 $: membership = current.membership;

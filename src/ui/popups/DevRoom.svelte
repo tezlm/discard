@@ -8,19 +8,20 @@ let filter = "";
 let view = null;
 
 console.log(current.room);
+console.log(current.room.getAllState("m.room.member").map(i => i.raw));
 </script>
 <Popup showClose>
   <h2 slot="header">{current.room.name}</h2>
   <div slot="content" class="scroll" style="max-height: min(50vh, 800px); max-width: 800px">
     {#if view === "state"}
       <Search width={500} bind:value={filter} />
-      {#each current.room.state.filter(i => i.type !== "m.room.member").filter(i => JSON.stringify(i).includes(filter)) as event}
-        <pre><code>{@html highlight(JSON.stringify(event, null, 4), Prism.languages.js, "json")}</code></pre>
+      {#each current.room.state.filter(i => i.type !== "m.room.member").filter(i => JSON.stringify(i.raw).includes(filter)) as event}
+        <pre><code>{@html highlight(JSON.stringify(event.raw, null, 4), Prism.languages.js, "json")}</code></pre>
       {/each}
     {:else if view === "members"}
       <Search width={500} bind:value={filter} />
-      {#each current.room.state.filter(i => i.type === "m.room.member").filter(i => JSON.stringify(i).includes(filter)) as event}
-        <pre><code>{@html highlight(JSON.stringify(event, null, 4), Prism.languages.js, "json")}</code></pre>
+      {#each current.room.getAllState("m.room.member").filter(i => JSON.stringify(i.raw).includes(filter)) as event}
+        <pre><code>{@html highlight(JSON.stringify(event.raw, null, 4), Prism.languages.js, "json")}</code></pre>
       {/each}
     {:else if view === "account"}
       <Search width={500} bind:value={filter} />

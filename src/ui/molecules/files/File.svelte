@@ -1,5 +1,5 @@
 <script>
-import { formatSize } from "../../../util/format.js";
+import { formatSize } from "../../../util/format.ts";
 import fileIcon from "../../../assets/file.svg";
 import downloadIcon from "../../../assets/icons/download.svg";
 export let src;
