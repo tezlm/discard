@@ -22,7 +22,7 @@ specifiers:
 
 dependencies:
   '@matrix-org/olm': '@gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.8.tgz'
-  discount: git.celery.eu.org/tezlm/discount/1352aa75f9f34a7a94f890df25d005c8e908607d
+  discount: link:../discount
   emojibase: 6.1.0
   emojibase-data: 7.0.1_emojibase@6.1.0
   fuzzysort: 2.0.1
@@ -824,10 +824,4 @@ packages:
     resolution: {tarball: https://gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.8.tgz}
     name: '@matrix-org/olm'
     version: 3.2.8
-    dev: false
-
-  git.celery.eu.org/tezlm/discount/1352aa75f9f34a7a94f890df25d005c8e908607d:
-    resolution: {commit: 1352aa75f9f34a7a94f890df25d005c8e908607d, repo: https://git.celery.eu.org/tezlm/discount, type: git}
-    name: discount
-    version: 0.1.0
     dev: false
