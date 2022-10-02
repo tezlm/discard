@@ -12,13 +12,16 @@
 	},
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "next",
+		"@tsconfig/svelte": "^3.0.0",
 		"@types/marked": "^4.0.7",
 		"svelte": "^3.50.1",
+		"svelte-preprocess": "^4.10.7",
+		"typescript": "^4.8.3",
 		"vite": "^2.9.15"
 	},
 	"dependencies": {
 		"@matrix-org/olm": "https://gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.8.tgz",
-		"discount": "git+https://git.celery.eu.org/tezlm/discount",
+		"discount": "link:../discount",
 		"emojibase": "^6.1.0",
 		"emojibase-data": "^7.0.1",
 		"fuzzysort": "^2.0.1",

@@ -1,5 +1,5 @@
 <script>
-import { formatSize } from "../../../util/format.js";
+import { formatSize } from "../../../util/format.ts";
 </script>
 <style>
 .homeserver {

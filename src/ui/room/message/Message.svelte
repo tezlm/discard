@@ -6,7 +6,7 @@ import MessageReactions from "./MessageReactions.svelte";
 import MessageToolbar from "../../atoms/Toolbar.svelte";
 import Emoji from "../../molecules/Emoji.svelte";
 import User from "../../molecules/User.svelte";
-import { formatDate, formatTime } from "../../../util/format.js";
+import { formatDate, formatTime } from "../../../util/format.ts";
 import { calculateHash } from '../../../util/content.js';
 import { quadOut } from "svelte/easing";
 import Avatar from "../../atoms/Avatar.svelte";

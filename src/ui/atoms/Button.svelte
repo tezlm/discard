@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 export let type = "normal";
 export let label = "button";
 export let clicked = () => {};

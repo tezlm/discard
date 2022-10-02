@@ -1,5 +1,5 @@
 <script>
-import { formatDate } from "../../../util/format.js";
+import { formatDate } from "../../../util/format.ts";
 </script>
 <style>
 h3 {

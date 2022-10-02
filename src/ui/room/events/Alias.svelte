@@ -1,5 +1,5 @@
 <script>
-import { formatDate } from "../../../util/format.js";
+import { formatDate } from "../../../util/format.ts";
 import { calculateHash } from "../../../util/content.js";
 export let room;
 export let event;
