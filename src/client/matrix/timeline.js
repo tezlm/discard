@@ -1,4 +1,5 @@
 import { handle } from "../actions/timeline.js";
+import { StateEvent } from "discount";
 
 class Timeline extends Array {
   constructor(roomId, start, end) {
@@ -12,8 +13,9 @@ class Timeline extends Array {
     if (!this.batchEnd) return false;
     const res = await state.api.fetchMessages(this.roomId, this.batchEnd, "b");
     
-    for (let i of res.state ?? []) {
-      state.rooms.get(this.roomId)?.handleState(i);
+    for (let ev of res.state ?? []) {
+      const room = state.rooms.get(this.roomId);
+      room?.handleState(new StateEvent(room.client, room, ev));
     }
     
     for (let i of res.chunk ?? []) handle(this.roomId, i, true);

@@ -7,6 +7,7 @@ import PushRules from "../../util/push.js";
 const defaultFilter = {
   room: {
     state: { lazy_load_members: true },
+    timeline: { limit: 0 },
   },
   presence: {
     types: [],
@@ -81,11 +82,11 @@ function start(api, syncer, userId) {
   syncer.on("leave", (roomId) => actions.rooms.handleLeave(roomId));
   
   syncer.on("state", (roomId, state) => actions.rooms.handleState(roomId, state));  
-  syncer.on("timeline", (roomId, event) => actions.timeline.handle(roomId, event, false));
+  syncer.on("event", (roomId, event) => actions.timeline.handle(roomId, event, false));
   // syncer.on("timeline", (roomId, event) => actions.timeline.handle(roomId, event, false));
   
-  syncer.on("roomAccountData", (roomId, { type, content }) => {
-    actions.rooms.handleAccount(roomId, type, content);
+  syncer.on("roomAccountData", (room, { type, content }) => {
+    actions.rooms.handleAccount(room.id, type, content);
   });
   
   syncer.on("accountData", ({ type, content }) => {

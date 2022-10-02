@@ -7,7 +7,8 @@ export default class MemberCache extends Map {
   }
   
   handle(event) {
-    const id = event.stateKey;
+    // const id = event.stateKey;
+    const id = event.stateKey ?? event.state_key;
     const cont = event.content;
     const power = this.room._powerCache ?? this.room.power;
     this.set(id, {

@@ -1,5 +1,4 @@
 import MemberCache from "../client/matrix/members.js";
-import Event from "./events.js";
 
 // this is just a 1:1 mapping of createRoom for now
 export class Room {
@@ -21,8 +20,7 @@ export class Room {
     this._powerCache = null;
   }
   
-  handleState(raw, skipCheck = false) {
-    const event = new Event(this, raw);
+  handleState(event, skipCheck = false) {
     if (!skipCheck || true) {
       const oldIdx = this.state.findIndex(i => i.type === event.type && i.stateKey === event.stateKey);
       if (oldIdx !== -1) this.state.splice(oldIdx, 1);

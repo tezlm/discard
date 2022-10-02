@@ -1,6 +1,7 @@
 import { writable, get } from "svelte/store";
 import TimelineSet from "../matrix/timeline.js";
-import { Room } from "../../util/rooms.js";
+import { Room as _Room } from "../../util/rooms.js";
+import { Room } from "discount";
 
 const roomStates = new Map();
 
@@ -20,9 +21,9 @@ const roomStates = new Map();
 
 // TODO: cleanup, set directly on room
 export function handleAccount(roomId, type, content) {
-  state.log.debug(`set ${type} to ${JSON.stringify(content)} in ${roomId}`);
-  if (!state.rooms.has(roomId)) return state.log.warn(`couldn't find room ${roomId} (set accountData)`);
-  state.rooms.get(roomId).accountData.set(type, content);
+  // state.log.debug(`set ${type} to ${JSON.stringify(content)} in ${roomId}`);
+  // if (!state.rooms.has(roomId)) return state.log.warn(`couldn't find room ${roomId} (set accountData)`);
+  // state.rooms.get(roomId).accountData.set(type, content);
   
   if (type === "m.fully_read" && state.syncer.status !== "starting") {
     update();
@@ -30,16 +31,17 @@ export function handleAccount(roomId, type, content) {
   }
 }
 
-export function handleJoin(roomId, events, batch) {
-  roomStates.set(roomId, events);
-  state.roomTimelines.set(roomId, new TimelineSet(roomId, batch));  
-  update();
+export function handleJoin(room, batch) {
+  // roomStates.set(roomId, events);
+  state.rooms.set(room.id, room)
+  state.roomTimelines.set(room.id, new TimelineSet(room.id, batch));  
+  // update()
   // actions.spaces.update();
 }
 
 export function handleState(roomId, event) {
-  const room = state.rooms.get(roomId);
-  room.handleState(event);
+  // const room = state.rooms.get(roomId);
+  // room?.handleState(event);
   if (state.syncer.status !== "starting") {
     update();
     // if (event.type === "m.space.child") actions.spaces.update();    
@@ -70,16 +72,17 @@ export function handleLeave(roomId) {
 
 // TODO: optimize, don't recreate everything over and over again
 export function update() {
-  for (let [id, data] of roomStates.entries()) {
-    if (state.rooms.has(id)) {
-      const room = state.rooms.get(id);
-      for (let ev of data) room.handleState(ev, true);
-    } else {
-      const room = new Room(id, data);
-      state.rooms.set(id, room);
-    }
-    state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
-  }
+  // for (let [id, data] of roomStates.entries()) {
+  //   if (state.rooms.has(id)) {
+  //     const room = state.rooms.get(id);
+  //     for (let ev of data) room.handleState(ev, true);
+  //   } else {
+  //     const room = new _Room(id, data);
+  //     state.rooms.set(id, room);
+  //   }
+  //   roomStates.delete(id);
+  // }
+  state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
 }
 
 export async function focus(room) {

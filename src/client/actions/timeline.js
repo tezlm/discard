@@ -74,6 +74,7 @@ export function send(roomId, type, content) {
 
 export function handle(roomId, raw, toStart = false) {
   if (raw.type === "m.room.redaction") return toStart ? null : redact(roomId, raw);
+  if (raw.unsigned?.redacted_because) return;
   
   const id = raw.event_id;
   if (state.events.has(raw.event_id)) return;

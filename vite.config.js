@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
+import autoPreprocess from 'svelte-preprocess';
 import { execSync } from "child_process";
 import autoPreprocess from 'svelte-preprocess';
 import pkgjson from "./package.json" assert { type: "json" };
