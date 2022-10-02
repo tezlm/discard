@@ -1,3 +1,11 @@
+// import { Event as Sus } from "discount";
+
+// export default class Event {
+//   constructor(room, raw) {
+//     return new Sus(state.client, room, raw);
+//   }
+// }
+
 export default class Event {
   constructor(room, raw) {
     this.room = room;

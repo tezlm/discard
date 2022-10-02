@@ -1,6 +1,7 @@
 <script>
 import Markdown from "../../molecules/Markdown.svelte";
 import Embed from "../../molecules/Embed.svelte";
+import Button from "../../atoms/Button.svelte";
 let input = "";
 let embed = {
   "url": "https://www.freecodecamp.org/news/what-is-open-graph-and-how-can-i-use-it-for-my-website/",
@@ -21,8 +22,35 @@ let embed = {
 }
 </script>
 <style>
+.join {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 16px;
+  border-radius: 4px;
+  background: var(--bg-rooms-members);
+}
+
+.join img {
+  border-radius: 50%;
+  height: 48px;
+  width: 48px;
+}
 </style>
 <p>testbed for random stuff</p>
+<div style="min-height: 1em"></div>
+<div>
+  <div class="join">
+    <div class="title">Your been invite to</div>
+    <div style="display: flex; align-items: center">
+      <img src={"https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"} />
+      <div style="padding: 0 16px">
+        <b>Room name</b>
+        <p>details here - maybe the room topic, or the member count?</p>
+      </div>
+      <Button label="Join" type="good" clicked={todo} />
+    </div>
+  </div>
+</div>
 <div style="min-height: 1em"></div>
 <Markdown bind:content={input} />
 <div style="min-height: 1em"></div>

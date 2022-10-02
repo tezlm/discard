@@ -212,6 +212,7 @@ function getHomeContextMenu() {
     class:unread={!allRead(space.roomId)}
   >
     <Tooltip position="right">
+      <!-- TODO: use <Avatar> (need to find out how to do border-radius) -->
       <img
         src={parseMxc(space?.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"}
         on:click={() => actions.spaces.focus(space)}

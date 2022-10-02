@@ -78,6 +78,7 @@ export function update() {
       const room = new Room(id, data);
       state.rooms.set(id, room);
     }
+    roomStates.delete(id);
     state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
   }
 }
