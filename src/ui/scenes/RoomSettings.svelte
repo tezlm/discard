@@ -14,7 +14,7 @@ const views = [
   { view: Overview,     name: "Overview",     icon: "info" },
   { view: Permissions,  name: "Permissions",  icon: "flag" },
   { view: Security,     name: "Security",     icon: "security" },
-  { view: Integrations, name: "Integrations", icon: "link" },
+  { view: Integrations, name: "Integrations", icon: "link" }, // maybe use `webhook`
   { view: Emoji,        name: "Emoji",        icon: "emoji_emotions" },
   null,
   { view: Members,      name: "Members",      icon: "people",           raw: true, props: { membership: "join" }},

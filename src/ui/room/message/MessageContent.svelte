@@ -124,6 +124,14 @@ img {
   opacity: .1;
 }
 
+.text :global([data-mx-ping="room"]) {
+  color: var(--color-purple);
+}
+
+.text :global([data-mx-ping="room"]::after) {
+  background: var(--color-purple);
+}
+
 .text :global([data-mx-ping]:hover::after) {
   opacity: .2;
 }

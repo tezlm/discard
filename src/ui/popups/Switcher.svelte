@@ -7,6 +7,7 @@ let highlighted = 0;
 $: rooms = getRooms(search);
 
 // TODO: highlight matches
+// TODO: handle spaces
 function getRooms(search) {
   const recent = state.recentRooms.slice(1);
   if (!search) return recent;
@@ -29,6 +30,17 @@ function handleKeyDown(e) {
     highlighted = Math.max(highlighted - 1, 0);
   }
 }
+
+function findParent(room) {
+  if (state.spaces.get("orphanRooms").includes(room)) return null;
+  if (state.spaces.get("orphanSpaces").includes(room)) return null;
+  for (let [id, rooms] of state.spaces) {
+    if (rooms.includes(room)) return state.rooms.get(id);
+  }
+  return null;
+}
+
+$: console.log(rooms[highlighted])
 </script>
 <style>
 .rooms {
@@ -59,17 +71,20 @@ function handleKeyDown(e) {
       optional
       autofocus
       bind:value={search}
-      submitted={() => focusRoom(rooms[0])}
+      submitted={() => focusRoom(rooms[highlighted])}
     />
     <div class="rooms">
       {#each rooms as room, i}
+        {@const parent = findParent(room)}
         <div
           class="room"
           class:highlighted={highlighted === i}
           on:click={() => focusRoom(room)}
           on:mouseover={() => highlighted = i}
         >
-          <span class="icon">#</span> {room.name}
+          <span class="icon">#</span>
+          {room.name}
+          {#if parent}<span class="dim">- {parent.name}</span>{/if}
         </div>
       {/each}
     </div>
