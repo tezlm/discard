@@ -14,10 +14,12 @@ function getRelation(content) {
   const relation = content["m.relates_to"];
   if (!relation) return null;
   if (relation.rel_type && !skip.includes(relation.rel_type)) {
+  // if (relation.rel_type) {
     return relation;
   } else {
     const type = Object.keys(relation)?.[0];
     if (!type || skip.includes(type)) return null;
+    // if (!type) return null;
     return { rel_type: type, ...relation[type] };
   }
 }
@@ -75,7 +77,7 @@ export function send(roomId, type, content) {
 export function handle(roomId, raw, toStart = false) {
   if (raw.type === "m.room.redaction") return toStart ? null : redact(roomId, raw);
   if (raw.unsigned?.redacted_because) return;
-  
+    
   const id = raw.event_id;
   if (state.events.has(raw.event_id)) return;
   const room = state.rooms.get(roomId);
@@ -109,15 +111,17 @@ export function handle(roomId, raw, toStart = false) {
     const original = state.events.get(relation.event_id);
     if (original) {
       if (relation.rel_type === "m.replace") {
-        original.parseRelation(event);
+        original.parseRelation(event, relation.rel_type);
       } else if (relation.rel_type === "m.annotation") {
         const key = relation.key;
         if (!original.reactions) original.reactions = new Map();
         if (!original.reactions.has(key)) original.reactions.set(key, []);
         original.reactions.get(relation.key).push(event);
+      } else {
+        original.parseRelation(event, relation.rel_type);
       }
     } else {
-      return queueRelation(relation.event_id, event, toStart);      
+      return queueRelation(relation.event_id, event, toStart);
     }
     state.events.set(id, event);
     const slice = actions.slice.get(roomId);
@@ -131,14 +135,17 @@ export function handle(roomId, raw, toStart = false) {
     //   actions.spaces.update();
     // }
     if (relations.has(id)) {
-      for (let relation of relations.get(id)) {
+      for (let ev of relations.get(id)) {
+        const relation = getRelation(ev.content);
         if (relation.rel_type === "m.replace") {
-          event.parseRelation(relation);
+          event.parseRelation(ev, relation.rel_type);
         } else if (relation.rel_type === "m.annotation") {
           const key = relation.key;
           if (!event.reactions) event.reactions = new Map();
           if (!event.reactions.has(key)) event.reactions.set(key, []);
-          event.reactions.get(relation.key).push(event);
+          event.reactions.get(relation.key).push(ev);
+        } else {
+          event.parseRelation(ev, relation.rel_type);
         }
       }
       relations.delete(id);

@@ -1,8 +1,8 @@
 // import { Store } from "../matrix/store.js";
 import Api from "../matrix/api.js";
-import Syncer from "../matrix/syncer.js";
 import Settings from "../matrix/settings.js";
 import PushRules from "../../util/push.js";
+import { Client } from "discount";
 
 const defaultFilter = {
   room: {
@@ -30,7 +30,7 @@ export async function fetch() {
   const filter = await api.postFilter(userId, defaultFilter);
   api.useFilter(filter);
   state.log.matrix("starting sync");  
-  const syncer = new Syncer(api);
+  const syncer = new Client({ baseUrl: api.baseUrl, token, userId });
   syncer.start();
   start(api, syncer, userId);
 }
@@ -48,7 +48,7 @@ export async function login({ localpart, homeserver, password }) {
     localStorage.setItem("homeserver", homeserver);
     localStorage.setItem("userid", userId);
     localStorage.setItem("token", token);
-    const syncer = new Syncer(api);
+    const syncer = new Client({ baseUrl: api.baseUrl, token, userId});
     syncer.start();
     start(api, syncer, userId);
     state.log.matrix("starting sync");

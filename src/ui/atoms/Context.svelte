@@ -1,6 +1,6 @@
 <script>
 export let items = [];
-export let width;
+export let width = null;
 let menuEl;
 let right = false;
 

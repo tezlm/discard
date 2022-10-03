@@ -314,6 +314,7 @@ time {
     <MessageContent {event} />
     {/if}
     {#if event.reactions}<MessageReactions {event} />{/if}
+    <!-- {event.relations.filter(i => i.content["m.relates_to"]?.rel_type === "m.thread").length} thread replies -->
   </div>
   {#if event.eventId !== $edit}
   <div class="toolbar" style:display={showReactionPicker ? "flex" : null}>

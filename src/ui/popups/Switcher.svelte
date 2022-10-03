@@ -39,8 +39,6 @@ function findParent(room) {
   }
   return null;
 }
-
-$: console.log(rooms[highlighted])
 </script>
 <style>
 .rooms {
