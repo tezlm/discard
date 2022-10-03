@@ -13,7 +13,7 @@ export let event;
 let showPicker = false;
 
 function formatPeople(events) {
-  const names = events.map(i => escapeHtml(i.sender.name));
+  const names = events.map(i => escapeHtml(i.sender.name ?? i.sender.id));
   if (names.length === 1) return names[0];
   if (names.length === 2) return `${names[0]} ${l("and")} ${names[1]}`;
   if (names.length < 7) return `${names.slice(0, -1).join(l(", "))} ${l("and")} ${names.at(-1)}`;

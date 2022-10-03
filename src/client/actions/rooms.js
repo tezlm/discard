@@ -1,55 +1,23 @@
 import { writable, get } from "svelte/store";
 import TimelineSet from "../matrix/timeline.js";
-import { Room as _Room } from "../../util/rooms.js";
-import { Room } from "discount";
 
 const roomStates = new Map();
 
-// maybe rename the 2 roomStates? (matrix state and discard state)
-// TODO: lazy loading
-// export function save() {
-//   for (let [id, data] of rooms) {
-//     state.store.rooms.set(id, data);
-//   }
-// }
-
-// export function load() {
-//   console.log(state.store.rooms.all(id));
-//   .then(state => rooms.set(id, state));
-//   state.store
-// }
-
-// TODO: cleanup, set directly on room
 export function handleAccount(roomId, type, content) {
-  // state.log.debug(`set ${type} to ${JSON.stringify(content)} in ${roomId}`);
-  // if (!state.rooms.has(roomId)) return state.log.warn(`couldn't find room ${roomId} (set accountData)`);
-  // state.rooms.get(roomId).accountData.set(type, content);
-  
   if (type === "m.fully_read" && state.syncer.status !== "starting") {
     update();
-    // actions.spaces.update();
   }
 }
 
 export function handleJoin(room, batch) {
-  // roomStates.set(roomId, events);
   state.rooms.set(room.id, room)
   state.roomTimelines.set(room.id, new TimelineSet(room.id, batch));  
-  // update()
-  // actions.spaces.update();
 }
 
 export function handleState(roomId, event) {
-  // const room = state.rooms.get(roomId);
-  // room?.handleState(event);
   if (state.syncer.status !== "starting") {
     update();
-    // if (event.type === "m.space.child") actions.spaces.update();    
   }
-}
-
-export function handleInvite(roomId, event) {
-  // TODO: invited rooms
 }
 
 export function handleLeave(roomId) {
@@ -63,25 +31,14 @@ export function handleLeave(roomId) {
     state.focusedRoomId = null;
     state.focusedRoom.set(null);
   }
-  roomStates.delete(roomId);
   state.rooms.delete(roomId);
-  // actions.spaces.update();
+  actions.spaces.update();
   update();
   state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
 }
 
-// TODO: optimize, don't recreate everything over and over again
 export function update() {
-  // for (let [id, data] of roomStates.entries()) {
-  //   if (state.rooms.has(id)) {
-  //     const room = state.rooms.get(id);
-  //     for (let ev of data) room.handleState(ev, true);
-  //   } else {
-  //     const room = new _Room(id, data);
-  //     state.rooms.set(id, room);
-  //   }
-  //   roomStates.delete(id);
-  // }
+  actions.spaces.update();
   state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
 }
 

@@ -21,11 +21,13 @@ export default class Event {
 
   // use this to parse edits/reactions?
   // TODO: only used to parse edits currently
-  parseRelation(event) {
+  parseRelation(event, relType) {
     if (event.sender.userId !== this.sender.userId) return;
     this.relations.unshift(event);
-    this.flags.add("edited");
-    this._contentDirty = true;
+    if (relType === "m.replace") {
+      this.flags.add("edited");
+      this._contentDirty = true;
+    }
   }
   
   // should handle edits, e2ee, and legacy events

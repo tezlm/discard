@@ -43,5 +43,5 @@ export function focus(space) {
   state.log.ui(`focus space ${space?.roomId}`);
 	state.focusedSpaceId = space?.roomId;
 	state.focusedSpace.set(space);
-	state.navRooms.set(state.spaces.get(space?.roomId ?? "orphanRooms"));
+	state.navRooms.set(state.spaces.get(space?.roomId ?? "orphanRooms") ?? []);
 }

@@ -101,12 +101,14 @@ function getColor(sender) {
   </div>
   <span class="author" style:color={getColor(event.sender)}>{event.sender.name || event.sender.userId}</span>
   <div class="content" on:click={() => actions.slice.jump(event.roomId, event.eventId)}>
+    {#if !event.content}NO CONTENT!{:else}
     {#if event.content.format === "org.matrix.custom.html"}
       {@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n|<br.*?>/g, " ")}
     {:else if event.content.body}
       {event.content.body.replace(/\n/g, " ")}
     {:else}
       <i style="color: var(--fg-muted)">failed to render event</i>
+    {/if}
     {/if}
   </div>
 </div>
