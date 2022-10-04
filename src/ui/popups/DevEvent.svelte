@@ -1,6 +1,6 @@
 <script>
 import Popup from "../atoms/Popup.svelte";
-import { highlight } from "prismjs";
+import hljs from "highlight.js";
 export let current;
 
 function copyId() {
@@ -28,6 +28,6 @@ pre {
       <div>discard flags: {[...current.event.flags].join(", ")}</div>
     {/if}
     <br />
-    <pre><code>{@html highlight(JSON.stringify(current.event.raw, null, 4), Prism.languages.js, "json")}</code></pre>
+    <pre><code>{@html hljs.highlight("json", JSON.stringify(current.event.raw, null, 4))}</code></pre>
   </div>
 </Popup>

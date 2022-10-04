@@ -7,7 +7,7 @@ import MessageToolbar from "../../atoms/Toolbar.svelte";
 import Emoji from "../../molecules/Emoji.svelte";
 import User from "../../molecules/User.svelte";
 import { formatDate, formatTime } from "../../../util/format.ts";
-import { calculateHash } from '../../../util/content.js';
+import { calculateHash } from '../../../util/content.ts';
 import { quadOut } from "svelte/easing";
 import Avatar from "../../atoms/Avatar.svelte";
 
@@ -300,8 +300,9 @@ time {
         class="user"
         style:top="{getReply(event.content) ? 24 : 0}px"
         in:fly={{ x: -15 }}
+        on:click={(e) => e.stopPropagation()}
       >
-        <User user={event.sender} />
+        <User member={event.sender} />
       </div>
       {/if}
       <span style="margin-right: 0.25rem;"></span>

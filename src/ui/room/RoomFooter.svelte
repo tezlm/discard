@@ -1,5 +1,4 @@
 <script>
-// TODO: video dimensions
 // TODO: split out input from rest of footer
 import Typing from "../atoms/Typing.svelte";
 import RoomInput from "./RoomInput.svelte";
@@ -24,7 +23,6 @@ async function handleKeyDown(e) {
     state.slice.set(state.roomSlices.get($room.roomId));
     state.api.sendReceipt($room.roomId, lastEvent);  
   } if (e.key === "ArrowUp") {
-    // FIXME: arrow up/down to select message edit
     if (textarea.selectionStart !== 0) return;
     if (textarea.selectionEnd !== 0) return;
     for (let i = $slice.events.length - 1; i >= 0; i--) {

@@ -1,6 +1,6 @@
 <svelte:options immutable />
 <script>
-import { parseMxc, generateAvatar } from "../../util/content.js";
+import { parseMxc, generateAvatar } from "../../util/content.ts";
 export let user;
 export let size;
 export let link = false;

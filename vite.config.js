@@ -22,12 +22,13 @@ export default defineConfig({
             "emojibase-data/en/shortcodes/emojibase.json",
           ],
           "sanitize-html": ["sanitize-html"],
+          "highlight.js": ["highlight.js"],
         }
       }
     }
   },
   define: {
-    build: {
+    "discardEnv": {
       package: pkgjson,
       time: new Date(),
       commit: execSync("git log -n 1 --oneline HEAD").toString().match(/[a-z0-9]+/)[0],

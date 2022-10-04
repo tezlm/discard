@@ -17,14 +17,8 @@ function getColor(sender, settings) {
 .change {
   display: flex;
   align-items: center;
-  white-space: pre;
   user-select: text;
   padding: 2px 0;
-}
-
-.content {
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .icon {
@@ -42,10 +36,6 @@ function getColor(sender, settings) {
   text-decoration: underline;
 }
 
-.name {
-  color: var(--fg-notice);
-}
-
 time {
   color: var(--fg-muted);
   font-size: 11px;
@@ -54,16 +44,12 @@ time {
 }
 </style>
 <div class="change">
-  <div class="icon">edit</div>
-  <div class="content">
-    <span class="author" style:color={getColor(event.sender, $settings)}>
+  <div class="icon">info</div>
+  <div>
+    unknown event type <b>{event.type}</b> from
+    <span class="author" style:color={getColor(event.sender, $settings)} data-mx-ping={event.sender.id}>
       {event.sender.name || event.sender.userId}
     </span>
-    {#if event.type === "m.room.name"}
-    changed the room name to <b class="name">{event.content.name}</b>
-    {:else if event.type === "m.room.topic"}
-    changed the room topic
-    {/if}
     <time datetime={event.date.toISOString()}>{formatDate(event.date)}</time>
   </div>
 </div>

@@ -1,7 +1,8 @@
 // a lot (but not all) of this was copied from cinny
+// NOTE: linkifyjs seems to take a long time (20%) to linkify text when loading messages
 import linkifyHtml from "linkifyjs/html";
 import sanitizeHtml from "sanitize-html";
-import { parseMxc } from "./content.js";
+import { parseMxc } from "./content.ts";
 
 const permittedHtmlTagsInline = [
   "font", "del", /*"p", */ "a", "sup", "sub", "b", "i",
@@ -107,7 +108,7 @@ const sanitizeOptsInline = {
 }
 
 export function parseHtml(html, opts = { linkify: true, sanitize: true, inline: false }) {
-	html = html.replace(/@room/, "<span data-mx-ping='room'>@room</span>"); // this *may* break
+	// html = html.replace(/@room/, "<span data-mx-ping='room'>@room</span>"); // this *may* break
 	if (opts.sanitize) html = sanitizeHtml(html, opts.inline ? sanitizeOptsInline : sanitizeOpts);
 	if (opts.linkify)  html = linkifyHtml(html, { ignoreTags: ["pre", "code"] });
 	return html;

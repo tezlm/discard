@@ -9,7 +9,30 @@ let count = 20;
 async function fetchList(room) {
   if (!room.request) await room.members.fetch();
   const members = room.members.with("join");
-  return [{ title: `members - ${members.length}`}, ...members];
+  if (state.dms.has(room.id)) {
+    return [{ title: `members: ${members.length}`, id: "members" }, ...members];
+  }
+  const sections = { admins: [], moderators: [], members: [] };
+  for (let member of members) {
+    if (member.power >= 100) {
+      sections.admins.push(member);
+    } else if (member.power >= 50) {
+      sections.moderators.push(member);
+    } else {
+      sections.members.push(member);
+    } 
+  }
+  const rendered = [];
+  if (sections.admins.length) {
+    rendered.push({ title: `admins - ${sections.admins.length}`, id: "admins" }, ...sections.admins);
+  }
+  if (sections.moderators.length) {
+    rendered.push({ title: `moderators - ${sections.moderators.length}`, id: "moderators" }, ...sections.moderators);
+  }
+  if (sections.members.length) {
+    rendered.push({ title: `members - ${sections.members.length}`, id: "members" }, ...sections.members);
+  }
+  return rendered;
 }
 
 let oldId = null;
@@ -58,7 +81,7 @@ $: if (room.roomId !== oldId) {
 </style>
 <div class="members scroll" tabindex="-1">
   {#await fetchList(room) then items}
-    {#each items.slice(0, count) as member (member.userId)}
+    {#each items.slice(0, count) as member (member.id)}
       {#if member.title}
         <div class="title">{member.title}</div>
       {:else}

@@ -15,7 +15,7 @@ $: setTimeout(async () => {
 });
 
 $: if (allMembers) {
-  members = allMembers.filter(i => i.name.includes(filter) || i.userId.includes(filter));
+  members = allMembers.filter(i => i.name?.includes(filter) || i.userId.includes(filter));
 }
 
 function getTitle(membership) {

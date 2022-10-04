@@ -2,13 +2,12 @@
 import Popup from "../atoms/Popup.svelte";
 import Button from "../atoms/Button.svelte";
 import Search from "../atoms/Search.svelte";
-import { highlight } from "prismjs";
+import hljs from "highlight.js";
 export let current;
 let filter = "";
 let view = null;
 
 console.log(current.room);
-console.log(current.room.getAllState("m.room.member").map(i => i.raw));
 </script>
 <Popup showClose>
   <h2 slot="header">{current.room.name}</h2>
@@ -16,18 +15,18 @@ console.log(current.room.getAllState("m.room.member").map(i => i.raw));
     {#if view === "state"}
       <Search width={500} bind:value={filter} />
       {#each current.room.state.filter(i => i.type !== "m.room.member").filter(i => JSON.stringify(i.raw).includes(filter)) as event}
-        <pre><code>{@html highlight(JSON.stringify(event.raw, null, 4), Prism.languages.js, "json")}</code></pre>
+        <pre><code>{@html hljs.highlight("json", JSON.stringify(event.raw, null, 4))}</code></pre>
       {/each}
     {:else if view === "members"}
       <Search width={500} bind:value={filter} />
       {#each current.room.getAllState("m.room.member").filter(i => JSON.stringify(i.raw).includes(filter)) as event}
-        <pre><code>{@html highlight(JSON.stringify(event.raw, null, 4), Prism.languages.js, "json")}</code></pre>
+        <pre><code>{@html hljs.highlight("json", JSON.stringify(event.raw, null, 4))}</code></pre>
       {/each}
     {:else if view === "account"}
       <Search width={500} bind:value={filter} />
       {#each [...current.room.accountData.entries()].filter(i => i[0].includes(filter)) as data}
         <div class="title" style="margin-top: 1em">{data[0]}</div>
-        <pre><code>{@html highlight(JSON.stringify(data[1], null, 4), Prism.languages.js, "json")}</code></pre>
+        <pre><code>{@html hljs.highlight("json", JSON.stringify(data[1], null, 4))}</code></pre>
       {/each}
     {:else}
       <div>room id: <code style="user-select: all">{current.room.roomId}</code></div><br />

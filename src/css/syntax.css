@@ -1,16 +1,21 @@
-code .token.comment   { color: #a3a6aa }
-code .token.number    { color: #d2a6ff }
-code .token.boolean   { color: #d2a6ff }
-code .token.string    { color: #aad94c }
-code .token.property  { color: #ffb454 }
-code .token.operator  { color: #f29668 }
-code .token.keyword   { color: #ff8f40 }
-code .token.function  { color: #ffb454 }
-code .token.parameter { color: #a3a6aa }
+code .hljs-comment   { color: #a3a6aa }
+code .hljs-number    { color: #d2a6ff }
+/* code .hljs-literal   { color: #95d8e5 } */
+/* code .hljs-literal   { color: #d2a6ff } */
+code .hljs-string    { color: #aad94c }
+/* code .hljs-property  { color: #ffb454 } */
+/* code .hljs-operator  { color: #f29668 } */
+/* code .hljs-title     { color: #ff8f40 } */
+code .hljs-keyword   { color: #ffb454 }
+/* code .hljs-parameter { color: #a3a6aa } */
 
-code .token.regex-source    { color: #95e6cb }
-code .token.regex-delimiter { color: #95d8e5 }
+/* code .hljs-regexp    { color: #95e6cb } */
+/* code .hljs-regex-delimiter { color: #95d8e5 } */
 
-code .token.selector { color: #aad94c }
-code .token.atrule   { color: #d2a6ff }
-
+code .hljs-selector-class {}
+code .hljs-selector-id {}
+code .hljs-selector-attr {}
+code .hljs-attribute {}
+/* code .hljs-build_in {} */
+/* code .hljs-selector { color: #aad94c } */
+/* code .hljs-atrule   { color: #d2a6ff } */

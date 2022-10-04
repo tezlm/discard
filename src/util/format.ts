@@ -27,8 +27,8 @@ export function formatDate(date: Date, lowercase = false) {
   return date.toLocaleDateString();
 }
 
-export function formatSize(size: number) {
-  if (!size) return "??? kb";
+export function formatSize(size: number): string {
+  if (size === 0) return "0 kb";
   let max = 1024;
   for (let unit of ["bytes", "KiB", "MiB", "GiB", "TiB"]) {
     if (size < max) return `${Math.floor(size / (max / 102400)) / 100} ${unit}`;

@@ -6,22 +6,12 @@ import TimelineSet from "../matrix/timeline.js";
 const relations = new Map();
 
 // TODO: multiple relations
-// TODO: what does this code even do i forgot
-// TODO: move code into event
-// FIXME: sometimes replies are dropped
-const skip = ["m.in_reply_to", "net.maunium.reply"];
+const skip = ["m.in_reply_to", "net.maunium.reply", "m.thread"];
 function getRelation(content) {
   const relation = content["m.relates_to"];
-  if (!relation) return null;
-  if (relation.rel_type && !skip.includes(relation.rel_type)) {
-  // if (relation.rel_type) {
-    return relation;
-  } else {
-    const type = Object.keys(relation)?.[0];
-    if (!type || skip.includes(type)) return null;
-    // if (!type) return null;
-    return { rel_type: type, ...relation[type] };
-  }
+  if (!relation || relation["m.in_reply_to"]) return null;
+  if (skip.includes(relation.rel_type)) return null;
+  return relation;
 }
 
 function queueRelation(id, event, toStart) {

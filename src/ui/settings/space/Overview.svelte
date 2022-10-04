@@ -1,5 +1,5 @@
 <script>
-import { parseMxc } from "../../../util/content.js";
+import { parseMxc } from "../../../util/content.ts";
 import Input from "../../atoms/Input.svelte";
 import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";

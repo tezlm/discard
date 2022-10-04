@@ -151,7 +151,8 @@ async function handleUpload(file) {
       } else if (type === "m.video") {
         const vid = document.createElement("video");
         // info.d doesnt officially exist, but makes implementing extensible events easier
-        vid.onloadedmetadata = () => res({ w: vid.videoWidth, h: vid.videoHeight, d: vid.duration });
+        // vid.onloadedmetadata = () => res({ w: vid.videoWidth, h: vid.videoHeight, d: vid.duration });
+        vid.onloadedmetadata = () => res({ w: vid.videoWidth, h: vid.videoHeight });
         vid.src = URL.createObjectURL(file);
       } else {
         throw "unreachable?";

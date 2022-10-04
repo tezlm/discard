@@ -1,5 +1,5 @@
 <script>
-import { parseMxc } from "../../util/content.js";
+import { parseMxc } from "../../util/content.ts";
 // export let url;
 export let embed;
 </script>

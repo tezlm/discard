@@ -2,7 +2,7 @@
 import Popup from "../atoms/Popup.svelte";
 import Tooltip from "../atoms/Tooltip.svelte";
 import Avatar from "../atoms/Avatar.svelte";
-import { parseMxc } from "../../util/content.js";
+import { parseMxc } from "../../util/content.ts";
 export let current;
 $: reacts = current.event.reactions ?? new Map();
 $: selected = [...reacts.keys()][0];

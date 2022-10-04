@@ -1,6 +1,6 @@
 <script>
 import Tooltip from "../atoms/Tooltip.svelte";
-import { parseMxc } from "../../util/content.js";
+import { parseMxc } from "../../util/content.ts";
 let focusedSpace = state.focusedSpace;
 let navSpaces = state.navSpaces;
 let spaces = state.spaces;

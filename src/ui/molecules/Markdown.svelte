@@ -1,6 +1,13 @@
 <script>
+import lexical from "lexical";
+import { registerRichText } from "@lexical/rich-text";
+import { registerPlainText } from "@lexical/plain-text";
+import { createEmptyHistoryState, registerHistory } from "@lexical/history";
+import { onMount } from "svelte";
 import md from "simple-markdown";
-
+let editorEl;
+const { createEditor } = lexical;
+/*
 const rules = {
   ...md.defaultRules,
   mention: {
@@ -16,36 +23,12 @@ const parse = md.parserFor(rules);
 export let content = "";
 let html = "";
 let editorEl;
-
-function getCursorPos(root) {
-  const sel = window.getSelection();
-  const range = sel.getRangeAt(0);
-  range.setStart(root, 0);
-  return range.toString().length;
-}
-
-function setCursorPos(root, pos) {
-  const sel = window.getSelection();
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, (el) => {
-    if (pos > el.textContent.length) {
-      pos -= el.textContent.length;
-      return NodeFilter.FILTER_REJECT;
-    }
-    return NodeFilter.FILTER_ACCEPT;
-  });
-  sel.removeAllRanges();
-
-  const node = walker.nextNode() ?? root;
-  const newRange = new Range();
-  newRange.setStart(node, pos);
-  sel.addRange(newRange);
-}
-
 function parseMarkdown(str) {
   const clean = str
     .replace(/&/g, "&amp;")
     .replace(/</g, "&gt;")
-    .replace(/>/g, "&lt;")
+    .replace(
+    />/g, "&lt;")
 
   console.log(parse(clean, { inline: false }))
   
@@ -69,28 +52,53 @@ function parseMarkdown(str) {
   }
 }
 
-function handlePaste(e) {
-  const text = e.clipboardData.getData("text");
-  const pos = getCursorPos(editorEl);
-  content = content.slice(0, pos) + text + content.slice(pos);
-  html = parseMarkdown(content);
-  queueMicrotask(() => setCursorPos(editorEl, pos + text.length));
-}
+$: console.log("new content:", JSON.stringify({ content, html }))
+*/
 
-function handleInput(e) {
-  if (e.inputType === "insertLineBreak") {
-    const pos = getCursorPos(editorEl);
-    content = content.slice(0, pos) + "\n" + content.slice(pos);
-    html = parseMarkdown(content);
-    queueMicrotask(() => setCursorPos(editorEl, pos + 1));
-  } else {
-    const pos = getCursorPos(editorEl);
-    html = parseMarkdown(content);
-    queueMicrotask(() => setCursorPos(editorEl, pos));
+const editor = createEditor({});
+onMount(() => {
+  editor.setRootElement(editorEl);
+  registerPlainText(editor);
+  registerHistory(editor, createEmptyHistoryState(), 1000);
+  // editor.addTransform(lexical.TextNode, (node) => {
+  //   const txt = node.getTextContent();
+  //   console.log(node, txt)
+  //   if (txt === "ayo") {
+  //     node.replace(lexical.$createTextNode("among"));
+  //   }
+  // });
+});
+
+/*
+import { useEffect } from "react";
+import { $createEmoticonNode } from "./EmoticonNode";
+import { TextNode } from "lexical";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+
+function emoticonTransform(node) {
+  const textContent = node.getTextContent();
+  if (textContent === ":avo:") {
+    node.replace($createEmoticonNode("emoticon avo-emoticon", "avo"));
+  } else if (textContent === ":)") {
+    node.replace($createEmoticonNode("", "🙂"));
   }
 }
 
-$: console.log("new content:", JSON.stringify({ content, html }))
+function useEmoticons(editor) {
+  useEffect(() => {
+    const removeTransform = editor.addTransform(TextNode, emoticonTransform);
+    return () => {
+      removeTransform();
+    };
+  }, [editor]);
+}
+
+export default function EmoticonPlugin() {
+  const [editor] = useLexicalComposerContext();
+  useEmoticons(editor);
+  return null;
+}
+*/
 </script>
 <style>
 .editor {
@@ -116,13 +124,4 @@ $: console.log("new content:", JSON.stringify({ content, html }))
   cursor: pointer;
 }
 </style>
-<div
-  class="editor"
-  contenteditable
-  bind:this={editorEl}
-  bind:innerHTML={html}
-  bind:textContent={content}
-  on:input={handleInput}
-  on:paste|preventDefault|stopPropagation={handlePaste}
->
-</div>
+<div class="editor" contenteditable bind:this={editorEl}></div>
