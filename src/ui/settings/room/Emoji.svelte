@@ -1,5 +1,5 @@
 <script>
-import { highlight } from "prismjs";
+import hljs from "highlight.js";
 export let room;
 </script>
 <p>pretty much exactly the same ui as discord</p>
@@ -12,7 +12,7 @@ export let room;
     {#if ev.content.pack.attribution}
     <p>{ev.content.pack.attribution}</p>
     {/if}
-    <pre><code>{@html highlight(JSON.stringify(ev.content, null, 4), Prism.languages.js, "json")}</code></pre>
+    <pre><code>{@html hljs.highlight("json", JSON.stringify(ev.content, null, 4))}</code></pre>
   {/if}
 {/each}
 </div>

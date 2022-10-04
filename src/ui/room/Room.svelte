@@ -40,6 +40,7 @@ $: if($navRooms) room = state.focusedRoom;
 	overflow: hidden;
 }
 </style>
+<!-- TODO: currently shows a flash when switching between room types, either hide it or show loading -->
 <div class="room">
   <RoomHeader room={$room} />
   {#if $room && $slice}

@@ -2,12 +2,13 @@
 import Toolbar from "../../atoms/Toolbar.svelte";
 import MessageReactions from "../message/MessageReactions.svelte";
 
+import Message from "../message/Message.svelte";
 import Create from "../events/Create.svelte";
 import NameTopic from "../events/NameTopic.svelte";
 import Member from "../events/Member.svelte";
 import Pinned from "../events/Pinned.svelte";
 import Alias from "../events/Alias.svelte";
-import Message from "../message/Message.svelte";
+import Unknown from "../events/Unknown.svelte";
 
 export let shiftKey;
 export let header;
@@ -71,7 +72,7 @@ function getToolbar(event, shiftKey) {
 	{:else if ["m.message", "m.notice", "m.emote", "m.file"].includes(event.type)}
 	-->
 	{:else}
-		unknown event type {event.type} from {event.sender.name || event.sender.userId}
+		<Unknown {room} {event} />
 	{/if}
 	{#if !["m.room.create", "m.room.message", "m.sticker"].includes(event.type)}
 	  <div class="toolbar">

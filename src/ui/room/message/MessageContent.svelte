@@ -1,7 +1,7 @@
 <script>
 import { parseHtml } from "../../../util/html.js";
-import { parseMxc } from "../../../util/content.js";
-import { highlightAllUnder } from "prismjs";
+import { parseMxc } from "../../../util/content.ts";
+import hljs from "highlight.js";
 import Button from "../../atoms/Button.svelte";
 import File from "../../molecules/files/File.svelte";
 import Audio from "../../molecules/files/Audio.svelte";
@@ -34,18 +34,10 @@ function parseDimensions(info) {
   return { width, height, css: `width: ${width}px; height: ${height}px` };
 }
 
-function formatSize(size) {
-  if (!size) return "??? kb";
-  let max = 1024;
-  for (let unit of ["bytes", "KiB", "MiB", "GiB", "TiB"]) {
-    if (size < max) return `${Math.floor(size / (max / 1024))} ${unit}`;
-    max *= 1024;
-  }
-  return "very big";
-}
-
 $: if (wrapper) {
-  highlightAllUnder(wrapper);
+  for (let el of wrapper.querySelectorAll("code[class^=language-]")) { 
+    hljs.highlightBlock(el);
+  }
 }
 </script>
 <style>
@@ -100,7 +92,7 @@ img {
   max-width: 90%;
 }
 
-.text :global(blockquote), .text :global(ol), .text :global(ul) {
+.text :global(blockquote), .text :global(ol), .text :global(ul), .text :global(details) {
   white-space: normal;
 }
 
@@ -214,9 +206,9 @@ img {
   {@const mime = content.info?.mimetype}
   <div style="display: inline-block">
     {#if /text\//.test(mime) || mime === "application/json"  || mime === "application/x-javascript"}
-      <Text src={parseMxc(content.url)} size={content.info.size} name={content.filename ?? content.body} />
+      <Text src={parseMxc(content.url)} size={content.info?.size ?? null} name={content.filename ?? content.body} />
     {:else}
-      <File src={parseMxc(content.url)} size={content.info.size} name={content.filename ?? content.body} {mime} />
+      <File src={parseMxc(content.url)} size={content.info?.size ?? null} name={content.filename ?? content.body} {mime} />
     {/if}
   </div>
   {:else if content.format === "org.matrix.custom.html"}

@@ -1,6 +1,6 @@
 <script>
 import { formatDate } from "../../../util/format.ts";
-import { calculateHash } from "../../../util/content.js";
+import { calculateHash } from "../../../util/content.ts";
 export let room;
 export let event;
 let settings = state.settings;

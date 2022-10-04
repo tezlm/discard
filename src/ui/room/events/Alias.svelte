@@ -1,6 +1,6 @@
 <script>
 import { formatDate } from "../../../util/format.ts";
-import { calculateHash } from "../../../util/content.js";
+import { calculateHash } from "../../../util/content.ts";
 export let room;
 export let event;
 let settings = state.settings;
@@ -46,7 +46,7 @@ time {
 <div class="change">
   <div class="icon">tag</div>
   <div>
-    <span class="author" style:color={getColor(event.sender, $settings)}>
+    <span class="author" style:color={getColor(event.sender, $settings)} data-mx-ping={event.sender.id}>
       {event.sender.name || event.sender.userId}
     </span>
     set the room's main alias to <b>{event.content.alias}</b>

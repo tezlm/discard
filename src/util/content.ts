@@ -1,5 +1,6 @@
-import defaultAv from "../assets/default-avatar.png";
-export const defaultAvatar = defaultAv;
+declare global {
+  const state: any;
+}
 
 export const colors = [
   "#f1c40f",
@@ -12,14 +13,18 @@ export const colors = [
   "#2ecc71",
 ];
 
-export function parseMxc(mxc, thumbSize) {
+export function parseMxc(mxc: string, thumbW?: number, thumbH?: number): string {
   if (!mxc) return null;
-  let replacer = `${state.api.baseUrl}/_matrix/media/r0/${thumbSize ? "thumbnail" : "download"}/$1/$2`;
-  if (thumbSize) replacer += `?height=${thumbSize}&width=${thumbSize}`;
+  let replacer = `${state.api.baseUrl}/_matrix/media/r0/${thumbW ? "thumbnail" : "download"}/$1/$2`;
+  if (thumbH) {
+    replacer += `?height=${thumbH}&width=${thumbW}`;
+  } else if (thumbW) {
+    replacer += `?height=${thumbW}&width=${thumbW}`;
+  }
   return mxc.replace(/mxc:\/\/([^/]+)\/(.+)/, replacer);
 }
 
-export function calculateHash(str) {
+export function calculateHash(str: string): number {
   if (!str?.length) return 0;
   let hash = 0;
   for (let i = 0; i < str.length; i += 1) {
@@ -30,7 +35,7 @@ export function calculateHash(str) {
   return Math.abs(hash);
 }
 
-export function generateAvatar(userId) {
+export function generateAvatar(userId: string): string {
   const size = 72;
   const squares = 4;
   const margin = 14;
@@ -41,7 +46,7 @@ export function generateAvatar(userId) {
   const ctx = canvas.getContext("2d");
   
   const hash = calculateHash(userId);
-  const rnd = makeRandom(hash >> 3);
+  const rnd = makeRandom();
   ctx.fillStyle = colors[hash % 8];
   ctx.fillRect(0, 0, size, size);
   ctx.fillStyle = "#ffffff";
@@ -57,7 +62,7 @@ export function generateAvatar(userId) {
   
   return canvas.toDataURL();
   
-  function square(x, y) {
+  function square(x: number, y: number) {
     const s = (size - margin * 2) / squares;
     ctx.fillRect(x * s + margin, y * s + margin, s, s);
   }

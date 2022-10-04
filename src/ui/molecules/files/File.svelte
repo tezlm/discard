@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 import { formatSize } from "../../../util/format.ts";
 import fileIcon from "../../../assets/file.svg";
 import downloadIcon from "../../../assets/icons/download.svg";
 export let src;
 export let name = "title";
-export let size = 0;
+export let size: number | null = 0;
 </script>
 <style>
 .file {
@@ -57,7 +57,11 @@ export let size = 0;
     <img src={fileIcon} alt="file icon" />
     <div class="info">
       <a href={src}>{name}</a><br />
+      {#if size === null}
+      <span class="size">??? kb</span>
+      {:else}
       <span class="size">{formatSize(size)}</span>
+      {/if}
     </div>
     <a class="download" href={src} download={name}>
       <img src={downloadIcon} alt="download" />

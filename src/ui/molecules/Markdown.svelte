@@ -1,4 +1,18 @@
 <script>
+import md from "simple-markdown";
+
+const rules = {
+  ...md.defaultRules,
+  mention: {
+    order: 0,
+    match: (source) => /^(@\S*:\S+)/.exec(source),
+    parse: (cap) => ({ content: cap[1] }),
+  },
+}
+
+const parse = md.parserFor(rules);
+
+// TODO: undo/redo
 export let content = "";
 let html = "";
 let editorEl;
@@ -28,33 +42,31 @@ function setCursorPos(root, pos) {
 }
 
 function parseMarkdown(str) {
-  function boldItalic(_, m, str) {
-    const openTag = m.length === 3 ? "<b><em>"
-      : m.length === 2 ? "<b>"
-      : "<em>";
-    const closeTag = m.length === 3 ? "</em><b>"
-      : m.length === 2 ? "</b>"
-      : "</em>";
-    const markup = `<span class="dim">${m}</span>`;
-    return `${openTag}${markup}${str}${markup}${closeTag}`;
-  }
-
-  function header(_, m, str) {
-    const markup = `<span class="dim">${m}</span>`;
-    return `<h${m.length}>${markup}${str}</h${m.length}>`;
-  }
-
-  return str
+  const clean = str
     .replace(/&/g, "&amp;")
     .replace(/</g, "&gt;")
     .replace(/>/g, "&lt;")
-    .replace(/^\/(\S*)/g, '<b><span class="dim">/</span>$1</b>')
-    .replace(/([@#!])(\S+?):(\S+)/g, '<span data-mx-ping>$1$2:$3</span>')
-    // .replace(/^(#{1,6})(.+)/g, header)
-    // .replace(/`(.+?)`/g, '<span class="dim">`</span><code>$1</code><span class="dim">`</span>')
-    // .replace(/([@#!])(\S+?):(\S+)/g, '<span data-mx-ping>$1$2:$3</span>')
-    // .replace(/([*_]{1,3})(.+?)\1/g, boldItalic)
-    // .replace(/\[(.+?)\]\((.+?)\)/g, '<span class="dim">[</span>$1<span class="dim">](</span><span class="link">$2</span><span class="dim">)</span>')
+
+  console.log(parse(clean, { inline: false }))
+  
+  return parse(clean, { inline: false }).map(render).join("\n\n");
+  
+  function render(node) {
+    const content = node.content instanceof Array
+      ? node.content.map(render).join("")
+      : node.content;
+  
+    const m = (str, cls = "dim") => `<span class="${cls}">${str}</span>`;
+  
+    switch (node.type) {
+      case "em": return `${m("*")}<em>${content}</em>${m("*")}`;
+      case "strong": return `${m("**")}<strong>${content}</strong>${m("**")}`;
+      case "inlineCode": return `<code>${m("`")}${content}${m("`")}</code>`;
+      case "link": return `${m("[")}${content}${m("](")}${m(node.target, "link")}${m(")")}`;
+      case "mention": return `<span data-mx-ping="${content}">${content}</span>`;
+      default: return content;
+    }  
+  }
 }
 
 function handlePaste(e) {
@@ -65,17 +77,26 @@ function handlePaste(e) {
   queueMicrotask(() => setCursorPos(editorEl, pos + text.length));
 }
 
-function handleInput() {
-  const pos = getCursorPos(editorEl);
-  html = parseMarkdown(content);
-  queueMicrotask(() => setCursorPos(editorEl, pos));  
+function handleInput(e) {
+  if (e.inputType === "insertLineBreak") {
+    const pos = getCursorPos(editorEl);
+    content = content.slice(0, pos) + "\n" + content.slice(pos);
+    html = parseMarkdown(content);
+    queueMicrotask(() => setCursorPos(editorEl, pos + 1));
+  } else {
+    const pos = getCursorPos(editorEl);
+    html = parseMarkdown(content);
+    queueMicrotask(() => setCursorPos(editorEl, pos));
+  }
 }
+
+$: console.log("new content:", JSON.stringify({ content, html }))
 </script>
 <style>
 .editor {
   background: var(--mod-lighten);
   padding: 4px;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .editor :global(.dim) {

@@ -1,7 +1,7 @@
 <script>
 import Input from "../../atoms/Input.svelte";
 import { parseHtml } from "../../../util/html.js";
-import { parseMxc } from "../../../util/content.js";
+import { parseMxc } from "../../../util/content.ts";
 export let room;
 let members = false;
 

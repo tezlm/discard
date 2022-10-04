@@ -1,7 +1,7 @@
 <script>
 // TODO: make edits apply
 import { parseHtml } from "../../../util/html.js";
-import { calculateHash } from '../../../util/content.js';
+import { calculateHash } from '../../../util/content.ts';
 import Avatar from "../../atoms/Avatar.svelte";
 export let room, eventId;
 let eventPromise = state.events.fetch(room, eventId);

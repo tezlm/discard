@@ -4,8 +4,6 @@ import Avatar from "../atoms/Avatar.svelte";
 export let current;
 const users = state.users;
 
-// FIXME: it shows the content twice on close?
-
 async function getProfile(userId) {
   if (users.has(userId)) return users.get(userId);
 	const { avatar_url, displayname } = await state.api.fetchUser(userId);

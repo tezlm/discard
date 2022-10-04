@@ -4,17 +4,26 @@ import Input from "../atoms/Input.svelte";
 import Popup from "../atoms/Popup.svelte";
 let search = "";
 let highlighted = 0;
-$: rooms = getRooms(search);
+$: results = getRooms(search);
 
-// TODO: highlight matches
+// this code is a mess, surely there's a better way
+
 // TODO: handle spaces
 function getRooms(search) {
-  const recent = state.recentRooms.slice(1);
-  if (!search) return recent;
+  if (!search) return state.recentRooms.slice(1);
+  const set = new Set(state.recentRooms);
+  const rooms = [...state.rooms.values()].map(room => ({ name: sanitize(room.name), room }));
   return fuzzysort
-    .go(search, [...state.rooms.values()], { key: "name", limit: 5, })
-    .map(i => i.obj)
-    .sort((a, b) => recent.find(i => i.roomId === a.roomId) ? -1 : recent.find(i => i.roomId === b.roomId) ? 1 : 0);
+    .go(search, rooms, { key: "name", limit: 5, })
+    .sort((a, b) => set.has(a.obj.roomId) ? -1 : set.has(b.obj.roomId) ? 1 : 0);
+}
+
+// TODO: move into utility function
+function sanitize(str) {
+  return str
+    ?.replace(/&amp;/g, "&")
+    .replace(/>/g, "&gt;")
+    .replace(/</g, "&lt;");
 }
 
 function focusRoom(room) {
@@ -24,11 +33,22 @@ function focusRoom(room) {
 }
 
 function handleKeyDown(e) {
-  if (e.key === "ArrowDown") {
-    highlighted = Math.min(highlighted + 1, rooms.length - 1);
-  } else if (e.key === "ArrowUp") {
-    highlighted = Math.max(highlighted - 1, 0);
-  }
+  if (e.key === "ArrowDown" || (e.key === "Tab" && !e.shiftKey)) {
+    if (e.key === "Tab") {
+        highlighted = (highlighted + 1) % results.length;
+    } else {
+        highlighted = Math.min(highlighted + 1, results.length - 1);
+    }
+  } else if (e.key === "ArrowUp" || (e.key === "Tab" && e.shiftKey)) {
+    if (e.key === "Tab") {
+        highlighted = (highlighted + results.length - 1) % results.length;
+    } else {
+        highlighted = Math.max(highlighted - 1, 0);
+    }
+  } else return;
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
 }
 
 function findParent(room) {
@@ -69,22 +89,42 @@ function findParent(room) {
       optional
       autofocus
       bind:value={search}
-      submitted={() => focusRoom(rooms[highlighted])}
+      submitted={() => focusRoom(search ? results[highlighted].obj.room : results[highlighted])}
     />
     <div class="rooms">
-      {#each rooms as room, i}
-        {@const parent = findParent(room)}
-        <div
-          class="room"
-          class:highlighted={highlighted === i}
-          on:click={() => focusRoom(room)}
-          on:mouseover={() => highlighted = i}
-        >
-          <span class="icon">#</span>
-          {room.name}
-          {#if parent}<span class="dim">- {parent.name}</span>{/if}
-        </div>
-      {/each}
+      <!-- this is horrible and i should feel bad -->
+      {#if !search}
+        {#each results as room, i}
+          {@const parent = findParent(room)}
+          <div
+            class="room"
+            class:highlighted={highlighted === i}
+            on:click={() => focusRoom(room)}
+            on:mouseover={() => highlighted = i}
+            on:focus={() => highlighted = i}
+          >
+            <span class="icon">#</span>
+            {room.name}
+            {#if parent}<span class="dim">- {parent.name}</span>{/if}
+          </div>
+        {/each}
+      {:else}
+        {#each results as result, i}
+          {@const room = result.obj.room}
+          {@const parent = findParent(room)}
+          <div
+            class="room"
+            class:highlighted={highlighted === i}
+            on:click={() => focusRoom(room)}
+            on:mouseover={() => highlighted = i}
+            on:focus={() => highlighted = i}
+          >
+            <span class="icon">#</span>
+            {@html fuzzysort.highlight(result, "<span style='color: var(--color-accent)'>", "</span>")}
+            {#if parent}<span class="dim">- {parent.name}</span>{/if}
+          </div>
+        {/each}
+      {/if}
     </div>
   </div>
 </Popup>
