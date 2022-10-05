@@ -5,7 +5,7 @@ import shortJoypixels from "emojibase-data/en/shortcodes/joypixels.json";
 import shortEmojibase from "emojibase-data/en/shortcodes/emojibase.json";
 import emojis from "emojibase-data/en/compact.json";
 import Input from "../atoms/Input.svelte";
-const groups = parseEmoji()
+const groups = parseEmoji();
 export let selected;
 let search = "";
 let hover;
@@ -161,7 +161,7 @@ async function handleSubmit(value, e) {
 <div class="selector" on:click={(e) => e.stopPropagation()}>
   <div class="header">
     <Input
-      small optional autofocus
+      small optional
       placeholder="search do it you wont"
       bind:value={search}
       submitted={handleSubmit}
@@ -200,6 +200,9 @@ async function handleSubmit(value, e) {
         </div>
         {/if}
       {/each}
+      {#if filtered.every(i => i.length === 0)}
+        <div style="display: flex; align-items: center; justify-content: center; width 100%; height: 100%">no emoji :(</div>
+      {/if}
     {/await}
   </div>
   <div class="preview">

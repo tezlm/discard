@@ -111,6 +111,5 @@ main > div {
 </main>
 <div class="layer layer-1"><Popups /></div>
 <div class="layer layer-2"><Popouts /></div>
-<!-- TODO: building the emoji picker is quite heavy, move to its own layer? -->
 <div class="layer layer-3"><ContextMenus /></div>
 <svelte:window on:click={handleClick} />

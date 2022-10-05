@@ -1,17 +1,28 @@
 <script>
-import Emoji from "../../molecules/Emoji.svelte";
 import twemoji from "twemoji";
 export let picked;
 export let show = false;
+let wrapperEl;
 
 function handleClick(e) {
-  e.stopImmediatePropagation();
+  e.stopPropagation();
   show = !show;
 }
 
-function handlePick(val, keep) {
-  if (val) picked(val, keep);
-  if (!keep) show = false;
+$: if (show) {
+  const rect = wrapperEl.getBoundingClientRect();
+  state.popout.set({
+    id: "emoji",
+    animate: "top",
+    bottom: 76,
+    right: window.innerWidth - rect.right,
+    selected(emoji, keepOpen) {
+      if (emoji) picked(emoji, keepOpen);
+      if (!keepOpen) show = false;
+    },
+  });
+} else {
+  state.popout.set({});
 }
 </script>
 <style>
@@ -37,16 +48,9 @@ function handlePick(val, keep) {
   filter: grayscale(0);
   transform: scale(1.2);
 }
-
-.emoji .wrapper {
-  position: absolute;
-  bottom: calc(56px);
-  right: 0;
-  pointer-events: all;
-}
 </style>
 <div class="emoji">
-  <div class="button" on:click={handleClick}>
+  <div class="button" bind:this={wrapperEl} on:click={handleClick}>
     <div class="icon" class:shown={show}>
       {@html twemoji.parse("😀", {
         folder: "svg",
@@ -54,10 +58,5 @@ function handlePick(val, keep) {
       })}
     </div>
   </div>
-  {#if show}
-  <div class="wrapper">
-    <Emoji selected={handlePick} />
-  </div>
-  {/if}
 </div>
 <svelte:window on:click={() => show = false} />

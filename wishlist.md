@@ -2,7 +2,7 @@
 
 varying levels of difficulty
 
-- [ ] account mangement
+- [ ] account management
   - [x] login/logout
   - [ ] register
   - [ ] guests
@@ -19,7 +19,7 @@ varying levels of difficulty
   - [x] send files
   - [x] paste in files
   - [x] open attachments in popup
-  - [x] image/video dimentions
+  - [x] image/video dimensions
   - [ ] file too big warning
   - [ ] drag and drop to upload file
 - [x] reactions
@@ -76,7 +76,7 @@ varying levels of difficulty
 ## 100% completion
 
 when everything on this checklist is complete, this project will be put
-in maintenence mode and only recieve bugfixes
+in maintenance mode and only receive bugfixes
 
 ## >100% completion
 

@@ -6,6 +6,7 @@ let { input } = state.roomState;
 
 function getUserMenu() {
   const name = member.name || member.userId;
+  const room = member.room;
   return [
     { label: "Profile", icon: "person",        clicked: todo },
     { label: "Mention", icon: "notifications", clicked: () => $input += member.id },

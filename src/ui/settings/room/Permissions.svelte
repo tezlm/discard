@@ -2,9 +2,10 @@
 import Power from "../../atoms/Power.svelte";
 import Confirm from "../Confirm.svelte";
 export let room;
+export let save;
 $: perms = $room.power;
 
-let modified = new Set();
+let modified = new Map();
 let isModified = false;
 
 const descriptions = {
@@ -17,8 +18,8 @@ const descriptions = {
   name:     `The minimum power required to change this ${$room.type}'s name.`,
   topic:    `The minimum power required to change this ${$room.type}'s topic.`,
   avatar:   `The minimum power required to change this ${$room.type}'s avatar.`,
-  power:    "The minimum power required to change other people's power levels.",
-  perms:    "The minimum power required to change these minimum power levels.",
+  power:    "The minimum power required to change these permissions and other people's power levels.",
+  // perms:    "The minimum power required to change these minimum power levels.",
   default:  "Everyone's default power level.",
   ping:     "The minimum power required to ping everyone. Set this to something high if this room is public.",
   rooms:    "The minimum power required to add/remove rooms to this space.",
@@ -44,7 +45,7 @@ function getItems() {
       { category: "Permission permissions" },
       { name: "Default Power",   id: "default",  power: perms.users_default ?? 0 },
       { name: "Manage Power",    id: "power",    power: perms.getState("m.room.power_levels") },
-      { name: "Manage Settings", id: "perms",    power: perms.state_default ?? 50 },
+      // { name: "Manage Settings", id: "perms",    power: perms.state_default ?? 50 },
       { category: "????" },
       { name: "Change Avatar",   id: "avatar",   power: perms.getState("m.room.avatar") },
       { name: "Upgrade Room",    id: "upgrade",  power: perms.getState("m.room.tombstone") },
@@ -66,13 +67,54 @@ function getItems() {
       { category: "Permission permissions" },
       { name: "Default Power",   id: "default",  power: perms.users_default ?? 0 },
       { name: "Manage Power",    id: "power",    power: perms.getState("m.room.power_levels") },
-      { name: "Manage Settings", id: "perms",    power: perms.state_default ?? 50 },
+      // { name: "Manage Settings", id: "perms",    power: perms.state_default ?? 50 },
       { category: "????" },
       { name: "Upgrade Room",    id: "upgrade",  power: perms.getState("m.room.tombstone") },
       { name: "History",         id: "history",  power: perms.getState("m.room.history_visibility") },
       { name: "Encrypt",         id: "encrypt",  power: perms.getState("m.room.encryption") },
     ];
   }
+}
+
+function handleChange(item, power) {  
+  if (item.power === power) {
+    modified.delete(item.id);
+  } else {
+    modified.set(item.id, power);
+  }
+  isModified = modified.size;
+}
+
+$: if (isModified) {
+  save = async () => {
+    const levels = $room.getState("m.room.power_levels")?.content;
+    for (let [id, power] of modified) {
+      const has = (key) => levels[key] ?? (levels[key] = {});
+      switch(id) {
+        case "message":  has("events"); levels.events["m.room.message"] = power; break;
+        case "reaction": has("events"); levels.events["m.room.reaction"] = power; break;
+        case "invite":   levels.invite = power; break;
+        case "kick":     levels.kick = power; break;
+        case "ban":      levels.ban = power; break;
+        case "redact":   levels.redact = power; break;
+        case "name":     has("events"); levels.events["m.room.name"] = power; break;
+        case "topic":    has("events"); levels.events["m.room.topic"] = power; break;
+        case "avatar":   has("events"); levels.events["m.room.avatar"] = power; break;
+        case "power":    has("events"); levels.events["m.room.power_levels"] = power; break;
+        // case "perms":    levels["key"] = power; break;
+        case "default":  levels.users_default = power; break;
+        case "ping":     has("notifications"); levels.notifications.room = power; break;
+        case "rooms":    has("events"); levels.events["m.space.child"] = power; break;
+        case "history":  has("events"); levels.events["m.room.history_visibility"] = power; break;
+        case "encrypt":  has("events"); levels.events["m.room.encryption"] = power; break;
+      }
+    }
+    await state.api.sendState($room.id, "m.room.power_levels", "", levels);
+    modified.clear();
+    isModified = false;
+  };
+} else {
+  save = null;
 }
 </script>
 <style>
@@ -123,7 +165,7 @@ function getItems() {
       value={item.power}
       max={perms.me}
       disabled={perms.me < perms.getState("m.room.power_levels") || perms.me < item.power}
-      changed={(p) => { modified[item.power === p ? "delete" : "add"](item.id); isModified = modified.size }}
+      changed={power => handleChange(item, power)}
     />
   </div>
 {/if}

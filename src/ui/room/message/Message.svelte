@@ -4,7 +4,6 @@ import MessageContent from "./MessageContent.svelte";
 import MessageEdit from "./MessageEdit.svelte";
 import MessageReactions from "./MessageReactions.svelte";
 import MessageToolbar from "../../atoms/Toolbar.svelte";
-import Emoji from "../../molecules/Emoji.svelte";
 import User from "../../molecules/User.svelte";
 import { formatDate, formatTime } from "../../../util/format.ts";
 import { calculateHash } from '../../../util/content.ts';
@@ -13,16 +12,12 @@ import Avatar from "../../atoms/Avatar.svelte";
 
 // TODO: modularize more, don't require fetching members and stuff
 
-// reaction picker:
-// TODO: share code with MessageReaction.svelte
-// TODO: (along with other menus) move into viewport
-
 export let room, event, header = false, shiftKey = false;
 
 let { edit, input } = state.roomState;
 let slice = state.slice;
 let settings = state.settings;
-let showToolbar = false;
+let toolbarEl;
 $: toolbar = getToolbar(shiftKey);
 
 let showReactionPicker = false;
@@ -67,9 +62,9 @@ function getToolbar(shift = false) {
 
   return toolbar;
 
-  function showMore(e) {
-    queueMicrotask(() => showToolbar = true);
-    state.context.set({ items: getContextMenu(), x: e.clientX, y: e.clientY });
+  function showMore() {
+    const rect = toolbarEl.getBoundingClientRect();
+    state.context.set({ items: getContextMenu(), x: rect.left, y: rect.top + 40 });
   }
 }
 
@@ -131,8 +126,9 @@ function getContextMenu() {
   menu.push({ label: "View Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
   return menu;
 
-  function showPicker() {
-    setTimeout(() => showReactionPicker = true);
+  function showPicker(e) {
+    showReactionPicker = true;
+    e.stopPropagation();
   }
 
   function addReaction(_, emoji) {
@@ -179,6 +175,33 @@ function getUserMenu() {
 	function copy(text) {
 		return () => navigator.clipboard.writeText(text);
 	}
+}
+
+$: if (showReactionPicker) {
+  queueMicrotask(() => {
+    const rect = toolbarEl.getBoundingClientRect();
+    state.popout.set({
+      id: "emoji",
+      animate: "left",
+      top: rect.top,
+      right: window.innerWidth - rect.left + 8,
+      selected(emoji, keepOpen) {
+        if (emoji && !event.reactions?.get(emoji)?.find(i => i.sender.id === state.userId)) {
+          const reaction = {
+            "m.relates_to": {
+              key: emoji,
+              rel_type: "m.annotation",
+              event_id: event.eventId,
+            },
+          };
+          state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
+        }
+        if (!keepOpen) showReactionPicker = false;
+      },
+    });
+  });
+} else {
+  state.popout.set({});
 }
 </script>
 <style>
@@ -259,10 +282,6 @@ time {
   z-index: 1;
 }
 
-.reaction-picker {
-  margin-right: 8px;
-}
-
 .message:hover time {
   display: inline-block;
 }
@@ -280,7 +299,7 @@ time {
   <div class="side">
     {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
     {#if header}
-    <div class="avatar" class:selected={showUserPopout} on:click|stopPropagation={() => showUserPopout = !showUserPopout} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>
+    <div class="avatar" class:selected={showUserPopout} on:click={() => setTimeout(() => showUserPopout = !showUserPopout)} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>
       <Avatar user={event.sender} size={40} />
     </div>
     {:else}
@@ -318,26 +337,9 @@ time {
     <!-- {event.relations.filter(i => i.content["m.relates_to"]?.rel_type === "m.thread").length} thread replies -->
   </div>
   {#if event.eventId !== $edit}
-  <div class="toolbar" style:display={showReactionPicker ? "flex" : null}>
-    {#if showReactionPicker}
-    <div class="reaction-picker" in:fly={{ x: 15 }}>
-      <Emoji selected={(emoji, keep) => {
-        if (!event.reactions?.get(emoji)?.find(i => i.sender.userId === state.userId) && emoji) {
-          const reaction = {
-            "m.relates_to": {
-              key: emoji,
-              rel_type: "m.annotation",
-              event_id: event.eventId,
-            },
-          };
-          state.api.sendEvent(event.roomId, "m.reaction", reaction, Math.random());  
-        }
-        if (!keep) showReactionPicker = false;
-      }} />
-    </div>
-    {/if}
+  <div class="toolbar" bind:this={toolbarEl} style:display={showReactionPicker ? "block" : null}>
     <MessageToolbar items={toolbar} />
   </div>
   {/if}
 </div>
-<svelte:window on:click={() => { showReactionPicker = false; showUserPopout = false; showToolbar = false }} />
+<svelte:window on:click={() => { showReactionPicker = false; showUserPopout = false; }} />
