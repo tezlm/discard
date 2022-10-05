@@ -28,6 +28,6 @@ pre {
       <div>discard flags: {[...current.event.flags].join(", ")}</div>
     {/if}
     <br />
-    <pre><code>{@html hljs.highlight("json", JSON.stringify(current.event.raw, null, 4))}</code></pre>
+    <pre><code>{@html hljs.highlight("json", JSON.stringify(current.event.raw, null, 4)).value}</code></pre>
   </div>
 </Popup>

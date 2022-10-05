@@ -6,6 +6,10 @@ import Avatar from "../atoms/Avatar.svelte";
 export let room;
 let count = 20;
 
+function delay(ms) {
+  return new Promise(res => setTimeout(res, ms));
+}
+
 async function fetchList(room) {
   if (!room.request) await room.members.fetch();
   const members = room.members.with("join");

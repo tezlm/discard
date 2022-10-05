@@ -1,9 +1,9 @@
 <script>
 export let value = "";
 export let placeholder = "Search";
-export let width;
 export let autofocus = false;
 export let focus = false;
+export let tall = false;
 
 function handleKeyDown(e) {
   if (e.key === "Escape" && value) {
@@ -17,17 +17,11 @@ function handleKeyDown(e) {
 .wrapper {
   display: inline-flex;
   position: relative;
-  width: 160px;
+  width: 100%;
   height: 24px;
 
   background: var(--bg-spaces);
   border-radius: 4px;
-
-  transition: width .2s;
-}
-
-.wrapper.focus {
-  width: 250px;
 }
 
 input {
@@ -67,8 +61,21 @@ input {
 .close:hover {
   color: var(--fg-notice);
 }
+
+.wrapper.tall {
+  height: 36px;
+}
+
+.wrapper.tall input {
+  padding: 16px 8px;
+}
+
+.wrapper.tall .icon {
+  padding: 16px 8px;
+  font-size: 20px;
+}
 </style>
-<div class="wrapper" class:focus={focus || value} style:width={width + "px"}>
+<div class="wrapper" class:tall class:focus={focus || value}>
   <input
     type="text"
     {placeholder}

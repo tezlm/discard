@@ -15,6 +15,9 @@ export let header;
 export let room;
 export let event;
 
+let toolbarEl;
+let showReactionPicker = false;
+
 function getToolbar(event, shiftKey) {
 	const toolbar = [];
   const fromMe = event.sender.userId === state.userId;
@@ -25,11 +28,39 @@ function getToolbar(event, shiftKey) {
   } else if (shiftKey){
 		toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
 	} else if (room.power.me >= room.power.getEvent("m.reaction")) {
-    toolbar.push({ name: "React", icon: "add_reaction", clicked: todo });
+    toolbar.push({ name: "React", icon: "add_reaction", clicked: () => showReactionPicker = !showReactionPicker });
     toolbar.push({ name: "More", icon: "more_vert", clicked: todo });
   }
 	
 	return toolbar;
+}
+
+
+$: if (showReactionPicker) {
+  queueMicrotask(() => {
+    const rect = toolbarEl.getBoundingClientRect();
+    state.popout.set({
+      id: "emoji",
+      animate: "left",
+      top: rect.top,
+      right: window.innerWidth - rect.left + 8,
+      selected(emoji, keepOpen) {
+        if (emoji && !event.reactions?.get(emoji)?.find(i => i.sender.id === state.userId)) {
+          const reaction = {
+            "m.relates_to": {
+              key: emoji,
+              rel_type: "m.annotation",
+              event_id: event.eventId,
+            },
+          };
+          state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
+        }
+        if (!keepOpen) showReactionPicker = false;
+      },
+    });
+  });
+} else {
+  state.popout.set({});
 }
 </script>
 <style>
@@ -54,6 +85,10 @@ function getToolbar(event, shiftKey) {
 .event:hover .toolbar {
 	display: block;
 }
+
+.reactions {
+	margin-left: 72px;
+}
 </style>
 <div class="event" class:create={event.type === "m.room.create"}>
 	{#if event.type === "m.room.create"}
@@ -75,13 +110,14 @@ function getToolbar(event, shiftKey) {
 		<Unknown {room} {event} />
 	{/if}
 	{#if !["m.room.create", "m.room.message", "m.sticker"].includes(event.type)}
-	  <div class="toolbar">
-		  <Toolbar items={getToolbar(event, shiftKey)} />
-		</div>
+  <div class="toolbar" bind:this={toolbarEl}>
+	  <Toolbar items={getToolbar(event, shiftKey)} />
+	</div>
 	{/if}
-	<!-- TODO: move reactions and reply here
-  {#if event.reactions}
+  {#if event.reactions && event.type !== "m.room.message"}
+	<div class="reactions">
 		<MessageReactions {event} />
+	</div>
 	{/if}
-	-->
 </div>
+<svelte:window on:click={() => { showReactionPicker = false }} />

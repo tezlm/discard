@@ -3,12 +3,20 @@ import Radio from "../../atoms/Radio.svelte";
 import Button from "../../atoms/Button.svelte";
 import Toggle from "../../atoms/Toggle.svelte";
 export let room;
+export let save;
 // TODO: disabled tooltip
 // TODO: make this work, live update
 const getIds = type => state.spaces.get(type).map(i => i.roomId);
 const isOrphan = [...getIds("orphanRooms"), ...getIds("orphanSpaces")].includes($room.roomId);
 
-$: history_visibility = $room.getState("m.room.history_visibility")?.content.history_visibility ?? "shared";
+$: historyVisibility = $room.getState("m.room.history_visibility")?.content.history_visibility ?? "shared";
+$: newHistoryVisibility = historyVisibility;
+
+$: if (newHistoryVisibility !== historyVisibility) {
+  save = () => {}
+} else {
+  save = null
+}
 </script>
 <div class="title">Encryption</div>
 <p>
@@ -44,7 +52,7 @@ $: history_visibility = $room.getState("m.room.history_visibility")?.content.his
 </div>
 <div style="margin: 1em"></div>
 <div class="title">Message History</div>
-<Radio selected={history_visibility} options={[
+<Radio bind:selected={newHistoryVisibility} options={[
   { id: "world_readable", name: "Everyone", detail: "Includes guests. Good for public rooms.", color: "var(--color-accent)" },
   { id: "shared",         name: "Members",  detail: "All members since selecting this option.", color: "var(--color-green)" },
   { id: "invited",        name: "Members, after invite", detail: "All members since they were invited.", color: "var(--color-yellow)" },

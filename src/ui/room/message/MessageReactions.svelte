@@ -2,15 +2,12 @@
 import { backOut, quadOut } from "svelte/easing";
 import { parseMxc } from "../../../util/content";
 import Tooltip from "../../atoms/Tooltip.svelte";
-import Emoji from "../../molecules/Emoji.svelte";
 export let event;
-// let popout = state.popout;
 
-// i have no idea how these work but they do so /shrug lol
 // TODO: make the number animate in reverse when the count goes down
-// TODO: reuse emoji picker everywhere
 
 let showPicker = false;
+let addEl;
 
 function formatPeople(events) {
   const names = events.map(i => escapeHtml(i.sender.name ?? i.sender.id));
@@ -73,6 +70,33 @@ function handleClick(mine, key) {
     };
     state.api.sendEvent(event.roomId, "m.reaction", reaction, Math.random());  
   }
+}
+
+$: if (showPicker) {
+  queueMicrotask(() => {
+    const rect = addEl.getBoundingClientRect();
+    state.popout.set({
+      id: "emoji",
+      animate: "right",
+      top: rect.top,
+      left: rect.left + 24,
+      selected(emoji, keepOpen) {
+        if (emoji && !event.reactions?.get(emoji)?.find(i => i.sender.id === state.userId)) {
+          const reaction = {
+            "m.relates_to": {
+              key: emoji,
+              rel_type: "m.annotation",
+              event_id: event.eventId,
+            },
+          };
+          state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
+        }
+        if (!keepOpen) showReactionPicker = false;
+      },
+    });
+  });
+} else {
+  state.popout.set({});
 }
 </script>
 <style>
@@ -182,25 +206,8 @@ function handleClick(mine, key) {
     </div>
   </Tooltip>
 {/each}
-<div class="add">
+<div class="add" bind:this={addEl}>
   <div class="icon" class:show={showPicker} on:click={(e) => { e.stopImmediatePropagation(); showPicker = !showPicker }}>add_reaction</div>
-  {#if showPicker}
-  <div class="picker" in:fly>
-    <Emoji selected={(emoji, keep) => {
-      if (!event.reactions?.get(emoji)?.mine && emoji) {
-        const reaction = {
-          "m.relates_to": {
-            key: emoji,
-            rel_type: "m.annotation",
-            event_id: event.eventId,
-          },
-        };
-        state.api.sendEvent(event.roomId, "m.reaction", reaction, Math.random());  
-      }
-      if (!keep) showPicker = false;
-    }} />
-  </div>
-  {/if}
 </div>
 </div>
 <svelte:window on:click={() => showPicker = false} />
