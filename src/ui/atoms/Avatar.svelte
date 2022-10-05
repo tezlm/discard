@@ -30,7 +30,7 @@ function handleError(e) {
 </style>
 <svelte:element
   this={link ? "a" : "div"}
-  href={link ? getAvatar(false) : null}
+  href={link ? getAvatar(user, false) : null}
   style:height={size + "px"}
   style:width={size + "px"}
 >

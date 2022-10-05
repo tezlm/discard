@@ -92,7 +92,7 @@ img {
   max-width: 90%;
 }
 
-.text :global(blockquote), .text :global(ol), .text :global(ul), .text :global(details) {
+.text :global(blockquote), .text :global(ol), .text :global(ul), .text :global(li), .text :global(details) {
   white-space: normal;
 }
 

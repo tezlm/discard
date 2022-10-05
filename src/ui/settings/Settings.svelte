@@ -3,7 +3,7 @@ import Confirm from "./Confirm.svelte";
 export let views, options;
 let focused = views[0];
 let popup = state.popup;
-let save = null;
+let save, reset;
 
 // TODO: categories
 
@@ -136,9 +136,9 @@ h1 {
       {#if !focused.raw}
       <h1>{focused.name}</h1>
       {/if}
-      <svelte:component this={focused.view} {...options} {...focused.props} bind:save={save} />
+      <svelte:component this={focused.view} {...options} {...focused.props} bind:save={save} bind:reset={reset} />
       {#if save}
-      <Confirm {save} />
+      <Confirm {save} reset={() => reset ? reset() : todo} />
       {/if}
     </div>
     <div class="exit" on:click={() => state.scene.set("chat")}>ESC</div>

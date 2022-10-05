@@ -1,5 +1,6 @@
 <script>
 import Avatar from "../atoms/Avatar.svelte";
+import Power from "../atoms/Power.svelte";
 export let member;
 
 let { input } = state.roomState;
@@ -17,7 +18,7 @@ function getUserMenu() {
     { label: `Kick ${name}`,    icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "kick",         room, member }) },
     { label: `Ban ${name}`,     icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "ban",          room, member }) },
     null,
-    { label: "Power",   clicked: todo, submenu: [] },
+    { label: "Power",   clicked: todo, submenu: [{ component: Power }] },
     null,
     { label: "Copy ID", clicked: copy(member.id), icon: "terminal" },
   ];

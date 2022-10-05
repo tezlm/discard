@@ -77,14 +77,16 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
 <div class="menu" style:width={width + "px"} bind:this={menuEl}>
 {#each items as item}
   {#if item}
-    <div
-      class="item"
-      style:color={item.color}
-      on:click={item.clicked}
-    >
       {#if item.component}
+      <div on:click={e => e.stopPropagation()}>
         <svelte:component this={item.component} />
-      {:else}
+      </div>
+    {:else}
+      <div
+        class="item"
+        style:color={item.color}
+        on:click={item.clicked}
+      >
         {item.label}
         {#if item.submenu}
         <div class="icon">navigate_next</div>
@@ -94,8 +96,8 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
         {:else if item.icon}
         <div class="icon">{item.icon}</div>
         {/if}
-      {/if}
       </div>
+    {/if}
   {:else}
     <div class="spacer"></div>
   {/if}

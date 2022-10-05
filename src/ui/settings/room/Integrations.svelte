@@ -84,3 +84,6 @@ h4 {
 {:else}
 no bridges
 {/each}
+<div style="height: 18px"></div>
+<h3>Bots</h3>
+[waiting on msc - please hold...]

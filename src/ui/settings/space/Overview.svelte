@@ -3,12 +3,17 @@ import { parseMxc } from "../../../util/content.ts";
 import Input from "../../atoms/Input.svelte";
 import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
-import Confirm from "../Confirm.svelte";
 export let room;
-export let save;
+export let save = null;
+let name, topic;
 
-let name = $room?.name ?? "";
-let topic = $room?.topic ?? "";
+export function reset() {
+  name = $room?.name ?? "";
+  topic = $room?.topic ?? "";  
+}
+
+reset();
+
 $: {
   let nameChanged = name !== ($room?.name ?? "");
   let topicChanged = topic !== ($room?.topic ?? "");
@@ -100,7 +105,7 @@ h1 {
   <div class="section" style="flex-direction: row">
     <div class="avatar">
       <div class="uploader">
-        <!-- TODO: generate default avatars -->
+        <!-- TODO: generate default avatars (use Avatar?) -->
         <img src={parseMxc($room.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"} />
         <div class="remove">Remove</div>
       </div>

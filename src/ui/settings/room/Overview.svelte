@@ -2,10 +2,16 @@
 import Input from "../../atoms/Input.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
 export let room;
-export let save;
+export let save = null;
+let name, topic;
 
-let name = $room?.name ?? "";
-let topic = $room?.topic ?? "";
+export function reset() {
+  name = $room?.name ?? "";
+  topic = $room?.topic ?? "";  
+}
+
+reset();
+
 $: {
   let nameChanged = name !== ($room?.name ?? "");
   let topicChanged = topic !== ($room?.topic ?? "");
