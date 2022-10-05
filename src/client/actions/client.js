@@ -83,7 +83,16 @@ function start(api, syncer, userId) {
   
   syncer.on("state", (roomId, state) => actions.rooms.handleState(roomId, state));  
   syncer.on("event", (roomId, event) => actions.timeline.handle(roomId, event, false));
-  // syncer.on("timeline", (roomId, event) => actions.timeline.handle(roomId, event, false));
+  syncer.on("ephemeral", (edu) => {
+    if (edu.type !== "m.typing") return;
+  
+    const roomState = state.roomStates.get(edu.room.id);
+    if (!roomState) return;
+    roomState.typing = edu.content.user_ids;
+    if (edu.room.id === state.focusedRoomId) {
+      state.roomState.typing.set(edu.content.user_ids);
+    }    
+  });
   
   syncer.on("roomAccountData", (room, { type, content }) => {
     actions.rooms.handleAccount(room.id, type, content);

@@ -21,6 +21,7 @@ function formatPeople(events) {
   }
 
   function escapeHtml(str) {
+  if (!str) console.warn("string in msgreact", str)
     return str
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")

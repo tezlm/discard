@@ -5,6 +5,8 @@ export let room;
 export let save;
 $: perms = $room.power;
 
+// TODO: live update, make this not suck as much
+
 let modified = new Map();
 let isModified = false;
 
@@ -31,7 +33,7 @@ function getItems() {
   if ($room.type === "room") {
     return [
       { category: "Basic permissions" },
-      { name: "Send Messages",   id: "message",  power: perms.getEvent("m.room.message") },
+      { name: "Send Messages",   id: "message",  power: perms.events_default ?? 0 },
       { name: "Add Reactions",   id: "reaction", power: perms.getEvent("m.room.reaction") },
       { name: "Redact Messages", id: "redact",   power: perms.redact ?? 0 },
       { name: "Ping Room",       id: "ping",     power: perms.notifications?.room ?? perms.state_default ?? 50 },
@@ -91,7 +93,7 @@ $: if (isModified) {
     for (let [id, power] of modified) {
       const has = (key) => levels[key] ?? (levels[key] = {});
       switch(id) {
-        case "message":  has("events"); levels.events["m.room.message"] = power; break;
+        case "message":  levels.events_default = power; break;
         case "reaction": has("events"); levels.events["m.room.reaction"] = power; break;
         case "invite":   levels.invite = power; break;
         case "kick":     levels.kick = power; break;

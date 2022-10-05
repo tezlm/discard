@@ -1,10 +1,17 @@
 <script>
 import Button from "../atoms/Button.svelte";
-import { fly } from "svelte/transition";
+import { backInOut } from "svelte/easing";
 export let save;
-export let cancel = todo;
+export let reset;
+let saving = false;
 
-// TODO: actual in/out animation
+function fly() {
+  return {
+    duration: 500,
+    easing: backInOut ,
+    css: (t) => `transform: translateY(${72 - t * 72}px)`,
+  }
+}
 </script>
 <style>
 .wrapper {
@@ -37,7 +44,7 @@ export let cancel = todo;
     <div class="label">
       Careful, you have unsaved changes!
     </div>
-    <Button type="link small" label="Cancel" clicked={cancel} />
-    <Button type="good small" label="Save Changes" clicked={save} />
+    <Button type="link small" label="Reset" clicked={reset} />
+    <Button type="good small" label="Save Changes" clicked={() => { saving = true; save().then(() => saving = false) }} loading={saving} />
   </div>
 </div>
