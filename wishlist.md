@@ -20,7 +20,7 @@ varying levels of difficulty
   - [x] paste in files
   - [x] open attachments in popup
   - [x] image/video dimensions
-  - [ ] file too big warning
+  - [x] file too big warning
   - [ ] drag and drop to upload file
 - [x] reactions
 - [ ] members
@@ -58,8 +58,8 @@ varying levels of difficulty
   - [ ] jump to latest
   - [ ] link embeds
   - [ ] room embeds
-  - [ ] better m.room.member
-  - [-] show other state events
+  - [ ] show m.room.member change type + reason
+  - [-] show other state events (m.*)
   - [ ] (future) use extensible events
 - [ ] qol/misc
   - [x] user colors
@@ -67,8 +67,17 @@ varying levels of difficulty
   - [x] view homeserver stats
 - [x] context menus
 - [ ] dms
+  - [x] show dms differently
+  - [ ] dm-only list
+  - [ ] start dms
 - [ ] router (change title/hash/favicon)
 - [ ] e2ee
+  - [ ] basic implementation
+  - [ ] attachments
+  - [ ] import/export keys
+  - [ ] cross signing + ssss
+  - [ ] verification
+  - [ ] key backup
 - [ ] threads
 - [ ] voice channels
 - [x] nitor

@@ -1,10 +1,8 @@
 import { writable, get } from "svelte/store";
 import TimelineSet from "../matrix/timeline.js";
 
-const roomStates = new Map();
-
-export function handleAccount(roomId, type, content) {
-  if (type === "m.fully_read" && state.syncer.status !== "starting") {
+export function handleAccount(_, event) {
+  if (event.type === "m.fully_read" && state.syncer.status !== "starting") {
     update();
   }
 }
@@ -14,10 +12,8 @@ export function handleJoin(room, batch) {
   state.roomTimelines.set(room.id, new TimelineSet(room.id, batch));  
 }
 
-export function handleState(roomId, event) {
-  if (state.syncer.status !== "starting") {
-    update();
-  }
+export function handleState(_1, _2) {
+  if (state.syncer.status !== "starting") update();
 }
 
 export function handleLeave(roomId) {

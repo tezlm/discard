@@ -2,6 +2,7 @@
 import Radio from "../../atoms/Radio.svelte";
 import Toggle from "../../atoms/Toggle.svelte";
 const settings = state.settings;
+// TODO: make appearance specifically about discard's appearance (don't change functionality)
 </script>
 <style>
 .option {
@@ -26,6 +27,7 @@ TODO: preview messages
 />
 <div style="height: 1em"></div>
 <div class="title">Room timeline</div>
+<!-- "show member events in public rooms" -->
 {#each [
   ["Show join and leaves", "showjoinleave"],
   ["Show name and avatar changes", "shownickavatar"],

@@ -17,8 +17,7 @@ function getName(room) {
 
 function getAvatar(room) {
 	if (!dms.has(room.roomId)) return room.avatar;
-	const other = dms.get(room.roomId);
-	return other.avatar;
+	return dms.get(room.id).avatar;
 }
 
 function isRead(room) {

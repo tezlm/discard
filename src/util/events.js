@@ -6,7 +6,11 @@
 //   }
 // }
 
-export default class Event {
+import { Event } from "discount";
+export default Event;
+
+// export default class Event {
+export class _Event {
   constructor(room, raw) {
     this.room = room;
     this.raw = raw;   

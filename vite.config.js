@@ -28,7 +28,7 @@ export default defineConfig({
     }
   },
   define: {
-    "discardEnv": {
+    DISCARD: {
       package: pkgjson,
       time: new Date(),
       commit: execSync("git log -n 1 --oneline HEAD").toString().match(/[a-z0-9]+/)[0],
