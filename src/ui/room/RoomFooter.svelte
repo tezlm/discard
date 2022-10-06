@@ -58,7 +58,7 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
 <style>
 .container {
   padding: 0 16px;
-  z-index: 1;
+  z-index: 2;
 }
 
 .input {

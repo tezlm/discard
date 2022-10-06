@@ -4,6 +4,7 @@ import Button from "../atoms/Button.svelte";
 import Video from "../molecules/files/Video.svelte";
 import Audio from "../molecules/files/Audio.svelte";
 import { formatSize } from "../../util/format.ts";
+import hljs from "highlight.js";
 export let current;
 export const confirm = current.confirm;
 let type = current.file.type.split("/")[0];
@@ -14,7 +15,10 @@ function closePopup() {
 
 async function getText(file) {
   const text = await file.text();
-  return text.split("\n").slice(0, 10).join("\n");
+  const trim = text.split("\n").slice(0, 12).join("\n");
+  const lang = file.type?.split("/")[1];
+  console.log(file.type)
+  return hljs.highlight(hljs.getLanguage(lang) ? lang : "text", trim).value; 
 }
 </script>
 <style>
@@ -56,7 +60,7 @@ img {
       {:else if type === "audio"}
       <Audio src={URL.createObjectURL(current.file)} name={current.file.name} size={current.file.size} />
       {:else if type === "text" || current.file.type === "application/json"}
-      <pre>{#await getText(current.file) then text}{text}{/await}</pre>
+      <pre>{#await getText(current.file) then text}{@html text}{/await}</pre>
       {/if}
     </div>
   </div>

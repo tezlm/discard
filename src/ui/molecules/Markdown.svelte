@@ -1,10 +1,27 @@
 <script>
 import lexical from "lexical";
-import { registerRichText } from "@lexical/rich-text";
 import { registerPlainText } from "@lexical/plain-text";
 import { createEmptyHistoryState, registerHistory } from "@lexical/history";
 import { onMount } from "svelte";
 import md from "simple-markdown";
+import Autocomplete from "./Autocomplete.svelte";
+import markdown from "@lexical/markdown";
+
+// import {
+//   $convertFromMarkdownString,
+//   $convertToMarkdownString,
+//   TRANSFORMERS,
+// } from '@lexical/markdown';
+
+// editor.update(() => {
+//   const markdown = $convertToMarkdownString(TRANSFORMERS);
+//   ...
+// });
+
+// editor.update(() => {
+//   $convertFromMarkdownString(markdown, TRANSFORMERS);
+// });
+
 let editorEl;
 const { createEditor } = lexical;
 /*
@@ -51,54 +68,99 @@ function parseMarkdown(str) {
     }  
   }
 }
-
-$: console.log("new content:", JSON.stringify({ content, html }))
 */
 
-const editor = createEditor({});
+class MentionNode extends lexical.TextNode {
+  constructor(user, key) {
+    super("@" + user.name, key);
+    // super(user.name, key);
+    this.user = user;
+  }
+  
+  static getType() {
+    return "mention";
+  }
+  
+  static clone(node) {
+    return new MentionNode(node.user, node.__text, node.__key);
+  }
+  
+  createDOM(config) {
+    const el = super.createDOM(config);
+    el.classList.add("mention");
+    // el.innerText = "@" + this.user.name;
+    return el;
+  }
+}
+
+const editor = createEditor({ namespace: "editor", nodes: [MentionNode] });
+
 onMount(() => {
   editor.setRootElement(editorEl);
   registerPlainText(editor);
   registerHistory(editor, createEmptyHistoryState(), 1000);
-  // editor.addTransform(lexical.TextNode, (node) => {
-  //   const txt = node.getTextContent();
-  //   console.log(node, txt)
-  //   if (txt === "ayo") {
-  //     node.replace(lexical.$createTextNode("among"));
-  //   }
-  // });
+  globalThis.editor=editor;
+  
+  editor.registerNodeTransform(lexical.TextNode, (node) => {
+    const txt = node.getTextContent();
+    // if (txt === "i will mention user ") {
+    if (txt === "user") {
+      const user = new MentionNode({ name: "user" });
+      user.setMode("token");
+      node.replace(user);
+      user.select();
+    } else if (txt === "room") {
+      // node.replace(new RoomNode({ name: "room" }));
+    }
+  });
+  
+  // editor.registerCommand(
+  //   // lexical.INSERT_PARAGRAPH_COMMAND,
+  //   lexical.INSERT_LINE_BREAK_COMMAND,
+  //   () => {
+  //     console.log("reset editor")
+  //     return true;
+  //   },
+  //   lexical.COMMAND_PRIORITY_EDITOR,
+  // );
 });
 
-/*
-import { useEffect } from "react";
-import { $createEmoticonNode } from "./EmoticonNode";
-import { TextNode } from "lexical";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+const users = [];
+const addUser = (name) => {
+  const id = `@${name.replace(/ /g, "-")}:celery.eu.org`;
+  users.push({ name, id, description: id });
+};
+addUser("bread");
+addUser("bruh");
+addUser("tezlm");
+addUser("username with spaces");
+addUser("foo");
+addUser("bar");
+addUser("baz");
+addUser("user");
 
-function emoticonTransform(node) {
-  const textContent = node.getTextContent();
-  if (textContent === ":avo:") {
-    node.replace($createEmoticonNode("emoticon avo-emoticon", "avo"));
-  } else if (textContent === ":)") {
-    node.replace($createEmoticonNode("", "🙂"));
-  }
-}
 
-function useEmoticons(editor) {
-  useEffect(() => {
-    const removeTransform = editor.addTransform(TextNode, emoticonTransform);
-    return () => {
-      removeTransform();
-    };
-  }, [editor]);
+function mention(id) {
+  editor.update(() => {
+    const sel = lexical.$getSelection();
+    if (!lexical.$isRangeSelection(sel) || !sel.isCollapsed()) return;
+    
+    const anchor = sel.anchor;
+    if (anchor.type !== "text") return;
+    
+    const anchorNode = anchor.getNode();
+    const tex = anchorNode.getTextContent();
+    const index = tex.indexOf("@");
+    const [left, right] = anchorNode.splitText(index);
+    console.log(index, left, right)
+    
+    const user = new MentionNode(users.find(i => i.id === id));
+    user.setMode("token");
+    right.replace(user);
+    user.select();
+    // lexical.$insertNodes([user]);
+  });
 }
-
-export default function EmoticonPlugin() {
-  const [editor] = useLexicalComposerContext();
-  useEmoticons(editor);
-  return null;
-}
-*/
 </script>
 <style>
 .editor {
@@ -115,7 +177,8 @@ export default function EmoticonPlugin() {
   color: var(--color-link);
 }
 
-.editor :global([data-mx-ping]) {
+.editor :global(.mention) {
+  display: inline-block;
   color: var(--fg-notice);
   font-weight: 500;
   background: var(--ping-bgalpha);
@@ -125,3 +188,5 @@ export default function EmoticonPlugin() {
 }
 </style>
 <div class="editor" contenteditable bind:this={editorEl}></div>
+<div style="min-height: 1em"></div>
+<Autocomplete type="user" selected={mention} options={users} />

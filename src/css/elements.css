@@ -72,3 +72,7 @@ th {
 tr:nth-child(odd) {
   background: var(--mod-darkener);
 }
+
+summary {
+  cursor: pointer;
+}

@@ -1,27 +1,34 @@
-code .hljs-comment   { color: #a3a6aa }
-code .hljs-number    { color: #d2a6ff }
-/* code .hljs-literal   { color: #95d8e5 } */
-/* code .hljs-literal   { color: #d2a6ff } */
-code .hljs-string    { color: #aad94c }
-/* code .hljs-property  { color: #ffb454 } */
-/* code .hljs-operator  { color: #f29668 } */
-/* code .hljs-title     { color: #ff8f40 } */
-code .hljs-keyword   { color: #ffb454 }
-/* code .hljs-parameter { color: #a3a6aa } */
+/* work in progress theme! lots colors may change */
 
-code .hljs-attr { color: #ffb454 }
+.hljs-comment   { color: #a3a6aa }
+.hljs-number    { color: #d2a6ff }
+.hljs-literal   { color: #95d8e5 }
+.hljs-literal   { color: #d2a6ff }
+.hljs-literal   { color: #f29668 }
+.hljs-string    { color: #aad94c }
+.hljs-property  { color: #ffb454 }
+.hljs-operator  { color: #f29668 }
+.hljs-title     { color: #ff8f40 }
+.hljs-keyword   { color: #ffb454 }
+.hljs-meta      { color: #ffb454 }
+.hljs-parameter { color: #a3a6aa }
+.hljs-name { color: #ff8f40 }
+.hljs-title { color: #ff8f40 }
 
-/* code .hljs-regexp    { color: #95e6cb } */
-/* code .hljs-regex-delimiter { color: #95d8e5 } */
+.hljs-attr { color: #ffb454 }
 
-code .hljs-type { color: #ffb454 }
-code .hljs-type { color: #f29668 }
-/* code .hljs-type { color: #ff8f40 } */
+.hljs-regexp    { color: #95e6cb }
+.hljs-regex-delimiter { color: #95d8e5 }
 
-code .hljs-selector-class {}
-code .hljs-selector-id {}
-code .hljs-selector-attr {}
-code .hljs-attribute {}
-/* code .hljs-build_in {} */
-/* code .hljs-selector { color: #aad94c } */
-/* code .hljs-atrule   { color: #d2a6ff } */
+.hljs-type { color: #ffb454 }
+.hljs-type { color: #f29668 }
+.hljs-type { color: #ff8f40 }
+
+.hljs-selector-class {}
+.hljs-selector-id {}
+.hljs-selector-attr {}
+.hljs-attribute {}
+.hljs-built_in { color: #f29668 }
+.hljs-built_in { color: #f29668 }
+.hljs-selector { color: #aad94c }
+.hljs-atrule   { color: #d2a6ff }

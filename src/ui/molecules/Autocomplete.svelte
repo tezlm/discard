@@ -16,14 +16,17 @@ export let options = [
   { name: "nick", description: "Change your nickname for this room" },
 ];
 
+export let selected = () => {};
+
 // $: filtered = input.slice(1).length ? fuzzysort.go(input.slice(1), options, { key: "name", limit: 20 }).map(i => i.obj) : options.slice(0, 20);
 </script>
 <style>
 .autocomplete {
-  max-height: 300px;
+  min-height: 500px;
   background: var(--bg-rooms-members);
   border-radius: 5px;
   box-shadow: var(--shadow-high);
+  user-select: none;
 }
 
 .title {
@@ -63,10 +66,22 @@ export let options = [
   margin-left: auto;
 }
 </style>
+<!--
 <div class="autocomplete scroll thin">
   <div class="title">{type}</div>
   {#each options as option}
   <div class="option">
+    <div class="icno">/</div>
+    <div class="name">{option.name}</div>
+    <div class="description">{option.description}</div>
+  </div>
+  {/each}
+</div>
+-->
+<div class="autocomplete scroll thin">
+  <div class="title">{type}</div>
+  {#each options as option (option.id)}
+  <div class="option" on:click={() => selected(option.id)}>
     <div class="icno">/</div>
     <div class="name">{option.name}</div>
     <div class="description">{option.description}</div>

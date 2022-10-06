@@ -10,7 +10,7 @@ let showPicker = false;
 let addEl;
 
 function formatPeople(events) {
-  const names = events.map(i => escapeHtml(i.sender.name ?? i.sender.id));
+  const names = events.map(i => escapeHtml(i.sender.name ?? i.sender.id, i.sender));
   if (names.length === 1) return names[0];
   if (names.length === 2) return `${names[0]} ${l("and")} ${names[1]}`;
   if (names.length < 7) return `${names.slice(0, -1).join(l(", "))} ${l("and")} ${names.at(-1)}`;
@@ -20,8 +20,11 @@ function formatPeople(events) {
     return `<span class="dim">${str}</span>`;
   }
 
-  function escapeHtml(str) {
-  if (!str) console.warn("string in msgreact", str)
+  function escapeHtml(str, sender) {
+    if (!str) {
+      console.warn("unknown sender", sender);
+      return "unknown person";
+    }
     return str
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")

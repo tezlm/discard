@@ -1,10 +1,10 @@
-<script lang="ts">
+<script>
 import { formatSize } from "../../../util/format.ts";
 import fileIcon from "../../../assets/file.svg";
 import downloadIcon from "../../../assets/icons/download.svg";
 export let src;
 export let name = "title";
-export let size: number | null = 0;
+export let size = 0;
 </script>
 <style>
 .file {
@@ -30,6 +30,13 @@ export let size: number | null = 0;
   padding: 0 1em;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+.header .info > a {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .header .info > .size {
@@ -56,7 +63,7 @@ export let size: number | null = 0;
   <div class="header">
     <img src={fileIcon} alt="file icon" />
     <div class="info">
-      <a href={src}>{name}</a><br />
+      <a class="name" href={src} title={name}>{name}</a><br />
       {#if size === null}
       <span class="size">??? kb</span>
       {:else}
