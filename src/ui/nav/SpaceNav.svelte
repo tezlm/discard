@@ -39,7 +39,8 @@ function allRead(spaceId) {
 
 function getContextMenu(space) {
 	return [
-	  // { label: "Mark As Read",  clicked: markRead, icon: "done" },
+	  // { label: "Mark As Read",  clicked: () => markAllRead(), icon: "done_all" },
+	  { label: "Mark As Read",  clicked: () => markAllRead(), icon: "done" },
 	  { label: "Notifications", clicked: todo, submenu: [
 	    { label: "Default",      clicked: todo, icon: "radio_button_checked" },
 	    { label: "All Messages", clicked: todo, icon: "radio_button_unchecked" },
@@ -62,13 +63,23 @@ function getContextMenu(space) {
 	  { label: "Dev Tools", clicked: () => state.popup.set({ id: "dev-room", room: space }) },
 	];
 
-	// function markRead() {
-	//   const lastEvent = state.roomTimelines.get(room.roomId).live.at(-1);
-	//   state.log.debug(`mark ${lastEvent} as read`);
-	//   state.rooms.get(room.roomId).readEvent = lastEvent;
-	//   state.slice.set(state.roomSlices.get(room.roomId));
-	//   state.api.sendReceipt(room.roomId, lastEvent);
-	// }
+	function markAllRead(space = $focusedSpace) {
+    markRead(space);
+    for (let room of spaces.get(space.id)) {
+      markRead(room);
+      if (room.type === "space") {
+        markAllRead(room);
+      }
+    }
+	}
+  
+  function markRead(room) {
+	  const lastEvent = state.roomTimelines.get(room.roomId).live.at(-1);
+	  state.log.debug(`mark ${lastEvent} as read`);
+	  state.rooms.get(room.id).accountData.set("m.fully_read", lastEvent);
+	  if (state.focusedRoomId === room.roomId) state.slice.set(state.roomSlices.get(room.id));
+	  state.api.sendReceipt(room.id, lastEvent);
+  }
 
   function openSettings() {
   	state.selectedRoom.set(space);

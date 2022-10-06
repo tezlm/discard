@@ -4,6 +4,7 @@ import Autocomplete from "../molecules/Autocomplete.svelte";
 import RoomTextarea from "./input/RoomTextarea.svelte";
 import EmojiButton from "./input/EmojiButton.svelte";
 import { marked } from "marked";
+import { quadOut } from "svelte/easing";
 
 export let onsend;
 export let placeholder = "";
@@ -17,6 +18,8 @@ let showEmoji = false;
 let room = state.focusedRoom;
 let slice = state.slice;
 let edit = state.roomState.edit;
+
+let isDragging = false;
 
 function handleKeyDown(e) {
   if (e.key === "Escape") {
@@ -83,19 +86,26 @@ function oninput(input) {
   });
 }
 
-async function onfile(file) {
+function onfile(file) {
   if (!file) return;
   textarea.blur();
   state.popup.set({
     id: "upload",
     file,
-    async confirm() {
+    confirm() {
       handleUpload(file);
       textarea.focus();
     },
     cancel() {
       textarea.focus();
     },
+  });
+  return new Promise(res => {
+    const unsub = state.popup.subscribe(({ id }) => {
+      if (id) return;
+      unsub();
+      res();
+    });
   });
 }
 
@@ -169,6 +179,30 @@ async function handleUpload(file) {
     }
   }
 }
+
+async function handleDrop(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  isDragging = false;
+  for (let file of e.dataTransfer.files) {
+    await onfile(file);
+  }
+}
+
+function blur() {
+  return {
+    duration: 300,
+    css: t => `background: rgba(${t * 34}, ${t * 34}, ${t * 34}, ${t * .51}); backdrop-filter: blur(${t * 4}px)`,
+  };
+}
+
+function slide() {
+  return {
+    duration: 300,
+    easing: quadOut,
+    css: t => `transform: translateY(${80 - (t * 80)}px) rotate(${-t * 12 + 6}deg); opacity: ${t}`,
+  };
+}
 </script>
 <style>
 .container {
@@ -208,6 +242,42 @@ async function handleUpload(file) {
   bottom: calc(100% + 8px);
   width: 100%;
 }
+
+.drop {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(34, 34, 34, .51);
+  backdrop-filter: blur(4px);
+}
+
+.drop-info {
+  display: flex;
+  transform: rotate(-6deg);
+  height: 200px;
+  width: 300px;
+  background: var(--color-accent);
+  padding: 8px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.drop-info div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: dashed white 3px;
+  padding: 2px;
+  border-radius: 8px;
+  font-family: var(--font-display);
+}
 </style>
 <div class="container" on:keydown={handleKeyDown}>
   {#if false}
@@ -238,4 +308,19 @@ async function handleUpload(file) {
     -->
     <EmojiButton bind:show={showEmoji} picked={(emoji, keep) => { input += emoji; keep || textarea.focus() }} />
   </div>
+  {#if isDragging}
+  <div class="drop" on:dragleave={() => isDragging = false} transition:blur>
+    <div class="drop-info" transition:slide>
+      <div>
+        <h2>drop to upload!</h2>
+        <p>hold shift to bypass upload preview</p>
+      </div>
+    </div>
+  </div>
+  {/if}
 </div>
+<svelte:window
+  on:dragover|preventDefault
+  on:dragenter={() => isDragging = true}
+  on:drop={handleDrop}
+/>

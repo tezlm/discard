@@ -1,6 +1,30 @@
 <script>
+import lexical from "lexical";
+import { registerPlainText } from "@lexical/plain-text";
+import { createEmptyHistoryState, registerHistory } from "@lexical/history";
+import { onMount } from "svelte";
 import md from "simple-markdown";
+import Autocomplete from "./Autocomplete.svelte";
+import markdown from "@lexical/markdown";
 
+// import {
+//   $convertFromMarkdownString,
+//   $convertToMarkdownString,
+//   TRANSFORMERS,
+// } from '@lexical/markdown';
+
+// editor.update(() => {
+//   const markdown = $convertToMarkdownString(TRANSFORMERS);
+//   ...
+// });
+
+// editor.update(() => {
+//   $convertFromMarkdownString(markdown, TRANSFORMERS);
+// });
+
+let editorEl;
+const { createEditor } = lexical;
+/*
 const rules = {
   ...md.defaultRules,
   mention: {
@@ -16,36 +40,12 @@ const parse = md.parserFor(rules);
 export let content = "";
 let html = "";
 let editorEl;
-
-function getCursorPos(root) {
-  const sel = window.getSelection();
-  const range = sel.getRangeAt(0);
-  range.setStart(root, 0);
-  return range.toString().length;
-}
-
-function setCursorPos(root, pos) {
-  const sel = window.getSelection();
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, (el) => {
-    if (pos > el.textContent.length) {
-      pos -= el.textContent.length;
-      return NodeFilter.FILTER_REJECT;
-    }
-    return NodeFilter.FILTER_ACCEPT;
-  });
-  sel.removeAllRanges();
-
-  const node = walker.nextNode() ?? root;
-  const newRange = new Range();
-  newRange.setStart(node, pos);
-  sel.addRange(newRange);
-}
-
 function parseMarkdown(str) {
   const clean = str
     .replace(/&/g, "&amp;")
     .replace(/</g, "&gt;")
-    .replace(/>/g, "&lt;")
+    .replace(
+    />/g, "&lt;")
 
   console.log(parse(clean, { inline: false }))
   
@@ -68,29 +68,99 @@ function parseMarkdown(str) {
     }  
   }
 }
+*/
 
-function handlePaste(e) {
-  const text = e.clipboardData.getData("text");
-  const pos = getCursorPos(editorEl);
-  content = content.slice(0, pos) + text + content.slice(pos);
-  html = parseMarkdown(content);
-  queueMicrotask(() => setCursorPos(editorEl, pos + text.length));
-}
-
-function handleInput(e) {
-  if (e.inputType === "insertLineBreak") {
-    const pos = getCursorPos(editorEl);
-    content = content.slice(0, pos) + "\n" + content.slice(pos);
-    html = parseMarkdown(content);
-    queueMicrotask(() => setCursorPos(editorEl, pos + 1));
-  } else {
-    const pos = getCursorPos(editorEl);
-    html = parseMarkdown(content);
-    queueMicrotask(() => setCursorPos(editorEl, pos));
+class MentionNode extends lexical.TextNode {
+  constructor(user, key) {
+    super("@" + user.name, key);
+    // super(user.name, key);
+    this.user = user;
+  }
+  
+  static getType() {
+    return "mention";
+  }
+  
+  static clone(node) {
+    return new MentionNode(node.user, node.__text, node.__key);
+  }
+  
+  createDOM(config) {
+    const el = super.createDOM(config);
+    el.classList.add("mention");
+    // el.innerText = "@" + this.user.name;
+    return el;
   }
 }
 
-$: console.log("new content:", JSON.stringify({ content, html }))
+const editor = createEditor({ namespace: "editor", nodes: [MentionNode] });
+
+onMount(() => {
+  editor.setRootElement(editorEl);
+  registerPlainText(editor);
+  registerHistory(editor, createEmptyHistoryState(), 1000);
+  globalThis.editor=editor;
+  
+  editor.registerNodeTransform(lexical.TextNode, (node) => {
+    const txt = node.getTextContent();
+    // if (txt === "i will mention user ") {
+    if (txt === "user") {
+      const user = new MentionNode({ name: "user" });
+      user.setMode("token");
+      node.replace(user);
+      user.select();
+    } else if (txt === "room") {
+      // node.replace(new RoomNode({ name: "room" }));
+    }
+  });
+  
+  // editor.registerCommand(
+  //   // lexical.INSERT_PARAGRAPH_COMMAND,
+  //   lexical.INSERT_LINE_BREAK_COMMAND,
+  //   () => {
+  //     console.log("reset editor")
+  //     return true;
+  //   },
+  //   lexical.COMMAND_PRIORITY_EDITOR,
+  // );
+});
+
+const users = [];
+const addUser = (name) => {
+  const id = `@${name.replace(/ /g, "-")}:celery.eu.org`;
+  users.push({ name, id, description: id });
+};
+addUser("bread");
+addUser("bruh");
+addUser("tezlm");
+addUser("username with spaces");
+addUser("foo");
+addUser("bar");
+addUser("baz");
+addUser("user");
+
+
+function mention(id) {
+  editor.update(() => {
+    const sel = lexical.$getSelection();
+    if (!lexical.$isRangeSelection(sel) || !sel.isCollapsed()) return;
+    
+    const anchor = sel.anchor;
+    if (anchor.type !== "text") return;
+    
+    const anchorNode = anchor.getNode();
+    const tex = anchorNode.getTextContent();
+    const index = tex.indexOf("@");
+    const [left, right] = anchorNode.splitText(index);
+    console.log(index, left, right)
+    
+    const user = new MentionNode(users.find(i => i.id === id));
+    user.setMode("token");
+    right.replace(user);
+    user.select();
+    // lexical.$insertNodes([user]);
+  });
+}
 </script>
 <style>
 .editor {
@@ -107,7 +177,8 @@ $: console.log("new content:", JSON.stringify({ content, html }))
   color: var(--color-link);
 }
 
-.editor :global([data-mx-ping]) {
+.editor :global(.mention) {
+  display: inline-block;
   color: var(--fg-notice);
   font-weight: 500;
   background: var(--ping-bgalpha);
@@ -116,13 +187,6 @@ $: console.log("new content:", JSON.stringify({ content, html }))
   cursor: pointer;
 }
 </style>
-<div
-  class="editor"
-  contenteditable
-  bind:this={editorEl}
-  bind:innerHTML={html}
-  bind:textContent={content}
-  on:input={handleInput}
-  on:paste|preventDefault|stopPropagation={handlePaste}
->
-</div>
+<div class="editor" contenteditable bind:this={editorEl}></div>
+<div style="min-height: 1em"></div>
+<Autocomplete type="user" selected={mention} options={users} />
