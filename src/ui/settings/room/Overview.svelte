@@ -10,6 +10,8 @@ export function reset() {
   topic = $room?.topic ?? "";  
 }
 
+// TODO: live update
+
 reset();
 
 $: {

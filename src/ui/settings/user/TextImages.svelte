@@ -3,6 +3,7 @@ import Toggle from "../../atoms/Toggle.svelte";
 import Radio from "../../atoms/Radio.svelte";
 let settings = state.settings;
 // TODO: dry with other settings
+// TODO: make text/images specifically about what's shown in room timeline and text box
 </script>
 <style>
 .setting {

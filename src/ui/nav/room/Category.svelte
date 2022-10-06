@@ -1,6 +1,7 @@
 <script>
 import Tooltip from "../../atoms/Tooltip.svelte";
 import Room from "./Room.svelte";
+// import Room from "./RoomTall.svelte";
 export let room;
 let expanded = true;
 $: rooms = state.spaces.get(room.roomId);

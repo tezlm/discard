@@ -183,11 +183,11 @@ async function handleSubmit(value, e) {
     {#await getFiltered(search)}
       <div style="display: flex; align-items: center; justify-content: center; width 100%; height: 100%">getting emoji...</div>
     {:then filtered}
-      {#each filtered as emojis, i}
+      {#each filtered as emojis, i (i)}
         {#if emojis && emojis.length}
         <div class="label">{getGroupName(i)}</div>
         <div class="group">
-        {#each emojis as emoji}
+        {#each emojis as emoji (emoji.unicode)}
           <div
             class="emoji"
             on:mouseover={() => hover = emoji}
@@ -212,4 +212,3 @@ async function handleSubmit(value, e) {
     {/if}
   </div>
 </div>
-<!-- <svelte:window on:click={() => selected(null, false)} /> -->

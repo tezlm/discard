@@ -81,8 +81,8 @@ function start(api, syncer, userId) {
   // syncer.on("invite", (roomId, state) => console.log(roomId, state));
   syncer.on("leave", (roomId) => actions.rooms.handleLeave(roomId));
   
-  syncer.on("state", (roomId, state) => actions.rooms.handleState(roomId, state));  
-  syncer.on("event", (roomId, event) => actions.timeline.handle(roomId, event, false));
+  syncer.on("state", (state) => actions.rooms.handleState(state.room.id, state.raw));  
+  syncer.on("event", (event) => actions.timeline.handle(event.room.id, event.raw, false));
   syncer.on("ephemeral", (edu) => {
     if (edu.type !== "m.typing") return;
   
@@ -91,11 +91,11 @@ function start(api, syncer, userId) {
     roomState.typing = edu.content.user_ids;
     if (edu.room.id === state.focusedRoomId) {
       state.roomState.typing.set(edu.content.user_ids);
-    }    
+    }
   });
   
-  syncer.on("roomAccountData", (room, { type, content }) => {
-    actions.rooms.handleAccount(room.id, type, content);
+  syncer.on("roomAccountData", (room, event) => {
+    actions.rooms.handleAccount(room, event);
   });
   
   syncer.on("accountData", ({ type, content }) => {
