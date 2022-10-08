@@ -5,7 +5,6 @@ import { createEmptyHistoryState, registerHistory } from "@lexical/history";
 import { onMount } from "svelte";
 import md from "simple-markdown";
 import Autocomplete from "./Autocomplete.svelte";
-import markdown from "@lexical/markdown";
 
 // import {
 //   $convertFromMarkdownString,
