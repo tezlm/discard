@@ -17,7 +17,6 @@ async function getText(file) {
   const text = await file.text();
   const trim = text.split("\n").slice(0, 12).join("\n");
   const lang = file.type?.split("/")[1];
-  console.log(file.type)
   return hljs.highlight(hljs.getLanguage(lang) ? lang : "text", trim).value; 
 }
 </script>

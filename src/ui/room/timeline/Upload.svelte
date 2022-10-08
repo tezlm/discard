@@ -50,6 +50,10 @@ $: file = upload.file;
 .icon:hover {
   color: var(--fg-notice);
 }
+
+.cancel {
+  cursor: pointer;
+}
 </style>
 <div class="file">
   <img src={fileIcon} alt="file icon" />
@@ -59,5 +63,5 @@ $: file = upload.file;
       <div class="bar" style:width="{upload.progress * 300}px"></div>
     </div>
   </div>
-  <div class="icon" on:click={() => upload.cancel()}>close</div>
+  <div class="icon cancel" on:click={() => upload.cancel()}>close</div>
 </div>

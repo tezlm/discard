@@ -5,6 +5,14 @@ import Button from "../atoms/Button.svelte";
 export let current;
 let localpart = "";
 let homeserver = "";
+let loading = false;
+
+async function join() {
+  loading = true;
+  await state.api.joinAlias(`#${localpart}:${homeserver}`);
+  loading = false;
+  state.popup.set({ ...current, id: null });
+}
 </script>
 <Popup showClose>
   <h2 slot="header">Join</h2>
@@ -19,7 +27,8 @@ let homeserver = "";
       type="primary"
       disabled={!(localpart && homeserver)}
       label="Join"
-      clicked={todo}
+      {loading}
+      clicked={join}
     />
   </div>
 </Popup>

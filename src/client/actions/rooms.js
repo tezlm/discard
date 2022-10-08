@@ -90,6 +90,7 @@ export async function focus(room) {
       upload: null,
       typing: [],
       slice: [],
+      search: null,
     };
   }
 }

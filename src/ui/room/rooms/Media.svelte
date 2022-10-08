@@ -248,11 +248,14 @@ onMount(paginate);
         <Audio src={parseMxc(content.url)} size={content.info.size} name={content.body} />
       {:else if type === "m.file"}
         {@const mime = event.content.info?.mimetype}
+        <File src={parseMxc(content.url)} size={content.info.size} name={content.body} />
+        <!--
         {#if /text\//.test(mime) || mime === "application/json"}
           <Text src={parseMxc(content.url)} size={content.info.size} name={content.body} />
         {:else}
           <File src={parseMxc(content.url)} size={content.info.size} name={content.body} />
         {/if}
+        -->
       {/if}
       {#if event.reactions}
       <MessageReactions {event} />

@@ -1,5 +1,5 @@
 import { openDB, deleteDB } from "idb";
-import Event from "../../util/events.js";
+import { Event } from "discount";
 
 class PersistentMap extends Map {
   constructor(name, db) {

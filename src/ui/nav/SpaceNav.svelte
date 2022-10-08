@@ -1,6 +1,7 @@
 <script>
 import Tooltip from "../atoms/Tooltip.svelte";
 import { parseMxc } from "../../util/content.ts";
+import { roomContext } from "../../util/context";
 let focusedSpace = state.focusedSpace;
 let navSpaces = state.navSpaces;
 let spaces = state.spaces;
@@ -35,60 +36,6 @@ function isRead(room) {
 
 function allRead(spaceId) {
   return spaces.get(spaceId).every(room => isRead(room));
-}
-
-function getContextMenu(space) {
-	return [
-	  // { label: "Mark As Read",  clicked: () => markAllRead(), icon: "done_all" },
-	  { label: "Mark As Read",  clicked: () => markAllRead(), icon: "done" },
-	  { label: "Notifications", clicked: todo, submenu: [
-	    { label: "Default",      clicked: todo, icon: "radio_button_checked" },
-	    { label: "All Messages", clicked: todo, icon: "radio_button_unchecked" },
-	    { label: "Mentions",     clicked: todo, icon: "radio_button_unchecked" },
-	    { label: "Nothing",      clicked: todo, icon: "radio_button_unchecked" },
-	  ] },
-	  null,
-	  { label: "Settings", clicked: openSettings, icon: "settings" /* submenu: [
-	    { label: "Foo", clicked: todo },
-	    { label: "Bar", clicked: todo },
-	    { label: "Baz", clicked: todo },
-	  ]*/ },
-	  null,
-	  { label: "Invite",    clicked: () => state.popup.set({ id: "invite", room: space }), icon: "person_add", color: "var(--color-accent)" },
-	  { label: "Copy Link", clicked: copy(`https://matrix.to/#/${space.roomId}`), icon: "link" },
-	  null,
-	  { label: "Leave",   clicked: () => state.popup.set({ id: "leave", type: "space", room: space }), icon: "logout", color: "var(--color-red)" },
-	  null,
-	  { label: "Copy ID", clicked: copy(space.roomId), icon: "terminal" },
-	  { label: "Dev Tools", clicked: () => state.popup.set({ id: "dev-room", room: space }) },
-	];
-
-	function markAllRead(space = $focusedSpace) {
-    markRead(space);
-    for (let room of spaces.get(space.id)) {
-      markRead(room);
-      if (room.type === "space") {
-        markAllRead(room);
-      }
-    }
-	}
-  
-  function markRead(room) {
-	  const lastEvent = state.roomTimelines.get(room.roomId).live.at(-1);
-	  state.log.debug(`mark ${lastEvent} as read`);
-	  state.rooms.get(room.id).accountData.set("m.fully_read", lastEvent);
-	  if (state.focusedRoomId === room.roomId) state.slice.set(state.roomSlices.get(room.id));
-	  state.api.sendReceipt(room.id, lastEvent);
-  }
-
-  function openSettings() {
-  	state.selectedRoom.set(space);
-  	state.scene.set("space-settings");
-  }
-
-	function copy(text) {
-		return () => navigator.clipboard.writeText(text);
-	}
 }
 
 function getHomeContextMenu() {
@@ -216,7 +163,7 @@ function getHomeContextMenu() {
   </div>
   <div class="separator"></div>
 	{#each $navSpaces as space}
-  {@const pings = spaces.get(space.roomId).reduce((pings, room) => pings + room.notifications.pings, 0)}
+  {@const pings = spaces.get(space.roomId).reduce((pings, room) => pings + room.notifications.highlight, 0)}
   <div
     class="space"
     class:focused={$focusedSpace?.roomId === space.roomId}
@@ -227,7 +174,7 @@ function getHomeContextMenu() {
       <img
         src={parseMxc(space?.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"}
         on:click={() => actions.spaces.focus(space)}
-    		on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getContextMenu(space), x: e.clientX, y: e.clientY })}
+    		on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: roomContext(space), x: e.clientX, y: e.clientY })}
       />
       <b slot="tip">{space?.name ?? "unknown..."}</b>
     </Tooltip>

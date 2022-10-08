@@ -5,6 +5,7 @@ import Tooltip from "../../atoms/Tooltip.svelte";
 export let event;
 
 // TODO: make the number animate in reverse when the count goes down
+// FIXME: custom image reactions kinda funky
 
 let showPicker = false;
 let addEl;
@@ -95,7 +96,7 @@ $: if (showPicker) {
           };
           state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
         }
-        if (!keepOpen) showReactionPicker = false;
+        if (!keepOpen) showPicker = false;
       },
     });
   });
@@ -110,6 +111,7 @@ $: if (showPicker) {
   align-items: center;
   flex-wrap: wrap;
   margin-top: 4px;
+  margin-bottom: -4px;
   user-select: none;
 }
 

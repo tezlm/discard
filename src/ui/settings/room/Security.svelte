@@ -11,6 +11,7 @@ const isOrphan = [...getIds("orphanRooms"), ...getIds("orphanSpaces")].includes(
 
 $: historyVisibility = $room.getState("m.room.history_visibility")?.content.history_visibility ?? "shared";
 $: newHistoryVisibility = historyVisibility;
+$: joinRule = $room.joinRule;
 
 $: if (newHistoryVisibility !== historyVisibility) {
   save = () => {}
@@ -35,7 +36,7 @@ $: if (newHistoryVisibility !== historyVisibility) {
   - public + knock is unintuitive since it still would allow everyone to join
 - should i keep published as a separate option or allow publishing invite-only/restricted rooms to room directory
 -->
-<Radio selected={"invite"} options={[
+<Radio selected={joinRule} options={[
   { id: "invite",     name: "Invite-only", detail: "Members must be invited to this room.", disabled: true },
   { id: "restricted", name: "Restricted",  detail: "Any member part of this space can join.", disabled: isOrphan, disabled: true },
   { id: "public",     name: "Public",      detail: "Anyone can join this room.", disabled: true },

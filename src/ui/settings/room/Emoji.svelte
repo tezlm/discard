@@ -12,7 +12,7 @@ export let room;
     {#if ev.content.pack.attribution}
     <p>{ev.content.pack.attribution}</p>
     {/if}
-    <pre><code>{@html hljs.highlight("json", JSON.stringify(ev.content, null, 4))}</code></pre>
+    <pre><code>{@html hljs.highlight("json", JSON.stringify(ev.content, null, 4)).value}</code></pre>
   {/if}
 {/each}
 </div>

@@ -2,6 +2,7 @@
 import Item from "./Item.svelte";
 import Tooltip from "../../atoms/Tooltip.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
+import { roomContext } from "../../../util/context";
 export let room;
 export let muted = false;
 let focusedRoom = state.focusedRoom;
@@ -38,46 +39,6 @@ function isRead(room) {
 			if (event.special !== "redacted") return event.eventId;
 		}
 		return null;
-	}
-}
-
-function getContextMenu(room) {
-	return [
-	  { label: "Mark As Read",  clicked: markRead, icon: "done" },
-	  { label: "Notifications", clicked: todo, submenu: [
-	    { label: "Default",      clicked: todo, icon: "radio_button_checked" },
-	    { label: "All Messages", clicked: todo, icon: "radio_button_unchecked" },
-	    { label: "Mentions",     clicked: todo, icon: "radio_button_unchecked" },
-	    { label: "Nothing",      clicked: todo, icon: "radio_button_unchecked" },
-			null,
-	    { label: "Suppress @room", clicked: todo },
-	  ] },
-	  null,
-	  { label: "Settings", clicked: openSettings(room), icon: "settings" /* submenu: [
-	    { label: "Foo", clicked: todo },
-	    { label: "Bar", clicked: todo },
-	    { label: "Baz", clicked: todo },
-	  ]*/ },
-	  null,
-	  { label: "Invite",    clicked: () => state.popup.set({ id: "invite", type: "room", room }), icon: "person_add", color: "var(--color-accent)" },
-	  { label: "Copy Link", clicked: copy(`https://matrix.to/#/${encodeURIComponent(room.getState("m.room.canonical_alias")?.content.alias ?? room.roomId)}`), icon: "link" },
-	  null,
-	  { label: "Leave",   clicked: () => state.popup.set({ id: "leave", type: "room", room }), icon: "logout", color: "var(--color-red)" },
-	  null,
-	  { label: "Copy ID", clicked: copy(room.roomId), icon: "terminal" },
-	  { label: "Dev Tools", clicked: () => state.popup.set({ id: "dev-room", room }) },
-	];
-
-	function markRead() {
-	  const lastEvent = state.roomTimelines.get(room.roomId).live.at(-1);
-	  state.log.debug(`mark ${lastEvent} as read`);
-	  state.rooms.get(room.roomId).accountData.set("m.fully_read", lastEvent);
-	  if (state.focusedRoomId === room.roomId) state.slice.set(state.roomSlices.get(room.roomId));
-	  state.api.sendReceipt(room.roomId, lastEvent);
-	}
-
-	function copy(text) {
-		return () => navigator.clipboard.writeText(text);
 	}
 }
 
@@ -165,7 +126,7 @@ function getIcon(room) {
 	{muted}
 	unread={!isRead(room)}
 	clicked={() => actions.rooms.focus(room)}
-	getContext={() => getContextMenu(room)}
+	getContext={() => roomContext(room)}
 >
 	<div class="avatar"><Avatar user={{ ...room, avatar: getAvatar(room) }} size={32} /></div>
 	<div class="name">{getName(room)}</div>

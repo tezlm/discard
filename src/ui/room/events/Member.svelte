@@ -103,8 +103,8 @@ time {
   <div class="icon" style:color={action.color}>{action.icon}</div>
   <div>
     {#if action.type !== "join"}
-    <span class="author" style:color={getColor(victim, $settings)} data-mx-ping={victim.userId}>
-      {victim.name || victim.userId}
+    <span class="author" style:color={getColor(victim, $settings)} data-mx-ping={victim.id}>
+      {victim.name || victim.id}
     </span>
     {/if}
     {#if action.type === "something"}
@@ -115,7 +115,7 @@ time {
       changed their name to <b style:color="var(--fg-content)">{action.name}</b>
     {:else if action.type === "join"}
       {@const [before, after] = getJoinMessage(event)}
-      {before}<span class="author" style:color={getColor(victim, $settings)} data-mx-ping={victim.userId}>{victim.name || victim.userId}</span>{after}
+      {before}<span class="author" style:color={getColor(victim, $settings)} data-mx-ping={victim.id}>{victim.name || victim.id}</span>{after}
     {:else if action.type === "invite"}
       was invited by
     {:else if action.type === "disinvite"}
@@ -134,8 +134,8 @@ time {
       {action}
     {/if}
     {#if event.sender.userId !== event.stateKey}
-    <span class="author" style:color={getColor(event.sender, $settings)} data-mx-ping={victim.userId}>
-      {event.sender.name || event.sender.userId}
+    <span class="author" style:color={getColor(event.sender, $settings)} data-mx-ping={event.sender.id}>
+      {event.sender.name || event.sender.id}
     </span>
     {/if}
     <time datetime={event.date.toISOString()}>{formatDate(event.date)}</time>
