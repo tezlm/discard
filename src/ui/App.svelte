@@ -84,11 +84,12 @@ main > div {
   width: 100vw;
   height: 100vh;
   pointer-events: none;
+  z-index: 10;
 }
 
-.layer-1 { z-index: 10 }
-.layer-2 { z-index: 20 }
-.layer-3 { z-index: 30 }
+.layer.context {
+  z-index: 20;
+}
 </style>
 <main>
   <!--
@@ -110,7 +111,7 @@ main > div {
   <div class="loading" transition:opacity><Loading /></div>
   {/if}
 </main>
-<div class="layer layer-1"><Popups /></div>
-<div class="layer layer-2"><Popouts /></div>
-<div class="layer layer-3"><ContextMenus /></div>
+<div class="layer"><Popups /></div>
+<div class="layer"><Popouts /></div>
+<div class="layer context"><ContextMenus /></div>
 <svelte:window on:click={handleClick} />

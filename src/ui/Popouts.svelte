@@ -1,8 +1,9 @@
 <script>
 import Emoji from "./molecules/Emoji.svelte";
+import PinnedMessages from "./molecules/PinnedMessages.svelte";
 let popout = state.popout;
 let windowHeight, windowWidth;
-let emojiEl;
+let emojiEl, pinnedEl;
 
 // TODO: autofocus emoji picker input
 
@@ -20,8 +21,7 @@ function getPosition(popout, element) {
 }
 </script>
 <style>
-.emoji {
-  visibility: hidden;
+.popout {
   pointer-events: auto;
   position: fixed;
   transform: translateX(0);
@@ -36,6 +36,10 @@ function getPosition(popout, element) {
 }
 
 .animate-top {
+  animation: fly-top 150ms ease-out;
+}
+
+.animate-bottom {
   animation: fly-bottom 150ms ease-out;
 }
 
@@ -53,16 +57,35 @@ function getPosition(popout, element) {
   from { opacity: 0.5; transform: translateY(-15px) }
   to   { opacity: 1;   transform: translateY(0) }
 }
+
+@keyframes fly-bottom {
+  from { opacity: 0.5; transform: translateY(15px) }
+  to   { opacity: 1;   transform: translateY(0) }
+}
 </style>
 <div
-  class="emoji"
+  class="popout"
   class:animate-right={$popout.animate === "right"}
   class:animate-left={$popout.animate === "left"}
   class:animate-top={$popout.animate === "top"}
+  class:animate-bottom={$popout.animate === "bottom"}
   style:visibility={$popout.id === "emoji" ? "visible" : "hidden"}
   style={getPosition($popout, emojiEl)}
   bind:this={emojiEl}
 >
   <Emoji selected={$popout.selected} />
 </div>
+{#if $popout.id === "pinned"}
+<div
+  class="popout"
+  class:animate-right={$popout.animate === "right"}
+  class:animate-left={$popout.animate === "left"}
+  class:animate-top={$popout.animate === "top"}
+  class:animate-bottom={$popout.animate === "bottom"}
+  style={getPosition($popout, pinnedEl)}
+  bind:this={pinnedEl}
+>
+  <PinnedMessages room={$popout.room}/>
+</div>
+{/if}
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />

@@ -22,6 +22,7 @@ $: toolbar = getToolbar(shiftKey);
 
 let showReactionPicker = false;
 let showUserPopout = false;
+let context = state.context;
 
 function unwrapEdits(event) {
   while (event.original) event = event.original;
@@ -64,7 +65,8 @@ function getToolbar(shift = false) {
 
   function showMore() {
     const rect = toolbarEl.getBoundingClientRect();
-    state.context.set({ items: getContextMenu(), x: rect.left, y: rect.top + 40 });
+    if ($context.items) return $context = {};
+    $context = { items: getContextMenu(), x: rect.left, y: rect.top + 40 };
   }
 }
 
@@ -177,6 +179,7 @@ function getUserMenu() {
 	}
 }
 
+let popout = state.popout;
 $: if (showReactionPicker) {
   queueMicrotask(() => {
     const rect = toolbarEl.getBoundingClientRect();
@@ -200,7 +203,7 @@ $: if (showReactionPicker) {
       },
     });
   });
-} else {
+} else if ($popout.id === "emoji") {
   state.popout.set({});
 }
 </script>
