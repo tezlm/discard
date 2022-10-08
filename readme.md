@@ -1,3 +1,3 @@
 # discard
 
-A former matrix client for people who like discord's ui. No longer maintained.
+An experimental matrix client for people who like discord's ui.
