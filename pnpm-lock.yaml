@@ -3,7 +3,6 @@ lockfileVersion: 5.4
 specifiers:
   '@lexical/clipboard': ^0.5.0
   '@lexical/history': ^0.5.0
-  '@lexical/markdown': ^0.5.0
   '@lexical/plain-text': ^0.5.0
   '@lexical/rich-text': ^0.5.0
   '@lexical/selection': ^0.5.0
@@ -32,7 +31,6 @@ specifiers:
 dependencies:
   '@lexical/clipboard': 0.5.0_lexical@0.5.0
   '@lexical/history': 0.5.0_lexical@0.5.0
-  '@lexical/markdown': 0.5.0_pk4iz76swcl2xpssw5krbc6ozu
   '@lexical/plain-text': 0.5.0_qqgt7rj5c76uep654vyaavnrhu
   '@lexical/rich-text': 0.5.0_qqgt7rj5c76uep654vyaavnrhu
   '@lexical/selection': 0.5.0_lexical@0.5.0
@@ -83,16 +81,6 @@ packages:
       lexical: 0.5.0
     dev: false
 
-  /@lexical/code/0.5.0_lexical@0.5.0:
-    resolution: {integrity: sha512-GmqRaQ8EBtlu13ObSZYiGDzIsrkwRyyqI2HRVBrPo2iszLBpby+7uIncAVQVkxt1JNYOKE2n4JfxK8TSYyMtYQ==}
-    peerDependencies:
-      lexical: 0.5.0
-    dependencies:
-      '@lexical/utils': 0.5.0_lexical@0.5.0
-      lexical: 0.5.0
-      prismjs: 1.29.0
-    dev: false
-
   /@lexical/history/0.5.0_lexical@0.5.0:
     resolution: {integrity: sha512-DCQgh1aQ1KS5JVYPU6GYr52BN0MQqmoXfFtf5uYCX9CbSAC0hDSK8ZPqwFW7jINqe6GwXxy7bo32j7E0A5023A==}
     peerDependencies:
@@ -111,15 +99,6 @@ packages:
       lexical: 0.5.0
     dev: false
 
-  /@lexical/link/0.5.0_lexical@0.5.0:
-    resolution: {integrity: sha512-XB8e+UPI9jeqsi7+Wr0n9SToljiS+gZmJ5gXANtR6lSZPtpcSUPs1iJZU2A2dNKXdvsZwSPCFdPL6ogFaaRvvQ==}
-    peerDependencies:
-      lexical: 0.5.0
-    dependencies:
-      '@lexical/utils': 0.5.0_lexical@0.5.0
-      lexical: 0.5.0
-    dev: false
-
   /@lexical/list/0.5.0_lexical@0.5.0:
     resolution: {integrity: sha512-TYXe4FtNL7Lk3XDEhPyUbT0Pb1TU58qZywGCdrtuRjPnF4oDvRXgg9EhYWfHzYwdsyhNgaHId+Fq41CjrwTMYg==}
     peerDependencies:
@@ -127,23 +106,6 @@ packages:
     dependencies:
       '@lexical/utils': 0.5.0_lexical@0.5.0
       lexical: 0.5.0
-    dev: false
-
-  /@lexical/markdown/0.5.0_pk4iz76swcl2xpssw5krbc6ozu:
-    resolution: {integrity: sha512-02RLx7PdVzvYxvx65FTbXkW6KcjQZ1waAaMDNKdtBV9r9Mv2Y2XunCUjErYHQ1JN9JkGGv0+JuliRT7qZTsF+Q==}
-    peerDependencies:
-      lexical: 0.5.0
-    dependencies:
-      '@lexical/code': 0.5.0_lexical@0.5.0
-      '@lexical/link': 0.5.0_lexical@0.5.0
-      '@lexical/list': 0.5.0_lexical@0.5.0
-      '@lexical/rich-text': 0.5.0_qqgt7rj5c76uep654vyaavnrhu
-      '@lexical/text': 0.5.0_lexical@0.5.0
-      '@lexical/utils': 0.5.0_lexical@0.5.0
-      lexical: 0.5.0
-    transitivePeerDependencies:
-      - '@lexical/clipboard'
-      - '@lexical/selection'
     dev: false
 
   /@lexical/plain-text/0.5.0_qqgt7rj5c76uep654vyaavnrhu:
@@ -188,14 +150,6 @@ packages:
       lexical: 0.5.0
     dependencies:
       '@lexical/utils': 0.5.0_lexical@0.5.0
-      lexical: 0.5.0
-    dev: false
-
-  /@lexical/text/0.5.0_lexical@0.5.0:
-    resolution: {integrity: sha512-RqhOBU2Ecg0WVW8p1d3OB2a8sQyvh3suADdr7We50+Dn/k1M+jhKVWiQnf07ve4/yqYTj6/9/8AAg7kuNS2P/A==}
-    peerDependencies:
-      lexical: 0.5.0
-    dependencies:
       lexical: 0.5.0
     dev: false
 
@@ -782,11 +736,6 @@ packages:
       nanoid: 3.3.4
       picocolors: 1.0.0
       source-map-js: 1.0.2
-
-  /prismjs/1.29.0:
-    resolution: {integrity: sha512-Kx/1w86q/epKcmte75LNrEoT+lX8pBpavuAbvJWRXar7Hz8jrtF+e3vY751p0R8H9HdArwaCTNDDzHg/ScJK1Q==}
-    engines: {node: '>=6'}
-    dev: false
 
   /require-relative/0.8.7:
     resolution: {integrity: sha512-AKGr4qvHiryxRb19m3PsLRGuKVAbJLUD7E6eOaHkfKhwc+vSgVOCY5xNvm9EkolBKTOf0GrQAZKLimOCz81Khg==}

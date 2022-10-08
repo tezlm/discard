@@ -84,7 +84,18 @@ $: if (room.roomId !== oldId) {
 }
 </style>
 <div class="members scroll" tabindex="-1">
-  {#await fetchList(room) then items}
+  {#await fetchList(room)}
+    <div class="title">Loading...</div>
+    {#each Array(20) as _}
+    <!-- TODO: cleanup -->
+    <div class="wrapper" style="cursor: initial; background: transparent !important">
+      <div class="member">
+        <div style="height:32px;width:32px;border-radius:50%;background:var(--bg-spaces)"></div>
+        <div style="height:16px;width:120px;border-radius:8px;background:var(--bg-misc); margin-left: 16px"></div>
+      </div>
+    </div>
+    {/each}
+  {:then items}
     {#each items.slice(0, count) as member (member.id)}
       {#if member.title}
         <div class="title">{member.title}</div>
