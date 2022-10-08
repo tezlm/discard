@@ -11,6 +11,10 @@ ul, ol {
   list-style-position: inside;
 }
 
+ul ul, ol ol, ul ol, ol ul {
+  margin-left: 1em;
+}
+
 blockquote {
   border-left: solid var(--color-gray-light) 4px;
   padding-left: 12px;

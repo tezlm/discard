@@ -10,6 +10,8 @@ import Pinned from "../events/Pinned.svelte";
 import Alias from "../events/Alias.svelte";
 import Unknown from "../events/Unknown.svelte";
 
+import { eventContext } from "../../../util/context";
+
 export let shiftKey;
 export let header;
 export let room;
@@ -20,7 +22,7 @@ let showReactionPicker = false;
 
 function getToolbar(event, shiftKey) {
 	const toolbar = [];
-  const fromMe = event.sender.userId === state.userId;
+  // const fromMe = event.sender.id === state.userId;
 
   if (event.special) {
     if (event.special === "errored") toolbar.push({ name: "Retry", icon: "refresh", clicked: todo });
@@ -35,6 +37,17 @@ function getToolbar(event, shiftKey) {
 	return toolbar;
 }
 
+function handleContext(e) {
+	if (e.target.tagName === "A") return;
+	e.preventDefault();
+	state.context.set({
+		items: eventContext(event, {
+			showPicker: () => showReactionPicker = true,
+		}),
+		x: e.clientX,
+		y: e.clientY,
+	});
+}
 
 $: if (showReactionPicker) {
   queueMicrotask(() => {
@@ -90,7 +103,7 @@ $: if (showReactionPicker) {
 	margin-left: 72px;
 }
 </style>
-<div class="event" class:create={event.type === "m.room.create"}>
+<div class="event" class:create={event.type === "m.room.create"} on:contextmenu|stopPropagation={handleContext}>
 	{#if event.type === "m.room.create"}
 		<Create {room} {event} {shiftKey} />
 	{:else if event.type === "m.room.name" || event.type === "m.room.topic"}
@@ -110,7 +123,7 @@ $: if (showReactionPicker) {
 		<Unknown {room} {event} />
 	{/if}
 	{#if !["m.room.create", "m.room.message", "m.sticker"].includes(event.type)}
-  <div class="toolbar" bind:this={toolbarEl}>
+  <div class="toolbar" bind:this={toolbarEl} style:display={showReactionPicker ? "block" : null}>
 	  <Toolbar items={getToolbar(event, shiftKey)} />
 	</div>
 	{/if}

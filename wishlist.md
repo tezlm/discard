@@ -20,8 +20,8 @@ varying levels of difficulty
   - [x] paste in files
   - [x] open attachments in popup
   - [x] image/video dimensions
-  - [x] file too big warning
-  - [ ] drag and drop to upload file
+  - [ ] file too big warning
+  - [x] drag and drop to upload file
 - [x] reactions
 - [ ] members
   - [x] member popout
@@ -78,18 +78,11 @@ varying levels of difficulty
   - [ ] cross signing + ssss
   - [ ] verification
   - [ ] key backup
-- [ ] threads
-- [ ] voice channels
 - [x] nitor
 
-## 100% completion
+## extra stuff
 
-when everything on this checklist is complete, this project will be put
-in maintenance mode and only receive bugfixes
-
-## >100% completion
-
-not essential to discard, but could be nice to have
+after the base stuff is done, i might start looking at other features
 
 - [ ] stickers/saved images
 - [ ] custom emoji
@@ -100,3 +93,5 @@ not essential to discard, but could be nice to have
   - [ ] forum
   - [-] media
   - [ ] documents  
+- [ ] threads
+- [ ] voice channels

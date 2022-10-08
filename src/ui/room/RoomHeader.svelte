@@ -15,8 +15,8 @@ function getName(room) {
 	return other.name ?? other.userId;
 }
 
-let roomfocus = false;
 let search;
+let searchfocus = false;
 </script>
 <style>
 .header {
@@ -73,6 +73,12 @@ let search;
 .roomsearch {
   margin: 0 8px;
   position: relative;
+  transition: width .2s;
+  width: 180px;
+}
+
+.roomsearch.focus {
+  width: 260px;
 }
 
 .roomsearch .recent {
@@ -85,7 +91,7 @@ let search;
   box-shadow: var(--shadow-popup);
 }
 
-.roomsearch .title{
+.roomsearch .title {
   padding: 4px 8px 0;
 }
 
@@ -116,7 +122,17 @@ let search;
   {:else}
   <div style:flex={1}></div>
   {/if}
+  <!--
   {#if room}
+  {#if dms.has(room.id)}
+  <div class="icon" on:click={todo}>videocam</div>
+  <div class="icon" on:click={todo}>call</div>
+  <div class="icon" on:click={todo}>push_pin</div>
+  {:else}
+  <div class="icon" on:click={todo}>forum</div>
+  <div class="icon" on:click={todo}>push_pin</div>
+  {/if}
+  -->
   <div
     class="icon"
     style:color={$settings.get("showmemberlist") ? "var(--fg-notice)" : null}
@@ -125,9 +141,9 @@ let search;
     people
   </div>
   <!--
-  <div class="roomsearch">
-    <Search bind:focus={roomfocus} bind:value={search} />
-    {#if roomfocus}
+  <div class="roomsearch" class:focus={searchfocus || !!search}>
+    <Search bind:focus={searchfocus} bind:value={search} />
+    {#if searchfocus}
     <div class="recent">
       <div class="title">History</div>
       <div class="option" on:click={() => search = "Option 1"}>Option 1</div>
@@ -136,10 +152,11 @@ let search;
     </div>
     {/if}
   </div>
-  -->
+  {:else}
+  <div class="icon" on:click={todo}>person_add</div>
   {/if}
-  <!--
-  <div class="icon">inbox</div>
-  <div class="icon">help</div>
+  <div class="spacer"></div>
+  <div class="icon" on:click={todo}>inbox</div>
+  <div class="icon" on:click={todo}>help</div>
   -->
 </div>

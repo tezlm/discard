@@ -75,7 +75,7 @@ input {
   font-size: 20px;
 }
 </style>
-<div class="wrapper" class:tall class:focus={focus || value}>
+<div class="wrapper" class:tall>
   <input
     type="text"
     {placeholder}

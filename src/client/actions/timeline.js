@@ -1,6 +1,4 @@
-import "../../util/push.js";
-// this module handles the recieved events from sync
-import Event from "../../util/events.js";
+import { Event } from "discount";
 import TimelineSet from "../matrix/timeline.js";
 
 const relations = new Map();
@@ -64,39 +62,39 @@ export function send(roomId, type, content) {
   state.api.sendEvent(roomId, type, content, id);
 }
 
-export function handle(roomId, raw, toStart = false) {
-  if (raw.type === "m.room.redaction") return toStart ? null : redact(roomId, raw);
-  if (raw.unsigned?.redacted_because) return;
+export function handle(event, toStart = false) {
+  if (event.type === "m.room.redaction") return toStart ? null : redact(event);
+  if (event.unsigned?.redacted_because) return;
     
-  const id = raw.event_id;
-  if (state.events.has(raw.event_id)) return;
-  const room = state.rooms.get(roomId);
+  const { id } = event;
+  if (state.events.has(id)) return;
+  if (!event.room) console.log("event with no room?", event);
+  const room = state.rooms.get(event.room.id);
   
   // event echo, update local status
-  if (raw.unsigned?.transaction_id) {
-    const tx = raw.unsigned.transaction_id;
+  if (event.unsigned?.transaction_id) {
+    const tx = event.unsigned.transaction_id;
     const original = state.events.get(tx);
     if (original) {
-      state.log.matrix(`successfully sent to ${id} in ${roomId} (for ${tx})`);
-      original.raw = raw;
+      state.log.matrix(`successfully sent to ${id} in ${room.id} (for ${tx})`);
+      original.raw = event.raw;
       original.flags.delete("sending");
       state.events.set(id, original);
       
-      const timeline = getTimeline(roomId);
-      const slice = state.roomSlices.get(roomId);
+      const timeline = getTimeline(room.id);
+      const slice = state.roomSlices.get(room.id);
       const index = timeline.lastIndexOf(tx);
       timeline[index] = id;
       if (index === timeline.length - 1) slice.end = id;
       
-      state.rooms.get(roomId).accountData.set("m.fully_read", id)
-      state.api.sendReceipt(roomId, id);
-      if (roomId === state.focusedRoomId) state.slice.set(slice);
+      room.accountData.set("m.fully_read", id)
+      state.api.sendReceipt(room.id, id);
+      if (room.it === state.focusedRoomId) state.slice.set(slice);
       return;
     }
   }
   
-  const event = new Event(room, raw);
-  const relation = getRelation(raw.content);
+  const relation = getRelation(event.content);
   if (relation) {
     const original = state.events.get(relation.event_id);
     if (original) {
@@ -114,12 +112,12 @@ export function handle(roomId, raw, toStart = false) {
       return queueRelation(relation.event_id, event, toStart);
     }
     state.events.set(id, event);
-    const slice = actions.slice.get(roomId);
+    const slice = actions.slice.get(room.id);
     slice.reslice();
-    if (roomId === state.focusedRoomId) state.slice.set(slice);
+    if (room.id === state.focusedRoomId) state.slice.set(slice);
   } else {
     state.events.set(id, event);
-    addToTimeline(roomId, id, toStart);
+    addToTimeline(room.id, id, toStart);
     // if (state.api.status === "syncing") {
     //   actions.rooms.update();
     //   actions.spaces.update();
@@ -143,10 +141,11 @@ export function handle(roomId, raw, toStart = false) {
   }
 }
 
-export function redact(roomId, event) {
-  const id = event.redacts ?? event.content.redacts;
+export function redact(event) {
+  const id = event.raw.redacts ?? event.content.redacts;
   if (!state.events.has(id)) return;
-  state.log.debug(`handle redaction in ${roomId} for ${id}`);
+  state.log.debug(`handle redaction in ${event.room.id} for ${id}`);
+  const roomId = event.room.id;
   
   const [timeline, index] = state.roomTimelines.get(roomId).for(id);
   if (index) {
@@ -157,7 +156,7 @@ export function redact(roomId, event) {
     // TODO: edge case?
     // if (slice.start === id) slice.start = timeline[0];
     
-    const sliceIndex = slice.events.findIndex(i => i.eventId === id);
+    const sliceIndex = slice.events.findIndex(i => i.id === id);
     if (sliceIndex !== -1) slice.events.splice(sliceIndex, 1);
     state.slice.set(slice);
   } else if (state.events.has(id)) {
@@ -169,7 +168,7 @@ export function redact(roomId, event) {
       const reactions = rel?.reactions;
       if (!reactions) return;
       if (!reactions.has(relation.key)) return;
-      const idx = reactions.get(relation.key).findIndex(i => i.eventId === original.eventId);
+      const idx = reactions.get(relation.key).findIndex(i => i.id === original.id);
       if (idx >= 0) reactions?.get(relation.key).splice(idx, 1);
       if (reactions.get(relation.key).length === 0) rel.reactions.delete(relation.key);
       if (reactions.size === 0) rel.reactions = null;

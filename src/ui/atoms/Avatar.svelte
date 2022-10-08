@@ -22,7 +22,6 @@ function handleError(e) {
 </script>
 <style>
 .avatar {
-  border-radius: 50%;
   background-color: var(--bg-spaces);
   object-fit: cover;
   user-select: none;
@@ -38,6 +37,7 @@ function handleError(e) {
     class="avatar"
     alt={"avatar for " + user.name ?? user.userId ?? user.roomId}
     loading="lazy"
+    style:border-radius={size / 2 + "px"}
     style:height={size + "px"}
     style:width={size + "px"}
     src={getAvatar(user)}

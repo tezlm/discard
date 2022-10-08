@@ -2,6 +2,7 @@
 export let localpart = "";
 export let homeserver = "";
 export let kind: "user" | "alias" | "room" = "user";
+export let lockHomeserver = false;
 let localpartEl: HTMLInputElement, homeserverEl: HTMLInputElement;
 
 const symbols = {
@@ -22,12 +23,12 @@ function update() {
   if (localpart?.includes(":"))  {
     const [newLocal, newServer] = localpart.split(":");
     localpart = newLocal;
-    if (newServer) homeserver = newServer;
-    homeserverEl.focus(); 
+    if (newServer && !lockHomeserver) homeserver = newServer;
+    homeserverEl?.focus(); 
   }
   if (homeserver?.includes(":")) {
     const [newLocal, newServer] = homeserver.split(":"); 
-    homeserver = newServer;
+    if (!lockHomeserver) homeserver = newServer;
     if (newLocal) localpart = newLocal;
   }
 }
@@ -73,7 +74,10 @@ input:nth-child(4) {
 <div class="userid">
   <span>{symbols[kind]}</span>
   <input id="localpart"  bind:value={localpart}  bind:this={localpartEl}  on:input={update} placeholder="cool-id" />
+  {#if lockHomeserver}
+  <span>:{homeserver}</span>
+  {:else}
   <span>:</span>
   <input id="homeserver" bind:value={homeserver} bind:this={homeserverEl} on:input={update} placeholder="example.org" />
+  {/if}
 </div>
-

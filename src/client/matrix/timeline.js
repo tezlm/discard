@@ -1,5 +1,5 @@
 import { handle } from "../actions/timeline.js";
-import { StateEvent } from "discount";
+import { Event, StateEvent } from "discount";
 
 class Timeline extends Array {
   constructor(roomId, start, end) {
@@ -12,13 +12,13 @@ class Timeline extends Array {
   async backwards() {
     if (!this.batchEnd) return false;
     const res = await state.api.fetchMessages(this.roomId, this.batchEnd, "b");
+    const room = state.rooms.get(this.roomId);
     
-    for (let ev of res.state ?? []) {
-      const room = state.rooms.get(this.roomId);
-      room?.handleState(new StateEvent(room.client, room, ev));
+    for (let raw of res.state ?? []) {
+      room?.handleState(new StateEvent(room, raw));
     }
     
-    for (let i of res.chunk ?? []) handle(this.roomId, i, true);
+    for (let raw of res.chunk ?? []) handle(new Event(room, raw), true);
     
     this.batchEnd = res.end;
     return true;

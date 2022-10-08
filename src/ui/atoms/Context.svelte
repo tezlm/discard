@@ -10,6 +10,12 @@ function tooRight(menuEl) {
   return rect.width * 2 + rect.left > window.innerWidth;
 }
 
+function handleClick(item, e) {
+  item.clicked(e);
+  state.context.set({});
+  e.stopPropagation();
+}
+
 $: if (items) setTimeout(() => right = tooRight(menuEl));
 </script>
 <style>
@@ -18,6 +24,7 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
   padding: 6px 8px;
   min-width: 180px;
   max-width: 240px;
+  max-height: calc(100vh - 16px);
   background: var(--bg-context);
   border-radius: 4px;
   box-shadow: var(--shadow-popup);
@@ -74,7 +81,7 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
   visibility: visible;
 }
 </style>
-<div class="menu" style:width={width + "px"} bind:this={menuEl}>
+<div class="menu scroll" style:width={width + "px"} bind:this={menuEl}>
 {#each items as item}
   {#if item}
       {#if item.component}
@@ -85,7 +92,7 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
       <div
         class="item"
         style:color={item.color}
-        on:click={item.clicked}
+        on:click={e => handleClick(item, e)}
       >
         {item.label}
         {#if item.submenu}

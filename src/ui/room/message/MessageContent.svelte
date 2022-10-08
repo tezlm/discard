@@ -36,7 +36,7 @@ function parseDimensions(info) {
 
 $: if (wrapper) {
   for (let el of wrapper.querySelectorAll("code[class^=language-]")) { 
-    hljs.highlightBlock(el);
+    hljs.highlightElement(el);
   }
 }
 </script>
@@ -205,11 +205,14 @@ img {
   {:else if type === "m.file"}
   {@const mime = content.info?.mimetype}
   <div style="display: inline-block">
-    {#if /text\//.test(mime) || mime === "application/json"  || mime === "application/x-javascript"}
-      <Text src={parseMxc(content.url)} size={content.info?.size ?? null} name={content.filename ?? content.body} />
+    <File src={parseMxc(content.url)} size={content.info?.size ?? null} name={content.filename ?? content.body} />
+    <!--
+    {#if (/text\//.test(mime) || mime === "application/json" || mime === "application/x-javascript") && content.info.size < 1024 * 1024}
+      <Text src={parseMxc(content.url)} size={content.info?.size ?? null} name={content.filename ?? content.body} {mime} />
     {:else}
-      <File src={parseMxc(content.url)} size={content.info?.size ?? null} name={content.filename ?? content.body} {mime} />
+      <File src={parseMxc(content.url)} size={content.info?.size ?? null} name={content.filename ?? content.body} />
     {/if}
+    -->
   </div>
   {:else if content.format === "org.matrix.custom.html"}
   <div class="text" class:emote={type === "m.emote"}>

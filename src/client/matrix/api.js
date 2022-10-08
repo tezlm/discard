@@ -82,7 +82,24 @@ export default class Api {
   
   fetchUser(userId) {
     return this.fetch("GET", `/profile/${encode(userId)}`);
-  }  
+  }
+  
+  async searchEvents(roomId, search, batch) {
+    const res = await this.fetch("POST", `/search${batch ? "?next_batch=" + batch : ""}`, {
+      search_categories: {
+        room_events: {
+          search_term: search,
+          order_by: "recent",
+          filter: {
+            limit: 50,
+            rooms: [roomId],
+          }
+        }
+      }
+    });
+    const { count, highlights, next_batch, results } = res.search_categories.room_events;
+    return { count, highlights, next_batch: next_batch, results: results.map(i => i.result) };
+  }
   
   // sending content
   sendEvent(roomId, type, content, txnId) {
@@ -106,8 +123,9 @@ export default class Api {
   }
   
   // redact events
-  redactEvent(roomId, eventId, content, txnId) {
-    return this.fetch("PUT", `/rooms/${encode(roomId)}/redact/${encode(eventId)}/${encode(txnId)}`, content);
+  redactEvent(roomId, eventId, reason) {
+    // TODO: allow editing transaction?
+    return this.fetch("PUT", `/rooms/${encode(roomId)}/redact/${encode(eventId)}/${Math.random()}`, reason ? { reason } : null);
   }
   
   // e2ee
@@ -163,6 +181,10 @@ export default class Api {
   
   joinRoom(roomId) {
     return this.fetch("POST", `/rooms/${encode(roomId)}/join`);    
+  }
+  
+  joinAlias(alias) {
+    return this.fetch("POST", `/join/${encode(alias)}`);    
   }
   
   leaveRoom(roomId) {

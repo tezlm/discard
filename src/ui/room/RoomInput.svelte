@@ -20,6 +20,7 @@ let slice = state.slice;
 let edit = state.roomState.edit;
 
 let isDragging = false;
+let isShift = false;
 
 function handleKeyDown(e) {
   if (e.key === "Escape") {
@@ -181,12 +182,18 @@ async function handleUpload(file) {
 }
 
 async function handleDrop(e) {
-  e.preventDefault();
-  e.stopPropagation();
+  console.log("drop", isShift)
   isDragging = false;
   for (let file of e.dataTransfer.files) {
-    await onfile(file);
+    if (isShift) {
+      console.log("upload file direct")
+      await handleUpload(file);
+    } else {
+      console.log("upload file")
+      await onfile(file);
+    }
   }
+  textarea?.focus();
 }
 
 function blur() {
@@ -312,15 +319,21 @@ function slide() {
   <div class="drop" on:dragleave={() => isDragging = false} transition:blur>
     <div class="drop-info" transition:slide>
       <div>
+        {#if isShift}
+        <h2>insta upload mode!</h2>
+        {:else}
         <h2>drop to upload!</h2>
-        <p>hold shift to bypass upload preview</p>
+        {/if}
+        <!-- FIXME: hold shift to bypass upload preview -->
+        <!-- <p>hold shift to bypass upload preview</p> -->
       </div>
     </div>
   </div>
   {/if}
 </div>
 <svelte:window
-  on:dragover|preventDefault
-  on:dragenter={() => isDragging = true}
-  on:drop={handleDrop}
+  on:dragover|preventDefault={(e) => { isShift = e.shiftKey && false; }}
+  on:dragstart|preventDefault={(e) => {  }}
+  on:dragenter|preventDefault={(e) => { isDragging = true; isShift = e.shiftKey && false }}
+  on:drop|preventDefault={handleDrop}
 />
