@@ -26,7 +26,7 @@ class Events extends PersistentMap {
   async fetch(room, eventId) {
     if (this.has(eventId)) return this.get(eventId);
     // const fromDb = await this._db.get(this.name, eventId);
-    const event = new Event(room, (await state.api.fetchEvent(room.roomId, eventId)));
+    const event = new Event(room, (await state.api.fetchEvent(room.id, eventId)));
     // const event = new Event(room, (await this._db.get(this.name, eventId) ?? await state.api.fetchEvent(room.roomId, eventId)));
     this.set(eventId, event);
     return event;

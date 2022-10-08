@@ -17,6 +17,26 @@ function getName(room) {
 
 let search;
 let searchfocus = false;
+
+let showPins = false;
+let pinButtonEl;
+
+let popout = state.popout;
+
+$: if (showPins) {
+  queueMicrotask(() => {
+    const rect = pinButtonEl.getBoundingClientRect();
+    state.popout.set({
+      id: "pinned",
+      animate: "bottom",
+      top: rect.top + rect.height + 16,
+      right: window.innerWidth - rect.right,
+      room
+    });
+  });
+} else {
+  state.popout.set({});
+}
 </script>
 <style>
 .header {
@@ -63,6 +83,10 @@ let searchfocus = false;
 }
 
 .icon:hover {
+  color: var(--fg-content);
+}
+
+.icon.active {
   color: var(--fg-content);
 }
 
@@ -133,6 +157,9 @@ let searchfocus = false;
   <div class="icon" on:click={todo}>push_pin</div>
   {/if}
   -->
+  {#if room}
+  <div class="icon" class:active={showPins} bind:this={pinButtonEl} on:click|stopPropagation={() => showPins = !showPins}>push_pin</div>
+  {/if}
   <div
     class="icon"
     style:color={$settings.get("showmemberlist") ? "var(--fg-notice)" : null}
@@ -160,3 +187,4 @@ let searchfocus = false;
   <div class="icon" on:click={todo}>help</div>
   -->
 </div>
+<svelte:window on:click={() => { showPins = false }} />

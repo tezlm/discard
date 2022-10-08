@@ -12,8 +12,8 @@ import Unknown from "../events/Unknown.svelte";
 
 import { eventContext } from "../../../util/context";
 
-export let shiftKey;
-export let header;
+export let shiftKey = false;
+export let header = true;
 export let room;
 export let event;
 
@@ -49,6 +49,7 @@ function handleContext(e) {
 	});
 }
 
+let popout = state.popout;
 $: if (showReactionPicker) {
   queueMicrotask(() => {
     const rect = toolbarEl.getBoundingClientRect();
@@ -72,7 +73,7 @@ $: if (showReactionPicker) {
       },
     });
   });
-} else {
+} else if ($popout.id === "emoji") {
   state.popout.set({});
 }
 </script>

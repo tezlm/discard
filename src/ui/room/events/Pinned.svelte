@@ -63,7 +63,7 @@ time {
     {#if added.length === 0 && removed.length === 0}
     did nothing to the pins in this room.
     {:else if added.length === 1 && removed.length === 0}
-    pinned <b class="link" on:click={() => actions.slice.jump(room.roomId, added[0])}>a message</b> from this room.
+    pinned <b class="link" on:click={() => actions.slice.jump(room.roomId, added[0])}>a message</b> to this room.
     {:else if added.length > 1 && removed.length === 0}
     pinned {added.length} messages to this room.
     {:else if added.length === 0 && removed.length === 1}
@@ -73,7 +73,7 @@ time {
     {:else}
     modified the pinned messages in this room.
     {/if}
-    See all <b>pinned messages</b>.
+    See all <b class="link" on:click={todo}>pinned messages</b>.
     <time datetime={event.date.toISOString()}>{formatDate(event.date)}</time>
   </div>
 </div>

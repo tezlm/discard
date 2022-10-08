@@ -158,7 +158,7 @@ async function handleSubmit(value, e) {
   margin: 0 8px;
 }
 </style>
-<div class="selector" on:click={(e) => e.stopPropagation()}>
+<div class="selector" on:clickstopPropagation>
   <div class="header">
     <Input
       small optional

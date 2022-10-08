@@ -12,20 +12,22 @@ export default class Api {
     const url = `${this.baseUrl}${path}`;
   	opts.method = method;
   	if (body) opts.body = body;
-  	return fetch(url, opts).then(res => res.json());
+    const res = await fetch(url, opts);
+    if (res.status < 200 || res.status >= 300) throw await res.json();
+    return res.json();
   }
   
-  async fetchUnauth(method, path, body) {
+  fetchUnauth(method, path, body) {
   	return this.fetchRaw(method, `/_matrix/client/v3${path}`, JSON.stringify(body));
   }
   
-  async fetchAuth(method, path, body, opts = {}) {
+  fetchAuth(method, path, body, opts = {}) {
     if (!this.token) throw "token required";
   	opts.headers = { authorization: "Bearer " + this.token };
   	return this.fetchRaw(method, path, body && JSON.stringify(body), opts);
   }
   
-  async fetch(method, path, body, opts = {}) {
+  fetch(method, path, body, opts = {}) {
   	return this.fetchAuth(method, `/_matrix/client/v3${path}`, body, opts);
   }
     
