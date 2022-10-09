@@ -9,12 +9,11 @@ import { formatDate, formatTime } from "../../../util/format.ts";
 import { calculateHash } from '../../../util/content.ts';
 import { quadOut } from "svelte/easing";
 import Avatar from "../../atoms/Avatar.svelte";
-
-// TODO: modularize more, don't require fetching members and stuff
+import { eventContext, memberContext } from "../../../util/context";
 
 export let room, event, header = false, shiftKey = false;
 
-let { edit, input } = state.roomState;
+let { edit } = state.roomState;
 let slice = state.slice;
 let settings = state.settings;
 let toolbarEl;
@@ -23,11 +22,6 @@ $: toolbar = getToolbar(shiftKey);
 let showReactionPicker = false;
 let showUserPopout = false;
 let context = state.context;
-
-function unwrapEdits(event) {
-  while (event.original) event = event.original;
-  return event;
-}
 
 // amazing logic
 function getToolbar(shift = false) {
@@ -44,7 +38,7 @@ function getToolbar(shift = false) {
       toolbar.push({ name: "Delete", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) }});
     }
     if (room.power.me >= room.power.getEvent("m.room.message")) {
-      toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
+      toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });
     }
     toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
   } else {
@@ -53,9 +47,9 @@ function getToolbar(shift = false) {
     }
     if (room.power.me >= room.power.getEvent("m.room.message")) {
       if (fromMe) {
-        toolbar.push({ name: "Edit", icon: "edit", clicked: () => state.roomState.edit.set(unwrapEdits(event).eventId) });
+        toolbar.push({ name: "Edit", icon: "edit", clicked: () => state.roomState.edit.set(event.id) });
       } else {
-        toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
+        toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });
       }
     }
     toolbar.push({ name: "More", icon: "more_vert", clicked: showMore });
@@ -66,7 +60,7 @@ function getToolbar(shift = false) {
   function showMore() {
     const rect = toolbarEl.getBoundingClientRect();
     if ($context.items) return $context = {};
-    $context = { items: getContextMenu(), x: rect.left, y: rect.top + 40 };
+    $context = { items: eventContext(event, { showEmoji: () => showReactionPicker = true }), x: rect.left, y: rect.top + 40 };
   }
 }
 
@@ -99,79 +93,6 @@ function fly(_, props) {
     easing: quadOut,
     css: t => `transform: translateX(${t * props.x - props.x}px)`,
   };
-}
-
-function getContextMenu() {
-  const menu = [];
-  if (room.power.me >= room.power.getEvent("m.room.reaction")) {
-    menu.push({ label: "Add Reaction", clicked:  () => showReactionPicker = true, submenu: [
-      { label: "thumbsup",   clicked: (e) => addReaction(e, "👍️"), icon: "👍️" },
-      { label: "thumbsdown", clicked: (e) => addReaction(e, "👎️"), icon: "👎️" },
-      { label: "eyes",       clicked: (e) => addReaction(e, "👀"), icon: "👀" },
-      { label: "sparkles",   clicked: (e) => addReaction(e, "✨"), icon: "✨" },
-      { label: "Other Reactions", icon: "add_reaction", clicked: () => showReactionPicker = true },
-    ] });
-  }
-  if (event.reactions?.size) {
-    menu.push({ label: "Reactions", icon: "emoji_emotions", clicked: () => state.popup.set({ id: "reactions", event }) });
-  }
-  if (room.power.me >= room.power.getEvent("m.room.message")) {
-    if (event.sender.userId === state.userId) menu.push({ label: "Edit Message", icon: "edit", clicked: () => state.roomState.edit.set(unwrapEdits(event).eventId) });
-    menu.push({ label: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(unwrapEdits(event)) });
-  }
-  menu.push({ label: "Mark Unread", icon: "mark_chat_unread", clicked: markUnread });
-  menu.push({ label: "Copy Link",   icon: "link", clicked: () => navigator.clipboard.writeText(`https://matrix.to/#/${room.roomId}/${event.eventId}`) });
-  if ((room.power.me >= room.power.getEvent("m.room.redaction") && event.sender.userId === state.userId) || (room.power.me >= room.power.getBase("redact"))) {
-    menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) } });
-  }
-  menu.push(null);
-  menu.push({ label: "View Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
-  return menu;
-
-  function addReaction(_, emoji) {
-    if (!event.reactions?.get(emoji)?.find(i => i.sender.userId === state.userId)) {
-      const reaction = {
-        "m.relates_to": {
-          key: emoji,
-          rel_type: "m.annotation",
-          event_id: event.eventId,
-        },
-      };
-      state.api.sendEvent(event.roomId, "m.reaction", reaction, Math.random());  
-    }
-  }
-
-  function markUnread() {
-    const timeline = state.roomTimelines.get(room.roomId).current;
-    const index = timeline.lastIndexOf(event.eventId);
-    const lastId = timeline[index - 1] ?? event.eventId;
-    state.log.debug(`mark ${lastId} as read`);
-    state.rooms.get(room.roomId).accountData.set("m.fully_read", { event_id: lastId });
-    state.slice.set(state.roomSlices.get(room.roomId));
-    state.api.sendReceipt(room.roomId, lastId);
-  }
-}
-
-function getUserMenu() {
-  const name = event.sender.name || event.sender.userId;
-  return [
-    { label: "Profile", icon: "person",        clicked: todo },
-    { label: "Mention", icon: "notifications", clicked: () => $input += event.sender.userId },
-    { label: "Message", icon: "message",       clicked: todo },
-    { label: "Block",   icon: "block",         clicked: todo },
-    null,
-    { label: "Remove Messages", icon: "delete",        color: "var(--color-red)", clicked: () => state.popup.set({ id: "deleterecent", room, member: event.sender }) },
-    { label: `Kick ${name}`,    icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "kick",         room, member: event.sender }) },
-    { label: `Ban ${name}`,     icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "ban",          room, member: event.sender }) },
-    null,
-    { label: "Power",   clicked: todo, submenu: [] },
-    null,
-    { label: "Copy ID", clicked: copy(event.sender.userId), icon: "terminal" },
-  ];
-
-	function copy(text) {
-		return () => navigator.clipboard.writeText(text);
-	}
 }
 
 let popout = state.popout;
@@ -297,11 +218,11 @@ time {
   z-index: 1;
 }
 </style>
-<div class="message" on:click={handleClick} on:contextmenu|stopPropagation={e => { if (e.target.tagName === "A") return; e.preventDefault(); state.context.set({ items: getContextMenu(), x: e.clientX, y: e.clientY }) }}>
+<div class="message" on:click={handleClick}>
   <div class="side">
     {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
     {#if header}
-    <div class="avatar" class:selected={showUserPopout} on:click|stopPropagation={() => showUserPopout = !showUserPopout} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>
+    <div class="avatar" class:selected={showUserPopout} on:click|stopPropagation={() => showUserPopout = !showUserPopout} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: memberContext(event.sender), x: e.clientX, y: e.clientY })}>
       <Avatar user={event.sender} size={40} />
     </div>
     {:else}
@@ -312,7 +233,7 @@ time {
     {#if getReply(event.content)}<MessageReply {room} eventId={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
-      <span class="author" style:color={getColor(event.sender, $settings)} on:click|stopPropagation={() => state.popup.set({ id: "user", userId: event.sender.id })} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>{event.sender.name || event.sender.userId}</span>
+      <span class="author" style:color={getColor(event.sender, $settings)} on:click|stopPropagation={() => state.popup.set({ id: "user", userId: event.sender.id })} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: memberContext(event.sender), x: e.clientX, y: e.clientY })}>{event.sender.name || event.sender.id}</span>
       {#if event.content.msgtype === "m.notice"}
       <div class="badge">bot</div>
       {/if}
@@ -338,7 +259,7 @@ time {
     {#if event.reactions}<MessageReactions {event} />{/if}
     <!-- {event.relations.filter(i => i.content["m.relates_to"]?.rel_type === "m.thread").length} thread replies -->
   </div>
-  {#if event.eventId !== $edit}
+  {#if event.id !== $edit}
   <div class="toolbar" bind:this={toolbarEl} style:display={showReactionPicker ? "block" : null}>
     <MessageToolbar items={toolbar} />
   </div>

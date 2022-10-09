@@ -37,7 +37,6 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
   padding: 6px 8px;
   margin: 2px 0;
   height: 32px;
-  color: var(--fg-interactive);
   font-size: 14px;
   font-weight: 500;
   border-radius: 2px;
@@ -90,7 +89,7 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
     {:else}
       <div
         class="item"
-        style:color={item.color}
+        style:color={item.color ?? "var(--fg-interactive)"}
         on:click={e => handleClick(item, e)}
       >
         {item.label}
