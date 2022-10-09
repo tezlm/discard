@@ -6,7 +6,7 @@ export let showClose = false;
 let current = state.popup;
 
 function closePopup() {
-  state.popup.set({ ...current, id: null });
+  state.popup.set({ ...$current, id: null });
 }
 
 function card() {
@@ -91,7 +91,7 @@ function opacity() {
 }
 </style>
 <div class="background" on:click={closePopup} transition:opacity>
-  <div class="card" on:click={e => e.stopPropagation()} class:raw transition:card>
+  <div class="card" on:click|stopPropagation class:raw transition:card>
     {#if showClose}
       <div class="icon close" on:click={closePopup}>close</div>
     {/if}

@@ -154,7 +154,8 @@ function getHomeContextMenu() {
   <div class="space" class:selected={$focusedSpace === null}>
     <Tooltip position="right" tip="Home">
       <img
-        class={$focusedSpace ? "space" : "space selected"}
+        class="space"
+        class:selected={$focusedSpace}
         src={"https://celery.eu.org/_matrix/media/r0/download/celery.eu.org/Wm9T9Nnch8IUQsVaJAInkaoVsgCJlmGx"}
         on:click={() => actions.spaces.focus(null)}
     		on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getHomeContextMenu(), x: e.clientX, y: e.clientY })}

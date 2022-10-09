@@ -36,7 +36,7 @@ function isMuted(room) {
 	<Create />
 	{/if}
 	{#each $navRooms as room}
-		{#if room.type === "space"}
+		{#if room.type === "m.space"}
 		<Category {room} />
 		{:else}
 		<Room {room} muted={isMuted(room)} />

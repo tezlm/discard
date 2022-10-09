@@ -4,7 +4,7 @@
 import Button from "../atoms/Button.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 export let room;
-let count = 20;
+let count = 30;
 
 function delay(ms) {
   return new Promise(res => setTimeout(res, ms));
@@ -86,7 +86,7 @@ $: if (room.roomId !== oldId) {
 <div class="members scroll" tabindex="-1">
   {#await fetchList(room)}
     <div class="title">Loading...</div>
-    {#each Array(20) as _}
+    {#each Array(count) as _}
     <!-- TODO: cleanup -->
     <div class="wrapper" style="cursor: initial; background: transparent !important">
       <div class="member">

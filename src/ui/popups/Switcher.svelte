@@ -6,16 +6,15 @@ let search = "";
 let highlighted = 0;
 $: results = getRooms(search);
 
+let dms = state.dms;
+
 // this code is a mess, surely there's a better way
 
 // TODO: handle spaces
 function getRooms(search) {
   if (!search) return state.recentRooms.slice(1);
-  const set = new Set(state.recentRooms);
-  const rooms = [...state.rooms.values()].map(room => ({ name: sanitize(room.name), room }));
-  return fuzzysort
-    .go(search, rooms, { key: "name", limit: 5, })
-    .sort((a, b) => set.has(a.obj.roomId) ? -1 : set.has(b.obj.roomId) ? 1 : 0);
+  const rooms = [...state.rooms.values()].map(room => ({ name: sanitize(room.name ?? dms.get(room.id)?.name), room }));
+  return fuzzysort.go(search, rooms, { key: "name", limit: 5 });
 }
 
 // TODO: move into utility function
@@ -28,7 +27,11 @@ function sanitize(str) {
 
 function focusRoom(room) {
   if (!room) return;
-  actions.rooms.focus(room);
+  if (state.spaces.has(room.id)) {
+    actions.spaces.focus(room);
+  } else {
+    actions.rooms.focus(room);
+  }
   state.popup.set({});
 }
 
@@ -66,6 +69,7 @@ function findParent(room) {
 }
 
 .room {
+  /* display: flex; */
   padding: 4px;
   border-radius: 4px;
   cursor: pointer;
@@ -75,6 +79,8 @@ function findParent(room) {
   display: inline;
   color: var(--fg-muted);
   font-weight: 500;
+  font-family: var(--font-monospace);
+  font-size: 16px;
 }
 
 .room.highlighted {
@@ -103,7 +109,7 @@ function findParent(room) {
             on:mouseover={() => highlighted = i}
             on:focus={() => highlighted = i}
           >
-            <span class="icon">#</span>
+            <span class="icon">{#if dms.has(room.id)}@{:else}#{/if}</span>
             {room.name}
             {#if parent}<span class="dim">- {parent.name}</span>{/if}
           </div>
@@ -119,7 +125,8 @@ function findParent(room) {
             on:mouseover={() => highlighted = i}
             on:focus={() => highlighted = i}
           >
-            <span class="icon">#</span>
+            <!-- <span class="icon">{#if dms.has(room.id)}@{:else if state.spaces.has(room.id)}folder{:else}#{/if}</span> -->
+            <span class="icon">{#if dms.has(room.id)}@{:else if state.spaces.has(room.id)}*{:else}#{/if}</span>
             {@html fuzzysort.highlight(result, "<span style='color: var(--color-accent)'>", "</span>")}
             {#if parent}<span class="dim">- {parent.name}</span>{/if}
           </div>

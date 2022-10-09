@@ -18,7 +18,6 @@ $: queueMicrotask(() => {
 <style>
 .menu {
   position: fixed;
-  z-index: 20;
   pointer-events: auto;
 }
 </style>
@@ -27,4 +26,4 @@ $: queueMicrotask(() => {
   <Context items={$context.items} />
   {/if}
 </div>
-<svelte:window on:click={closeMenu} on:contextmenu={closeMenu} />
+<svelte:window on:contextmenu={closeMenu} />

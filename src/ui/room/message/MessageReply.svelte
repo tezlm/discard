@@ -100,7 +100,7 @@ function getColor(sender) {
     <Avatar user={event.sender} size={16} />
   </div>
   <span class="author" style:color={getColor(event.sender)}>{event.sender.name || event.sender.id}</span>
-  <div class="content" on:click={() => actions.slice.jump(event.room.id, event.event.id)}>
+  <div class="content" on:click={() => actions.slice.jump(event.room.id, event.id)}>
     {#if !event.content}NO CONTENT!{:else}
     {#if event.content.format === "org.matrix.custom.html"}
       {@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n|<br.*?>/g, " ")}

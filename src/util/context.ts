@@ -1,4 +1,4 @@
-import { Event, Room } from "discount";
+import type { Event, Room, Member } from "discount";
 
 declare global {
   const state: any;
@@ -77,11 +77,11 @@ export function roomContext(room: Room) {
 	  ]*/ },
 	  null,
 	  { label: "Invite",    clicked: () => state.popup.set({ id: "invite", type: "room", room }), icon: "person_add", color: "var(--color-accent)" },
-	  { label: "Copy Link", clicked: copy(`https://matrix.to/#/${encodeURIComponent(room.getState("m.room.canonical_alias")?.content.alias ?? room.roomId)}`), icon: "link" },
+	  { label: "Copy Link", clicked: copy(`https://matrix.to/#/${encodeURIComponent(room.getState("m.room.canonical_alias")?.content.alias ?? room.id)}`), icon: "link" },
 	  null,
 	  { label: "Leave",   clicked: () => state.popup.set({ id: "leave", type: "room", room }), icon: "logout", color: "var(--color-red)" },
 	  null,
-	  { label: "Copy ID", clicked: copy(room.roomId), icon: "terminal" },
+	  { label: "Copy ID", clicked: copy(room.id), icon: "terminal" },
 	  { label: "Dev Tools", clicked: () => state.popup.set({ id: "dev-room", room }) },
 	];
 
@@ -92,7 +92,7 @@ export function roomContext(room: Room) {
 	  if (state.focusedRoomId === room.roomId) state.slice.set(state.roomSlices.get(room.id));
 	  state.api.sendReceipt(room.id, lastId);
     
-    if (room.type === "space") {
+    if (room.type === "m.space") {
       for (let child of state.spaces.get(room.id)) markRead(child);
     }
 	}
@@ -104,20 +104,11 @@ export function roomContext(room: Room) {
   function openSettings(room: Room) {
   	return () => {
   		state.selectedRoom.set(room);
-  		state.scene.set("room-settings");	
+  		state.scene.set(`${room.type === "m.space" ? "space" : "room"}-settings`);	
   	};
   }
+}
+
+export function memberContext(member: Member) {
   
-  /*
-	function markRead() {
-    const r = room;
-    for (let room of [...rooms, r]) {
-  	  const lastEvent = state.roomTimelines.get(room.roomId).live.at(-1);
-  	  state.log.debug(`mark ${lastEvent} as read`);
-  	  state.rooms.get(room.roomId).accountData.set("m.fully_read", lastEvent);
-  	  if (state.focusedRoomId === room.roomId) state.slice.set(state.roomSlices.get(room.roomId));
-  	  state.api.sendReceipt(room.roomId, lastEvent);    
-    }
-	}
-  */
 }

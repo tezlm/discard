@@ -10,6 +10,7 @@ import Popouts from './Popouts.svelte';
 import ContextMenus from './ContextMenus.svelte';
 import { quadInOut, quartInOut } from 'svelte/easing';
 let scene = state.scene;
+let { context, popup } = state;
 
 function opacity() {
   return {
@@ -36,6 +37,14 @@ function easeRev() {
 }
 
 function handleClick(e) {
+  if ($context.items) {
+    $context = {};
+  } else if ($popup.id) {
+    // $popup = { ...$popup, id: null };
+  // } else if ($poput) {
+    // $popup = {};
+  }
+
   const ping = e.target.getAttribute("data-mx-ping");
   if (ping) {
     state.popup.set({ id: "user", userId: ping });
@@ -84,12 +93,11 @@ main > div {
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  z-index: 10;
 }
 
-.layer.context {
-  z-index: 20;
-}
+.layer.layer-1 { z-index: 10; }
+.layer.layer-2 { z-index: 20; }
+.layer.layer-3 { z-index: 30; }
 </style>
 <main>
   <!--
@@ -111,7 +119,7 @@ main > div {
   <div class="loading" transition:opacity><Loading /></div>
   {/if}
 </main>
-<div class="layer"><Popups /></div>
-<div class="layer"><Popouts /></div>
-<div class="layer context"><ContextMenus /></div>
+<div class="layer layer-1"><Popups /></div>
+<div class="layer layer-2"><Popouts /></div>
+<div class="layer layer-3"><ContextMenus /></div>
 <svelte:window on:click={handleClick} />

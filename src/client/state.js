@@ -28,6 +28,7 @@ const state = {
   scene: writable({}),
   popup: writable({}),
   popout: writable({}),
+  emoji: writable({}),
   context: writable({}),
   
   // data

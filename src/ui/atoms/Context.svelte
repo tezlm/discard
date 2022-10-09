@@ -28,7 +28,7 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
   background: var(--bg-context);
   border-radius: 4px;
   box-shadow: var(--shadow-popup);
-  z-index: 1;
+  overflow: visible !important;
 }
 
 .item {
@@ -62,11 +62,10 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
 }
 
 .submenu {
-  visibility: hidden;
   position: absolute;
-  z-index: 1;
   top: -8px;
   padding: 0 12px;
+  visibility: hidden;
 }
 
 .submenu:not(.right) {
@@ -84,7 +83,7 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
 <div class="menu scroll" style:width={width + "px"} bind:this={menuEl}>
 {#each items as item}
   {#if item}
-      {#if item.component}
+    {#if item.component}
       <div on:click={e => e.stopPropagation()}>
         <svelte:component this={item.component} />
       </div>

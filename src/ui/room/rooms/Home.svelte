@@ -1,15 +1,46 @@
 <script>
 import Button from "../../atoms/Button.svelte";
 </script>
-<div style="margin: 2em auto;">
-  <div style="border-radius: 4px; background: var(--bg-rooms-members); border: solid var(--bg-spaces) 1px; padding: 16px; display: inline-block; user-select: text">
-    <b>welcome to discard!</b>
-    <p>i consider this software to be pre-alpha, so expect bugs and missing features!</p>
-  </div>
-  <br />
-  <br />
-  <div>
-    <Button type="normal" label="Create Space" clicked={() => state.popup.set({ id: "create", type: "space" })} />
-    <Button type="primary" label="Create Room" clicked={() => state.popup.set({ id: "create", type: "room" })} />
+<style>
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.content h1 {
+  text-align: center;
+}
+
+.content .warning {  
+  padding: 8px;
+  margin: 1em 0 8px;
+  border: solid var(--event-ping) 2px;
+  background: var(--event-ping-bg);
+  border-radius: 4px;
+}
+
+.buttons {
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: auto auto;
+  margin-top: 1em;
+}
+</style>
+<div class="content">
+  <div style="display: flex; flex-direction: column">
+    <h1>welcome to discard!</h1>
+    <div class="warning">
+      discard is pre-alpha, expect things to break!
+    </div>
+    <div class="buttons">
+      <Button clicked={() => state.popup.set({ id: "create", type: "space" })}>Create Space</Button>
+      <Button clicked={() => state.popup.set({ id: "create", type: "room" })}>Create Room</Button>
+      <Button clicked={() => state.scene.set("user-settings")}>Open Settings</Button>
+      <Button clicked={() => window.open("https://git.celery.eu.org/tezlm/discard")}>View Source</Button>
+    </div>
+    <!-- <Button clicked={() => window.open("https://git.celery.eu.org/tezlm/discard")}>View source</Button> -->
   </div>
 </div>
