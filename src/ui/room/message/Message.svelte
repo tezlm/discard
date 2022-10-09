@@ -104,12 +104,12 @@ function fly(_, props) {
 function getContextMenu() {
   const menu = [];
   if (room.power.me >= room.power.getEvent("m.room.reaction")) {
-    menu.push({ label: "Add Reaction", clicked: showPicker, submenu: [
+    menu.push({ label: "Add Reaction", clicked:  () => showReactionPicker = true, submenu: [
       { label: "thumbsup",   clicked: (e) => addReaction(e, "👍️"), icon: "👍️" },
       { label: "thumbsdown", clicked: (e) => addReaction(e, "👎️"), icon: "👎️" },
       { label: "eyes",       clicked: (e) => addReaction(e, "👀"), icon: "👀" },
       { label: "sparkles",   clicked: (e) => addReaction(e, "✨"), icon: "✨" },
-      { label: "Other Reactions", icon: "add_reaction", clicked: showPicker },
+      { label: "Other Reactions", icon: "add_reaction", clicked: () => showReactionPicker = true },
     ] });
   }
   if (event.reactions?.size) {
@@ -127,11 +127,6 @@ function getContextMenu() {
   menu.push(null);
   menu.push({ label: "View Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
   return menu;
-
-  function showPicker(e) {
-    showReactionPicker = true;
-    e.stopPropagation();
-  }
 
   function addReaction(_, emoji) {
     if (!event.reactions?.get(emoji)?.find(i => i.sender.userId === state.userId)) {
@@ -194,16 +189,16 @@ $: if (showReactionPicker) {
             "m.relates_to": {
               key: emoji,
               rel_type: "m.annotation",
-              event_id: event.eventId,
+              event_id: event.id,
             },
           };
           state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
         }
         if (!keepOpen) showReactionPicker = false;
       },
-    });
+    });  
   });
-} else if ($popout.id === "emoji") {
+} else {
   state.popout.set({});
 }
 </script>
@@ -260,11 +255,15 @@ $: if (showReactionPicker) {
   width: 40px;
   box-shadow: 0 0 0 #00000022;
   cursor: pointer;
-  transition: all .2s;
+  transition: box-shadow .2s;
 }
 
 .avatar:hover, .avatar.selected {
   box-shadow: 0 4px 4px #00000022;
+}
+
+.avatar:active {
+  transform: translateY(1px);
 }
 
 time {
@@ -302,7 +301,7 @@ time {
   <div class="side">
     {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
     {#if header}
-    <div class="avatar" class:selected={showUserPopout} on:click={() => setTimeout(() => showUserPopout = !showUserPopout)} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>
+    <div class="avatar" class:selected={showUserPopout} on:click|stopPropagation={() => showUserPopout = !showUserPopout} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>
       <Avatar user={event.sender} size={40} />
     </div>
     {:else}
@@ -313,7 +312,7 @@ time {
     {#if getReply(event.content)}<MessageReply {room} eventId={getReply(event.content)} />{/if}
     {#if header}
     <div class="top">
-      <span class="author" style:color={getColor(event.sender, $settings)} on:click|stopPropagation={() => state.popup.set({ id: "user", userId: event.sender.userId })} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>{event.sender.name || event.sender.userId}</span>
+      <span class="author" style:color={getColor(event.sender, $settings)} on:click|stopPropagation={() => state.popup.set({ id: "user", userId: event.sender.id })} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getUserMenu(), x: e.clientX, y: e.clientY })}>{event.sender.name || event.sender.userId}</span>
       {#if event.content.msgtype === "m.notice"}
       <div class="badge">bot</div>
       {/if}

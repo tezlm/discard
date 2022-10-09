@@ -59,6 +59,7 @@ $: if (showReactionPicker) {
       top: rect.top,
       right: window.innerWidth - rect.left + 8,
       selected(emoji, keepOpen) {
+				console.log("selected", emoji)
         if (emoji && !event.reactions?.get(emoji)?.find(i => i.sender.id === state.userId)) {
           const reaction = {
             "m.relates_to": {
@@ -73,7 +74,7 @@ $: if (showReactionPicker) {
       },
     });
   });
-} else if ($popout.id === "emoji") {
+} else {
   state.popout.set({});
 }
 </script>

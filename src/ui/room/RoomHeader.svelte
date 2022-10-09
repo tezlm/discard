@@ -136,6 +136,8 @@ $: if (showPins) {
     {:else}
     <span class="roomicon icon">tag</span>
     {/if}
+  {:else}
+    <span class="roomicon icon">home</span>
   {/if}
   <span class="name">{room ? getName(room) : "Home"}</span>
   {#if room?.topic}
@@ -159,7 +161,6 @@ $: if (showPins) {
   -->
   {#if room}
   <div class="icon" class:active={showPins} bind:this={pinButtonEl} on:click|stopPropagation={() => showPins = !showPins}>push_pin</div>
-  {/if}
   <div
     class="icon"
     style:color={$settings.get("showmemberlist") ? "var(--fg-notice)" : null}
@@ -167,6 +168,7 @@ $: if (showPins) {
   >
     people
   </div>
+  {/if}
   <!--
   <div class="roomsearch" class:focus={searchfocus || !!search}>
     <Search bind:focus={searchfocus} bind:value={search} />

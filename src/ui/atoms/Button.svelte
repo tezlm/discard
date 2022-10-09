@@ -1,6 +1,6 @@
 <script lang="ts">
+export let label;
 export let type = "normal";
-export let label = "button";
 export let clicked = () => {};
 export let disabled = false;
 export let loading = false;
@@ -80,5 +80,9 @@ button {
   class:loading
   on:click={clicked}
 >
+  {#if label}
   {label}
+  {:else}
+  <slot></slot>
+  {/if}
 </button>
