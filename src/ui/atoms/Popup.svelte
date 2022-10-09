@@ -46,6 +46,7 @@ function opacity() {
   position: relative;
   min-width: 440px;
   min-height: 200px;
+  max-height: calc(100vh - 16px);
   border-radius: 5px;
   background: var(--bg-content);
   color: var(--fg-content);
@@ -103,7 +104,7 @@ function opacity() {
         <slot name="header"></slot>
       </div>
       {/if}
-      <div class="content">
+      <div class="content scroll">
         <slot name="content"></slot>
       </div>
       {#if $$slots.footer}

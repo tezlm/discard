@@ -58,10 +58,12 @@ async function create() {
   }, 10);
 }
 </script>
+<style>
+</style>
 <Popup showClose>
   <!--<h2 slot="header" style="text-align: center">Customize {capitalize(current.type)}</h2>-->
   <h3 slot="header">Create {capitalize(current.type)}</h3>
-  <div slot="content" style="display: flex; flex-direction: column">
+  <div slot="content" style="display: flex; flex-direction: column;">
     <!--<div style="margin-bottom: 1em; max-width: 440px; text-align: center">
       Customize your {capitalize(current.type)} with an name, topic, and avatar. You can always change these later.
     </div>

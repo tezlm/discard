@@ -5,10 +5,13 @@ import shortJoypixels from "emojibase-data/en/shortcodes/joypixels.json";
 import shortEmojibase from "emojibase-data/en/shortcodes/emojibase.json";
 import emojis from "emojibase-data/en/compact.json";
 import Input from "../atoms/Input.svelte";
+import Search from "../atoms/Search.svelte";
 const groups = parseEmoji();
 export let selected;
 let search = "";
 let hover;
+
+// TODO: custom emoji support
 
 async function parseEmoji() {
   const groups = [[], [], [], [], [], [], [], [], [], []];
@@ -158,11 +161,11 @@ async function handleSubmit(value, e) {
   margin: 0 8px;
 }
 </style>
-<div class="selector" on:clickstopPropagation>
+<div class="selector" on:click|stopPropagation>
   <div class="header">
-    <Input
-      small optional
-      placeholder="search do it you wont"
+    <Search
+      placeholder="shift for multiple, ctrl for raw text"
+      size="input"
       bind:value={search}
       submitted={handleSubmit}
       escaped={() => selected(null, false)}
@@ -209,6 +212,7 @@ async function handleSubmit(value, e) {
     {#if hover}
     <div class="emoji">{@html getTwemoji(hover.unicode)}</div>
     <b>:{getShortcode(hover.hexcode)}:</b>
+    <!-- <span style="color: var(--fg-dim)">{hover.tags?.join(", ")}</span> -->
     {/if}
   </div>
 </div>

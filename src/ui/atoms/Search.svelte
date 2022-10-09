@@ -1,16 +1,26 @@
-<script>
+<script type="ts">
 export let value = "";
 export let placeholder = "Search";
 export let autofocus = false;
 export let focus = false;
-export let tall = false;
+export let size: "small" | "input" | "tall" = "small";
+export let submitted: (_: string, _1: KeyboardEvent) => {};
+export let escaped = (_: KeyboardEvent) => {};
 
-function handleKeyDown(e) {
-  if (e.key === "Escape" && value) {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    value = "";
+function handleKeyDown(e: KeyboardEvent) {
+  if (e.key === "Enter") {
+    if (value) submitted(value, e);
+  } else if (e.key === "Escape") {
+    if (value) {
+      value = "";
+    } else {
+      escaped(e);
+    }
+  } else {
+    return;
   }
+  e.stopPropagation();
+  e.preventDefault();
 }
 </script>
 <style>
@@ -62,20 +72,29 @@ input {
   color: var(--fg-notice);
 }
 
-.wrapper.tall {
+.wrapper.size-tall {
   height: 36px;
 }
 
-.wrapper.tall input {
+.wrapper.size-tall input {
   padding: 16px 8px;
 }
 
-.wrapper.tall .icon {
+.wrapper.size-tall .icon {
   padding: 16px 8px;
   font-size: 20px;
 }
+
+.wrapper.size-input input {
+  padding: 14px 8px;
+}
+
+.wrapper.size-input .icon {
+  padding: 14px 4px;
+  font-size: 18px;
+}
 </style>
-<div class="wrapper" class:tall>
+<div class="wrapper" class:size-tall={size === "tall"} class:size-input={size === "input"}>
   <input
     type="text"
     {placeholder}

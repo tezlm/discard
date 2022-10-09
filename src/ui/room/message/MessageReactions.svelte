@@ -53,14 +53,6 @@ function counterOut() {
   }
 }
 
-function fly() {
-  return {
-    duration: 200,
-    easing: quadOut,
-    css: t => `transform: translateX(${t * -15 + 15}px)`,
-  };
-}
-
 function handleClick(mine, key) {
   // instantly respond with reaction/local echo?
   if (mine) {
@@ -116,11 +108,13 @@ $: if (showPicker) {
 }
 
 .reaction {
-  display: inline-block;
+  display: inline-flex;
   position: relative;
   overflow: hidden;
   padding: 2px 4px;
   margin-right: 4px;
+  margin-bottom: 4px;
+  min-width: 40px;
 
   color: var(--fg-notice);
   background: var(--bg-rooms-members);
@@ -138,15 +132,26 @@ $: if (showPicker) {
 .key, .spacer, .count {
   display: inline-block;
   margin: 0 2px;
-  height: 1em;
+}
+
+img.key {
+  height: 16px;
+  margin-top: 2px;
+  margin-bottom: -2px;
+}
+
+.key {
+  color: var(--fg-content);
 }
 
 .spacer {
-  opacity: 0;
+  visibility: hidden;
+  margin-left: 4px;
 }
 
 .count {
   position: absolute;
+  right: 4px;
 }
 
 .reaction.self {
@@ -175,13 +180,6 @@ $: if (showPicker) {
 :global(.dim) {
   color: var(--fg-dim);
 }
-
-.picker {
-  position: absolute;
-  top: 0;
-  left: 22px;
-  z-index: 1;
-}
 </style>
 <div class="reactions">
 {#each [...event.reactions.entries()] as [key, events]}
@@ -202,9 +200,8 @@ $: if (showPicker) {
         <div class="key">{key}</div>
       {/if}
       {#key events.length}
-        <div class="count" in:counterIn out:counterOut>
-        {events.length}
-        </div>
+        <!-- <div class="count" in:counterIn={{ count: events.length }} out:counterOut> -->
+        <div class="count">{events.length}</div>
       {/key}
       <div class="spacer">
       {events.length}

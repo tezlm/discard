@@ -5,23 +5,23 @@ declare global {
   const todo: () => {};
 }
 
-export function eventContext(event: Event, callbacks: { showPicker: () => {} }) {
+export function eventContext(event: Event, config: { showEmoji: () => {} }) {
   const menu = [];
   const power = event.room.power;
   if (power.me >= power.getEvent("m.room.reaction")) {
-    menu.push({ label: "Add Reaction", clicked: callbacks.showPicker, submenu: [
+    menu.push({ label: "Add Reaction", clicked: config.showEmoji, submenu: [
       { label: "thumbsup",   clicked: () => addReaction("👍️"), icon: "👍️" },
       { label: "thumbsdown", clicked: () => addReaction("👎️"), icon: "👎️" },
       { label: "eyes",       clicked: () => addReaction("👀"), icon: "👀" },
       { label: "sparkles",   clicked: () => addReaction("✨"), icon: "✨" },
-      { label: "Other Reactions", icon: "add_reaction", clicked: callbacks.showPicker },
+      { label: "Other Reactions", icon: "add_reaction", clicked: config.showEmoji },
     ] });
   }
   if (event.reactions?.size) {
     menu.push({ label: "Reactions", icon: "emoji_emotions", clicked: () => state.popup.set({ id: "reactions", event }) });
   }
   if (power.me >= power.getEvent("m.room.message")) {
-    if (event.sender.id === state.id) menu.push({ label: "Edit Message", icon: "edit", clicked: () => state.roomState.edit.set(event.id) });
+    if (event.sender.id === state.userId && event.type === "m.room.message") menu.push({ label: "Edit Message", icon: "edit", clicked: () => state.roomState.edit.set(event.id) });
     menu.push({ label: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });
   }
   menu.push({ label: "Mark Unread", icon: "mark_chat_unread", clicked: markUnread });
@@ -34,7 +34,7 @@ export function eventContext(event: Event, callbacks: { showPicker: () => {} }) 
   return menu;
 
   function addReaction(emoji: string) {
-    if (!event.reactions?.get(emoji)?.find(i => i.sender.id === state.userId)) {
+    if (!event.reactions?.get(emoji)?.find((i: Event) => i.sender.id === state.userId)) {
       const reaction = {
         "m.relates_to": {
           key: emoji,
@@ -109,6 +109,26 @@ export function roomContext(room: Room) {
   }
 }
 
+import { get } from "svelte/store";
 export function memberContext(member: Member) {
-  
+  const name = member.name || member.id;
+  return [
+    { label: "Profile", icon: "person",        clicked: todo },
+    // { label: "Mention", icon: "notifications", clicked: () => $input += event.sender.userId },
+    { label: "Mention", icon: "notifications", clicked: () => { const { input } = state.roomState; input.set(get(input) + member.id) } },
+    { label: "Message", icon: "message",       clicked: todo },
+    { label: "Block",   icon: "block",         clicked: todo },
+    null,
+    { label: "Remove Messages", icon: "delete",        color: "var(--color-red)", clicked: () => state.popup.set({ id: "deleterecent", room: member.room, member }) },
+    { label: `Kick ${name}`,    icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "kick",         room: member.room, member }) },
+    { label: `Ban ${name}`,     icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "ban",          room: member.room, member }) },
+    null,
+    { label: "Power",   clicked: todo, submenu: [] },
+    null,
+    { label: "Copy ID", clicked: copy(member.id), icon: "terminal" },
+  ];
+
+	function copy(text: string) {
+		return () => navigator.clipboard.writeText(text);
+	}
 }

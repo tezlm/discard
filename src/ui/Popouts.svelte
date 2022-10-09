@@ -4,7 +4,7 @@ import PinnedMessages from "./molecules/PinnedMessages.svelte";
 let popout = state.popout;
 let windowHeight, windowWidth;
 let emojiEl, pinnedEl;
-
+let loadedEmoji = false;
 // TODO: autofocus emoji picker input
 
 function getPosition(popout, element) {
@@ -19,6 +19,8 @@ function getPosition(popout, element) {
   if (popout.bottom) css += `bottom: ${clampH(popout.bottom)}px;`;
   return css;
 }
+
+$: if ($popout.id === "emoji") loadedEmoji = true;
 </script>
 <style>
 .popout {
@@ -63,6 +65,7 @@ function getPosition(popout, element) {
   to   { opacity: 1;   transform: translateY(0) }
 }
 </style>
+{#if loadedEmoji}
 <div
   class="popout"
   class:animate-right={$popout.animate === "right"}
@@ -75,6 +78,7 @@ function getPosition(popout, element) {
 >
   <Emoji selected={$popout.selected} />
 </div>
+{/if}
 {#if $popout.id === "pinned"}
 <div
   class="popout"

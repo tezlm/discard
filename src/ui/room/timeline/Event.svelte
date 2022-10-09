@@ -42,7 +42,7 @@ function handleContext(e) {
 	e.preventDefault();
 	state.context.set({
 		items: eventContext(event, {
-			showPicker: () => showReactionPicker = true,
+			showEmoji: () => showReactionPicker = true,
 		}),
 		x: e.clientX,
 		y: e.clientY,
