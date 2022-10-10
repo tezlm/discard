@@ -35,7 +35,7 @@ function getLink() {
 <Popup>
   <h3 slot="header">Invite friends to {current.room.name}</h3>
   <div slot="content">
-    <Search placeholder="Search for people" size="tall" />
+    <Search placeholder="Search for people" size="tall" escaped={() => state.popup.set({ ...current, id: null })} />
     <div class="split-top"></div>
     <br />
     <br />

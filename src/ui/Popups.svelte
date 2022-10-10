@@ -23,8 +23,9 @@ import Attachment from "./popups/Attachment.svelte";
 // import Member from "./popups/Member.svelte";
 import User from "./popups/User.svelte";
 import Invite from "./popups/Invite.svelte";
-import Ban from "./popups/Ban.svelte";
 import Kick from "./popups/Kick.svelte";
+import Ban from "./popups/Ban.svelte";
+import Unban from "./popups/Unban.svelte";
 import DeleteRecent from "./popups/DeleteRecent.svelte";
 
 const popups = new Map();
@@ -54,8 +55,9 @@ popups.set("attachment", Attachment);
 popups.set("user", User);
 // popups.set("nickname", Nickname);
 popups.set("invite", Invite);
-popups.set("ban", Ban);
 popups.set("kick", Kick);
+popups.set("ban", Ban);
+popups.set("unban", Unban);
 popups.set("deleterecent", DeleteRecent);
 
 let current = state.popup;

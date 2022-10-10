@@ -6,8 +6,7 @@ import Button from "../../atoms/Button.svelte";
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  width: 100%;
+  flex: 1;
 }
 
 .content h1 {
@@ -25,8 +24,22 @@ import Button from "../../atoms/Button.svelte";
 .buttons {
   display: grid;
   grid-gap: 8px;
-  grid-template-columns: auto auto;
+  grid-template-columns: 300px 300px;
   margin-top: 1em;
+}
+
+.button {
+  display: flex;
+  text-align: left;
+}
+
+.button .icon {
+  font-size: 32px;
+  margin-right: 16px;
+}
+
+.button .description {
+  font-weight: normal;
 }
 </style>
 <div class="content">
@@ -36,11 +49,60 @@ import Button from "../../atoms/Button.svelte";
       discard is pre-alpha, expect things to break!
     </div>
     <div class="buttons">
-      <Button clicked={() => state.popup.set({ id: "create", type: "space" })}>Create Space</Button>
-      <Button clicked={() => state.popup.set({ id: "create", type: "room" })}>Create Room</Button>
-      <Button clicked={() => state.scene.set("user-settings")}>Open Settings</Button>
-      <Button clicked={() => window.open("https://git.celery.eu.org/tezlm/discard")}>View Source</Button>
+      <Button clicked={() => state.popup.set({ id: "create", type: "room" })}>
+        <div class="button">
+          <div class="icon">tag</div>
+          <div style="flex: 1">
+            <div>Create room</div>
+            <div class="description">Create a chatroom to talk in</div>
+          </div>
+        </div>
+      </Button>
+      <Button clicked={() => state.popup.set({ id: "create", type: "space" })}>
+        <div class="button">
+          <div class="icon">folder</div>
+          <div style="flex: 1">
+            <div>Create Space</div>
+            <div class="description">Use spaces to organize rooms</div>
+          </div>
+        </div>
+      </Button>
+      <Button clicked={todo}>
+        <div class="button">
+          <div class="icon">person</div>
+          <div style="flex: 1">
+            <div>Start DM</div>
+            <div class="description">Start a converation with someone</div>
+          </div>
+        </div>
+      </Button>
+      <Button clicked={todo}>
+        <div class="button">
+          <div class="icon">explore</div>
+          <div style="flex: 1">
+            <div>Explore Rooms</div>
+            <div class="description">Find public rooms to talk in</div>
+          </div>
+        </div>
+      </Button>
+      <Button clicked={() => state.scene.set("user-settings")}>
+        <div class="button">
+          <div class="icon">settings</div>
+          <div style="flex: 1">
+            <div>Open Settings</div>
+            <div class="description">Set up and configure some stuff</div>
+          </div>
+        </div>
+      </Button>
+      <Button clicked={() => window.open("https://git.celery.eu.org/tezlm/discard")}>
+        <div class="button">
+          <div class="icon">code</div>
+          <div style="flex: 1">
+            <div>View Source</div>
+            <div class="description">Check out the source code on gitea</div>
+          </div>
+        </div>
+      </Button>
     </div>
-    <!-- <Button clicked={() => window.open("https://git.celery.eu.org/tezlm/discard")}>View source</Button> -->
   </div>
 </div>

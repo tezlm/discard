@@ -88,17 +88,40 @@ nav {
 }
 
 .exit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: sticky;
-  top: 2em;
-  margin-right: 2em;
+  top: 4em;
   height: fit-content;
-  color: var(--fg-interactive);
-  font-weight: 700;
-  cursor: pointer;
+  margin-right: 2em;
+  user-select: none;
 }
 
-.exit:hover {
+.exit .close {
+  border: solid var(--color-gray-light) 3px;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 24px;
+  height: 18px;
+  width: 18px;
+  padding: 16px;
   color: var(--fg-notice);
+}
+
+.exit .close:hover {
+  background: var(--mod-lighten);
+}
+
+.exit .close:active {
+  transform: translateY(1px);
+}
+
+.exit .keybind {
+  margin-top: 4px;
+  color: var(--fg-interactive);
+  font-size: 14px;
+  font-weight: 14px;
 }
 
 h1 {
@@ -141,7 +164,10 @@ h1 {
       <Confirm {save} reset={() => reset ? reset() : todo} />
       {/if}
     </div>
-    <div class="exit" on:click={() => state.scene.set("chat")}>ESC</div>
+    <div class="exit">
+      <div class="close icon" on:click={() => state.scene.set("chat")}>close</div>
+      <div class="keybind">ESC</div>
+    </div>
   </div>
 </div>
 <svelte:window on:keydown={handleKeyDown} />

@@ -112,22 +112,45 @@ export function roomContext(room: Room) {
 import { get } from "svelte/store";
 export function memberContext(member: Member) {
   const name = member.name || member.id;
-  return [
+  const { power } = member.room;
+  
+  const menu = [];
+  menu.push(
     { label: "Profile", icon: "person",        clicked: todo },
     // { label: "Mention", icon: "notifications", clicked: () => $input += event.sender.userId },
     { label: "Mention", icon: "notifications", clicked: () => { const { input } = state.roomState; input.set(get(input) + member.id) } },
     { label: "Message", icon: "message",       clicked: todo },
     { label: "Block",   icon: "block",         clicked: todo },
     null,
-    { label: "Remove Messages", icon: "delete",        color: "var(--color-red)", clicked: () => state.popup.set({ id: "deleterecent", room: member.room, member }) },
-    { label: `Kick ${name}`,    icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "kick",         room: member.room, member }) },
-    { label: `Ban ${name}`,     icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "ban",          room: member.room, member }) },
-    null,
-    { label: "Power",   clicked: todo, submenu: [] },
+  );
+  
+  const moderate = [];
+  const membership = member.membership;
+  if (power.me >= power.getBase("redact")) moderate.push({ label: "Remove Messages", icon: "delete", color: "var(--color-red)", clicked: () => state.popup.set({ id: "deleterecent", room: member.room, member }) });
+  if (power.me >= power.getBase("kick") && power.me > member.power) {
+    if (membership !== "ban" && membership !== "leave") {
+      moderate.push({ label: `Kick ${name}`, icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "kick", room: member.room, member }) });
+    }
+  }
+  if (power.me >= power.getBase("ban") && power.me > member.power) {
+    if (membership === "ban") {
+      moderate.push({ label: `Unban ${name}`,  icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "unban", room: member.room, member }) });
+    } else {
+      moderate.push({ label: `Ban ${name}`,    icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "ban",   room: member.room, member }) });
+    }
+  }
+  if (moderate.length > 0) moderate.push(null);
+  menu.push(...moderate);
+  
+  menu.push(
+    // { label: "Power",   clicked: todo, submenu: [] },
+    { label: "Power",   clicked: todo, submenu: [{ label: member.power.toString(), clicked: () => {}, icon: "bolt" }] },
     null,
     { label: "Copy ID", clicked: copy(member.id), icon: "terminal" },
-  ];
-
+  );
+  
+  return menu;
+      
 	function copy(text: string) {
 		return () => navigator.clipboard.writeText(text);
 	}

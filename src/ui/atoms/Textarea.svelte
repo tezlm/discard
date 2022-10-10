@@ -2,9 +2,14 @@
 export let value = "";
 export let placeholder = "";
 export let readonly = false;
+export let autofocus = false;
  
 function handleInput(e) {
   value = e.target.value;
+}
+
+function handleKeydown(e) {
+  if (e.key === "Enter") e.stopPropagation();
 }
 </script>
 <style>
@@ -28,8 +33,10 @@ textarea {
 <textarea
   {value}
   {readonly}
+  {autofocus}
   placeholder={placeholder}
   rows=3
   class:readonly
   on:input={handleInput}
+  on:keydown={handleKeydown}
 />
