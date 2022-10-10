@@ -30,7 +30,28 @@ const descriptions = {
 };
 
 function getItems() {
-  if ($room.type === "room") {
+  if ($room.type === "m.space") {
+    return [
+      { category: "Room list permissions" },
+      { name: "Manage Rooms",    id: "rooms",    power: perms.getState("m.space.child") },
+      { category: "Membership permissions" },
+      { name: "Invite Users",    id: "invite",   power: perms.invite ?? 0 },
+      { name: "Kick Members",    id: "kick",     power: perms.kick ?? 50 },
+      { name: "Ban Members",     id: "ban",      power: perms.ban ?? 50 },
+      { category: "Space profile permissions" },
+      { name: "Change Name",     id: "name",     power: perms.getState("m.room.name") },
+      { name: "Change Topic",    id: "topic",    power: perms.getState("m.room.topic") },
+      { name: "Change Avatar",   id: "avatar",   power: perms.getState("m.room.avatar") },
+      { category: "Permission permissions" },
+      { name: "Default Power",   id: "default",  power: perms.users_default ?? 0 },
+      { name: "Manage Power",    id: "power",    power: perms.getState("m.room.power_levels") },
+      // { name: "Manage Settings", id: "perms",    power: perms.state_default ?? 50 },
+      { category: "????" },
+      { name: "Upgrade Room",    id: "upgrade",  power: perms.getState("m.room.tombstone") },
+      { name: "History",         id: "history",  power: perms.getState("m.room.history_visibility") },
+      { name: "Encrypt",         id: "encrypt",  power: perms.getState("m.room.encryption") },
+    ];
+  } else {
     return [
       { category: "Basic permissions" },
       { name: "Send Messages",   id: "message",  power: perms.events_default ?? 0 },
@@ -50,27 +71,6 @@ function getItems() {
       // { name: "Manage Settings", id: "perms",    power: perms.state_default ?? 50 },
       { category: "????" },
       { name: "Change Avatar",   id: "avatar",   power: perms.getState("m.room.avatar") },
-      { name: "Upgrade Room",    id: "upgrade",  power: perms.getState("m.room.tombstone") },
-      { name: "History",         id: "history",  power: perms.getState("m.room.history_visibility") },
-      { name: "Encrypt",         id: "encrypt",  power: perms.getState("m.room.encryption") },
-    ];
-  } else {
-    return [
-      { category: "Room list permissions" },
-      { name: "Manage Rooms",    id: "rooms",    power: perms.getState("m.space.child") },
-      { category: "Membership permissions" },
-      { name: "Invite Users",    id: "invite",   power: perms.invite ?? 0 },
-      { name: "Kick Members",    id: "kick",     power: perms.kick ?? 50 },
-      { name: "Ban Members",     id: "ban",      power: perms.ban ?? 50 },
-      { category: "Space profile permissions" },
-      { name: "Change Name",     id: "name",     power: perms.getState("m.room.name") },
-      { name: "Change Topic",    id: "topic",    power: perms.getState("m.room.topic") },
-      { name: "Change Avatar",   id: "avatar",   power: perms.getState("m.room.avatar") },
-      { category: "Permission permissions" },
-      { name: "Default Power",   id: "default",  power: perms.users_default ?? 0 },
-      { name: "Manage Power",    id: "power",    power: perms.getState("m.room.power_levels") },
-      // { name: "Manage Settings", id: "perms",    power: perms.state_default ?? 50 },
-      { category: "????" },
       { name: "Upgrade Room",    id: "upgrade",  power: perms.getState("m.room.tombstone") },
       { name: "History",         id: "history",  power: perms.getState("m.room.history_visibility") },
       { name: "Encrypt",         id: "encrypt",  power: perms.getState("m.room.encryption") },

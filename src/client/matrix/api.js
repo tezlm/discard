@@ -148,7 +148,7 @@ export default class Api {
   }
 
   // files
-  uploadFile(file, progress) {
+  uploadFile(file, progress = () => {}) {
     if (!this.token) throw "token required";
     const xhr = new XMLHttpRequest();
     const promise = new Promise((res, rej) => {

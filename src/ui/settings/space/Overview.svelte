@@ -5,11 +5,12 @@ import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
 export let room;
 export let save = null;
-let name, topic;
+let name, topic, avatar;
 
 export function reset() {
   name = $room?.name ?? "";
   topic = $room?.topic ?? "";  
+  avatar = null;
 }
 
 reset();
@@ -17,11 +18,21 @@ reset();
 $: {
   let nameChanged = name !== ($room?.name ?? "");
   let topicChanged = topic !== ($room?.topic ?? "");
-  if (nameChanged || topicChanged) {
+  if (nameChanged || topicChanged || avatar) {
     save = async () => {
       const proms = [];
-      if (nameChanged) proms.push(state.api.sendState($room.roomId, "m.room.name", "", { name }));
-      if (topicChanged) proms.push(state.api.sendState($room.roomId, "m.room.topic", "", { topic }));
+      if (nameChanged) proms.push(state.api.sendState($room.id, "m.room.name", "", { name }));
+      if (topicChanged) proms.push(state.api.sendState($room.id, "m.room.topic", "", { topic }));
+      if (avatar) {
+        if (avatar.file) {
+          const prom = state.api.uploadFile(avatar.file).promise
+            .then(url => state.api.sendState($room.id, "m.room.avatar", "", { url }));
+          proms.push(prom);
+        } else {
+          proms.push(state.api.sendState($room.id, "m.room.avatar", "", { url:  null }));
+        }
+        avatar = null;
+      }
       await Promise.all(proms);
       save = null;
     }
@@ -99,6 +110,33 @@ h1 {
   margin-bottom: none;
   border-bottom: none;
 }
+
+.avat {
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.avat > div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 100%;
+  width: 100%;
+  background: #22222288;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .2s;
+  font-weight: 500;
+}
+
+.avat:hover > div {
+  opacity: 1;
+}
 </style>
 <h1>Space Overview</h1>
 <div>
@@ -106,7 +144,11 @@ h1 {
     <div class="avatar">
       <div class="uploader">
         <!-- TODO: generate default avatars (use Avatar?) -->
-        <img src={parseMxc($room.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"} />
+        <div class="avat">
+          <img src={parseMxc($room.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"} />
+          <!-- <div>Upload Image</div> -->
+          <div class="icon">edit</div>
+        </div>
         <div class="remove">Remove</div>
       </div>
       <div class="side">

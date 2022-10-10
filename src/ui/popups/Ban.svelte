@@ -4,8 +4,15 @@ import Popup from "../atoms/Popup.svelte";
 import Textarea from "../atoms/Textarea.svelte";
 import Dropdown from "../atoms/Dropdown.svelte";
 import Button from "../atoms/Button.svelte";
-export const confirm = todo;
+export const confirm = ban;
 export let current;
+let reason;
+
+const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const placeholders = [
+  "they hurt my feelings",
+  "they broke bad",
+];
 
 const options = [];
 if (current.room.type === "space") options.push(["This space", "space"]);
@@ -16,6 +23,11 @@ if (current.room.type === "room") {
     options.push(["This space", "space"]);
     options.push(["Only this room", "room"]);
   }
+}
+
+function ban() {
+  current.member.ban(reason && reason);
+  state.popup.set({ ...current, id: null });
 }
 </script>
 <style>
@@ -31,10 +43,10 @@ if (current.room.type === "room") {
     <Dropdown {options} />
     {/if}
     <div class="title">Reason for ban</div>
-    <Textarea placeholder="they disagree with my opinion" />
+    <Textarea autofocus placeholder={rnd(placeholders)} bind:value={reason} />
   </div>
   <div slot="footer">
     <Button type="link" label="Nevermind!" clicked={() => state.popup.set({ ...current, id: null })} />
-    <Button type="danger" label="Do it!" clicked={todo} />
+    <Button type="danger" label="Do it!" clicked={ban} />
   </div>
 </Popup>

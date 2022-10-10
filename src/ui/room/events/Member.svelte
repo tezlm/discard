@@ -30,10 +30,10 @@ function getAction(event) {
 }
 
 function getMembership(current = "leave", old = "leave", event) {
-  const self = event.sender.userId === event.stateKey;
+  const self = event.sender.id === event.stateKey;
   if (current === "leave") {
     if (old === "ban") return { icon: "east", type: "unban" };
-    if (old === "leave") return { icon: "close", type: "disinvite" };
+    if (old === "invite") return { icon: "close", type: "disinvite" };
     return { icon: "west", color: self ? null : "var(--color-red)", type: self ? "leave" : "kick" };
   } else if (current === "invite") {
     return { icon: "east", color: "var(--color-accent)", type: "invite" };
@@ -137,6 +137,9 @@ time {
     <span class="author" style:color={getColor(event.sender, $settings)} data-mx-ping={event.sender.id}>
       {event.sender.name || event.sender.id}
     </span>
+    {/if}
+    {#if event.content.reason}
+    <span>{event.content.reason}</span>
     {/if}
     <time datetime={event.date.toISOString()}>{formatDate(event.date)}</time>
   </div>

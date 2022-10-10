@@ -4,14 +4,16 @@ import Popup from "../atoms/Popup.svelte";
 import Textarea from "../atoms/Textarea.svelte";
 import Dropdown from "../atoms/Dropdown.svelte";
 import Button from "../atoms/Button.svelte";
-export const confirm = kick;
+export const confirm = unban;
 export let current;
 let reason;
 
 const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const placeholders = [
-  "they disagree with my opinion",
-  "i dont like them",
+  "they have matured and grown as a person",
+  "i got free wifi anywhere i went",
+  "they really *are* a nigerian prince",
+  "i misclicked",
 ];
 
 const options = [];
@@ -25,8 +27,8 @@ if (current.room.type === "room") {
   }
 }
 
-function kick() {
-  current.member.kick(reason && reason);
+function unban() {
+  current.member.unban(reason && reason);
   state.popup.set({ ...current, id: null });
 }
 </script>
@@ -36,17 +38,17 @@ function kick() {
 }
 </style>
 <Popup>
-  <h2 slot="header">Kick {current.member.name}?</h2>
+  <h2 slot="header">Unban {current.member.name}?</h2>
   <div slot="content">
     {#if false && options.length > 1}
-    <div class="title">Kick scope</div>
+    <div class="title">Unban scope</div>
     <Dropdown {options} />
     {/if}
-    <div class="title">Reason for Kick</div>
+    <div class="title">Reason for unban</div>
     <Textarea autofocus placeholder={rnd(placeholders)} bind:value={reason} />
   </div>
   <div slot="footer">
     <Button type="link" label="Nevermind!" clicked={() => state.popup.set({ ...current, id: null })} />
-    <Button type="danger" label="Do it!" clicked={kick} />
+    <Button type="danger" label="Do it!" clicked={unban} />
   </div>
 </Popup>

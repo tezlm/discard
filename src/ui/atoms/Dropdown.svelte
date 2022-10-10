@@ -3,6 +3,7 @@ export let options;
 export let selected = options[0][1];
 export let changed = () => {};
 let show = false;
+let width;
 
 function select(option) {
   show = false;
@@ -33,7 +34,6 @@ function select(option) {
 
 .options {
   position: absolute;
-  width: 100%;
   border-radius: 3px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
@@ -76,12 +76,12 @@ function select(option) {
 </style>
 <div class="container">
   <!-- FIXME: close on blur -->
-  <div class="dropdown" class:show on:click={() => show = !show}>
+  <div class="dropdown" class:show on:click={() => show = !show} bind:clientWidth={width}>
     {options.find(i => i[1] === selected)?.[0]}
     <div class="arrow icon" class:show>expand_more</div>
   </div>
   {#if show}
-  <div class="options">
+  <div class="options" style:width={width + "px"}>
   {#each options as option}
     <div class="option" class:selected={selected === option[1]} on:click={() => select(option[1])}>
       <div class="label">

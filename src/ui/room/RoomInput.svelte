@@ -29,11 +29,11 @@ function handleKeyDown(e) {
     } else if (reply) {
       reply = null;
     } else {
-      const lastEvent = state.roomTimelines.get($room.roomId).live.at(-1);
+      const lastEvent = state.roomTimelines.get($room.id).live.at(-1);
       state.log.debug(`mark ${lastEvent} as read`);
-      state.rooms.get($room.roomId).accountData.set("m.fully_read", { event_id: lastEvent });
+      state.rooms.get($room.id).accountData.set("m.fully_read", { event_id: lastEvent });
       state.slice.set(state.roomSlices.get($room.roomId));
-      state.api.sendReceipt($room.roomId, lastEvent);
+      state.api.sendReceipt($room.id, lastEvent);
     }
     e.preventDefault();
     e.stopImmediatePropagation();
@@ -56,7 +56,7 @@ function oninput(input) {
     function getName(id) {
       const member = $room.members.get(id);
       if (!member) return id;
-      return "@" + (member.name ?? member.userId).replace(/^@/, "");
+      return "@" + (member.name ?? member.id).replace(/^@/, "");
     }
 
     return input.replace(
