@@ -6,14 +6,14 @@ export let small = false;
 export let autofocus = false;
 export let readonly = false;
 export let optional = false;
-export let submitted = () => {};
-export let escaped = () => {};
+export let submitted = (_: string, _2: KeyboardEvent) => {};
+export let escaped = (_: KeyboardEvent) => {};
 
-function handleInput(e) {
-  value = e.target.value;
+function handleInput(e: KeyboardEvent) {
+  value = (e.target as HTMLInputElement).value;
 }
 
-function handleKeyDown(e) {
+function handleKeyDown(e: KeyboardEvent) {
   if (e.key === "Enter") {
     e.stopPropagation();
     e.preventDefault();

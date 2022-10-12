@@ -6,14 +6,14 @@ export let room;
 export let muted = false;
 let focusedRoom = state.focusedRoom;
 let dms = state.dms;
-$: focused= $focusedRoom?.roomId === room.roomId;
+$: focused= $focusedRoom?.id === room.id;
 
 // move dm status into the room object?
 function getName(room) {
-	if (!dms.has(room.roomId)) return room.name;
+	if (!dms.has(room.id)) return room.name;
 	// return room.name.toLowerCase().replace(/ /g, "-").replace(/^#/, "");
-	const other = dms.get(room.roomId);
-	return other.name ?? other.userId;
+	const other = dms.get(room.id);
+	return other.name ?? other.id;
 }
 
 function isRead(room) {

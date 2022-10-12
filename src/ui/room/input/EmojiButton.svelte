@@ -4,6 +4,8 @@ export let picked;
 export let show = false;
 let wrapperEl;
 
+const emojis = ["😀", ""];
+
 function handleClick(e) {
   e.stopPropagation();
   show = !show;
@@ -26,32 +28,36 @@ $: if (show) {
 }
 </script>
 <style>
-.emoji {
+.wrapper {
   position: relative;
 }
 
-.emoji .button {
+.wrapper .button {
   padding: 11px 12px 0;
   height: 100%;
   pointer-events: all;
   cursor: pointer;
 }
 
-.emoji .button .icon {
+.button :global(img.emoji) {
+  height: auto;
+  transform: none;
+  margin-right: 0;
+  
   height: 22px;
   width: 22px;
   filter: grayscale(1);
   transition: all .2s ease-out;
 }
 
-.emoji:hover .button .icon, .emoji .icon.shown {
+:is(.button:hover, .button.shown) :global(img.emoji) {
   filter: grayscale(0);
   transform: scale(1.2);
 }
 </style>
-<div class="emoji">
-  <div class="button" bind:this={wrapperEl} on:click={handleClick}>
-    <div class="icon" class:shown={show}>
+<div class="wrapper">
+  <div class="button" bind:this={wrapperEl} on:click={handleClick} class:shown={show}>
+    <div class="icon">
       {@html twemoji.parse("😀", {
         folder: "svg",
         ext: ".svg",

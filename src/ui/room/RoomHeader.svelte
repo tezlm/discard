@@ -131,7 +131,7 @@ $: if (showPins) {
 </style>
 <div class="header" class:dark={dark}>
   {#if room}
-    {#if dms.has(room.roomId)}
+    {#if dms.has(room.id)}
     <span class="roomicon" style="font-family: var(--font-display)">@</span>
     {:else}
     <span class="roomicon icon">tag</span>
@@ -139,11 +139,13 @@ $: if (showPins) {
   {:else}
     <span class="roomicon icon">home</span>
   {/if}
-  <span class="name">{room ? getName(room) : "Home"}</span>
+  <span class="name">
+  {#if room}{@html parseHtml(getName(room), { twemojify: true })}{:else}Home{/if}
+  </span>
   {#if room?.topic}
   <div class="spacer"></div>
-  <div class="topic" on:click={() => state.popup.set({ id: "info", head: room.name, body: parseHtml(room.topic, { linkify: true }), html: true })}>
-    {@html parseHtml(room.topic, { linkify: true })}
+  <div class="topic" on:click={() => state.popup.set({ id: "info", head: room.name, body: parseHtml(room.topic, { linkify: true, twemojify: true }), html: true })}>
+    {@html parseHtml(room.topic, { linkify: true, twemojify: true })}
   </div>
   {:else}
   <div style:flex={1}></div>
@@ -160,7 +162,9 @@ $: if (showPins) {
   {/if}
   -->
   {#if room}
+  <!--
   <div class="icon" class:active={showPins} bind:this={pinButtonEl} on:click|stopPropagation={() => showPins = !showPins}>push_pin</div>
+  -->
   <div
     class="icon"
     style:color={$settings.get("showmemberlist") ? "var(--fg-notice)" : null}

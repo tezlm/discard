@@ -1,14 +1,22 @@
 <script>
-import { backOut, quadOut } from "svelte/easing";
+import twemoji from "twemoji";
+import { backOut } from "svelte/easing";
 import { parseMxc } from "../../../util/content";
 import Tooltip from "../../atoms/Tooltip.svelte";
 export let event;
 
 // TODO: make the number animate in reverse when the count goes down
-// FIXME: custom image reactions kinda funky
 
 let showPicker = false;
 let addEl;
+
+function getTwemoji(unicode) {
+  return twemoji.parse(unicode, {
+    attributes: () => ({ loading: 'lazy' }),
+    folder: "svg",
+    ext: ".svg",
+  });
+}
 
 function formatPeople(events) {
   const names = events.map(i => escapeHtml(i.sender.name ?? i.sender.id, i.sender));
@@ -134,14 +142,14 @@ $: if (showPicker) {
   margin: 0 2px;
 }
 
-img.key {
+.key {
+  color: var(--fg-content);
+}
+
+.key :global(img.emoji) {
   height: 16px;
   margin-top: 2px;
   margin-bottom: -2px;
-}
-
-.key {
-  color: var(--fg-content);
 }
 
 .spacer {
@@ -194,11 +202,13 @@ img.key {
       {/if}
     </span>
     <div class="reaction" class:self={getMine(events)} on:click={() => handleClick(getMine(events), key)}>
-      {#if key.startsWith("mxc://")}
-        <img class="key" src={parseMxc(key)}>
-      {:else}
-        <div class="key">{key}</div>
-      {/if}
+      <div class="key">
+        {#if key.startsWith("mxc://")}
+          <img src={parseMxc(key)} alt={events[0].content.shortcode}>
+        {:else}
+          {@html getTwemoji(key)}
+        {/if}
+      </div>
       {#key events.length}
         <!-- <div class="count" in:counterIn={{ count: events.length }} out:counterOut> -->
         <div class="count">{events.length}</div>

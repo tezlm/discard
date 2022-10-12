@@ -8,6 +8,14 @@ export let save;
 // TODO: make this work, live update
 const getIds = type => state.spaces.get(type).map(i => i.roomId);
 const isOrphan = [...getIds("orphanRooms"), ...getIds("orphanSpaces")].includes($room.roomId);
+let allowKnock;
+$: roomVersion = $room.getState("m.room.create")?.content?.room_version;
+
+const versions = {
+  knock: ["7", "8", "9", "10"],
+  restricted: ["8", "9", "10"],
+  knockRestricted: ["10"],
+};
 
 $: historyVisibility = $room.getState("m.room.history_visibility")?.content.history_visibility ?? "shared";
 $: newHistoryVisibility = historyVisibility;
@@ -37,15 +45,15 @@ $: if (newHistoryVisibility !== historyVisibility) {
 - should i keep published as a separate option or allow publishing invite-only/restricted rooms to room directory
 -->
 <Radio selected={joinRule} options={[
-  { id: "invite",     name: "Invite-only", detail: "Members must be invited to this room.", disabled: true },
-  { id: "restricted", name: "Restricted",  detail: "Any member part of this space can join.", disabled: isOrphan, disabled: true },
-  { id: "public",     name: "Public",      detail: "Anyone can join this room.", disabled: true },
-  { id: "published",  name: "Published",   detail: "Public, and published to the room directory.", disabled: true },
+  { id: "invite",     name: "Invite-only", detail: `Members must be invited to this room.`, disabled: allowKnock && "This rule doesn't make sense with knocking" },
+  { id: "restricted", name: "Restricted",  detail: `Any member part of this space can join${allowKnock ? ", and anyone can knock" : ""}.`, disabled:  !(allowKnock ? versions.knockRestricted : versions.restricted).includes(roomVersion) ? "Room version does not support this join rule" : (isOrphan && "This room is not in a space!") },
+  { id: "public",     name: "Public",      detail: `Anyone can ${allowKnock ? "knock on" : "join"} this room.`, disabled: allowKnock && !versions.knock.includes(roomVersion) && "Room version does not support this join rule" },
+  { id: "published",  name: "Published",   detail: `Public, and published to the room directory.` },
 ]} />
 <div style="margin-top: 8px">
   <div style="display: flex; justify-content: space-between">
     Allow knocking
-    <Toggle />
+    <Toggle bind:checked={allowKnock} />
   </div>
   <div style="color: var(--fg-muted)">
     Knocking allows users to request to join this room.

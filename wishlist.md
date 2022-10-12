@@ -35,7 +35,8 @@ varying levels of difficulty
   - [ ] show # of unread messages
   - [ ] mentions list/inbox
   - [x] highlight mentions
-- [-] rich input
+- [ ] rich input
+  - [ ] markdown preview
   - [ ] slash commands
   - [ ] user/command autocomplete
   - [ ] room autocomplete?
@@ -49,9 +50,9 @@ varying levels of difficulty
   - [x] create room
   - [x] leave room
   - [ ] join room
-  - [ ] room invite list
+  - [ ] room invites
   - [ ] invite people
-  - [ ] ban/kick people
+  - [x] ban/kick/unban people
 - [ ] timeline
   - [ ] jump to reply
   - [ ] jump to unread

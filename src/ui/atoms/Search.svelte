@@ -85,12 +85,16 @@ input {
   font-size: 20px;
 }
 
+.wrapper.size-input {
+  height: 28px;
+}
+
 .wrapper.size-input input {
   padding: 14px 8px;
 }
 
 .wrapper.size-input .icon {
-  padding: 14px 4px;
+  padding: 14px 6px;
   font-size: 18px;
 }
 </style>

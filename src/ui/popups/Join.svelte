@@ -19,7 +19,7 @@ async function join() {
   <div slot="content">
     <span class="title">Room/Space alias</span>
     <div style="height: 12px"></div>
-    <IdInput kind="alias" bind:localpart={localpart} bind:homeserver={homeserver} />
+    <IdInput kind="alias" bind:localpart={localpart} bind:homeserver={homeserver} autofocus />
   </div>
   <div slot="footer">
     <Button type="link" label="Cancel" clicked={() => state.popup.set({ ...current, id: null })} />

@@ -1,6 +1,7 @@
 <script>
 import Tooltip from "../atoms/Tooltip.svelte";
 import Avatar from "../atoms/Avatar.svelte";
+import { onDestroy } from "svelte";
 let { userId, users } = state;
 let copyCount = 0, copyText = getCopyText();
 
@@ -38,10 +39,19 @@ function resetCopy() {
 async function getProfile() {
   if (users.has(userId)) return users.get(userId);
 	const { avatar_url, displayname } = await state.api.fetchUser(userId);
-	const data = { avatar: avatar_url, name: displayname || userId, userId };
+	const data = { avatar: avatar_url, name: displayname || userId, id: userId, userId };
 	users.set(userId, data);
 	return data;
 }
+
+
+let offline = false;
+function onStatus(status) {
+	offline = status === "reconnecting";
+}
+
+state.syncer.on("status", onStatus);
+onDestroy(() => state.syncer.off("status", onStatus));
 </script>
 <style>
 .wrapper > div {
@@ -82,6 +92,8 @@ async function getProfile() {
 
 .offline {
 	justify-content: center;
+	align-items: center;
+	height: 40px;
 	font-weight: bold;
 	color: var(--color-red);
 }
@@ -115,7 +127,7 @@ async function getProfile() {
 }
 </style>
 <div class="wrapper">
-	{#if !navigator.onLine}
+	{#if !navigator.onLine || offline}
 	<div class="offline">Offline!</div>
 	{/if}
 	{#if false}

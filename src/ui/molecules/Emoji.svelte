@@ -113,8 +113,6 @@ async function handleSubmit(value, e) {
 
 .emojis {
   background: var(--bg-rooms-members);
-  overflow-y: scroll;
-  scrollbar-width: thin;
 }
 
 .group {
@@ -135,7 +133,7 @@ async function handleSubmit(value, e) {
   text-transform: uppercase;
 }
 
-.emoji {
+.emojiwrap {
   font-size: 30px;
   height: 40px;
   width: 40px;
@@ -143,12 +141,16 @@ async function handleSubmit(value, e) {
   border-radius: 4px;
 }
 
-.emojis .emoji:hover {
+.emojiwrap:hover {
   cursor: pointer;
+  background: var(--color-gray-light);
 }
 
-.emojis .emoji:hover {
-  background: var(--color-gray-light);
+.emojiwrap :global(img.emoji) {
+  transform: none;
+  margin-right: 0;
+  height: 100%;
+  vertical-align: initial;
 }
 
 .preview {
@@ -171,7 +173,8 @@ async function handleSubmit(value, e) {
       escaped={() => selected(null, false)}
     />
   </div>
-  <div class="categories">
+  <div class="categories scroll">
+    <div class="icon">history</div>
     <div class="icon">emoji_emotions</div>
     <div class="icon">emoji_people</div>
     <div class="icon">park</div>
@@ -182,7 +185,7 @@ async function handleSubmit(value, e) {
     <div class="icon">emoji_symbols</div>
     <div class="icon">flag</div>
   </div>
-  <div class="emojis">
+  <div class="emojis scroll">
     {#await getFiltered(search)}
       <div style="display: flex; align-items: center; justify-content: center; width 100%; height: 100%">getting emoji...</div>
     {:then filtered}
@@ -192,7 +195,7 @@ async function handleSubmit(value, e) {
         <div class="group">
         {#each emojis as emoji (emoji.unicode)}
           <div
-            class="emoji"
+            class="emojiwrap"
             on:mouseover={() => hover = emoji}
             on:focus={() => hover = emoji}
             on:click={(e) => selected(emoji.unicode, e.shiftKey)}

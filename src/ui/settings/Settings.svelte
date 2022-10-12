@@ -136,12 +136,19 @@ h1 {
   margin: 8px auto;
   background: #4F545C7b;
 }
+
+.title {
+  margin-left: 18px;
+  color: var(--fg-muted);
+}
 </style>
 <div class="settings">
   <div class="sidebar hidescroll">
     <nav>
       {#each views as view}
-        {#if view}
+        {#if view?.label}
+        <div class="title">{view.label}</div>
+        {:else if view}
         <div on:click={() => handleClick(view)} class="item" class:selected={view === focused} style:color={view.color}>
           {view.name}
           {#if view.icon}

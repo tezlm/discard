@@ -20,8 +20,8 @@ $: {
   if (nameChanged || topicChanged) {
     save = async () => {
       const proms = [];
-      if (nameChanged) proms.push(state.api.sendState($room.roomId, "m.room.name", "", { name }));
-      if (topicChanged) proms.push(state.api.sendState($room.roomId, "m.room.topic", "", { topic }));
+      if (nameChanged) proms.push(state.api.sendState($room.id, "m.room.name", "", { name }));
+      if (topicChanged) proms.push(state.api.sendState($room.id, "m.room.topic", "", { topic }));
       await Promise.all(proms);
       save = null;
     }
@@ -53,6 +53,7 @@ $: {
       bind:value={name}
       placeholder="amazing-room"
       readonly={$room.power.me < $room.power.getState("m.room.name")}
+      submitted={() => save && save()}
     />
   </div>
   <div class="section">

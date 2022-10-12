@@ -128,11 +128,6 @@ img {
   opacity: .2;
 }
 
-.text :global([data-mx-emoticon]) {
-  height: calc(1em);
-  margin-bottom: -2px;
-}
-
 .sticker-popout {
   position: absolute;
   left: 128px;

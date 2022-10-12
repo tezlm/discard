@@ -42,13 +42,14 @@ export async function login({ localpart, homeserver, password }) {
 
   try {
     state.log.matrix("logging in");
-    const token = await api.login(userId, password, Math.random() > 0.99 ? "discount" : "discard");
+    const { accessToken, deviceId } = await api.login(userId, password, Math.random() > 0.99 ? "discount" : "discard");
     const filter = await api.postFilter(userId, defaultFilter);
     api.useFilter(filter);
     localStorage.setItem("homeserver", homeserver);
     localStorage.setItem("userid", userId);
-    localStorage.setItem("token", token);
-    const syncer = new Client({ baseUrl: api.baseUrl, token, userId});
+    localStorage.setItem("deviceid", deviceId);
+    localStorage.setItem("token", accessToken);
+    const syncer = new Client({ baseUrl: api.baseUrl, token: accessToken, userId });
     syncer.start();
     start(api, syncer, userId);
     state.log.matrix("starting sync");
@@ -120,7 +121,8 @@ function start(api, syncer, userId) {
 }
 
 export async function logout() {
-  // state.syncer.stop();
+  state.log.debug("bye!");
+  state.syncer.stop();
   state.api.logout();
   localStorage.removeItem("token");
   state.scene.set("auth");

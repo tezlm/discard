@@ -1,6 +1,7 @@
 <script>
 import Search from "../../atoms/Search.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
+import { memberContext } from "../../../util/context";
 
 export let room, membership;
 let users = state.users;
@@ -28,33 +29,11 @@ function getTitle(membership) {
 
 async function getMember(member) {
   if (membership === "join") return member;
-  if (users.has(member.userId)) return users.get(member.userId);
-  const { displayname, avatar_url } = await state.api.fetchUser(member.userId);
-  const data = { avatar: avatar_url, name: displayname || member.userId, userId: member.userId };
-  users.set(member.userId, data);
+  if (users.has(member.id)) return users.get(member.id);
+  const { displayname, avatar_url } = await state.api.fetchUser(member.id);
+  const data = { avatar: avatar_url, name: displayname || member.id, userId: member.id };
+  users.set(member.id, data);
   return data;
-}
-
-function getContextMenu(member) {
-  const name = member.name || member.userId;
-  return [
-    { label: "Profile", clicked: todo, icon: "person" },
-    { label: "Mention", clicked: todo, icon: "notifications" },
-    { label: "Message", clicked: todo, icon: "message" },
-    { label: "Block",   clicked: todo, icon: "block" },
-    null,
-    { label: "Remove Messages",  clicked: () => state.popup.set({ id: "deleterecent", room, member }), icon: "delete",        color: "var(--color-red)" },
-    { label: `Kick ${name}`,     clicked: () => state.popup.set({ id: "kick",         room, member }), icon: "person_remove", color: "var(--color-red)" },
-    { label: `Ban ${name}`,      clicked: () => state.popup.set({ id: "ban",          room, member }), icon: "person_remove", color: "var(--color-red)" },
-    null,
-    { label: "Power",   clicked: todo, submenu: [] },
-    null,
-    { label: "Copy ID", clicked: copy(member.userId), icon: "terminal" },
-  ];
-
-	function copy(text) {
-		return () => navigator.clipboard.writeText(text);
-	}
 }
 </script>
 <style>
@@ -112,7 +91,7 @@ h1 {
   </div>
   {#if members}
     {#each members as member}
-    <div class="member" on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getContextMenu(member), x: e.clientX, y: e.clientY })}>
+    <div class="member" on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: memberContext(member), x: e.clientX, y: e.clientY })}>
       {#await getMember(member)}
         <div class="avatar"></div>
         <div class="name">
@@ -130,7 +109,7 @@ h1 {
       {#if membership === "join"}
       <div class="power">{member.power}</div>
       {/if}
-      <div class="icon menu" on:click|stopPropagation={e => state.context.set({ items: getContextMenu(member), x: e.clientX, y: e.clientY })}>more_vert</div>
+      <div class="icon menu" on:click|stopPropagation={e => state.context.set({ items: memberContext(member), x: e.clientX, y: e.clientY })}>more_vert</div>
     </div>
     {:else}
     <p>hmmm, seems like nobody's here?</p>
