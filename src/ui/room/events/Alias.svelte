@@ -49,7 +49,11 @@ time {
     <span class="author" style:color={getColor(event.sender, $settings)} data-mx-ping={event.sender.id}>
       {event.sender.name || event.sender.userId}
     </span>
+    {#if event.content.alias}
     set the room's main alias to <b>{event.content.alias}</b>
+    {:else}
+    unset the room's main alias
+    {/if}
     <time datetime={event.date.toISOString()}>{formatDate(event.date)}</time>
   </div>
 </div>

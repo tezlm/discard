@@ -2,6 +2,7 @@
 // NOTE: linkifyjs seems to take a long time (20%) to linkify text when loading messages
 import linkifyHtml from "linkifyjs/html";
 import sanitizeHtml from "sanitize-html";
+import twemoji from "twemoji";
 import { parseMxc } from "./content.ts";
 
 const permittedHtmlTagsInline = [
@@ -107,9 +108,18 @@ const sanitizeOptsInline = {
 	},
 }
 
-export function parseHtml(html, opts = { linkify: true, sanitize: true, inline: false }) {
-	// html = html.replace(/@room/, "<span data-mx-ping='room'>@room</span>"); // this *may* break
-	if (opts.sanitize) html = sanitizeHtml(html, opts.inline ? sanitizeOptsInline : sanitizeOpts);
-	if (opts.linkify)  html = linkifyHtml(html, { ignoreTags: ["pre", "code"] });
+function twemojifyHtml(html) {
+  return twemoji.parse(html, {
+    attributes: () => ({ loading: 'lazy' }),
+    folder: "svg",
+    ext: ".svg",
+  });
+}
+
+export function parseHtml(html, opts = { linkify: true, sanitize: true, inline: false, twemojify: true }) {
+	html = html.replace(/@room/, "<span data-mx-ping='room'>@room</span>"); // this *may* break
+	if (opts.sanitize)  html = sanitizeHtml(html, opts.inline ? sanitizeOptsInline : sanitizeOpts);
+	if (opts.linkify)   html = linkifyHtml(html, { ignoreTags: ["pre", "code"] });
+	if (opts.twemojify) html = twemojifyHtml(html);
 	return html;
 }

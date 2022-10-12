@@ -7,7 +7,7 @@ const users = state.users;
 async function getProfile(userId) {
   if (users.has(userId)) return users.get(userId);
 	const { avatar_url, displayname } = await state.api.fetchUser(userId);
-	const data = { avatar: avatar_url, name: displayname || userId, userId };
+	const data = { avatar: avatar_url, name: displayname, id: userId, userId };
 	users.set(userId, data);
 	return data;
 }
@@ -47,14 +47,14 @@ async function getProfile(userId) {
     <div class="header">
       <Avatar link size={72} {user} />
       <div style="margin-left: 12px;">
-        <h2>{user.name}</h2>
-        <span>{user.userId}</span>
+        <h2>{user.name || user.id}</h2>
+        <span>{user.id}</span>
       </div>
     </div>
     <div class="info">
       more text here, foo bar baz<br />
       even more text here<br />
     </div>
-  {/await}
+    {/await}
   </div>
 </Popup>

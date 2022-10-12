@@ -58,7 +58,7 @@ export default class Api {
     });
     if (res.error) throw res;
     this.token = res.access_token;
-    return res.access_token;;
+    return { accessToken: res.access_token, deviceId: res.device_id };
   }
   
   logout() {

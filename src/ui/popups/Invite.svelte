@@ -35,7 +35,7 @@ function getLink() {
 <Popup>
   <h3 slot="header">Invite friends to {current.room.name}</h3>
   <div slot="content">
-    <Search placeholder="Search for people" size="tall" escaped={() => state.popup.set({ ...current, id: null })} />
+    <Search placeholder="Search for people" size="tall" escaped={() => state.popup.set({ ...current, id: null })} autofocus />
     <div class="split-top"></div>
     <br />
     <br />
@@ -51,7 +51,7 @@ function getLink() {
     {#if getLink()}
     <div class="split-btm"></div>
     <div class="title">Or, send a link</div>
-    <Input value={getLink()} autofocus />
+    <Input value={getLink()} />
     {/if}
   </div>
 </Popup>

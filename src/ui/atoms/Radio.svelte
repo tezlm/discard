@@ -1,4 +1,5 @@
 <script>
+import Tooltip from "./Tooltip.svelte";
 export let options;
 export let selected;
 export let changed = () => {};
@@ -9,10 +10,16 @@ function select(option) {
 }
 </script>
 <style>
+.options {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+}
+
 .option {
   display: flex;
   align-items: center;
-  margin: 8px 0;
+  margin-bottom: 8px;
   padding: 10px 8px;
   background: var(--bg-rooms-members);
   border-radius: 3px;
@@ -76,24 +83,46 @@ function select(option) {
   margin-top: 4px;
 }
 </style>
-<div>
+<div class="options">
   {#each options as option}
-    <div
-      class="option"
-      class:selected={selected === option.id}
-      class:disabled={option.disabled}
-      style:border-left-color={option.color}
-      on:click={() => !option.disabled && select(option.id)}
-    >
-      <div class="dot">
-        {#if selected === option.id}<div></div>{/if}
+    {#if option.disabled && typeof option.disabled === "string"}
+      <Tooltip tip={option.disabled} position="right">
+        <div
+          class="option"
+          class:selected={selected === option.id}
+          class:disabled={option.disabled}
+          style:border-left-color={option.color}
+          on:click={() => !option.disabled && select(option.id)}
+        >
+          <div class="dot">
+            {#if selected === option.id}<div></div>{/if}
+          </div>
+          <div class="label">
+            <div class="name">{option.name}</div>
+            {#if option.detail}
+            <div class="detail">{option.detail}</div>
+            {/if}
+          </div>
+        </div>
+      </Tooltip>
+      {:else}
+      <div
+        class="option"
+        class:selected={selected === option.id}
+        class:disabled={option.disabled}
+        style:border-left-color={option.color}
+        on:click={() => !option.disabled && select(option.id)}
+      >
+        <div class="dot">
+          {#if selected === option.id}<div></div>{/if}
+        </div>
+        <div class="label">
+          <div class="name">{option.name}</div>
+          {#if option.detail}
+          <div class="detail">{option.detail}</div>
+          {/if}
+        </div>
       </div>
-      <div class="label">
-        <div class="name">{option.name}</div>
-        {#if option.detail}
-        <div class="detail">{option.detail}</div>
-        {/if}
-      </div>
-    </div>
+    {/if}
   {/each}
 </div>

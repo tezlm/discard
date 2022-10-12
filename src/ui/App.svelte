@@ -28,14 +28,6 @@ function ease() {
   }
 }
 
-function easeRev() {
-  return {
-    duration: 300,
-    easing: quartInOut,
-    css: t => `transform: scale(${.9 + (t / 10)})`,
-  }
-}
-
 function handleClick(e) {
   if ($context.items) {
     $context = {};
@@ -51,12 +43,11 @@ function handleClick(e) {
   }
 }
 
-let focusedRoom = state.focusedRoom;
-scene.subscribe(() => {
-  state.log.ui("switch scene to " + $scene);
+// let focusedRoom = state.focusedRoom;
+$: state.log.ui("switch scene to " + $scene);
+
   // disabled for now because copied link doesn't actually do anything
   // location.hash = `/${$scene}/${$focusedRoom?.roomId ?? ""}`; // TODO: better routing
-});
 
 // focusedRoom.subscribe(() => {
   // location.hash = `/${$scene}/${$focusedRoom?.roomId ?? ""}`; // TODO: better routing
@@ -104,7 +95,7 @@ main > div {
   {#if $scene === "chat"}
   <div class="chat" transition:easeRev><Chat /></div>
   -->
-  {#if $scene !== "loading" && $scene !== "auth"}
+  {#if $scene.endsWith("-settings") || $scene === "chat"}
   <div class="chat" class:hide={$scene !== "chat"}><Chat /></div>
   {/if}
   {#if $scene === "user-settings"}

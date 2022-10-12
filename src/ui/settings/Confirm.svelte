@@ -34,7 +34,6 @@ function fly() {
 
 .label {
   flex: 1;
-  font-weight: 500;
   color: var(--fg-notice);
   padding: 4px;
 }

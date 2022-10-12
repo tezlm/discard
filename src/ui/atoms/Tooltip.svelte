@@ -1,22 +1,22 @@
 <svelte:options immutable />
-<script>
+<script lang="ts">
 export let tip = "";
-export let position = "up";
+export let position: "up" | "down" | "left" | "right" = "up";
 export let style = "";
 export let color = null;
-let wrapper, tooltip;
+let wrapperEl: HTMLDivElement, tooltipEl: HTMLDivElement;
 
 function setPos() {
-  if (!wrapper) return;
-  const rect = wrapper.getBoundingClientRect();
+  if (!wrapperEl) return;
+  const rect = wrapperEl.getBoundingClientRect();
   const offsetY = position === "up" ? 0
     : position === "down" ? rect.height
     : rect.height / 2;
   const offsetX = position === "left" ? 0
     : position === "right" ? rect.width
     : rect.width / 2;
-  tooltip.style.top = (rect.top + offsetY) + "px";
-  tooltip.style.left = (rect.left + offsetX) + "px";
+  tooltipEl.style.top = (rect.top + offsetY) + "px";
+  tooltipEl.style.left = (rect.left + offsetX) + "px";
 }
 
 setTimeout(setPos);
@@ -71,11 +71,11 @@ setTimeout(setPos);
 <div
   class="wrapper"
   style={color ? `--bg-tooltip: ${color}; ${style}` : style}
-  bind:this={wrapper}
+  bind:this={wrapperEl}
   on:mouseover={setPos}
   on:focus={setPos}
 >
-  <div class="tooltip {position}" bind:this={tooltip}>
+  <div class="tooltip {position}" bind:this={tooltipEl}>
     {#if $$slots.tip}
     <slot name="tip" />
     {:else}

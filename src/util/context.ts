@@ -118,7 +118,7 @@ export function memberContext(member: Member) {
   menu.push(
     { label: "Profile", icon: "person",        clicked: todo },
     // { label: "Mention", icon: "notifications", clicked: () => $input += event.sender.userId },
-    { label: "Mention", icon: "notifications", clicked: () => { const { input } = state.roomState; input.set(get(input) + member.id) } },
+    { label: "Mention", icon: "notifications", clicked: () => { const { input } = state.roomState; input.set(get(input) + member.id); state.scene.set("chat") } },
     { label: "Message", icon: "message",       clicked: todo },
     { label: "Block",   icon: "block",         clicked: todo },
     null,

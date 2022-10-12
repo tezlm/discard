@@ -44,3 +44,14 @@
   font-family: "Material Icons";
   src: url(../assets/fonts/material-icons.woff2) format("woff2");
 }
+
+.emoji, [data-mx-emoticon] {
+  height: calc(1em + 4px);
+  vertical-align: middle;
+  transform: translateY(-2px);
+  margin-right: 1px;
+}
+
+:is(.emoji, [data-mx-emoticon]) + :not(.emoji, [data-mx-emoticon]) {
+  margin-right: 2px;
+}

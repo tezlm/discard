@@ -1,5 +1,5 @@
 <script lang="ts">
-export let label;
+export let label: string | undefined;
 export let type = "normal";
 export let clicked = () => {};
 export let disabled = false;

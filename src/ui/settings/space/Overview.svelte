@@ -132,6 +132,7 @@ h1 {
   opacity: 0;
   transition: opacity .2s;
   font-weight: 500;
+  font-size: 32px;
 }
 
 .avat:hover > div {
@@ -144,7 +145,7 @@ h1 {
     <div class="avatar">
       <div class="uploader">
         <!-- TODO: generate default avatars (use Avatar?) -->
-        <div class="avat">
+        <div class="avat" on:click={todo}>
           <img src={parseMxc($room.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"} />
           <!-- <div>Upload Image</div> -->
           <div class="icon">edit</div>

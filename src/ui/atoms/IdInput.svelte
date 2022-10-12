@@ -3,6 +3,7 @@ export let localpart = "";
 export let homeserver = "";
 export let kind: "user" | "alias" | "room" = "user";
 export let lockHomeserver = false;
+export let autofocus = false;
 let localpartEl: HTMLInputElement, homeserverEl: HTMLInputElement;
 
 const symbols = {
@@ -73,11 +74,11 @@ input:nth-child(4) {
 </style>
 <div class="userid">
   <span>{symbols[kind]}</span>
-  <input id="localpart"  bind:value={localpart}  bind:this={localpartEl}  on:input={update} placeholder="cool-id" />
+  <input bind:value={localpart}  bind:this={localpartEl}  on:input={update} placeholder="cool-id"     {autofocus} />
   {#if lockHomeserver}
   <span>:{homeserver}</span>
   {:else}
   <span>:</span>
-  <input id="homeserver" bind:value={homeserver} bind:this={homeserverEl} on:input={update} placeholder="example.org" />
+  <input bind:value={homeserver} bind:this={homeserverEl} on:input={update} placeholder="example.org" />
   {/if}
 </div>
