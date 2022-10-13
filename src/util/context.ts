@@ -26,7 +26,7 @@ export function eventContext(event: Event, config: { showEmoji: () => {} }) {
   }
   menu.push({ label: "Mark Unread", icon: "mark_chat_unread", clicked: markUnread });
   menu.push({ label: "Copy Link",   icon: "link", clicked: () => navigator.clipboard.writeText(`https://matrix.to/#/${event.room.id}/${event.id}`) });
-  if ((power.me >= power.getEvent("m.room.redaction") && event.sender.id === state.id) || (power.me >= power.getBase("redact"))) {
+  if ((power.me >= power.getEvent("m.room.redaction") && event.sender.id === state.id) || power.me >= (power.redact ?? 50)) {
     menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.flags.add("redacted"); state.api.redactEvent(event.room.id, event.id) } });
   }
   menu.push(null);
@@ -127,13 +127,13 @@ export function memberContext(member: Member) {
   
   const moderate = [];
   const membership = member.membership;
-  if (power.me >= power.getBase("redact")) moderate.push({ label: "Remove Messages", icon: "delete", color: "var(--color-red)", clicked: () => state.popup.set({ id: "deleterecent", room: member.room, member }) });
-  if (power.me >= power.getBase("kick") && power.me > member.power) {
+  if (power.me >= (power.redact ?? 50)) moderate.push({ label: "Remove Messages", icon: "delete", color: "var(--color-red)", clicked: () => state.popup.set({ id: "deleterecent", room: member.room, member }) });
+  if (power.me >= (power.kick ?? 50) && power.me > member.power) {
     if (membership !== "ban" && membership !== "leave") {
       moderate.push({ label: `Kick ${name}`, icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "kick", room: member.room, member }) });
     }
   }
-  if (power.me >= power.getBase("ban") && power.me > member.power) {
+  if (power.me >= (power.ban ?? 50) && power.me > member.power) {
     if (membership === "ban") {
       moderate.push({ label: `Unban ${name}`,  icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "unban", room: member.room, member }) });
     } else {

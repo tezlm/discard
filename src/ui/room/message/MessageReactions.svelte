@@ -146,7 +146,7 @@ $: if (showPicker) {
   color: var(--fg-content);
 }
 
-.key :global(img.emoji) {
+.key :global(img) {
   height: 16px;
   margin-top: 2px;
   margin-bottom: -2px;

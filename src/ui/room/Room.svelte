@@ -17,6 +17,7 @@ let room = state.focusedRoom;
 let space = state.focusedSpace;
 let slice = state.slice;
 let settings = state.settings;
+let selectedTab;
 $: type = $room?.getState("m.room.create")?.content.type;
 
 let navRooms = state.navRooms;
@@ -42,7 +43,7 @@ $: if($navRooms) room = state.focusedRoom;
 </style>
 <!-- TODO: currently shows a flash when switching between room types, either hide it or show loading -->
 <div class="room">
-  <RoomHeader room={$room} />
+  <RoomHeader room={$room} bind:selectedTab />
   {#if $room && $slice}
 		<div class="content" style:flex-direction="row">
 			{#if $room.getState("m.room.encryption")}
@@ -69,6 +70,6 @@ $: if($navRooms) room = state.focusedRoom;
   {:else if $space}
 	  <SpaceRoom room={$space} />
   {:else}
-	  <HomeRoom />
+	  <HomeRoom {selectedTab} />
   {/if}
 </div>

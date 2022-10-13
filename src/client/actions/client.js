@@ -79,10 +79,11 @@ function start(api, syncer, userId) {
   state.scene.set("loading");
   
   syncer.on("join", (room, batch) => actions.rooms.handleJoin(room, batch));
-  // syncer.on("invite", (roomId, state) => console.log(roomId, state));
+  syncer.on("join", (room) => console.log(room));
+  // syncer.on("invite", (invite) => console.log(invite));
   syncer.on("leave", (room) => actions.rooms.handleLeave(room.id));
   
-  syncer.on("state", (state) => actions.rooms.handleState(state.room.id, state.raw));
+  syncer.on("state", (state) => actions.rooms.handleState(state));
   syncer.on("event", (event) => actions.timeline.handle(event));
   syncer.on("ephemeral", (edu) => {
     if (edu.type !== "m.typing") return;

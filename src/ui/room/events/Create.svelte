@@ -54,7 +54,7 @@ h1 {
   <h1>Welcome to {name}!</h1>
   <div class="info">This is the start of the <b>{name}</b> room. {#if topic}{topic}{/if}</div>
   {/if}
-  {#if room.power.me >= room.power.getBase("invite")}
+  {#if room.power.me >= (room.power.invite ?? 0)}
   <div class="action" on:click={invite}>
     <div class="icon">person_add</div>
     Invite User

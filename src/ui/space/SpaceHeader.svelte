@@ -89,7 +89,7 @@ function showPopup(id, opts) {
   <span>{$focusedSpace ? $focusedSpace?.name ?? "unknown" : "Home"}</span>
   {#if $focusedSpace && showMenu}
   <div class="menu" transition:zoomIn>
-      {#if $focusedSpace.power.me >= $focusedSpace.power.getBase("invite") || $focusedSpace.joinRule === "public"}
+      {#if $focusedSpace.power.me >= ($focusedSpace.power.invite ?? 0) || $focusedSpace.joinRule === "public"}
       <div class="item" on:click={() => showPopup("invite", { room: $focusedSpace })}><span class="color-accent">Invite People</span></div>
       <div class="spacer"></div>
       {/if}

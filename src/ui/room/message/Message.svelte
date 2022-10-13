@@ -34,7 +34,7 @@ function getToolbar(shift = false) {
   } else if (event.flags?.has("sending")) {
     toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
   } else if (shift && !showReactionPicker) {
-    if (fromMe || room.power.me >= room.power.getBase("redact")) {
+    if (fromMe || (room.power.me >= room.power.redact ?? 50)) {
       toolbar.push({ name: "Delete", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) }});
     }
     if (room.power.me >= room.power.getEvent("m.room.message")) {
