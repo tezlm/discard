@@ -1,19 +1,54 @@
 <script>
+import Avatar from "../../atoms/Avatar.svelte";
 import Button from "../../atoms/Button.svelte";
+import Tooltip from "../../atoms/Tooltip.svelte";
+import { onDestroy } from "svelte";
+
+export let selectedTab;
+let invites = state.syncer.invites;
+
+function updateInvites() {
+  invites = state.syncer.invites;
+}
+
+state.syncer.on("invite", updateInvites);
+state.syncer.on("leave-invite", updateInvites);
+state.syncer.on("join", updateInvites);
+onDestroy(() => {
+  state.syncer.off("invite", updateInvites);
+  state.syncer.off("leave-invite", updateInvites);
+  state.syncer.off("join", updateInvites);
+});
+
+function getInviteSender(invite) {  
+  const myMemberEvent = invite.state.find(i => i.type === "m.room.member" && i.state_key === state.userId);
+  return invite.state.find(i => i.type === "m.room.member" && i.state_key === myMemberEvent.sender);
+}
+
+function join(invite) {
+  invite.join();
+  
+  const interval = setInterval(() => {
+    if (!state.rooms.has(invite.id)) return;
+    actions.rooms.focus(state.rooms.get(invite.id));
+    clearInterval(interval);
+  }, 10);
+  
+}
 </script>
 <style>
-.content {
+.center {
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 1;
 }
 
-.content h1 {
+.center h1 {
   text-align: center;
 }
 
-.content .warning {  
+.center .warning {  
   padding: 8px;
   margin: 1em 0 8px;
   border: solid var(--event-ping) 2px;
@@ -34,15 +69,79 @@ import Button from "../../atoms/Button.svelte";
 }
 
 .button .icon {
-  font-size: 32px;
+  font-size: 24px;
   margin-right: 16px;
 }
 
 .button .description {
   font-weight: normal;
 }
+
+.invites {
+  padding: 16px;
+}
+
+.invites h2 {
+  margin: 16px 8px;
+}
+
+.invite .info {
+  flex: 1;
+  margin: 0 8px;
+  overflow: hidden;
+}
+
+.invite .info div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.invite {
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  padding: 8px;
+  border-top: solid var(--mod-lighten) 1px;
+}
+
+.invite:hover {
+  background: var(--mod-lighten);
+}
+
+.invite button {
+  height: 32px;
+  width: 32px;
+  margin-right: 8px;
+  font-weight: 500;
+  font-size: 24px;
+  border: none;
+  color: var(--fg-content);
+  border-radius: 50%;
+  background: var(--bg-rooms-members);
+  transition: color background .2s;
+}
+
+.invite button:hover {
+  background: var(--bg-spaces);
+}
+
+.invite button.accept:hover { color: var(--color-green) }
+.invite button.reject:hover { color: var(--color-red) }
+
+.invite button:active {
+  transform: translateY(1px);
+}
+
+.dim {
+  color: var(--fg-dim);
+}
+
+.small {
+  font-size: 14px;
+}
 </style>
-<div class="content">
+{#if selectedTab === "home"}
+<div class="center">
   <div style="display: flex; flex-direction: column">
     <h1>welcome to discard!</h1>
     <div class="warning">
@@ -106,3 +205,28 @@ import Button from "../../atoms/Button.svelte";
     </div>
   </div>
 </div>
+{:else if selectedTab === "invites"}
+<div class="invites scroll">
+  <h2>Invites - {invites.size}</h2>
+  {#each [...invites.values()] as invite (invite.id)}
+  {@const sender = getInviteSender(invite)}
+  <div class="invite">
+    <Avatar user={{ avatar: invite.avatar, id: invite.id }} size={36} />
+    <div class="info">
+      <div>{invite.name}{#if invite.topic}<span class="dim">- {invite.topic}</span>{/if}</div>
+      <div class="small"><span class="dim">invited by </span>{sender.content.displayname || sender.state_key} <span class="dim">({sender.state_key})</span></div>
+    </div>
+    <Tooltip tip="Accept">
+      <button class="icon accept" on:click={() => join(invite)}>check</button>
+    </Tooltip>
+    <Tooltip tip="Reject">
+      <button class="icon reject" on:click={() => invite.leave()}>close</button>
+    </Tooltip>
+  </div>
+  {:else}
+  <div style="padding: 8px">
+    no invites, come back later
+  </div>
+  {/each}
+</div>
+{/if}

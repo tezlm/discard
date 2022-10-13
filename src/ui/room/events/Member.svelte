@@ -33,7 +33,7 @@ function getMembership(current = "leave", old = "leave", event) {
   const self = event.sender.id === event.stateKey;
   if (current === "leave") {
     if (old === "ban") return { icon: "east", type: "unban" };
-    if (old === "invite") return { icon: "close", type: "disinvite" };
+    if (old === "invite") return { icon: "close", type: event.sender.id === event.stateKey ? "reject" : "disinvite" };
     return { icon: "west", color: self ? null : "var(--color-red)", type: self ? "leave" : "kick" };
   } else if (current === "invite") {
     return { icon: "east", color: "var(--color-accent)", type: "invite" };
@@ -118,6 +118,8 @@ time {
       {before}<span class="author" style:color={getColor(victim, $settings)} data-mx-ping={victim.id}>{victim.name || victim.id}</span>{after}
     {:else if action.type === "invite"}
       was invited by
+    {:else if action.type === "reject"}
+      rejected the invite
     {:else if action.type === "disinvite"}
       was disinvited by
     {:else if action.type === "leave"}
@@ -133,7 +135,7 @@ time {
     {:else}
       {action}
     {/if}
-    {#if event.sender.userId !== event.stateKey}
+    {#if event.sender.id !== event.stateKey}
     <span class="author" style:color={getColor(event.sender, $settings)} data-mx-ping={event.sender.id}>
       {event.sender.name || event.sender.id}
     </span>

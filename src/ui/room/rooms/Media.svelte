@@ -142,7 +142,7 @@ function getContextMenu(event) {
     menu.push({ label: "Reactions", icon: "emoji_emotions", clicked: () => state.popup.set({ id: "reactions", event }) });
   }
   menu.push({ label: "Copy Link",   icon: "link", clicked: () => navigator.clipboard.writeText(`https://matrix.to/#/${room.roomId}/${event.eventId}`) });
-  if ((event.room.power.me >= event.room.power.getEvent("m.room.redaction") && event.sender.userId === state.userId) || (event.room.power.me >= event.room.power.getBase("redact"))) {
+  if ((event.room.power.me >= event.room.power.getEvent("m.room.redaction") && event.sender.userId === state.userId) || (event.room.power.me >= event.room.power.redact ?? 50)) {
     menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) } });
   }
   menu.push(null);

@@ -195,19 +195,19 @@ export default class Api {
   
   // memers
   inviteMember(roomId, userId, reason) {
-    return this.fetch("POST", `/rooms/${encode(roomId)}/invite`, { user_id: userId, ...(reason && { reason }) });    
+    return this.fetch("POST", `/rooms/${encode(roomId)}/invite`, { user_id: userId, ...(reason && { reason }) });
   }
   
   kickMember(roomId, userId, reason) {
-    return this.fetch("POST", `/rooms/${encode(roomId)}/kick`, { user_id: userId, ...(reason && { reason }) });    
+    return this.fetch("POST", `/rooms/${encode(roomId)}/kick`, { user_id: userId, ...(reason && { reason }) });
   }
   
   banMember(roomId, userId, reason) {
-    return this.fetch("POST", `/rooms/${encode(roomId)}/ban`, { user_id: userId, ...(reason && { reason }) });    
+    return this.fetch("POST", `/rooms/${encode(roomId)}/ban`, { user_id: userId, ...(reason && { reason }) });
   }
   
   unbanMember(roomId, userId, reason) {
-    return this.fetch("POST", `/rooms/${encode(roomId)}/unban`, { user_id: userId, ...(reason && { reason }) });    
+    return this.fetch("POST", `/rooms/${encode(roomId)}/unban`, { user_id: userId, ...(reason && { reason }) });
   }
   
   // misc

@@ -1,19 +1,21 @@
 <script>
 import Search from "../atoms/Search.svelte";
 import { parseHtml } from "../../util/html.js";
+import { onDestroy } from "svelte";
 export let room;
 let space = state.focusedSpace;
 let settings = state.settings;
 $: dark = $space && !room;
 
-// move dm status into the room object?
 let dms = state.dms;
 function getName(room) {
 	if (!dms.has(room.roomId)) return room.name;
 	// return room.name.toLowerCase().replace(/ /g, "-").replace(/^#/, "");
-	const other = dms.get(room.roomId);
-	return other.name ?? other.userId;
+	const other = dms.get(room.id);
+	return other.name ?? other.id;
 }
+
+export let selectedTab = "home";
 
 let search;
 let searchfocus = false;
@@ -22,6 +24,20 @@ let showPins = false;
 let pinButtonEl;
 
 let popout = state.popout;
+let inviteCount = state.syncer.invites.size;
+
+function updateInvites() {
+  inviteCount = state.syncer.invites.size;
+}
+
+state.syncer.on("invite", updateInvites);
+state.syncer.on("leave-invite", updateInvites);
+state.syncer.on("join", updateInvites);  
+onDestroy(() => {
+  state.syncer.off("invite", updateInvites);
+  state.syncer.off("leave-invite", updateInvites);
+  state.syncer.off("join", updateInvites);
+});
 
 $: if (showPins) {
   queueMicrotask(() => {
@@ -129,6 +145,39 @@ $: if (showPins) {
 .roomsearch .option:hover {
   background: var(--bg-spaces);
 }
+
+.tab {
+  display: flex;
+  align-items: center;
+  border-radius: 3px;
+  padding: 2px 8px;
+  margin-right: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.tab:hover {
+  background: var(--mod-lighten);
+}
+
+.tab.selected {
+  background: var(--mod-lightener);
+  color: var(--fg-notice);
+}
+
+.ping {
+	display: inline-block;
+	height: 16px;
+	min-width: 16px;
+  margin-left: 4px;
+  text-align: center;
+
+	background: var(--color-red);
+	color: var(--fg-notice);
+	font-size: 12px;
+	font-weight: 700;
+	border-radius: 50%;
+}
 </style>
 <div class="header" class:dark={dark}>
   {#if room}
@@ -141,12 +190,18 @@ $: if (showPins) {
     <span class="roomicon icon">home</span>
   {/if}
   <span class="name">
-  {#if room}{@html parseHtml(getName(room), { twemojify: true })}{:else}Home{/if}
+  {#if room}{@html parseHtml(getName(room) ?? "null", { twemojify: true })}{:else}Home{/if}
   </span>
   {#if room?.topic}
   <div class="spacer"></div>
   <div class="topic" on:click={() => state.popup.set({ id: "info", head: room.name, body: parseHtml(room.topic, { linkify: true, twemojify: true }), html: true })}>
     {@html parseHtml(room.topic, { linkify: true, twemojify: true })}
+  </div>
+  {:else if !room}
+  <div class="spacer"></div>
+  <div style="flex:1;display:flex">
+    <div class="tab" class:selected={selectedTab === "home"}    on:click={() => selectedTab = "home"}>Dashboard</div>
+    <div class="tab" class:selected={selectedTab === "invites"} on:click={() => selectedTab = "invites"}>Invites {#if inviteCount}<span class="ping">{inviteCount}</span>{/if}</div>
   </div>
   {:else}
   <div style:flex={1}></div>

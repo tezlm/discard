@@ -95,7 +95,7 @@ async function create() {
     <div style="display:flex; margin-top: 1em;  max-width: 440px">
       <div style="flex: 1">
         <div>Disable federation</div>
-        <div class="dim" style="margin-top: 4px">Prevents anyone not part of <strong>{localStorage.getItem("homeserver")}</strong> from ever joing this {current.type}</div>
+        <div class="dim" style="margin-top: 4px">Prevents anyone not part of <strong>{localStorage.getItem("homeserver")}</strong> from ever joining this {current.type}</div>
       </div>
       <Toggle />
     </div>

@@ -12,7 +12,7 @@ export function handleJoin(room, batch) {
   state.roomTimelines.set(room.id, new TimelineSet(room.id, batch));  
 }
 
-export function handleState(_1, _2) {
+export function handleState(_) {
   if (state.syncer.status !== "starting") update();
 }
 
