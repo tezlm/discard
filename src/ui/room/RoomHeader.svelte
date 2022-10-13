@@ -67,12 +67,13 @@ $: if (showPins) {
 }
 
 .topic {
+  flex: 1;
+  padding: 16px 0;
   cursor: pointer;
   font-size: 14px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex: 1;
 }
 
 .icon, .roomicon {

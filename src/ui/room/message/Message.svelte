@@ -95,7 +95,6 @@ function fly(_, props) {
   };
 }
 
-let popout = state.popout;
 $: if (showReactionPicker) {
   queueMicrotask(() => {
     const rect = toolbarEl.getBoundingClientRect();

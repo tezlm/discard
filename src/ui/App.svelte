@@ -1,14 +1,14 @@
 <script>
-import Loading from './scenes/Loading.svelte';
-import Chat from './scenes/Chat.svelte';
-import LoginRegister from './scenes/LoginRegister.svelte';
-import UserSettings from './scenes/UserSettings.svelte';
-import SpaceSettings from './scenes/SpaceSettings.svelte';
-import RoomSettings from './scenes/RoomSettings.svelte';
-import Popups from './Popups.svelte';
-import Popouts from './Popouts.svelte';
-import ContextMenus from './ContextMenus.svelte';
-import { quadInOut, quartInOut } from 'svelte/easing';
+import Loading from "./scenes/Loading.svelte";
+import Chat from "./scenes/Chat.svelte";
+import LoginRegister from "./scenes/LoginRegister.svelte";
+import UserSettings from "./scenes/UserSettings.svelte";
+import SpaceSettings from "./scenes/SpaceSettings.svelte";
+import RoomSettings from "./scenes/RoomSettings.svelte";
+import Popups from "./Popups.svelte";
+import Popouts from "./Popouts.svelte";
+import ContextMenus from "./ContextMenus.svelte";
+import { quadInOut, quartInOut } from "svelte/easing";
 let scene = state.scene;
 let { context, popup } = state;
 

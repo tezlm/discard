@@ -121,6 +121,6 @@ textarea::placeholder {
   ></textarea>
 </div>
 <div class="info">
-  escape to <a on:click={e => { e.preventDefault(); $edit = null }}>cancel</a> •
-  enter to <a on:click={e => { e.preventDefault(); save() }}>save</a>
+  escape to <a on:click|preventDefault={() => $edit = null}>cancel</a> •
+  enter to <a on:click|preventDefault={save}>save</a>
 </div>

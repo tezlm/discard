@@ -91,6 +91,7 @@ export function roomContext(room: Room) {
 	  state.rooms.get(room.id).accountData.set("m.fully_read", { event_id: lastId });
 	  if (state.focusedRoomId === room.roomId) state.slice.set(state.roomSlices.get(room.id));
 	  state.api.sendReceipt(room.id, lastId);
+    state.api.fetch("POST", `/rooms/${encodeURIComponent(room.id)}/receipt/m.read.private/${encodeURIComponent(lastId)}`, { thread_id: "main" });
     
     if (room.type === "m.space") {
       for (let child of state.spaces.get(room.id)) markRead(child);

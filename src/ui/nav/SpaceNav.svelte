@@ -141,6 +141,7 @@ function getHomeContextMenu() {
 	min-width: 22px;
 	margin-right: 4px;
   padding: 4px;
+  pointer-events: none;
 
 	background: var(--color-red);
 	border: solid var(--bg-spaces) 3px;

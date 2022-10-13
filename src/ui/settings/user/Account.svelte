@@ -26,7 +26,7 @@ let { userId, users } = state;
   <Avatar user={users.get(userId)} size={72} />
   <div style="margin-left: 1em"></div>
   <div class="details">
-    <span class="big">{users.get(userId).name}</span>
+    <span class="big">{users.get(userId).name || userId}</span>
     <span>{userId}</span>
   </div>
   <hr />

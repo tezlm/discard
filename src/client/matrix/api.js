@@ -195,19 +195,24 @@ export default class Api {
   
   // memers
   inviteMember(roomId, userId, reason) {
-    return this.fetch("POST", `/rooms/${encode(roomId)}/invite`, { user_id: userId, reason });    
+    return this.fetch("POST", `/rooms/${encode(roomId)}/invite`, { user_id: userId, ...(reason && { reason }) });    
   }
   
   kickMember(roomId, userId, reason) {
-    return this.fetch("POST", `/rooms/${encode(roomId)}/kick`, { user_id: userId, reason });    
+    return this.fetch("POST", `/rooms/${encode(roomId)}/kick`, { user_id: userId, ...(reason && { reason }) });    
   }
   
   banMember(roomId, userId, reason) {
-    return this.fetch("POST", `/rooms/${encode(roomId)}/ban`, { user_id: userId, reason });    
+    return this.fetch("POST", `/rooms/${encode(roomId)}/ban`, { user_id: userId, ...(reason && { reason }) });    
   }
   
   unbanMember(roomId, userId, reason) {
-    return this.fetch("POST", `/rooms/${encode(roomId)}/unban`, { user_id: userId, reason });    
+    return this.fetch("POST", `/rooms/${encode(roomId)}/unban`, { user_id: userId, ...(reason && { reason }) });    
+  }
+  
+  // misc
+  searchUsers(searchTerm, limit = 20) {
+    return state.api.fetch("POST", "/user_directory/search", { limit, search_term: searchTerm });
   }
   
   fetchUrlPreview(url, ts) {
