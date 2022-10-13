@@ -4,7 +4,7 @@ export let type = "normal";
 export let clicked = () => {};
 export let disabled = false;
 export let loading = false;
-$: standard = ["normal", "primary", "good", "warn", "danger"].some(i => type.split(" ").includes(i));
+$: standard = ["normal", "primary", "good", "warn", "danger"].some(i => type.split(" ").includes(i)) && !type.includes("hollow");
 </script>
 <style>
 button {
@@ -48,27 +48,41 @@ button {
   padding: 6px 16px;
 }
 
-.normal { background: var(--bg-misc) }
-.primary { background: var(--color-accent) }
-.good { background: var(--color-green) }
-.warn { background: var(--color-yellow) }
-.danger { background: var(--color-red) }
-
-.link {
-  background: transparent;
-}
-
 .hollow {
   background: transparent;
   border: solid var(--button-outline) 1px;
 }
 
+.normal:not(.hollow) { background: var(--bg-misc) }
+.primary:not(.hollow) { background: var(--color-accent) }
+.good:not(.hollow) { background: var(--color-green) }
+.warn:not(.hollow) { background: var(--color-yellow) }
+.danger:not(.hollow) { background: var(--color-red) }
+
+.normal.hollow { border: solid var(--bg-misc) 1px; }
+.primary.hollow { border: solid var(--color-accent) 1px; }
+.good.hollow { border: solid var(--color-green) 1px; }
+.warn.hollow { border: solid var(--color-yellow) 1px; }
+.danger.hollow { border: solid var(--color-red) 1px; }
+
+.link {
+  background: transparent;
+}
+
+.hollow:hover { background: var(--button-outline) }
+.normal.hollow:hover { background: var(--bg-misc) }
+.primary.hollow:hover { background: var(--color-accent) }
+.good.hollow:hover { background: var(--color-green) }
+.warn.hollow:hover { background: var(--color-yellow) }
+.danger.hollow:hover { background: var(--color-red) }
 .standard:hover::after { background: #00000033 }
 .link:hover { text-decoration: underline }
-.hollow:hover { background: var(--button-outline) }
 
 .disabled { cursor: not-allowed }
 .loading { cursor: progress }
+.hollow.disabled { border: solid var(--button-outline) 1px; }
+.hollow.disabled:hover { background: none }
+.hollow.loading:hover { background: none }
 .standard.disabled::after { background: #00000055 }
 .standard.loading::after { background: #00000055 }
 </style>

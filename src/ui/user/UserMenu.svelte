@@ -146,7 +146,7 @@ onDestroy(() => state.syncer.off("status", onStatus));
 		</div>
 		<div class="info" on:click={handleCopyClick} on:mouseleave={resetCopy}>
 			<Tooltip tip={copyText} color={copyCount > 0 ? "var(--color-green)" : null}>
-				<div class="displayname">{profile.name}</div>
+				<div class="displayname">{profile.name || userId}</div>
 				<div class="userid">{userId}</div>
 			</Tooltip>
 		</div>

@@ -6,10 +6,11 @@ export let small = false;
 export let autofocus = false;
 export let readonly = false;
 export let optional = false;
+export let autoselect = false;
 export let submitted = (_: string, _2: KeyboardEvent) => {};
 export let escaped = (_: KeyboardEvent) => {};
 
-function handleInput(e: KeyboardEvent) {
+function handleInput(e: InputEvent) {
   value = (e.target as HTMLInputElement).value;
 }
 
@@ -21,6 +22,10 @@ function handleKeyDown(e: KeyboardEvent) {
   } else if (e.key === "Escape") {
     escaped(e);
   }
+}
+
+function handleFocus(e: FocusEvent) {
+  if (autoselect) (e.target as HTMLInputElement).select();
 }
 </script>
 <style>
@@ -57,4 +62,5 @@ input {
   class:readonly
   on:input={handleInput}
   on:keydown={handleKeyDown}
+  on:focus={handleFocus}
 />

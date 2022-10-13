@@ -150,6 +150,8 @@ $: if (showPicker) {
   height: 16px;
   margin-top: 2px;
   margin-bottom: -2px;
+  transform: none;
+  vertical-align: initial;
 }
 
 .spacer {

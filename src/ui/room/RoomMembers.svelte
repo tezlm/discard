@@ -1,14 +1,10 @@
 <script>
-// seems to re-render on *every* message, due to the way `room` is updated?
 // TODO: automatically load/unload members on scroll
 import Button from "../atoms/Button.svelte";
 import Avatar from "../atoms/Avatar.svelte";
+import { memberContext } from "../../util/context";
 export let room;
 let count = 30;
-
-function delay(ms) {
-  return new Promise(res => setTimeout(res, ms));
-}
 
 async function fetchList(room) {
   if (!room.request) await room.members.fetch();
@@ -40,9 +36,9 @@ async function fetchList(room) {
 }
 
 let oldId = null;
-$: if (room.roomId !== oldId) {
+$: if (room.id !== oldId) {
   count = 20;
-  oldId = room.roomId;
+  oldId = room.id;
 }
 </script>
 <style>
@@ -101,7 +97,8 @@ $: if (room.roomId !== oldId) {
         <div class="title">{member.title}</div>
       {:else}
         <!-- TODO: open members popout instead of user popup -->
-        <div class="wrapper" on:click={() => state.popup.set({ id: "user", userId: member.userId })}>
+        <!-- TODO: optimize by putting single click/context listener on wrapper instead of each element -->
+        <div class="wrapper" on:click={() => state.popup.set({ id: "user", userId: member.id })} on:contextmenu|preventDefault|stopPropagation={(e) => state.context.set({ items: memberContext(member), x: e.clientX, y: e.clientY })}>
           <div class="member">
             <Avatar user={member} size={32} />
             <div class="name">{member.name || member.userId}</div>
