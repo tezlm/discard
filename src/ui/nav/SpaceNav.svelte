@@ -2,13 +2,14 @@
 import Tooltip from "../atoms/Tooltip.svelte";
 import { parseMxc } from "../../util/content.ts";
 import { roomContext } from "../../util/context";
+import { getLastMessage } from "../../util/timeline";
 let focusedSpace = state.focusedSpace;
 let navSpaces = state.navSpaces;
 let spaces = state.spaces;
 let pushRules = state.pushRules;
 
 function isMuted(room) {
-	const rule = $pushRules.rules.find(i => i.id === room.roomId);
+	const rule = $pushRules.rules.find(i => i.id === room.id);
 	if (!rule) return false;
 	return rule.actions.includes("dont_notify");
 }
@@ -16,22 +17,12 @@ function isMuted(room) {
 function isRead(room) {
   if (isMuted(room)) return true;
 
-	const timeline = state.roomTimelines.get(room.roomId).live;
-	if (!timeline.length) return true;
-	const lastMessage = timeline.at(-1);
-	const readMessage = getLastMessage(timeline, room.readEvent);
-	if (!readMessage) return false;
-	return getLastMessage(timeline, room.readEvent) === lastMessage;
-
-	function getLastMessage(timeline, fromEvent) {
-		const index = timeline.lastIndexOf(fromEvent);
-		if (index === -1) return null;
-		for (let i = index; i >= 0; i--) {
-			const event = state.events.get(timeline[i]);
-			if (event.special !== "redacted") return event.eventId;
-		}
-		return null;
-	}
+	const tl = state.roomTimelines.get(room.id);
+  if (getLastMessage(tl, room.readEvent) === getLastMessage(tl)) {
+    return room.type === "m.space" ? state.spaces.get(room.id).every(i => isRead(i)) : true;
+  } else {
+    return false;
+  }  
 }
 
 function allRead(spaceId) {
@@ -165,11 +156,11 @@ function getHomeContextMenu() {
   </div>
   <div class="separator"></div>
 	{#each $navSpaces as space}
-  {@const pings = spaces.get(space.roomId).reduce((pings, room) => pings + room.notifications.highlight, 0)}
+  {@const pings = spaces.get(space.id).reduce((pings, room) => pings + room.notifications.highlight, 0)}
   <div
     class="space"
-    class:focused={$focusedSpace?.roomId === space.roomId}
-    class:unread={!allRead(space.roomId)}
+    class:focused={$focusedSpace?.id === space.id}
+    class:unread={!allRead(space.id)}
   >
     <Tooltip position="right">
       <!-- TODO: use <Avatar> (need to find out how to do border-radius) -->
@@ -186,4 +177,12 @@ function getHomeContextMenu() {
   </div>
 	{/each}
 </div>
-
+<svelte:window on:keydown={(e) => {
+	// TODO: move into proper keybind handler
+	if (!(e.altKey && e.ctrlKey && !e.shiftKey) || (e.key !== "ArrowUp" && e.key !== "ArrowDown")) return;
+	const idx = $navSpaces.findIndex(i => i.id === state.focusedSpaceId);
+	const newSpace = $navSpaces[(idx + (e.key === "ArrowUp" ? -1 : 1) + $navSpaces.length + 1) % ($navSpaces.length + 1)];
+	actions.spaces.focus(newSpace ?? null);
+  e.preventDefault();
+  e.stopPropagation();
+}} />

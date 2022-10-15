@@ -2,8 +2,6 @@
 import MessageReply from "./MessageReply.svelte";
 import MessageContent from "./MessageContent.svelte";
 import MessageEdit from "./MessageEdit.svelte";
-import MessageReactions from "./MessageReactions.svelte";
-import MessageToolbar from "../../atoms/Toolbar.svelte";
 import User from "../../molecules/User.svelte";
 import { formatDate, formatTime } from "../../../util/format.ts";
 import { calculateHash } from '../../../util/content.ts';
@@ -16,53 +14,10 @@ export let room, event, header = false, shiftKey = false;
 let { edit } = state.roomState;
 let slice = state.slice;
 let settings = state.settings;
-let toolbarEl;
-$: toolbar = getToolbar(shiftKey);
 
 let showReactionPicker = false;
 let showUserPopout = false;
 let context = state.context;
-
-// amazing logic
-function getToolbar(shift = false) {
-  const toolbar = [];
-  const fromMe = event.sender.userId === state.userId;
-
-  if (event.flags?.has("errored")) {
-    toolbar.push({ name: "Retry", icon: "refresh", clicked: todo });
-    toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
-  } else if (event.flags?.has("sending")) {
-    toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
-  } else if (shift && !showReactionPicker) {
-    if (fromMe || (room.power.me >= room.power.redact ?? 50)) {
-      toolbar.push({ name: "Delete", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) }});
-    }
-    if (room.power.me >= room.power.getEvent("m.room.message")) {
-      toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });
-    }
-    toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
-  } else {
-    if (room.power.me >= room.power.getEvent("m.reaction")) {
-      toolbar.push({ name: "React", icon: "add_reaction", clicked: () => showReactionPicker = !showReactionPicker });
-    }
-    if (room.power.me >= room.power.getEvent("m.room.message")) {
-      if (fromMe) {
-        toolbar.push({ name: "Edit", icon: "edit", clicked: () => state.roomState.edit.set(event.id) });
-      } else {
-        toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });
-      }
-    }
-    toolbar.push({ name: "More", icon: "more_vert", clicked: showMore });
-  }
-
-  return toolbar;
-
-  function showMore() {
-    const rect = toolbarEl.getBoundingClientRect();
-    if ($context.items) return $context = {};
-    $context = { items: eventContext(event, { showEmoji: () => showReactionPicker = true }), x: rect.left, y: rect.top + 40 };
-  }
-}
 
 function getReply(content) {
   return content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
@@ -93,33 +48,6 @@ function fly(_, props) {
     easing: quadOut,
     css: t => `transform: translateX(${t * props.x - props.x}px)`,
   };
-}
-
-$: if (showReactionPicker) {
-  queueMicrotask(() => {
-    const rect = toolbarEl.getBoundingClientRect();
-    state.popout.set({
-      id: "emoji",
-      animate: "left",
-      top: rect.top,
-      right: window.innerWidth - rect.left + 8,
-      selected(emoji, keepOpen) {
-        if (emoji && !event.reactions?.get(emoji)?.find(i => i.sender.id === state.userId)) {
-          const reaction = {
-            "m.relates_to": {
-              key: emoji,
-              rel_type: "m.annotation",
-              event_id: event.id,
-            },
-          };
-          state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
-        }
-        if (!keepOpen) showReactionPicker = false;
-      },
-    });  
-  });
-} else {
-  state.popout.set({});
 }
 </script>
 <style>
@@ -195,21 +123,8 @@ time {
   display: none;
 }
 
-.toolbar {
-  display: none;
-  align-items: start;
-  position: absolute;
-  right: 1rem;
-  top: -16px;
-  z-index: 1;
-}
-
 .message:hover time {
   display: inline-block;
-}
-
-.message:hover .toolbar {
-  display: flex;
 }
 
 .message .user {
@@ -255,13 +170,6 @@ time {
     {:else}
     <MessageContent {event} />
     {/if}
-    {#if event.reactions}<MessageReactions {event} />{/if}
-    <!-- {event.relations.filter(i => i.content["m.relates_to"]?.rel_type === "m.thread").length} thread replies -->
   </div>
-  {#if event.id !== $edit}
-  <div class="toolbar" bind:this={toolbarEl} style:display={showReactionPicker ? "block" : null}>
-    <MessageToolbar items={toolbar} />
-  </div>
-  {/if}
 </div>
 <svelte:window on:click={() => { showReactionPicker = false; showUserPopout = false; }} />

@@ -39,6 +39,8 @@ let oldId = null;
 $: if (room.id !== oldId) {
   count = 20;
   oldId = room.id;
+	console.time("room members")
+	queueMicrotask(() => console.timeEnd("room members"));
 }
 </script>
 <style>

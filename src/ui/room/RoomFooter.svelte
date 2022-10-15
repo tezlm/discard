@@ -63,6 +63,7 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
 
 .input {
   display: flex;
+  align-items: center;
   min-height: 44px;
   border-radius: 8px;
   background: #40444b;
@@ -73,9 +74,11 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
   cursor: not-allowed;
 }
 
+.input.disabled a {
+  cursor: pointer;
+}
+
 .center {
-  display: flex;
-  align-items: center;
   padding: 0 16px;
 }
 
@@ -89,7 +92,8 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
 {#if $room}
 <div class="container">
   {#if $room.tombstone}
-  <div class="input disabled"><div class="center">{$room.tombstone?.body ?? "This room has been replaced"}</div></div>
+  {@const replacement = state.rooms.get($room.tombstone.replacement_room)}
+  <div class="input disabled"><div class="center">{$room.tombstone?.body ?? "This room has been replaced"}{#if replacement}. Why not visit the <a on:click={() => actions.rooms.focus(replacement)}>new room</a>?{/if}</div></div>
   {:else if $room.power?.getEvent("m.room.message") > $room.power?.me}
   <div class="input disabled"><div class="center">You can't send messages here</div></div>
   {:else if $room.getState("m.room.encryption")}

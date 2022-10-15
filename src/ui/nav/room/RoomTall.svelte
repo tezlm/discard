@@ -84,10 +84,6 @@ function getIcon(room) {
 	min-width: 4px;
 }
 
-.settings {
-	line-height: 1;
-}
-
 .settings .icon {
 	color: var(--fg-dim);
 	font-size: 16px;

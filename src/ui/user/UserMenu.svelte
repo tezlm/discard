@@ -139,7 +139,9 @@ onDestroy(() => state.syncer.off("status", onStatus));
 	{/if}
 	<div class="user">
 		{#await getProfile()}
+		<div style="flex: 1">
 			loading
+		</div>
 		{:then profile}
 		<div class="avatar">
 			<Avatar user={profile} size={32} />

@@ -39,7 +39,7 @@ export function update() {
 }
 
 export async function focus(room) {
-  state.log.ui("set focused room to " + room?.roomId);
+  state.log.ui("set focused room to " + room?.id);
   const states = state.roomStates;
   if (!state.roomState) {
     state.roomState = {};
@@ -79,7 +79,7 @@ export async function focus(room) {
     recent.unshift(room);
     if (recent.length > 8) recent.pop();
   }
-  
+    
   function getDefaultState() {
     return {
       input: "",

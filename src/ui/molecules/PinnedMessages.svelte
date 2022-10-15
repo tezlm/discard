@@ -48,7 +48,7 @@ let pinned = room.getState("m.room.pinned_events")?.content.pinned ?? [];
   <div class="content">
   {#each pinned as eventId (eventId)}
     <div class="item">
-    {#await state.events.fetch(room, eventId)}
+    {#await room.events.fetch(eventId)}
     loading {eventId}
     {:then event}
     <Event {room} {event} />

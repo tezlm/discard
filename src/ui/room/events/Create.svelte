@@ -54,16 +54,18 @@ h1 {
   <h1>Welcome to {name}!</h1>
   <div class="info">This is the start of the <b>{name}</b> room. {#if topic}{topic}{/if}</div>
   {/if}
-  {#if room.power.me >= (room.power.invite ?? 0)}
+  {#if !room.tombstone}
+  {#if room.power.me >= (room.power.invite ?? 0) || room.joinRule === "public"}
   <div class="action" on:click={invite}>
     <div class="icon">person_add</div>
-    Invite User
+    Invite Users
   </div>
   {/if}
   <div class="action" on:click={edit}>
     <div class="icon">edit</div>
     Edit Room
   </div>
+  {/if}
   <!--
   {#if shiftKey}
   <div class="action" on:click={() => state.popup.set({ id: "source", event })}>

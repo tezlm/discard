@@ -23,6 +23,7 @@ let isDragging = false;
 let isShift = false;
 
 function handleKeyDown(e) {
+  if (e.altKey) return;
   if (e.key === "Escape") {
     if (showEmoji) {
       showEmoji = false;
@@ -32,8 +33,9 @@ function handleKeyDown(e) {
       const lastEvent = state.roomTimelines.get($room.id).live.at(-1);
       state.log.debug(`mark ${lastEvent} as read`);
       state.rooms.get($room.id).accountData.set("m.fully_read", { event_id: lastEvent });
-      state.slice.set(state.roomSlices.get($room.roomId));
+      state.slice.set(state.roomSlices.get($room.id));
       state.api.sendReceipt($room.id, lastEvent);
+      state.api.fetch("POST", `/rooms/${encodeURIComponent($room.id)}/receipt/m.read.private/${encodeURIComponent(lastEvent)}`, { thread_id: "main" });
     }
     e.preventDefault();
     e.stopImmediatePropagation();
