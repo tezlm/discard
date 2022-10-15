@@ -75,14 +75,17 @@ async function resolveWellKnown(domain) {
 function start(api, syncer, userId) {
   state.api = api;
   state.syncer = syncer;
+  state.client = syncer;
   state.userId = userId;
   state.scene.set("loading");
   
   syncer.on("join", (room, batch) => actions.rooms.handleJoin(room, batch));
-  syncer.on("join", (room) => console.log(room));
-  // syncer.on("invite", (invite) => console.log(invite));
   syncer.on("leave", (room) => actions.rooms.handleLeave(room.id));
-  
+
+  syncer.on("invite", () => state.invites.set(syncer.invites));
+  syncer.on("leave-invite", () => state.invites.set(syncer.invites));
+  syncer.on("join", () => state.invites.set(syncer.invites));  
+    
   syncer.on("state", (state) => actions.rooms.handleState(state));
   syncer.on("event", (event) => actions.timeline.handle(event));
   syncer.on("ephemeral", (edu) => {

@@ -18,7 +18,7 @@ export function update() {
       .sort(orderSpaces)
       .map(i => i.room);
     children.forEach(i => inSpaces.add(i.roomId));
-    state.spaces.set(id, children);    
+    state.spaces.set(id, children);
   }
   
   const orphans = [...state.rooms.values()].filter(i => !inSpaces.has(i.roomId));

@@ -1,16 +1,15 @@
 <script>
 import Search from "../atoms/Search.svelte";
 import { parseHtml } from "../../util/html.js";
-import { onDestroy } from "svelte";
 export let room;
 let space = state.focusedSpace;
 let settings = state.settings;
 $: dark = $space && !room;
 
-let dms = state.dms;
+let { popout, invites, dms } = state;
+
 function getName(room) {
-	if (!dms.has(room.roomId)) return room.name;
-	// return room.name.toLowerCase().replace(/ /g, "-").replace(/^#/, "");
+	if (!dms.has(room.id)) return room.name;
 	const other = dms.get(room.id);
 	return other.name ?? other.id;
 }
@@ -22,22 +21,6 @@ let searchfocus = false;
 
 let showPins = false;
 let pinButtonEl;
-
-let popout = state.popout;
-let inviteCount = state.syncer.invites.size;
-
-function updateInvites() {
-  inviteCount = state.syncer.invites.size;
-}
-
-state.syncer.on("invite", updateInvites);
-state.syncer.on("leave-invite", updateInvites);
-state.syncer.on("join", updateInvites);  
-onDestroy(() => {
-  state.syncer.off("invite", updateInvites);
-  state.syncer.off("leave-invite", updateInvites);
-  state.syncer.off("join", updateInvites);
-});
 
 $: if (showPins) {
   queueMicrotask(() => {
@@ -197,11 +180,11 @@ $: if (showPins) {
   <div class="topic" on:click={() => state.popup.set({ id: "info", head: room.name, body: parseHtml(room.topic, { linkify: true, twemojify: true }), html: true })}>
     {@html parseHtml(room.topic, { linkify: true, twemojify: true })}
   </div>
-  {:else if !room}
+  {:else if !room && !$space}
   <div class="spacer"></div>
   <div style="flex:1;display:flex">
     <div class="tab" class:selected={selectedTab === "home"}    on:click={() => selectedTab = "home"}>Dashboard</div>
-    <div class="tab" class:selected={selectedTab === "invites"} on:click={() => selectedTab = "invites"}>Invites {#if inviteCount}<span class="ping">{inviteCount}</span>{/if}</div>
+    <div class="tab" class:selected={selectedTab === "invites"} on:click={() => selectedTab = "invites"}>Invites {#if $invites.size}<span class="ping">{$invites.size}</span>{/if}</div>
   </div>
   {:else}
   <div style:flex={1}></div>

@@ -2,23 +2,9 @@
 import Avatar from "../../atoms/Avatar.svelte";
 import Button from "../../atoms/Button.svelte";
 import Tooltip from "../../atoms/Tooltip.svelte";
-import { onDestroy } from "svelte";
 
 export let selectedTab;
-let invites = state.syncer.invites;
-
-function updateInvites() {
-  invites = state.syncer.invites;
-}
-
-state.syncer.on("invite", updateInvites);
-state.syncer.on("leave-invite", updateInvites);
-state.syncer.on("join", updateInvites);
-onDestroy(() => {
-  state.syncer.off("invite", updateInvites);
-  state.syncer.off("leave-invite", updateInvites);
-  state.syncer.off("join", updateInvites);
-});
+let invites = state.invites;
 
 function getInviteSender(invite) {  
   const myMemberEvent = invite.state.find(i => i.type === "m.room.member" && i.state_key === state.userId);
@@ -207,8 +193,8 @@ function join(invite) {
 </div>
 {:else if selectedTab === "invites"}
 <div class="invites scroll">
-  <h2>Invites - {invites.size}</h2>
-  {#each [...invites.values()] as invite (invite.id)}
+  <h2>Invites - {$invites.size}</h2>
+  {#each [...$invites.values()] as invite (invite.id)}
   {@const sender = getInviteSender(invite)}
   <div class="invite">
     <Avatar user={{ avatar: invite.avatar, id: invite.id }} size={36} />
@@ -224,8 +210,8 @@ function join(invite) {
     </Tooltip>
   </div>
   {:else}
-  <div style="padding: 8px">
-    no invites, come back later
+  <div style="padding: 8px;" class="dim">
+    <i>no invites - come back later ᕕ( ᐛ )ᕗ </i>
   </div>
   {/each}
 </div>

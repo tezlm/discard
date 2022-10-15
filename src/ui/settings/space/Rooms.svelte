@@ -9,7 +9,7 @@ const children = $room.state
 <table style="width: 100%">
   <tr><th>id</th><th>suggested</th><th>order</th><th>name</th></tr>
 {#each children as child}
-  <tr><td>{child.state_key}</td><td>{child.content.suggested}</td><td>{child.content.order}</td><td>{state.rooms.get(child.state_key)?.name}</td></tr>
+  <tr><td>{child.stateKey}</td><td>{child.content.suggested}</td><td>{child.content.order}</td><td>{state.rooms.get(child.stateKey)?.name}</td></tr>
 {:else}
   <tr><i>no rooms</i></tr>
 {/each}

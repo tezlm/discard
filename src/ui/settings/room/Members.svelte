@@ -90,7 +90,7 @@ h1 {
     <div><Search width={220} placeholder="Filter {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
   </div>
   {#if members}
-    {#each members as member}
+    {#each members as member (member.id)}
     <div class="member" on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: memberContext(member), x: e.clientX, y: e.clientY })}>
       {#await getMember(member)}
         <div class="avatar"></div>

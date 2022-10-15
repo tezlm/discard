@@ -7,13 +7,16 @@ let type = "login";
 let localpart, homeserver, password;
 let form;
 let error;
+let loading = false;
 
 async function handleSubmit() {
   for (let input of form.querySelectorAll("input")) {
     if (!input.value) return input.focus();
   }
 
+  loading = true;
   actions.client.login({ localpart, homeserver, password })
+    .then(() => loading = false)
     .catch(err => error = err);
 }
 </script>
@@ -84,7 +87,7 @@ h5, .spacer {
         <h5 class="title">Password</h5>
         <Input type="password" placeholder="verysecurepassword" bind:value={password} submitted={handleSubmit} />
         <div class="spacer"></div>
-        <Button type="primary big" clicked={handleSubmit} label={type === "login" ? "Login" : "Register"} />
+        <Button type="primary big" clicked={handleSubmit} label={type === "login" ? (loading ? "Logging in..." : "Login") : "Register"} {loading} />
         {#if error}
         <div class="error">{error}</div>
         {/if}

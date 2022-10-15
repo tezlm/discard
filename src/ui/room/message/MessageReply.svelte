@@ -1,17 +1,16 @@
 <script>
-// TODO: make edits apply
 import { parseHtml } from "../../../util/html.js";
 import { calculateHash } from '../../../util/content.ts';
 import Avatar from "../../atoms/Avatar.svelte";
 export let room, eventId;
-let eventPromise = state.events.fetch(room, eventId);
+let eventPromise = room.events.fetch(eventId);
 let settings = state.settings;
 
 function getColor(sender) {
   if (!sender) return;
   if ($settings.get("namecolors") === "never") return;
-  if ($settings.get("namecolors") === "power" && room.power.getUser(sender.userId) === 0) return;
-  return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
+  if ($settings.get("namecolors") === "power" && room.power.getUser(sender.id) === 0) return;
+  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
 }
 </script>
 <style>
@@ -101,7 +100,7 @@ function getColor(sender) {
   </div>
   <span class="author" style:color={getColor(event.sender)}>{event.sender.name || event.sender.id}</span>
   <div class="content" on:click={() => actions.slice.jump(event.room.id, event.id)}>
-    {#if !event.content}NO CONTENT!{:else}
+    {#if !event.content}empty event?{:else}
     {#if event.content.format === "org.matrix.custom.html"}
       {@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n|<br.*?>/g, " ")}
     {:else if event.content.body}
@@ -113,5 +112,5 @@ function getColor(sender) {
   </div>
 </div>
 {:catch err}
-<div class="reply">error: {err}</div>
+<div class="reply">error: {err.error ?? JSON.stringify(err)}</div>
 {/await}

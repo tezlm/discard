@@ -20,6 +20,7 @@ const log = {
 const state = {
   api: null,
   syncer: null,
+  client: null,
   userId: null,
   store: store,
   log: log,
@@ -33,6 +34,7 @@ const state = {
   
   // data
   rooms: new Map(),
+  invites: writable(new Map()),
   spaces: new Map(),
   dms: new Map(),
   settings: writable(new Settings()),

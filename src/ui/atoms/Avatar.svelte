@@ -10,8 +10,8 @@ let missing = state.missingAvatars;
 // TODO: redo this code, right now it assumes things are a user (workaround for rooms)
 
 function getAvatar(user, crop = true) {
-  const id = user?.userId ?? user?.roomId ?? user.id;
-  if (!user.avatar) return generateAvatar(id);
+  const id = user?.id;
+  if (!user?.avatar) return generateAvatar(id);
   return missing.has(id) ? generateAvatar(id) : parseMxc(user.avatar, crop ? size : null);
 }
 

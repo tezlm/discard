@@ -20,7 +20,7 @@ function shouldSplit(prev, ev) {
 	if (ev.type !== "m.room.message" && prev.type !== "m.room.message") return false;
 	if (ev.type !== "m.room.message" && prev.type === "m.room.message") return true;
 	if (ev.type === "m.room.message" && prev.type !== "m.room.message") return true;
-	if (prev.sender.userId !== ev.sender.userId) return true;
+	if (prev.sender.id !== ev.sender.id) return true;
 	if (ev.content["m.relates_to"]?.["m.in_reply_to"]) return true;
 	if (ev.date - prev.date > 1000 * 60 * 10) return true;
 	if (ev.date.getDay() !== prev.date.getDay()) return true;
@@ -28,10 +28,10 @@ function shouldSplit(prev, ev) {
 }
 
 function dividerProps(prev, ev) {
-	const room = state.rooms.get(ev.roomId);
+	const room = state.rooms.get(ev.room.id);
 	return {
 		unpad: shouldSplit(prev, ev),
-		unread: room.readEvent === prev.eventId,
+		unread: room.readEvent === prev.id,
 		newdate: prev.date.getDay() !== ev.date.getDay() ? ev.date
 			: prev.type === "m.room.create" ? ev.date
 			: null,
@@ -88,10 +88,11 @@ function checkShift(e) {
 }
 
 function getHighlight(event, reply) {
-	if (reply?.eventId === event.eventId) return "var(--color-blue)";
+	if (reply?.eventId === event.id) return "var(--color-blue)";
 }
 
-function shouldRender(type, settings) {
+function shouldRender(_type, _settings) {
+	// TODO:
 	// joinleave, nickavatar
 	// if (["m.room.name", "m.room.topic"].includes(type) && !settings.get("shownametopic")) return false;
 	return true;
@@ -104,6 +105,11 @@ function shouldPing(event) {
 	if (!highlight) return false;
 	return highlight.value !== false;
 }
+
+onDestroy(state.focusedRoom.subscribe(() => {
+	console.time("focus room")
+	queueMicrotask(() => console.timeEnd("focus room"));
+}));
 
 onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => reset && reset())));
 onDestroy(upload.subscribe(refocus));
@@ -203,7 +209,7 @@ onDestroy(edit.subscribe(() => {
 	100% { background: none }
 }
 </style>
-<div class="content" style:display={room ? null : "none"}><!--
+<div class="content" style:display={room ? null : "none"}>
 	<div style="position: absolute; top: 0; left: 0; width: 100%; z-index: 1">
 		<div style="background: var(--bg-misc); padding: 8px; display:flex; align-items: center">
 			This room is archived
@@ -214,10 +220,10 @@ onDestroy(edit.subscribe(() => {
 		<div style="background: var(--color-accent); margin: 0 16px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; padding: 4px 12px; font-size: 14px; font-weight: 500; cursor: pointer;">
 			5 new messages
 		</div>
-	</div>-->
+	</div>
 	<Scroller
 		items={slice.events}
-		itemKey="eventId"
+		itemKey="id"
 		direction="up"
 		margin={300}
 		bind:scrollTop={scrollTop}
@@ -233,14 +239,13 @@ onDestroy(edit.subscribe(() => {
 		<div slot="top" style="margin-top: auto"></div>
 		<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
 		<div>
-			{#if true} <!-- so i can use const -->
-			{#if event.special !== "redacted" && shouldRender(event.type, $settings)}
+			{#if !event.flags?.has("redacted") && shouldRender(event.type, $settings)}
 				<div
 					class:header={shouldSplit(slice.events[index - 1], event) ? true : null}
 					class:ping={shouldPing(event)}
-					class:focused={$focused === event.eventId}
-					class:editing={$edit === event.eventId}
-					data-event-id={event.eventId}
+					class:focused={$focused === event.id}
+					class:editing={$edit === event.id}
+					data-event-id={event.id}
 					class:highlight={getHighlight(event, $reply)}
 					style:--color={getHighlight(event, $reply)}
 				>
@@ -252,7 +257,6 @@ onDestroy(edit.subscribe(() => {
 			{/if}
 			{#if index < slice.events.length - 1}
 				<Divider {...dividerProps(event, slice.events[index + 1])} />
-			{/if}
 			{/if}
 		</div>
 		<div slot="placeholder-end" class="tall"><Placeholder /></div>

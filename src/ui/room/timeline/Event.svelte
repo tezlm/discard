@@ -19,37 +19,62 @@ export let event;
 
 let toolbarEl;
 let showReactionPicker = false;
+let context = state.context;
 
+// messy/complex if statements, maybe i should clean it up..?
 function getToolbar(event, shiftKey) {
 	const toolbar = [];
-  // const fromMe = event.sender.id === state.userId;
+  const fromMe = event.sender.id === state.userId;
+	const isMessage = event.type === "m.room.message";
 
-  if (event.special) {
-    if (event.special === "errored") toolbar.push({ name: "Retry", icon: "refresh", clicked: todo });
+  if (event.flags?.has("errored")) {
+		toolbar.push({ name: "Retry", icon: "refresh", clicked: todo });
     toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
-  } else if (shiftKey){
+  } else if (event.flags?.has("sending")) {
+    toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
+  } else if (shiftKey) {
+    if (!event.stateKey && ((fromMe && room.power.me >= room.power.getEvent("m.room.redact")) || (room.power.me >= room.power.redact ?? 50))) {
+      toolbar.push({ name: "Delete", icon: "delete", color: "var(--color-red)", clicked: () => { event.flags.add("redacted"); state.api.redactEvent(event.room.id, event.id) }});
+    }
+    if (isMessage && room.power.me >= room.power.getEvent("m.room.message")) {
+      toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });
+    }
 		toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
-	} else if (room.power.me >= room.power.getEvent("m.reaction")) {
-    toolbar.push({ name: "React", icon: "add_reaction", clicked: () => showReactionPicker = !showReactionPicker });
-    toolbar.push({ name: "More", icon: "more_vert", clicked: todo });
-  }
+	} else {
+		if (room.power.me >= room.power.getEvent("m.reaction")) {
+			toolbar.push({ name: "React", icon: "add_reaction", clicked: () => showReactionPicker = !showReactionPicker });
+		}
+    if (isMessage && room.power.me >= room.power.getEvent("m.room.message")) {
+      if (fromMe) {
+        toolbar.push({ name: "Edit", icon: "edit", clicked: () => state.roomState.edit.set(event.id) });
+      } else {
+        toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });
+      }
+    }
+    toolbar.push({ name: "More", icon: "more_vert", clicked: showMore });
+	}
 	
 	return toolbar;
+
+  function showMore() {
+    const rect = toolbarEl.getBoundingClientRect();
+    if ($context.items) return $context = {};
+    $context = { items: eventContext(event, { showEmoji: () => showReactionPicker = true }), x: rect.left, y: rect.top + 40 };
+  }
 }
 
 function handleContext(e) {
 	if (e.target.tagName === "A") return;
 	e.preventDefault();
-	state.context.set({
+	$context = {
 		items: eventContext(event, {
 			showEmoji: () => showReactionPicker = true,
 		}),
 		x: e.clientX,
 		y: e.clientY,
-	});
+	};
 }
 
-let popout = state.popout;
 $: if (showReactionPicker) {
   queueMicrotask(() => {
     const rect = toolbarEl.getBoundingClientRect();
@@ -59,7 +84,6 @@ $: if (showReactionPicker) {
       top: rect.top,
       right: window.innerWidth - rect.left + 8,
       selected(emoji, keepOpen) {
-				console.log("selected", emoji)
         if (emoji && !event.reactions?.get(emoji)?.find(i => i.sender.id === state.userId)) {
           const reaction = {
             "m.relates_to": {
@@ -124,12 +148,12 @@ $: if (showReactionPicker) {
 	{:else}
 		<Unknown {room} {event} />
 	{/if}
-	{#if !["m.room.create", "m.room.message", "m.sticker"].includes(event.type)}
+	{#if !["m.room.create", "m.sticker"].includes(event.type)}
   <div class="toolbar" bind:this={toolbarEl} style:display={showReactionPicker ? "block" : null}>
 	  <Toolbar items={getToolbar(event, shiftKey)} />
 	</div>
 	{/if}
-  {#if event.reactions && event.type !== "m.room.message"}
+  {#if event.reactions}
 	<div class="reactions">
 		<MessageReactions {event} />
 	</div>

@@ -100,7 +100,7 @@ function findParent(room) {
     <div class="rooms">
       <!-- this is horrible and i should feel bad -->
       {#if !search}
-        {#each results as room, i}
+        {#each results as room, i (room.id)}
           {@const parent = findParent(room)}
           <div
             class="room"

@@ -89,7 +89,7 @@ export function handle(event, toStart = false) {
       
       room.accountData.set("m.fully_read", id)
       state.api.sendReceipt(room.id, id);
-      if (room.it === state.focusedRoomId) state.slice.set(slice);
+      if (room.id === state.focusedRoomId) state.slice.set(slice);
       return;
     }
   }
@@ -145,13 +145,12 @@ export function redact(event) {
   const id = event.raw.redacts ?? event.content.redacts;
   if (!state.events.has(id)) return;
   state.log.debug(`handle redaction in ${event.room.id} for ${id}`);
-  const roomId = event.room.id;
   
-  const [timeline, index] = state.roomTimelines.get(roomId).for(id);
+  const [timeline, index] = state.roomTimelines.get(event.room.id).for(id);
   if (index) {
     timeline.splice(index, 1);
   
-    const slice = actions.slice.get(roomId);
+    const slice = actions.slice.get(event.room.id);
     if (slice.end === id) slice.end = timeline.at(-1);
     // TODO: edge case?
     // if (slice.start === id) slice.start = timeline[0];
@@ -161,7 +160,7 @@ export function redact(event) {
     state.slice.set(slice);
   } else if (state.events.has(id)) {
     const original = state.events.get(id);
-    const slice = actions.slice.get(roomId);
+    const slice = actions.slice.get(event.room.id);
     const relation = getRelation(original.content);
     if (relation?.rel_type === "m.annotation") {
       const rel = state.events.get(relation.event_id);

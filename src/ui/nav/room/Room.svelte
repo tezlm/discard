@@ -2,6 +2,7 @@
 import Item from "./Item.svelte";
 import Tooltip from "../../atoms/Tooltip.svelte";
 import { roomContext } from "../../../util/context";
+import { getLastMessage } from "../../../util/timeline";
 export let room;
 export let muted = false;
 let focusedRoom = state.focusedRoom;
@@ -11,7 +12,6 @@ $: focused= $focusedRoom?.id === room.id;
 // move dm status into the room object?
 function getName(room) {
 	if (!dms.has(room.id)) return room.name;
-	// return room.name.toLowerCase().replace(/ /g, "-").replace(/^#/, "");
 	const other = dms.get(room.id);
 	return other.name ?? other.id;
 }
@@ -19,22 +19,8 @@ function getName(room) {
 function isRead(room) {
 	if (muted) return true;
 
-	const timeline = state.roomTimelines.get(room.roomId).live;
-	if (!timeline.length) return true;
-	const lastMessage = timeline.at(-1);
-	const readMessage = getLastMessage(timeline, room.readEvent);
-	if (!readMessage) return false;
-	return getLastMessage(timeline, room.readEvent) === lastMessage;
-
-	function getLastMessage(timeline, fromEvent) {
-		const index = timeline.lastIndexOf(fromEvent);
-		if (index === -1) return null;
-		for (let i = index; i >= 0; i--) {
-			const event = state.events.get(timeline[i]);
-			if (event.special !== "redacted") return event.eventId;
-		}
-		return null;
-	}
+	const tl = state.roomTimelines.get(room.id);
+	return getLastMessage(tl, room.readEvent)	=== getLastMessage(tl);
 }
 
 function openSettings(room) {
@@ -49,7 +35,7 @@ function getIcon(room) {
 	if (type === "org.eu.celery.room.media") return "image";
 	if (type === "org.eu.celery.room.forum") return "message";
 	if (type === "io.element.video") return "volume_up";
-	if (dms.has(room.roomId)) return "person";
+	if (dms.has(room.id)) return "person";
 	if (!type) {
 		if ((room.power.users_default ?? 0) < room.power.getEvent("m.room.message")) {
 			// return "campaign";
@@ -81,10 +67,6 @@ function getIcon(room) {
 .spacer {
 	margin-left: auto;
 	min-width: 4px;
-}
-
-.settings {
-	line-height: 1;
 }
 
 .settings .icon {
