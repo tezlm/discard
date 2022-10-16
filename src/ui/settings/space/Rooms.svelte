@@ -1,6 +1,6 @@
 <script>
 export let room;
-const children = $room.state
+const children = room.state
   .filter(i => i.type === "m.space.child")
   .filter(i => Object.keys(i.content).length);
 </script>

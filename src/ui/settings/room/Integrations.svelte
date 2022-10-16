@@ -66,13 +66,13 @@ h4 {
 }
 </style>
 <h3>Bridges</h3>
-{#each $room.getAllState("uk.half-shot.bridge") as event}
+{#each room.getAllState("uk.half-shot.bridge") as event}
   {@const bridge = event.content}
   <div class="bridge">
     <Avatar user={{ id: bridge.protocol.id, avatar: bridge.protocol.avatar_url }} size={72} link={true} />
     <div class="info">
       <h4>{bridge.protocol.displayname ?? bridge.protocol.id}</h4>
-      Currently being bridged to {bridge.channel.displayname ?? $room.name}
+      Currently being bridged to {bridge.channel.displayname ?? room.name}
       <hr />
       <!--This bridge was created by <span data-mx-ping={bridge.creator}>{bridge.creator}</span><br />-->
       This bridge is managed by <span data-mx-ping={bridge.bridgebot}>{bridge.bridgebot}</span><br />

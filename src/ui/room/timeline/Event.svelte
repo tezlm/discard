@@ -25,7 +25,6 @@ let context = state.context;
 function getToolbar(event, shiftKey) {
 	const toolbar = [];
   const fromMe = event.sender.id === state.userId;
-	const isMessage = event.type === "m.room.message";
 
   if (event.flags?.has("errored")) {
 		toolbar.push({ name: "Retry", icon: "refresh", clicked: todo });
@@ -33,10 +32,10 @@ function getToolbar(event, shiftKey) {
   } else if (event.flags?.has("sending")) {
     toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
   } else if (shiftKey) {
-    if (!event.stateKey && ((fromMe && room.power.me >= room.power.getEvent("m.room.redact")) || (room.power.me >= room.power.redact ?? 50))) {
+    if (!event.isState() && ((fromMe && room.power.me >= room.power.getEvent("m.room.redact")) || (room.power.me >= room.power.redact ?? 50))) {
       toolbar.push({ name: "Delete", icon: "delete", color: "var(--color-red)", clicked: () => { event.flags.add("redacted"); state.api.redactEvent(event.room.id, event.id) }});
     }
-    if (isMessage && room.power.me >= room.power.getEvent("m.room.message")) {
+    if (event.type === "m.room.message" && room.power.me >= room.power.getEvent("m.room.message")) {
       toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });
     }
 		toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
@@ -44,7 +43,7 @@ function getToolbar(event, shiftKey) {
 		if (room.power.me >= room.power.getEvent("m.reaction")) {
 			toolbar.push({ name: "React", icon: "add_reaction", clicked: () => showReactionPicker = !showReactionPicker });
 		}
-    if (isMessage && room.power.me >= room.power.getEvent("m.room.message")) {
+    if (!event.isState() && room.power.me >= room.power.getEvent("m.room.message")) {
       if (fromMe) {
         toolbar.push({ name: "Edit", icon: "edit", clicked: () => state.roomState.edit.set(event.id) });
       } else {
@@ -124,10 +123,6 @@ $: if (showReactionPicker) {
 .event:hover .toolbar {
 	display: block;
 }
-
-.reactions {
-	margin-left: 72px;
-}
 </style>
 <div class="event" class:create={event.type === "m.room.create"} on:contextmenu|stopPropagation={handleContext}>
 	{#if event.type === "m.room.create"}
@@ -141,20 +136,20 @@ $: if (showReactionPicker) {
 	{:else if event.type === "m.room.canonical_alias"}
 		<Alias {room} {event} />
 	{:else if event.type === "m.room.message" || event.type === "m.sticker"}
-	  <Message {room} {event} {header} {shiftKey} />
+	  <Message {room} {event} {header} />
 	<!-- TODO: extensible events.
 	{:else if ["m.message", "m.notice", "m.emote", "m.file"].includes(event.type)}
 	-->
 	{:else}
 		<Unknown {room} {event} />
 	{/if}
-	{#if !["m.room.create", "m.sticker"].includes(event.type)}
+	{#if event.type !== "m.room.create"}
   <div class="toolbar" bind:this={toolbarEl} style:display={showReactionPicker ? "block" : null}>
 	  <Toolbar items={getToolbar(event, shiftKey)} />
 	</div>
 	{/if}
   {#if event.reactions}
-	<div class="reactions">
+	<div style:margin-left={event.type === "m.room.create" ? "16px" : "72px"}>
 		<MessageReactions {event} />
 	</div>
 	{/if}

@@ -39,3 +39,11 @@
 ::-webkit-scrollbar-button {
   display: none;
 }
+
+.warning {  
+  padding: 8px;
+  margin: 1em 0 8px;
+  border: solid var(--event-ping) 2px;
+  background: var(--event-ping-bg);
+  border-radius: 4px;
+}

@@ -7,7 +7,7 @@ const users = state.users;
 async function getProfile(userId) {
   if (users.has(userId)) return users.get(userId);
 	const { avatar_url, displayname } = await state.api.fetchUser(userId).catch(() => ({}));
-	const data = { avatar: avatar_url, name: displayname, id: userId, userId };
+	const data = { avatar: avatar_url, name: displayname, id: userId };
 	users.set(userId, data);
 	return data;
 }

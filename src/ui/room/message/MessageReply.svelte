@@ -98,7 +98,7 @@ function getColor(sender) {
   <div class="avatar">
     <Avatar user={event.sender} size={16} />
   </div>
-  <span class="author" style:color={getColor(event.sender)}>{event.sender.name || event.sender.id}</span>
+  <span class="author" style:color={getColor(event.sender)} data-mx-ping={event.sender.id}>{event.sender.name || event.sender.id}</span>
   <div class="content" on:click={() => actions.slice.jump(event.room.id, event.id)}>
     {#if !event.content}empty event?{:else}
     {#if event.content.format === "org.matrix.custom.html"}

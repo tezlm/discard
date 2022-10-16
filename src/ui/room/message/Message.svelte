@@ -7,17 +7,13 @@ import { formatDate, formatTime } from "../../../util/format.ts";
 import { calculateHash } from '../../../util/content.ts';
 import { quadOut } from "svelte/easing";
 import Avatar from "../../atoms/Avatar.svelte";
-import { eventContext, memberContext } from "../../../util/context";
+import { memberContext } from "../../../util/context";
 
-export let room, event, header = false, shiftKey = false;
+export let room, event, header = false;
 
 let { edit } = state.roomState;
-let slice = state.slice;
-let settings = state.settings;
-
-let showReactionPicker = false;
+let { slice, settings } = state;
 let showUserPopout = false;
-let context = state.context;
 
 function getReply(content) {
   return content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
@@ -28,16 +24,16 @@ function getColor(sender, settings) {
   if (!sender) return;
   if (level === "never") return `var(--fg-content)`;
   if (level === "power" && sender.power <= (room.power.users_default ?? 0)) return `var(--fg-content)`;
-  return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
+  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
 }
 
 function handleClick(e) {
   if (e.altKey) {
-    const prev = $slice.events[$slice.events.findIndex(i => i.eventId === event.eventId) - 1];
+    const prev = $slice.events[$slice.events.findIndex(i => i.id === event.eventId) - 1];
     if (prev) {
-      room.accountData.set("m.fully_read", { event_id: prev.eventId });
+      room.accountData.set("m.fully_read", { event_id: prev.id });
       state.slice.set(state.roomSlices.get(state.focusedRoomId));
-      state.api.sendReceipt(event.roomId, prev.eventId);
+      state.api.sendReceipt(event.room.id, prev.id);
     }
   }
 }
@@ -156,7 +152,7 @@ time {
         class="user"
         style:top="{getReply(event.content) ? 24 : 0}px"
         in:fly={{ x: -15 }}
-        on:click={(e) => e.stopPropagation()}
+        on:click|stopPropagation
       >
         <User member={event.sender} />
       </div>
@@ -172,4 +168,4 @@ time {
     {/if}
   </div>
 </div>
-<svelte:window on:click={() => { showReactionPicker = false; showUserPopout = false; }} />
+<svelte:window on:click={() => { showUserPopout = false; }} />

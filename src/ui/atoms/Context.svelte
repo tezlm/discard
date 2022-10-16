@@ -4,6 +4,8 @@ export let width = null;
 let menuEl;
 let right = false;
 
+// FIXME: submenu can exist outside of window
+
 function tooRight(menuEl) {
   if (!menuEl) return;
   const rect = menuEl.getBoundingClientRect();
@@ -93,13 +95,16 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
         on:click={e => handleClick(item, e)}
       >
         {item.label}
+        {#if item.icon}
+        <div class="icon">{item.icon}</div>
+        {/if}
         {#if item.submenu}
+        {#if !item.icon}
         <div class="icon">navigate_next</div>
+        {/if}
         <div class="submenu" class:right>
           <svelte:self items={item.submenu} />
         </div>
-        {:else if item.icon}
-        <div class="icon">{item.icon}</div>
         {/if}
       </div>
     {/if}

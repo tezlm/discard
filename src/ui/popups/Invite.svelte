@@ -24,7 +24,7 @@ function getLink() {
 
 async function searchUsers(term) {
   const { results } = await state.api.searchUsers(term);
-  const users = results.map(i => ({ avatar: i.avatar_url, name: i.display_name, id: i.user_id, userId: i.user_id }));
+  const users = results.map(i => ({ avatar: i.avatar_url, name: i.display_name, id: i.user_id }));
   for (let user of users) {
     if (!state.users.has(user.id)) state.users.set(user.id, user);
     if (current.room.members.has(user.id)) inviteStates.set(user.id, getState(current.room.members.get(user.id)));

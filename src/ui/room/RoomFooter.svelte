@@ -1,41 +1,13 @@
 <script>
-// TODO: split out input from rest of footer
 import Typing from "../atoms/Typing.svelte";
 import RoomInput from "./RoomInput.svelte";
-import { marked } from "marked";
-import { onDestroy } from "svelte";
 let textarea;
 let room = state.focusedRoom;
-let slice = state.slice;
-let { reply, edit, input, rows, upload: fileUpload, typing } = state.roomState;
+let { reply, edit, input, typing } = state.roomState;
 
 const getName = id => ($room.members.get(id)?.name ?? id.replace(/^@/, ""));
 
-async function handleSend(e) {
-  sendMessage(e)
-}
-
-async function handleKeyDown(e) {
-  if (e.key === "Escape") {
-    const lastEvent = state.roomTimelines.get($room.roomId).live.at(-1);
-    state.log.debug(`mark ${lastEvent} as read`);
-    state.rooms.get($room.roomId).readEvent = lastEvent;
-    state.slice.set(state.roomSlices.get($room.roomId));
-    state.api.sendReceipt($room.roomId, lastEvent);  
-  } if (e.key === "ArrowUp") {
-    if (textarea.selectionStart !== 0) return;
-    if (textarea.selectionEnd !== 0) return;
-    for (let i = $slice.events.length - 1; i >= 0; i--) {
-      const event = $slice.events[i];
-      if (event.sender === state.userId) {
-        $edit = event.eventId;
-        return;
-      }
-    }
-  }
-}
-
-async function sendMessage(content, roomId = $room.roomId) {
+async function sendMessage(content, roomId = $room.id) {
   if ($reply) {
     content["m.relates_to"] = {};
     content["m.relates_to"]["m.in_reply_to"] = {};
@@ -51,9 +23,9 @@ async function sendMessage(content, roomId = $room.roomId) {
 }
 
 $: if ($input) textarea?.focus();
-onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => textarea?.focus())));
-onDestroy(reply.subscribe(() => queueMicrotask(() => textarea?.focus())));
-onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus())));
+$: if ($room) textarea?.focus();
+$: if ($reply || true) textarea?.focus();
+$: if (!$edit) textarea?.focus();
 </script>
 <style>
 .container {
@@ -102,7 +74,7 @@ onDestroy(edit.subscribe(() => queueMicrotask(() => $edit || textarea?.focus()))
   <RoomInput
     showUpload={true}
     placeholder={`Message ${$room.name}`}
-    onsend={handleSend}
+    onsend={sendMessage}
     bind:input={$input}
     bind:reply={$reply}
     bind:textarea={textarea}

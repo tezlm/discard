@@ -6,8 +6,8 @@ export let save = null;
 let name, topic;
 
 export function reset() {
-  name = $room?.name ?? "";
-  topic = $room?.topic ?? "";  
+  name = room?.name ?? "";
+  topic = room?.topic ?? "";  
 }
 
 // TODO: live update
@@ -15,13 +15,13 @@ export function reset() {
 reset();
 
 $: {
-  let nameChanged = name !== ($room?.name ?? "");
-  let topicChanged = topic !== ($room?.topic ?? "");
+  let nameChanged = name !== (room?.name ?? "");
+  let topicChanged = topic !== (room?.topic ?? "");
   if (nameChanged || topicChanged) {
     save = async () => {
       const proms = [];
-      if (nameChanged) proms.push(state.api.sendState($room.id, "m.room.name", "", { name }));
-      if (topicChanged) proms.push(state.api.sendState($room.id, "m.room.topic", "", { topic }));
+      if (nameChanged) proms.push(room.sendState("m.room.name", { name }));
+      if (topicChanged) proms.push(room.sendState("m.room.topic", { topic }));
       await Promise.all(proms);
       save = null;
     }
@@ -52,7 +52,7 @@ $: {
     <Input
       bind:value={name}
       placeholder="amazing-room"
-      readonly={$room.power.me < $room.power.getState("m.room.name")}
+      readonly={room.power.me < room.power.getState("m.room.name")}
       submitted={() => save && save()}
     />
   </div>
@@ -61,12 +61,12 @@ $: {
     <Textarea
       bind:value={topic}
       placeholder="what an amazing room"
-      readonly={$room.power.me < $room.power.getState("m.room.topic")}
+      readonly={room.power.me < room.power.getState("m.room.topic")}
     />
   </div>
   <div class="section">
     <div class="title">Developers</div>
-    <p><b>Room Id:</b> <code style="user-select: all">{$room?.roomId}</code></p>
-    <p><b>Room Version:</b> <code style="user-select: all">{$room.getState("m.room.create")?.content.room_version ?? "no m.room.create!"}</code></p>
+    <p><b>Room Id:</b> <code style="user-select: all">{room?.id}</code></p>
+    <p><b>Room Version:</b> <code style="user-select: all">{room.getState("m.room.create")?.content.room_version ?? "no m.room.create!"}</code></p>
   </div>
 </div>
