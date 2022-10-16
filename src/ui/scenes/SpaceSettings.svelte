@@ -26,4 +26,4 @@ const views = [
   { clicked: () => state.popup.set({ id: "leave", type: "space", room: $room, confirm: () => queueMicrotask(todo) }), name: "Leave Space", color: "var(--color-red)", icon: "logout" },
 ];
 </script>
-<Settings {views} options={{ room }} />
+<Settings {views} options={{ room: $room }} />

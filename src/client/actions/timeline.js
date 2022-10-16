@@ -78,6 +78,7 @@ export function handle(event, toStart = false) {
     if (original) {
       state.log.matrix(`successfully sent to ${id} in ${room.id} (for ${tx})`);
       original.raw = event.raw;
+      original.id = event.id;
       original.flags.delete("sending");
       state.events.set(id, original);
       

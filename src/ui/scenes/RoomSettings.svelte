@@ -24,4 +24,4 @@ const views = [
   { clicked: () => state.popup.set({ id: "leave", type: "room", room: $room }), name: "Leave Room", color: "var(--color-red)", icon: "logout" },
 ];
 </script>
-<Settings {views} options={{ room }} />
+<Settings {views} options={{ room: $room }} />

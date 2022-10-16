@@ -326,16 +326,15 @@ function slide() {
         {:else}
         <h2>drop to upload!</h2>
         {/if}
-        <!-- FIXME: hold shift to bypass upload preview -->
-        <!-- <p>hold shift to bypass upload preview</p> -->
+        <p>hold shift to bypass upload preview</p>
       </div>
     </div>
   </div>
   {/if}
 </div>
 <svelte:window
-  on:dragover|preventDefault={(e) => { isShift = e.shiftKey && false; }}
-  on:dragstart|preventDefault={(e) => {  }}
+  on:dragover|preventDefault={(e) => { isShift = e.shiftKey }}
+  on:dragstart|preventDefault={(e) => { isShift = e.shiftKey }}
   on:dragenter|preventDefault={(e) => { isDragging = true; isShift = e.shiftKey && false }}
   on:drop|preventDefault={handleDrop}
 />

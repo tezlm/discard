@@ -39,7 +39,7 @@ function resetCopy() {
 async function getProfile() {
   if (users.has(userId)) return users.get(userId);
 	const { avatar_url, displayname } = await state.api.fetchUser(userId);
-	const data = { avatar: avatar_url, name: displayname || userId, id: userId, userId };
+	const data = { avatar: avatar_url, name: displayname || userId, id: userId };
 	users.set(userId, data);
 	return data;
 }

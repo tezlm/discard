@@ -11,12 +11,12 @@ let members = false;
 let filter;
 
 $: setTimeout(async () => {
-  await $room.members.fetch();
-  allMembers = $room.members.with(membership);
+  await room.members.fetch();
+  allMembers = room.members.with(membership);
 });
 
 $: if (allMembers) {
-  members = allMembers.filter(i => i.name?.includes(filter) || i.userId.includes(filter));
+  members = allMembers.filter(i => i.name?.includes(filter) || i.id.includes(filter));
 }
 
 function getTitle(membership) {
@@ -31,7 +31,7 @@ async function getMember(member) {
   if (membership === "join") return member;
   if (users.has(member.id)) return users.get(member.id);
   const { displayname, avatar_url } = await state.api.fetchUser(member.id);
-  const data = { avatar: avatar_url, name: displayname || member.id, userId: member.id };
+  const data = { avatar: avatar_url, name: displayname || member.id, id: member.id };
   users.set(member.id, data);
   return data;
 }
@@ -95,14 +95,14 @@ h1 {
       {#await getMember(member)}
         <div class="avatar"></div>
         <div class="name">
-          {member.userId}
-          <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>
+          {member.id}
+          <span style="color: var(--fg-muted); font-size: 14px">{member.id}</span>
         </div>
       {:then member}
       <Avatar user={member} size={40} />
       <div class="name">
         {member.name}
-        <span style="color: var(--fg-muted); font-size: 14px">{member.userId}</span>
+        <span style="color: var(--fg-muted); font-size: 14px">{member.id}</span>
       </div>
       {/await}
       <div style="margin-left: auto;"></div>

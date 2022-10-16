@@ -19,7 +19,7 @@ const placeholders = [
 const options = [];
 if (current.room.type === "space") options.push(["This space", "space"]);
 if (current.room.type === "room") {
-  if (state.spaces.get("orphanRooms").find(i => i.roomId === current.room.id)) {
+  if (state.spaces.get("orphanRooms").find(i => i.id === current.room.id)) {
     options.push(["This room", "room"]);
   } else {
     options.push(["This space", "space"]);

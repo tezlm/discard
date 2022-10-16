@@ -14,7 +14,7 @@
 export function getLastMessage(timeline: any, fromEventId: string): string | null {
   for (let i = fromEventId ? timeline.live.lastIndexOf(fromEventId) : timeline.live.length - 1; i >= 0; i--) {
     const event = state.events.get(timeline.live[i]);
-    if (event.type === "m.room.message" && !event.flags?.has("redacted") && !event.unsigned?.redacted_because) return event.id;
+    if (event && event.type === "m.room.message" && !event.flags?.has("redacted") && !event.unsigned?.redacted_because) return event.id;
   }
   return null;
 }

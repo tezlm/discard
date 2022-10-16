@@ -1,81 +1,77 @@
 <script>
 import Power from "../../atoms/Power.svelte";
-import Confirm from "../Confirm.svelte";
+import { onDestroy } from "svelte";
 export let room;
 export let save;
-$: perms = $room.power;
-
-// TODO: live update, make this not suck as much
+$: perms = room.power;
 
 let modified = new Map();
-let isModified = false;
 
-const descriptions = {
-  message:  "The minimum power required to send messages.",
-  reaction: "The minimum power required to add reactions to messages. Unlike discord, disabling this permission will also disallow reacting with existing reactions.",
-  invite:   `The minimum power required to invite new people to this ${$room.type}.`,
-  kick:     `The minimum power required to remove other (lower-powered) members from this ${$room.type}. Kicked members can rejoin with an invite ${$room.joinRule === "public" ? "or a link." : ""}`,
-  ban:      `The minimum power required to remove other (lower-powered) members from this ${$room.type}. Bans last forever, or until an unban.`,
-  redact:   "The minimum power required to remove messages.",
-  name:     `The minimum power required to change this ${$room.type}'s name.`,
-  topic:    `The minimum power required to change this ${$room.type}'s topic.`,
-  avatar:   `The minimum power required to change this ${$room.type}'s avatar.`,
-  power:    "The minimum power required to change these permissions and other people's power levels.",
-  // perms:    "The minimum power required to change these minimum power levels.",
-  default:  "Everyone's default power level.",
-  ping:     "The minimum power required to ping everyone. Set this to something high if this room is public.",
-  rooms:    "The minimum power required to add/remove rooms to this space.",
-  history:  "The minimum power required to change history visibility",
-  encrypt:  "The minimum power required to enable end to end encryption",
+// TODO: preserve permissions when someone else updates them
+const updateRoom = () => { modified.clear(); modified = modified; room = room };
+state.client.on("state", updateRoom);
+onDestroy(() => state.client.off("state", updateRoom));
+
+const info = {
+  message:  { name: "Send Messages",   description: "The minimum power required to send messages." },
+  reaction: { name: "Send Reactions",  description: "The minimum power required to add reactions to messages. Unlike discord, disabling this permission will also disallow reacting with existing reactions." },
+  invite:   { name: "Invite Users",    description: `The minimum power required to invite new people to this ${room.type}.` },
+  kick:     { name: "Kick Members",    description: `The minimum power required to remove other (lower-powered) members from this ${room.type}. Kicked members can rejoin with an invite ${room.joinRule === "public" ? "or a link." : ""}` },
+  ban:      { name: "Ban Members",     description: `The minimum power required to remove other (lower-powered) members from this ${room.type}. Bans last forever, or until an unban.` },
+  redact:   { name: "Redact Messages", description: "The minimum power required to remove messages." },
+  name:     { name: "Change Name",     description: `The minimum power required to change this ${room.type}'s name.` },
+  topic:    { name: "Change Topic",    description: `The minimum power required to change this ${room.type}'s topic.` },
+  avatar:   { name: "Change avatar",   description: `The minimum power required to change this ${room.type}'s avatar.` },
+  power:    { name: "Manage Power",    description: "The minimum power required to change these permissions and other people's power levels." },
+  // perms{ name: "", description: :    "The minimum power required to change these minimum power levels." },
+  default:  { name: "Default Power",   description: "Everyone's default power level." },
+  ping:     { name: "Ping room",       description: "The minimum power required to ping everyone. The @everyone of matrix." },
+  rooms:    { name: "Manage Rooms",    description: "The minimum power required to add/remove rooms to this space." },
+  upgrade:  { name: "Upgrade",         description: "The minimum power required to upgrade this room to a nev version" },
+  history:  { name: "History",         description: "The minimum power required to change history visibility" },
+  encrypt:  { name: "Encript",         description: "The minimum power required to enable end to end encryption" },
 };
 
-function getItems() {
-  if ($room.type === "m.space") {
-    return [
-      { category: "Room list permissions" },
-      { name: "Manage Rooms",    id: "rooms",    power: perms.getState("m.space.child") },
-      { category: "Membership permissions" },
-      { name: "Invite Users",    id: "invite",   power: perms.invite ?? 0 },
-      { name: "Kick Members",    id: "kick",     power: perms.kick ?? 50 },
-      { name: "Ban Members",     id: "ban",      power: perms.ban ?? 50 },
-      { category: "Space profile permissions" },
-      { name: "Change Name",     id: "name",     power: perms.getState("m.room.name") },
-      { name: "Change Topic",    id: "topic",    power: perms.getState("m.room.topic") },
-      { name: "Change Avatar",   id: "avatar",   power: perms.getState("m.room.avatar") },
-      { category: "Permission permissions" },
-      { name: "Default Power",   id: "default",  power: perms.users_default ?? 0 },
-      { name: "Manage Power",    id: "power",    power: perms.getState("m.room.power_levels") },
-      // { name: "Manage Settings", id: "perms",    power: perms.state_default ?? 50 },
-      { category: "????" },
-      { name: "Upgrade Room",    id: "upgrade",  power: perms.getState("m.room.tombstone") },
-      { name: "History",         id: "history",  power: perms.getState("m.room.history_visibility") },
-      { name: "Encrypt",         id: "encrypt",  power: perms.getState("m.room.encryption") },
-    ];
+function getItems(room) {
+  const power = room.power;
+  const items = [];
+  if (room.type === "m.space") {
+    items.push(
+        { category: "Room list permissions" },
+        { id: "rooms", power: power.getState("m.space.child") },
+    );
   } else {
-    return [
+    items.push(
       { category: "Basic permissions" },
-      { name: "Send Messages",   id: "message",  power: perms.events_default ?? 0 },
-      { name: "Add Reactions",   id: "reaction", power: perms.getEvent("m.room.reaction") },
-      { name: "Redact Messages", id: "redact",   power: perms.redact ?? 0 },
-      { name: "Ping Room",       id: "ping",     power: perms.notifications?.room ?? perms.state_default ?? 50 },
+      { id: "message",  power: power.events_default ?? 0 },
+      { id: "reaction", power: power.getEvent("m.room.reaction") },
+      { id: "redact",   power: power.redact ?? 0 },
+      { id: "ping",     power: power.notifications?.room ?? power.state_default ?? 50 },
+    );
+  }
+  items.push(
       { category: "Membership permissions" },
-      { name: "Invite Users",    id: "invite",   power: perms.invite ?? 0 },
-      { name: "Kick Members",    id: "kick",     power: perms.kick ?? 50 },
-      { name: "Ban Members",     id: "ban",      power: perms.ban ?? 50 },
-      { category: "Room profile permissions" },
-      { name: "Change Name",     id: "name",     power: perms.getState("m.room.name") },
-      { name: "Change Topic",    id: "topic",    power: perms.getState("m.room.topic") },
+      { id: "invite", power: power.invite ?? 0 },
+      { id: "kick",   power: power.kick ?? 50 },
+      { id: "ban",    power: power.ban ?? 50 },    
+      { category: `${room.type === "m.space" ? "Space" : "Room"} profile permissions` },
+      { id: "name",   power: power.getState("m.room.name") },
+      { id: "topic",  power: power.getState("m.room.topic") },
+  );
+  if (room.type === "m.space") {
+    items.push({ id: "avatar",   power: power.getState("m.room.avatar") });
+  }
+  items.push(
       { category: "Permission permissions" },
-      { name: "Default Power",   id: "default",  power: perms.users_default ?? 0 },
-      { name: "Manage Power",    id: "power",    power: perms.getState("m.room.power_levels") },
+      { id: "default",  power: power.users_default ?? 0 },
+      { id: "power",    power: power.getState("m.room.power_levels") },
       // { name: "Manage Settings", id: "perms",    power: perms.state_default ?? 50 },
       { category: "????" },
-      { name: "Change Avatar",   id: "avatar",   power: perms.getState("m.room.avatar") },
-      { name: "Upgrade Room",    id: "upgrade",  power: perms.getState("m.room.tombstone") },
-      { name: "History",         id: "history",  power: perms.getState("m.room.history_visibility") },
-      { name: "Encrypt",         id: "encrypt",  power: perms.getState("m.room.encryption") },
-    ];
-  }
+      { id: "upgrade",  power: power.getState("m.room.tombstone") },
+      { id: "history",  power: power.getState("m.room.history_visibility") },
+      { id: "encrypt",  power: power.getState("m.room.encryption") },
+  );
+  return items;
 }
 
 function handleChange(item, power) {  
@@ -84,16 +80,30 @@ function handleChange(item, power) {
   } else {
     modified.set(item.id, power);
   }
-  isModified = modified.size;
+  modified = modified;
 }
 
-$: if (isModified) {
+export function reset() {
+  modified.clear();
+  modified = modified;
+  room = room;  
+}
+
+$: if (modified.size) {
   save = async () => {
-    const levels = $room.getState("m.room.power_levels")?.content;
+    const levels = room.getState("m.room.power_levels")?.content;
     for (let [id, power] of modified) {
       const has = (key) => levels[key] ?? (levels[key] = {});
       switch(id) {
-        case "message":  levels.events_default = power; break;
+        case "message":  {
+          // make sure disabling messages doesn't disable anything else
+          if (!levels.events?.["m.room.reaction"]) {
+            has("events");
+            levels.events["m.room.reaction"] = levels.events_default;
+          }
+          levels.events_default = power;
+          break;
+        }
         case "reaction": has("events"); levels.events["m.room.reaction"] = power; break;
         case "invite":   levels.invite = power; break;
         case "kick":     levels.kick = power; break;
@@ -111,9 +121,9 @@ $: if (isModified) {
         case "encrypt":  has("events"); levels.events["m.room.encryption"] = power; break;
       }
     }
-    await state.api.sendState($room.id, "m.room.power_levels", "", levels);
+    await state.api.sendState(room.id, "m.room.power_levels", "", levels);
     modified.clear();
-    isModified = false;
+    // modified = modified;
   };
 } else {
   save = null;
@@ -122,8 +132,7 @@ $: if (isModified) {
 <style>
 .item {
   display: flex;
-  margin: 8px 0;
-  padding: 8px 0;
+  padding: 16px 0;
   border-bottom: solid var(--color-gray) 1px;
 }
 
@@ -152,23 +161,24 @@ $: if (isModified) {
 }
 </style>
 {#if perms}
-{#each getItems() as item}
+{#each getItems(room) as item}
 {#if item.category}
   <h3 class="category">{item.category}</h3>
 {:else}
   <div class="item">
     <div>
-      <h5 class="title">{item.name}</h5>
-      <div class="description">{descriptions[item.id]}</div>
+      <h5 class="title">{info[item.id].name}</h5>
+      <div class="description">{info[item.id].description}</div>
     </div>
-    <div style="flex: 1">
+    <div style="flex: 1; display: flex; margin-left: 8px">
+      <div style="flex: 1;"></div>
+      <Power
+        value={item.power}
+        max={perms.me}
+        disabled={perms.me < perms.getState("m.room.power_levels") || perms.me < item.power}
+        changed={power => handleChange(item, power)}
+      />
     </div>
-    <Power
-      value={item.power}
-      max={perms.me}
-      disabled={perms.me < perms.getState("m.room.power_levels") || perms.me < item.power}
-      changed={power => handleChange(item, power)}
-    />
   </div>
 {/if}
 {/each}
@@ -176,6 +186,3 @@ $: if (isModified) {
 <p>permissions failed to load!</p>
 {/if}
 <div style="padding: 1em"></div>
-{#if isModified}
-<Confirm />
-{/if}

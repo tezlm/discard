@@ -103,7 +103,7 @@ $: if (room.id !== oldId) {
         <div class="wrapper" on:click={() => state.popup.set({ id: "user", userId: member.id })} on:contextmenu|preventDefault|stopPropagation={(e) => state.context.set({ items: memberContext(member), x: e.clientX, y: e.clientY })}>
           <div class="member">
             <Avatar user={member} size={32} />
-            <div class="name">{member.name || member.userId}</div>
+            <div class="name">{member.name || member.id}</div>
           </div>
         </div>
       {/if}

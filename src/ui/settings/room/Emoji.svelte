@@ -5,7 +5,7 @@ export let room;
 <p>pretty much exactly the same ui as discord</p>
 <br />
 <div>
-{#each $room.getAllState("im.ponies.room_emotes") as ev}
+{#each room.getAllState("im.ponies.room_emotes") as ev}
   {#if ev.content.pack}
     <br />
     <h3>{ev.content.pack.display_name ?? ev.stateKey}</h3>

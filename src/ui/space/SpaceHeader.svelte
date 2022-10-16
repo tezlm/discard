@@ -15,6 +15,16 @@ function zoomIn() {
 function showPopup(id, opts) {
   state.popup.set({ id, type: "space", ...opts }); 
 }
+
+function getHomeContextMenu() {
+  return [
+    { label: "Create Room",  icon: "tag",    clicked: () => state.popup.set({ id: "create", type: "room" }) },
+    { label: "Create Space", icon: "folder", clicked: () => state.popup.set({ id: "create", type: "space" }) },
+	  { label: "Join",         icon: "add",    clicked: () => state.popup.set({ id: "join" }) },
+    null,
+	  { label: "Settings", clicked: () => state.scene.set("user-settings"), icon: "settings" },
+  ];
+}
 </script>
 <style>
 .header {
@@ -85,9 +95,10 @@ function showPopup(id, opts) {
   color: #ff73fa;
 }
 </style>
-<div class="header" on:click={() => showMenu = $focusedSpace && !showMenu}  on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: roomContext($focusedSpace), x: e.clientX, y: e.clientY })}>
+<div class="header" on:click={() => showMenu = !showMenu}  on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: $focusedSpace ? roomContext($focusedSpace) : getHomeContextMenu(), x: e.clientX, y: e.clientY })}>
   <span>{$focusedSpace ? $focusedSpace?.name ?? "unknown" : "Home"}</span>
-  {#if $focusedSpace && showMenu}
+  {#if showMenu}
+  {#if $focusedSpace}
   <div class="menu" transition:zoomIn>
       {#if $focusedSpace.power.me >= ($focusedSpace.power.invite ?? 0) || $focusedSpace.joinRule === "public"}
       <div class="item" on:click={() => showPopup("invite", { room: $focusedSpace })}><span class="color-accent">Invite People</span></div>
@@ -104,5 +115,14 @@ function showPopup(id, opts) {
       {/if}
       <div class="item" on:click={() => showPopup("leave", { room: $focusedSpace })}><span class="color-red">Leave Space</span></div>
   </div>
+  {:else}
+  <div class="menu" transition:zoomIn>
+      <div class="item" on:click={() => showPopup("create", { type: "room" })}>Create Room</div>
+      <div class="item" on:click={() => showPopup("create", { type: "space" })}>Create Space</div>
+      <div class="item" on:click={() => showPopup("join")}>Join</div>
+      <div class="spacer"></div>
+      <div class="item" on:click={() => state.scene.set("user-settings") }>Settings</div>
+  </div>
+  {/if}
   {/if}
 </div>

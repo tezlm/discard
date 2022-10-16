@@ -216,6 +216,10 @@ export default class Api {
   }
   
   fetchUrlPreview(url, ts) {
-  	return this.fetch("GET", `preview_url?url=${encode(url)}&ts=${encode(ts)}`);
+  	return this.fetch("GET", `/preview_url?url=${encode(url)}&ts=${encode(ts)}`);
   }
+  
+  roomDirVisibility(roomId) {
+  	return this.fetch("GET", `/directory/list/room/${encode(roomId)}`);
+  }  
 }

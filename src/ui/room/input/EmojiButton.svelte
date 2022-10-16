@@ -4,7 +4,11 @@ export let picked;
 export let show = false;
 let wrapperEl;
 
-const emojis = ["😀", ""];
+const emojis = ["😀", "🤨", "🥰", "🥳", "🥹", "😫", "🤬", "🤓", "🤮", ];
+// const emojis = ["😀", "🤨", "🥰"];
+// const emojis = ["😀"];
+let emoji = emojis[0];
+const changeEmoji = () => emoji = emojis[Math.floor(Math.random() * emojis.length)];
 
 function handleClick(e) {
   e.stopPropagation();
@@ -46,19 +50,22 @@ $: if (show) {
   
   height: 22px;
   width: 22px;
-  filter: grayscale(1);
-  transition: all .2s ease-out;
 }
 
-:is(.button:hover, .button.shown) :global(img.emoji) {
+.button .icon {
+  filter: grayscale(1);
+  transition: all .2s ease-out;  
+}
+
+:is(.button:hover, .button.shown) :global(.icon) {
   filter: grayscale(0);
   transform: scale(1.2);
 }
 </style>
-<div class="wrapper">
+<div class="wrapper" on:mouseenter={changeEmoji} on:focus={changeEmoji}>
   <div class="button" bind:this={wrapperEl} on:click={handleClick} class:shown={show}>
     <div class="icon">
-      {@html twemoji.parse("😀", {
+      {@html twemoji.parse(emoji, {
         folder: "svg",
         ext: ".svg",
       })}

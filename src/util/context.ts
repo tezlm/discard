@@ -26,7 +26,7 @@ export function eventContext(event: Event, config: { showEmoji: () => {} }) {
   }
   menu.push({ label: "Mark Unread", icon: "mark_chat_unread", clicked: markUnread });
   menu.push({ label: "Copy Link",   icon: "link", clicked: () => navigator.clipboard.writeText(`https://matrix.to/#/${event.room.id}/${event.id}`) });
-  if ((power.me >= power.getEvent("m.room.redaction") && event.sender.id === state.id) || power.me >= (power.redact ?? 50)) {
+  if (!event.isState() && ((power.me >= power.getEvent("m.room.redaction") && event.sender.id === state.id) || power.me >= (power.redact ?? 50))) {
     menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.flags.add("redacted"); state.api.redactEvent(event.room.id, event.id) } });
   }
   menu.push(null);
@@ -70,11 +70,17 @@ export function roomContext(room: Room) {
 	    { label: "Suppress @room", clicked: todo },
 	  ] },
 	  null,
-	  { label: "Settings", clicked: openSettings(room), icon: "settings" /* submenu: [
-	    { label: "Foo", clicked: todo },
-	    { label: "Bar", clicked: todo },
-	    { label: "Baz", clicked: todo },
-	  ]*/ },
+	  { label: "Settings", clicked: openSettings(room), icon: "settings", /* submenu: [
+	    { label: "Overview",     icon: "info", clicked: todo },
+	    { label: "Permissions",  icon: "flag", clicked: todo },
+	    { label: "Security",     icon: "security", clicked: todo },
+	    { label: "Integrations", icon: "link", clicked: todo },
+	    { label: "Emoji",        icon: "emoji_emotions", clicked: todo },
+      null,
+	    { label: "Members",      icon: "people", clicked: todo },
+	    { label: "Bans",         icon: "person_remove", clicked: todo },
+	    { label: "Invites",      icon: "person_add_alt_1", clicked: todo },
+	  ] */ },
 	  null,
 	  { label: "Invite",    clicked: () => state.popup.set({ id: "invite", type: "room", room }), icon: "person_add", color: "var(--color-accent)" },
 	  { label: "Copy Link", clicked: copy(`https://matrix.to/#/${encodeURIComponent(room.getState("m.room.canonical_alias")?.content.alias ?? room.id)}`), icon: "link" },

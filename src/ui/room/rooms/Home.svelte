@@ -19,7 +19,6 @@ function join(invite) {
     actions.rooms.focus(state.rooms.get(invite.id));
     clearInterval(interval);
   }, 10);
-  
 }
 </script>
 <style>

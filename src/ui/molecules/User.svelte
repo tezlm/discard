@@ -1,10 +1,7 @@
 <script>
 import Avatar from "../atoms/Avatar.svelte";
-import Power from "../atoms/Power.svelte";
 import { memberContext } from "../../util/context";
 export let member;
-
-let { input } = state.roomState;
 
 function openMenu(e) {
   e.stopPropagation();

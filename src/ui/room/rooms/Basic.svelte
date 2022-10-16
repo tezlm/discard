@@ -5,6 +5,7 @@ import Divider from '../timeline/Divider.svelte';
 import Upload from '../timeline/Upload.svelte';
 import Placeholder from '../timeline/Placeholder.svelte';
 import Event from "../timeline/Event.svelte";
+import { getLastMessage } from "../../../util/timeline";
 export let room;
 export let slice;
 let { focused, reply, edit, upload } = state.roomState;
@@ -115,22 +116,27 @@ onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => reset && reset(
 onDestroy(upload.subscribe(refocus));
 onDestroy(reply.subscribe(refocus));
 onDestroy(edit.subscribe(refocus));
-onDestroy(focused.subscribe(() => {
-	if (!$focused) return;
+$: if($focused) {
 	const id = $focused;
 	const element = document.querySelector(`[data-event-id="${id}"]`);
 	if (element) {
 		queueMicrotask(() => element.scrollIntoView({ behavior: "smooth", block: "center" }));
 		setTimeout(() => id === $focused && focused.set(null), 2000);
 	}
-}));
-onDestroy(edit.subscribe(() => {
-	if (!$edit) return;
+}
+
+$: if($edit) {
 	const element = document.querySelector(`[data-event-id="${$edit}"]`);
 	if (element) {
 		setTimeout(() => element.scrollIntoView({ behavior: "smooth", block: "center" }));
 	}
-}));
+}
+
+
+function isRead(room) {
+	const tl = state.roomTimelines.get(room.id);
+	return getLastMessage(tl, room.readEvent)	=== getLastMessage(tl);
+}
 </script>
 <style>
 .content {
@@ -208,19 +214,41 @@ onDestroy(edit.subscribe(() => {
 @keyframes unfocus {
 	100% { background: none }
 }
+
+.unread {
+	display: flex;
+	position: absolute;
+	left: 16px;
+	top: -1px;
+	width: calc(100% - 32px);
+	padding: 4px 12px;
+	border-radius: 0 0 8px 8px;
+	background: var(--color-accent);
+	font-size: 14px;
+	font-weight: 500;
+	box-shadow: var(--shadow-high);
+	cursor: pointer;
+	z-index: 1;
+	user-select: none;
+}
+
+.unread:active {
+	top: 0;
+}
 </style>
 <div class="content" style:display={room ? null : "none"}>
-	<div style="position: absolute; top: 0; left: 0; width: 100%; z-index: 1">
-		<div style="background: var(--bg-misc); padding: 8px; display:flex; align-items: center">
-			This room is archived
-			<div style="padding: 4px 8px ; border-radius: 4px;background:var(--bg-content); margin-left: auto;">
-				unarchive
-			</div>
+	<!--
+	{#if !isRead(room)}
+	<div class="unread" on:click={() => actions.slice.jump(room.id, room.readEvent)}>
+		<div style="flex: 1;">
+		{5} new messages
 		</div>
-		<div style="background: var(--color-accent); margin: 0 16px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; padding: 4px 12px; font-size: 14px; font-weight: 500; cursor: pointer;">
-			5 new messages
+		<div style="display: flex; font-weight: 700">
+			Mark As Read <div class="icon" style="margin-left: 4px">mark_chat_read</div>
 		</div>
 	</div>
+	{/if}
+	-->
 	<Scroller
 		items={slice.events}
 		itemKey="id"

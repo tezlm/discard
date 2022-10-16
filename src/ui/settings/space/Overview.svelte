@@ -8,28 +8,28 @@ export let save = null;
 let name, topic, avatar;
 
 export function reset() {
-  name = $room?.name ?? "";
-  topic = $room?.topic ?? "";  
+  name = room?.name ?? "";
+  topic = room?.topic ?? "";  
   avatar = null;
 }
 
 reset();
 
 $: {
-  let nameChanged = name !== ($room?.name ?? "");
-  let topicChanged = topic !== ($room?.topic ?? "");
+  let nameChanged = name !== (room?.name ?? "");
+  let topicChanged = topic !== (room?.topic ?? "");
   if (nameChanged || topicChanged || avatar) {
     save = async () => {
       const proms = [];
-      if (nameChanged) proms.push(state.api.sendState($room.id, "m.room.name", "", { name }));
-      if (topicChanged) proms.push(state.api.sendState($room.id, "m.room.topic", "", { topic }));
+      if (nameChanged) proms.push(state.api.sendState(room.id, "m.room.name", "", { name }));
+      if (topicChanged) proms.push(state.api.sendState(room.id, "m.room.topic", "", { topic }));
       if (avatar) {
         if (avatar.file) {
           const prom = state.api.uploadFile(avatar.file).promise
-            .then(url => state.api.sendState($room.id, "m.room.avatar", "", { url }));
+            .then(url => state.api.sendState(room.id, "m.room.avatar", "", { url }));
           proms.push(prom);
         } else {
-          proms.push(state.api.sendState($room.id, "m.room.avatar", "", { url:  null }));
+          proms.push(state.api.sendState(room.id, "m.room.avatar", "", { url:  null }));
         }
         avatar = null;
       }
@@ -146,7 +146,7 @@ h1 {
       <div class="uploader">
         <!-- TODO: generate default avatars (use Avatar?) -->
         <div class="avat" on:click={todo}>
-          <img src={parseMxc($room.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"} />
+          <img src={parseMxc(room.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"} />
           <!-- <div>Upload Image</div> -->
           <div class="icon">edit</div>
         </div>
@@ -162,7 +162,7 @@ h1 {
       <Input
         bind:value={name}
         placeholder="amazing-room"
-        readonly={$room.power.me < $room.power.getState("m.room.name")}
+        readonly={room.power.me < room.power.getState("m.room.name")}
       />
     </div>
   </div>
@@ -171,12 +171,12 @@ h1 {
     <Textarea
       bind:value={topic}
       placeholder="what an amazing room"
-      readonly={$room.power.me < $room.power.getState("m.room.topic")}
+      readonly={room.power.me < room.power.getState("m.room.topic")}
     />
   </div>
   <div class="section">
     <div class="title">Developers</div>
-    <p><b>Room Id:</b> <code style="user-select: all">{$room.roomId}</code></p>
-    <p><b>Room Version:</b> <code style="user-select: all">{$room.getState("m.room.create")?.content.room_version ?? "no m.room.create!"}</code></p>
+    <p><b>Room Id:</b> <code style="user-select: all">{room.id}</code></p>
+    <p><b>Room Version:</b> <code style="user-select: all">{room.getState("m.room.create")?.content.room_version ?? "no m.room.create!"}</code></p>
   </div>
 </div>
