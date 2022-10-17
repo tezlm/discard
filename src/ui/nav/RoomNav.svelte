@@ -12,7 +12,7 @@ $: flattenedRooms = state.spaces.get($focusedSpace?.id ?? "orphanRooms").flatMap
 let focusTimeout;
 
 function isMuted(room) {
-	const rule = $pushRules.rules.find(i => i.id === room.roomId);
+	const rule = $pushRules.rules.find(i => i.id === room.id);
 	if (!rule) return false;
 	return rule.actions.includes("dont_notify");
 }
@@ -46,7 +46,7 @@ function isMuted(room) {
 <svelte:window on:keydown={(e) => {
 	// TODO: move into proper keybind handler
 	if (!(e.altKey && !e.ctrlKey && !e.shiftKey) || (e.key !== "ArrowUp" && e.key !== "ArrowDown")) return;
-	const idx = flattenedRooms.findIndex(i => i.roomId === state.focusedRoomId);
+	const idx = flattenedRooms.findIndex(i => i.id === state.focusedRoomId);
 	const newRoom = flattenedRooms[(idx + (e.key === "ArrowUp" ? -1 : 1) + flattenedRooms.length + 1) % (flattenedRooms.length + 1)];
 	actions.rooms.focus(newRoom);
 }} />

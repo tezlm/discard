@@ -1,11 +1,11 @@
 <script>
 import Emoji from "./molecules/Emoji.svelte";
 import PinnedMessages from "./molecules/PinnedMessages.svelte";
-let popout = state.popout;
+let { popout, settings } = state;
 let windowHeight, windowWidth;
 let emojiEl, pinnedEl;
 let loadedEmoji = false;
-// TODO: autofocus emoji picker input
+// TODO: autofocus emoji picker input + clear on open
 
 function getPosition(popout, element) {
   const rect = element?.getBoundingClientRect() ?? { width: 0, height: 0 };
@@ -45,6 +45,10 @@ $: if ($popout.id === "emoji") loadedEmoji = true;
   animation: fly-bottom 150ms ease-out;
 }
 
+.reducemotion {
+  animation: none;
+}
+
 @keyframes fly-right {
   from { opacity: 0.5; transform: translateX(15px) }
   to   { opacity: 1;   transform: translateX(0) }
@@ -68,6 +72,7 @@ $: if ($popout.id === "emoji") loadedEmoji = true;
 {#if loadedEmoji}
 <div
   class="popout"
+  class:reducemotion={$settings.get("reducemotion")}
   class:animate-right={$popout.animate === "right"}
   class:animate-left={$popout.animate === "left"}
   class:animate-top={$popout.animate === "top"}
@@ -82,6 +87,7 @@ $: if ($popout.id === "emoji") loadedEmoji = true;
 {#if $popout.id === "pinned"}
 <div
   class="popout"
+  class:reducemotion={$settings.get("reducemotion")}
   class:animate-right={$popout.animate === "right"}
   class:animate-left={$popout.animate === "left"}
   class:animate-top={$popout.animate === "top"}

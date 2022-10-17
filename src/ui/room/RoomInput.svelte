@@ -44,8 +44,8 @@ function handleKeyDown(e) {
     if (textarea.selectionEnd !== 0) return;
     for (let i = $slice.events.length - 1; i >= 0; i--) {
       const event = $slice.events[i];
-      if (event.sender.userId === state.userId) {
-        $edit = event.eventId;
+      if (event.sender.id === state.userId) {
+        $edit = event.id;
         return;
       }
     }

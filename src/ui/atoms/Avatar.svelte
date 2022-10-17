@@ -4,6 +4,7 @@ import { parseMxc, generateAvatar } from "../../util/content.ts";
 export let user;
 export let size;
 export let link = false;
+export let square = false;
 let missing = state.missingAvatars;
 
 // TODO: handle per room avatars
@@ -16,7 +17,7 @@ function getAvatar(user, crop = true) {
 }
 
 function handleError(e) {
-  missing.add(user.userId ?? user.roomId ?? user.id);
+  missing.add(user.id);
   e.target.src = getAvatar();
 }
 </script>
@@ -37,7 +38,7 @@ function handleError(e) {
     class="avatar"
     alt={"avatar for " + user.name ?? user.id}
     loading="lazy"
-    style:border-radius={size / 2 + "px"}
+    style:border-radius={!square && size / 2 + "px"}
     style:height={size + "px"}
     style:width={size + "px"}
     src={getAvatar(user)}

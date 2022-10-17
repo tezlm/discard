@@ -107,7 +107,7 @@ function getHomeContextMenu() {
       <div class="item" on:click={() => { state.selectedRoom.set($focusedSpace); state.scene.set("space-settings") }}>Space Settings</div>
       <div class="item" on:click={todo}>Notification Settings</div>
       <div class="spacer"></div>
-      {#if $focusedSpace.power.me >= $focusedSpace.power.getState("m.space.child")}
+      {#if $focusedSpace.power.me >= $focusedSpace.power.forState("m.space.child")}
       <div class="item" on:click={() => showPopup("create", { type: "room", parent: $focusedSpace })}>Create Room</div>
       <div class="item" on:click={() => showPopup("create", { type: "space", parent: $focusedSpace })}>Create Subspace</div>
       <div class="item" on:click={() => showPopup("addexisting", { parent: $focusedSpace })}>Add Existing Room</div>

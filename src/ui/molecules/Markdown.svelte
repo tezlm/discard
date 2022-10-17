@@ -2,6 +2,7 @@
 import lexical from "lexical";
 import { registerPlainText } from "@lexical/plain-text";
 import { createEmptyHistoryState, registerHistory } from "@lexical/history";
+// import { $generateHtmlFromNodes as renderHTML } from '@lexical/html';
 import { onMount } from "svelte";
 import md from "simple-markdown";
 import Autocomplete from "./Autocomplete.svelte";
@@ -86,10 +87,9 @@ class MentionNode extends lexical.TextNode {
   
   createDOM(config) {
     const el = super.createDOM(config);
-    el.classList.add("mention");
-    // el.innerText = "@" + this.user.name;
+    el.dataset.mxPing = this.user.id;
     return el;
-  }
+  }  
 }
 
 const editor = createEditor({ namespace: "editor", nodes: [MentionNode] });
@@ -98,30 +98,10 @@ onMount(() => {
   editor.setRootElement(editorEl);
   registerPlainText(editor);
   registerHistory(editor, createEmptyHistoryState(), 1000);
-  globalThis.editor=editor;
   
   editor.registerNodeTransform(lexical.TextNode, (node) => {
-    const txt = node.getTextContent();
-    // if (txt === "i will mention user ") {
-    if (txt === "user") {
-      const user = new MentionNode({ name: "user" });
-      user.setMode("token");
-      node.replace(user);
-      user.select();
-    } else if (txt === "room") {
-      // node.replace(new RoomNode({ name: "room" }));
-    }
+    // console.log(renderHTML(node));
   });
-  
-  // editor.registerCommand(
-  //   // lexical.INSERT_PARAGRAPH_COMMAND,
-  //   lexical.INSERT_LINE_BREAK_COMMAND,
-  //   () => {
-  //     console.log("reset editor")
-  //     return true;
-  //   },
-  //   lexical.COMMAND_PRIORITY_EDITOR,
-  // );
 });
 
 const users = [];
@@ -138,7 +118,6 @@ addUser("bar");
 addUser("baz");
 addUser("user");
 
-
 function mention(id) {
   editor.update(() => {
     const sel = lexical.$getSelection();
@@ -151,11 +130,10 @@ function mention(id) {
     const tex = anchorNode.getTextContent();
     const index = tex.indexOf("@");
     const [left, right] = anchorNode.splitText(index);
-    console.log(index, left, right)
     
     const user = new MentionNode(users.find(i => i.id === id));
     user.setMode("token");
-    right.replace(user);
+    (right ?? left).replace(user);
     user.select();
     // lexical.$insertNodes([user]);
   });
@@ -176,7 +154,7 @@ function mention(id) {
   color: var(--color-link);
 }
 
-.editor :global(.mention) {
+.editor :global([data-mx-ping]) {
   display: inline-block;
   color: var(--fg-notice);
   font-weight: 500;

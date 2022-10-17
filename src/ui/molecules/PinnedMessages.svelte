@@ -1,5 +1,6 @@
 <script>
-import Event from "../room/timeline/Event.svelte";
+// import Event from "../room/timeline/Event.svelte";
+import Message from "../room/message/Message.svelte";
 export let room;
 let pinned = room.getState("m.room.pinned_events")?.content.pinned ?? [];
 </script>
@@ -43,15 +44,15 @@ let pinned = room.getState("m.room.pinned_events")?.content.pinned ?? [];
   height: 200px;
 }
 </style>
-<div class="pins scroll" on:click|stopPropagation={() => state.context.set({})}>
+<div class="pins scroll">
   <div class="header">Pinned Messages</div>
   <div class="content">
   {#each pinned as eventId (eventId)}
-    <div class="item">
+    <div class="item" on:click={() => actions.slice.jump(room.id, eventId)}>
     {#await room.events.fetch(eventId)}
     loading {eventId}
     {:then event}
-    <Event {room} {event} />
+    <Message header {room} {event} />
     {:catch error}
     error loading event. {error.error}
     {/await}

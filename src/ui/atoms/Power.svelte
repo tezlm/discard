@@ -1,25 +1,26 @@
-<script>
+<script lang="ts">
+// export let default = null;
 export let showDefault = false;
 export let disabled = false;
 export let value = 0;
 export let max = 100;
-export let changed = () => {};
+export let changed = (_: number) => {};
 let original = value;
 let focus = false;
-let input;
+let inputEl: HTMLInputElement;
 
 $: changed(value);
 
-function handleKeyDown(e) {
+function handleKeyDown(e: KeyboardEvent) {
   if (e.key === "Escape") {
     value = original;
     focus = false;
     e.stopImmediatePropagation();
-    input.blur();
+    inputEl.blur();
   } else if (e.key === "Enter") {
     focus = false;
     e.stopImmediatePropagation();
-    input.blur();
+    inputEl.blur();
   }
 }
 </script>
@@ -109,7 +110,7 @@ input::-webkit-inner-spin-button {
       type="number"
       placeholder={disabled ? "" : "edit"}
       bind:value={value}
-      bind:this={input}
+      bind:this={inputEl}
       on:focus={() => focus = !disabled}
       on:blur={() => focus = false}
       on:keydown={handleKeyDown}

@@ -1,6 +1,7 @@
 <script>
 import Search from "../atoms/Search.svelte";
 import { parseHtml } from "../../util/html.js";
+import { roomContext } from "../../util/context";
 export let room;
 let space = state.focusedSpace;
 let settings = state.settings;
@@ -162,7 +163,7 @@ $: if (showPins) {
 	border-radius: 50%;
 }
 </style>
-<div class="header" class:dark={dark}>
+<div class="header" class:dark={dark} on:contextmenu|preventDefault|stopPropagation={(e) => room && state.context.set({ items: roomContext(room), x: e.clientX, y: e.clientY })}>
   {#if room}
     {#if dms.has(room.id)}
     <span class="roomicon" style="font-family: var(--font-display)">@</span>
@@ -201,9 +202,7 @@ $: if (showPins) {
   {/if}
   -->
   {#if room}
-  <!--
   <div class="icon" class:active={showPins} bind:this={pinButtonEl} on:click|stopPropagation={() => showPins = !showPins}>push_pin</div>
-  -->
   <div
     class="icon"
     style:color={$settings.get("showmemberlist") ? "var(--fg-notice)" : null}

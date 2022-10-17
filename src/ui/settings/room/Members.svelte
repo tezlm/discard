@@ -1,6 +1,7 @@
 <script>
 import Search from "../../atoms/Search.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
+import Power from "../../atoms/Power.svelte";
 import { memberContext } from "../../../util/context";
 
 export let room, membership;
@@ -61,7 +62,7 @@ h1 {
   margin-left: 16px;
 }
 
-.power, .menu {
+.menu {
   display: flex;
   align-items: center;
 }
@@ -107,7 +108,7 @@ h1 {
       {/await}
       <div style="margin-left: auto;"></div>
       {#if membership === "join"}
-      <div class="power">{member.power}</div>
+      <Power showDefault value={member.power} disabled={(member.power >= room.power.me || room.power.me < room.power.forState("m.room.power_levels")) && member.id !== state.client.userId} max={room.power.me} />
       {/if}
       <div class="icon menu" on:click|stopPropagation={e => state.context.set({ items: memberContext(member), x: e.clientX, y: e.clientY })}>more_vert</div>
     </div>

@@ -9,8 +9,8 @@ function getColor(sender, settings) {
   const level = settings.get("namecolors");
   if (!sender) return;
   if (level === "never") return `var(--fg-content)`;
-  if (level === "power" && sender.power <= (room.power.users_default ?? 0)) return `var(--fg-content)`;
-  return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
+  if (level === "power" && sender.power <= room.power.usersDefault) return `var(--fg-content)`;
+  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
 }
 </script>
 <style>

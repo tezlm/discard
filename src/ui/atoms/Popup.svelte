@@ -4,6 +4,7 @@ import { quadOut } from 'svelte/easing';
 export let raw = false;
 export let showClose = false;
 let current = state.popup;
+let settings = state.settings;
 
 function closePopup() {
   state.popup.set({ ...$current, id: null });
@@ -13,7 +14,7 @@ function card() {
   return {
     duration: 200,
     easing: quadOut,
-    css: t => `opacity: ${t}; transform: scale(${Math.min(t * 1.1, 1.01)})`,
+    css: t => $settings.get("reducemotion") ? `opacity: ${t}` : `opacity: ${t}; transform: scale(${Math.min(t * 1.1, 1.01)})`,
   }
 }
 

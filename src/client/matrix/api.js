@@ -221,5 +221,13 @@ export default class Api {
   
   roomDirVisibility(roomId) {
   	return this.fetch("GET", `/directory/list/room/${encode(roomId)}`);
-  }  
+  }
+  
+  putRule(kind, ruleId, rule) {
+  	return this.fetch("PUT", `/pushrules/global/${encode(kind)}/${encode(ruleId)}`, rule);
+  }
+  
+  deleteRule(kind, roomId) {
+  	return this.fetch("DELETE", `/pushrules/global/${encode(kind)}/${encode(roomId)}`);
+  }
 }

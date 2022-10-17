@@ -5,7 +5,7 @@ import Room from "./Room.svelte";
 import { roomContext } from "../../../util/context";
 export let room;
 let expanded = true;
-$: rooms = state.spaces.get(room.roomId);
+$: rooms = state.spaces.get(room.id);
 
 // TODO: persist `expanded`
 // TODO: subspace-specific menu?
@@ -50,7 +50,7 @@ $: rooms = state.spaces.get(room.roomId);
 <div class="category" on:click={() => expanded = !expanded} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: roomContext(room), x: e.clientX, y: e.clientY })}>
   <div class="icon chevron" class:expanded>chevron_right</div>
   <div class="title">{room.name}</div>
-  {#if room.power.me >= room.power.getState("m.space.child")}
+  {#if room.power.me >= room.power.forState("m.space.child")}
   <div style="flex: 1"></div>
   <Tooltip tip="Create Room">
     <div class="icon add" on:click|stopPropagation={() => state.popup.set({ id: "create", type: "room", parent: room })}>add</div>

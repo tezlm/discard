@@ -7,24 +7,24 @@ export let room;
 export let muted = false;
 let focusedRoom = state.focusedRoom;
 let dms = state.dms;
-$: focused= $focusedRoom?.roomId === room.roomId;
+$: focused= $focusedRoom?.id === room.id;
 
 // move dm status into the room object?
 function getName(room) {
-	if (!dms.has(room.roomId)) return room.name;
-	const other = dms.get(room.roomId);
-	return other.name ?? other.userId;
+	if (!dms.has(room.id)) return room.name;
+	const other = dms.get(room.id);
+	return other.name ?? other.id;
 }
 
 function getAvatar(room) {
-	if (!dms.has(room.roomId)) return room.avatar;
+	if (!dms.has(room.id)) return room.avatar;
 	return dms.get(room.id).avatar;
 }
 
 function isRead(room) {
 	if (muted) return true;
 
-	const timeline = state.roomTimelines.get(room.roomId).live;
+	const timeline = state.roomTimelines.get(room.id).live;
 	if (!timeline.length) return true;
 	const lastMessage = timeline.at(-1);
 	const readMessage = getLastMessage(timeline, room.readEvent);
@@ -36,7 +36,7 @@ function isRead(room) {
 		if (index === -1) return null;
 		for (let i = index; i >= 0; i--) {
 			const event = state.events.get(timeline[i]);
-			if (event.special !== "redacted") return event.eventId;
+			if (event.special !== "redacted") return event.id;
 		}
 		return null;
 	}
@@ -54,9 +54,9 @@ function getIcon(room) {
 	if (type === "org.eu.celery.room.media") return "image";
 	if (type === "org.eu.celery.room.forum") return "message";
 	if (type === "io.element.video") return "volume_up";
-	if (dms.has(room.roomId)) return "person";
+	if (dms.has(room.id)) return "person";
 	if (!type) {
-		// if ((room.power.users_default ?? 0)< room.power.getEvent("m.room.message")) {
+		// if (room.power.usersDefault < room.power.forEvent("m.room.message")) {
 		// 	return "campaign";
 		// }
 		return "tag";

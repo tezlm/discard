@@ -32,18 +32,18 @@ function getToolbar(event, shiftKey) {
   } else if (event.flags?.has("sending")) {
     toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
   } else if (shiftKey) {
-    if (!event.isState() && ((fromMe && room.power.me >= room.power.getEvent("m.room.redact")) || (room.power.me >= room.power.redact ?? 50))) {
+    if (!event.isState() && ((fromMe && room.power.me >= room.power.forEvent("m.room.redact")) || (room.power.me >= room.power.redact))) {
       toolbar.push({ name: "Delete", icon: "delete", color: "var(--color-red)", clicked: () => { event.flags.add("redacted"); state.api.redactEvent(event.room.id, event.id) }});
     }
-    if (event.type === "m.room.message" && room.power.me >= room.power.getEvent("m.room.message")) {
+    if (event.type === "m.room.message" && room.power.me >= room.power.forEvent("m.room.message")) {
       toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });
     }
 		toolbar.push({ name: "Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
 	} else {
-		if (room.power.me >= room.power.getEvent("m.reaction")) {
+		if (room.power.me >= room.power.forEvent("m.reaction")) {
 			toolbar.push({ name: "React", icon: "add_reaction", clicked: () => showReactionPicker = !showReactionPicker });
 		}
-    if (!event.isState() && room.power.me >= room.power.getEvent("m.room.message")) {
+    if (!event.isState() && room.power.me >= room.power.forEvent("m.room.message")) {
       if (fromMe) {
         toolbar.push({ name: "Edit", icon: "edit", clicked: () => state.roomState.edit.set(event.id) });
       } else {
@@ -59,6 +59,7 @@ function getToolbar(event, shiftKey) {
     const rect = toolbarEl.getBoundingClientRect();
     if ($context.items) return $context = {};
     $context = { items: eventContext(event, { showEmoji: () => showReactionPicker = true }), x: rect.left, y: rect.top + 40 };
+    // $context = { items: eventContext(event, { showEmoji: () => showReactionPicker = true }), x: rect.left - 120, y: rect.top };
   }
 }
 

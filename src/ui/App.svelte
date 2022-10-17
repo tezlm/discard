@@ -10,7 +10,7 @@ import Popouts from "./Popouts.svelte";
 import ContextMenus from "./ContextMenus.svelte";
 import { quadInOut, quartInOut } from "svelte/easing";
 let scene = state.scene;
-let { context, popup } = state;
+let { context, popup, settings } = state;
 
 function opacity() {
   return {
@@ -24,7 +24,7 @@ function ease() {
   return {
     duration: 300,
     easing: quartInOut,
-    css: t => `opacity: ${Math.min(t * 2, 1)}; transform: scale(${1.1 - t / 10})`,
+    css: t => $settings.get("reducemotion") ? `opacity: ${Math.min(t * 2, 1)}` : `opacity: ${Math.min(t * 2, 1)}; transform: scale(${1.1 - t / 10})`,
   }
 }
 
@@ -74,6 +74,10 @@ main > div {
   transform: scale(0.9);
 }
 
+.chat.reducemotion {
+  transform: none;
+}
+
 .settings { z-index: 1 }
 .loading { z-index: 2 }
 
@@ -96,7 +100,7 @@ main > div {
   <div class="chat" transition:easeRev><Chat /></div>
   -->
   {#if $scene.endsWith("-settings") || $scene === "chat"}
-  <div class="chat" class:hide={$scene !== "chat"}><Chat /></div>
+  <div class="chat" class:hide={$scene !== "chat"} class:reducemotion={$settings.get("reducemotion")}><Chat /></div>
   {/if}
   {#if $scene === "user-settings"}
   <div class="settings" transition:ease><UserSettings /></div>

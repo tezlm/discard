@@ -1,7 +1,7 @@
 <script>
 // considering there is only one place that uses/needs this (room content), this may just be a useless abstraction
 // this could be combined with room content to make a room timeline scroller instead
-// TODO: consider refactoring?
+// TODO: redo, instead of rendering a slice render a full array with methods to load more/less
 export let fetchBackwards = async () => {};
 export let fetchForwards = async () => {};
 export let getDefault = () => {};
@@ -35,7 +35,6 @@ function handleScroll() {
 }
 
 // FIXME: pagination sometimes jumps around when scrolling up
-// possibly due to messages "merging together"
 async function paginate() {
   if (paginating || !contentEl) return;
   paginating = true;
@@ -74,7 +73,7 @@ queueMicrotask(reset);
 }
 </style>
 <div
-  class="scroll" 
+  class="scroll"
   on:scroll={handleScroll}
   bind:this={scrollEl}
 >
@@ -83,13 +82,13 @@ queueMicrotask(reset);
   {:else}
   <slot name="placeholder-start" />
   {/if}
-  
+
   <div bind:this={contentEl}>
     {#each items as item, i (item[itemKey])}
     <slot data={item} index={i} />
     {/each}
   </div>
-  
+
   {#if atItemsBottom}
   <slot name="bottom" />
   {:else}

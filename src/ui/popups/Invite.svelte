@@ -7,7 +7,6 @@ import Button from "../atoms/Button.svelte";
 export let current;
 let usersPromise = Promise.resolve(null);
 let inviteStates = new Map();
-
 function getLink() {
   if (current.room.joinRule !== "public") return null;
   const alias = current.room.getState("m.room.canonical_alias")?.content.alias;
@@ -22,9 +21,19 @@ function getLink() {
   }
 }
 
+const { users } = state;
+async function fetchUser(userId) {
+  if (users.has(userId)) return users.get(userId);
+	const { avatar_url, displayname } = await state.api.fetchUser(userId).catch(() => ({}));
+	const data = { avatar: avatar_url, name: displayname, id: userId };
+	users.set(userId, data);
+	return data;
+}
+
 async function searchUsers(term) {
   const { results } = await state.api.searchUsers(term);
   const users = results.map(i => ({ avatar: i.avatar_url, name: i.display_name, id: i.user_id }));
+  if (/@.*:.+/.test(term)) await fetchUser(term).then(user => users.push(user)).catch(() => {});
   for (let user of users) {
     if (!state.users.has(user.id)) state.users.set(user.id, user);
     if (current.room.members.has(user.id)) inviteStates.set(user.id, getState(current.room.members.get(user.id)));

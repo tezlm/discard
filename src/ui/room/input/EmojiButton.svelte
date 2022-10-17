@@ -4,9 +4,7 @@ export let picked;
 export let show = false;
 let wrapperEl;
 
-const emojis = ["😀", "🤨", "🥰", "🥳", "🥹", "😫", "🤬", "🤓", "🤮", ];
-// const emojis = ["😀", "🤨", "🥰"];
-// const emojis = ["😀"];
+const emojis = ["😀", "🤨", "🥰", "🥳", "🥹", "😫", "🤬", "🤓", "🤮"];
 let emoji = emojis[0];
 const changeEmoji = () => emoji = emojis[Math.floor(Math.random() * emojis.length)];
 

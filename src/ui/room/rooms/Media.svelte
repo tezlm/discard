@@ -44,7 +44,7 @@ async function handleUpload(file) {
     ...(["m.image", "m.video"].includes(type) ? await getSize(file, type) : {}),
   };
 
-  actions.timeline.send(room.roomId, "m.room.message", {
+  actions.timeline.send(room.id, "m.room.message", {
     url,
     body: file.name,
     msgtype: type,
@@ -129,7 +129,7 @@ async function fetchForwards() {
 
 function getContextMenu(event) {
   const menu = [];
-  if (event.room.power.me >= event.room.power.getEvent("m.room.reaction")) {
+  if (event.room.power.me >= event.room.power.forEvent("m.room.reaction")) {
     menu.push({ label: "Add Reaction", clicked: todo, submenu: [
       { label: "thumbsup",   clicked: (e) => addReaction(e, "👍️"), icon: "👍️" },
       { label: "thumbsdown", clicked: (e) => addReaction(e, "👎️"), icon: "👎️" },
@@ -141,8 +141,8 @@ function getContextMenu(event) {
   if (event.reactions?.size) {
     menu.push({ label: "Reactions", icon: "emoji_emotions", clicked: () => state.popup.set({ id: "reactions", event }) });
   }
-  menu.push({ label: "Copy Link",   icon: "link", clicked: () => navigator.clipboard.writeText(`https://matrix.to/#/${room.roomId}/${event.eventId}`) });
-  if ((event.room.power.me >= event.room.power.getEvent("m.room.redaction") && event.sender.userId === state.userId) || (event.room.power.me >= event.room.power.redact ?? 50)) {
+  menu.push({ label: "Copy Link",   icon: "link", clicked: () => navigator.clipboard.writeText(`https://matrix.to/#/${room.id}/${event.id}`) });
+  if ((event.room.power.me >= event.room.power.forEvent("m.room.redaction") && event.sender.id === state.userId) || (event.room.power.me >= event.room.power.redact)) {
     menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) } });
   }
   menu.push(null);
@@ -152,15 +152,15 @@ function getContextMenu(event) {
   function addReaction(e, emoji) {
     e.stopPropagation();
     state.context.set({})
-    if (!event.reactions?.get(emoji)?.find(i => i.sender.userId === state.userId)) {
+    if (!event.reactions?.get(emoji)?.find(i => i.sender.id === state.userId)) {
       const reaction = {
         "m.relates_to": {
           key: emoji,
           rel_type: "m.annotation",
-          event_id: event.eventId,
+          event_id: event.id,
         },
       };
-      state.api.sendEvent(event.roomId, "m.reaction", reaction, Math.random());  
+      state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
     }
   }
 }

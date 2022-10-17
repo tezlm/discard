@@ -64,16 +64,16 @@ function counterOut() {
 function handleClick(mine, key) {
   // instantly respond with reaction/local echo?
   if (mine) {
-    state.api.redactEvent(mine.roomId, mine.eventId);
+    state.api.redactEvent(mine.room.id, mine.id);
   } else {
     const reaction = {
       "m.relates_to": {
         key,
         rel_type: "m.annotation",
-        event_id: event.eventId,
+        event_id: event.id,
       },
     };
-    state.api.sendEvent(event.roomId, "m.reaction", reaction, Math.random());  
+    state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
   }
 }
 
@@ -91,7 +91,7 @@ $: if (showPicker) {
             "m.relates_to": {
               key: emoji,
               rel_type: "m.annotation",
-              event_id: event.eventId,
+              event_id: event.id,
             },
           };
           state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
