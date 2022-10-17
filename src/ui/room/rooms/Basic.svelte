@@ -116,7 +116,7 @@ $: if($edit) {
 
 
 function isRead(room) {
-	const tl = state.roomTimelines.get(room.id);
+	const tl = room.events.live;
 	return getLastMessage(tl, room.readEvent)	=== getLastMessage(tl);
 }
 </script>

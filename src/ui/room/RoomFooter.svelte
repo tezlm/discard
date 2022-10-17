@@ -7,7 +7,7 @@ let { reply, edit, input, typing } = state.roomState;
 
 const getName = id => ($room.members.get(id)?.name ?? id.replace(/^@/, ""));
 
-async function sendMessage(content, roomId = $room.id) {
+async function sendMessage(content, theRoom = $room) {
   if ($reply) {
     content["m.relates_to"] = {};
     content["m.relates_to"]["m.in_reply_to"] = {};
@@ -15,8 +15,8 @@ async function sendMessage(content, roomId = $room.id) {
     reply.set(null);
   }
 
-  actions.timeline.send(roomId, "m.room.message", content);
-  state.log.debug("send event to " + roomId);
+  actions.timeline.send(theRoom, "m.room.message", content);
+  state.log.debug("send event to " + theRoom.id);
 
   // const { event_id } = await state.client.sendEvent($room.roomId, null, "m.room.message", content);
   // state.client.sendReadReceipt($room.timeline.find(i => i.getId() === event_id)); // FIXME: flash of unread on message send

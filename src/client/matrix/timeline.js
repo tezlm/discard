@@ -1,4 +1,4 @@
-import { handle } from "../actions/timeline.js";
+import { handle } from "../actions/timeline";
 import { Event, StateEvent } from "discount";
 
 class Timeline extends Array {

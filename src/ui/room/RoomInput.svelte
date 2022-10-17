@@ -30,7 +30,7 @@ function handleKeyDown(e) {
     } else if (reply) {
       reply = null;
     } else {
-      const lastEvent = state.roomTimelines.get($room.id).live.at(-1);
+      const lastEvent = $room.events.live.at(-1)?.id;
       state.log.debug(`mark ${lastEvent} as read`);
       state.rooms.get($room.id).accountData.set("m.fully_read", { event_id: lastEvent });
       state.slice.set(state.roomSlices.get($room.id));
