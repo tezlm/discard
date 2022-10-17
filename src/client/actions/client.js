@@ -79,7 +79,7 @@ function start(api, syncer, userId) {
   state.userId = userId;
   state.scene.set("loading");
   
-  syncer.on("join", (room, batch) => actions.rooms.handleJoin(room, batch));
+  syncer.on("join", (room) => actions.rooms.handleJoin(room));
   syncer.on("leave", (room) => actions.rooms.handleLeave(room.id));
 
   syncer.on("invite", () => state.invites.set(syncer.invites));

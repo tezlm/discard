@@ -83,7 +83,7 @@ function findParent(room) {
   font-size: 16px;
 }
 
-.room.highlighted {
+.rooms:not(:hover) .room.highlighted, .room:hover {
   background: var(--mod-lighten);
 }
 </style>
@@ -122,8 +122,6 @@ function findParent(room) {
             class="room"
             class:highlighted={highlighted === i}
             on:click={() => focusRoom(room)}
-            on:mouseover={() => highlighted = i}
-            on:focus={() => highlighted = i}
           >
             <!-- <span class="icon">{#if dms.has(room.id)}@{:else if state.spaces.has(room.id)}folder{:else}#{/if}</span> -->
             <span class="icon">{#if dms.has(room.id)}@{:else if state.spaces.has(room.id)}*{:else}#{/if}</span>

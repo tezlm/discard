@@ -57,7 +57,6 @@ const state = {
   roomSlices: new Map(),
   roomStates: new Map(),
   roomState: null,
-  events: store.events, // TODO: offline support?
   slice: writable(null),
   
   // cache

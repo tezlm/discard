@@ -17,7 +17,7 @@ function isMuted(room) {
 function isRead(room) {
   if (isMuted(room)) return true;
 
-	const tl = state.roomTimelines.get(room.id);
+	const tl = room.events.live;
   if (getLastMessage(tl, room.readEvent) === getLastMessage(tl)) {
     return room.type === "m.space" ? state.spaces.get(room.id).every(i => isRead(i)) : true;
   } else {

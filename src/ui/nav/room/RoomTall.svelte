@@ -3,6 +3,7 @@ import Item from "./Item.svelte";
 import Tooltip from "../../atoms/Tooltip.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
 import { roomContext } from "../../../util/context";
+import { getLastMessage } from "../../../util/timeline";
 export let room;
 export let muted = false;
 let focusedRoom = state.focusedRoom;
@@ -24,22 +25,8 @@ function getAvatar(room) {
 function isRead(room) {
 	if (muted) return true;
 
-	const timeline = state.roomTimelines.get(room.id).live;
-	if (!timeline.length) return true;
-	const lastMessage = timeline.at(-1);
-	const readMessage = getLastMessage(timeline, room.readEvent);
-	if (!readMessage) return false;
-	return getLastMessage(timeline, room.readEvent) === lastMessage;
-
-	function getLastMessage(timeline, fromEvent) {
-		const index = timeline.lastIndexOf(fromEvent);
-		if (index === -1) return null;
-		for (let i = index; i >= 0; i--) {
-			const event = state.events.get(timeline[i]);
-			if (event.special !== "redacted") return event.id;
-		}
-		return null;
-	}
+	const tl = room.events.live;
+	return getLastMessage(tl, room.readEvent)	=== getLastMessage(tl);
 }
 
 function openSettings(room) {

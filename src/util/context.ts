@@ -55,14 +55,13 @@ export function eventContext(event: Event, config: { showEmoji: () => {} }): Arr
   }
 
   function markUnread() {
-    const roomId = event.room.id;
-    const timeline = state.roomTimelines.get(roomId).current;
+    const timeline = event.room.events.live;
     const index = timeline.lastIndexOf(event.id);
-    const lastId = timeline[index - 1] ?? event.id;
+    const lastId = timeline[index - 1]?.id ?? event.id;
     state.log.debug(`mark ${lastId} as read`);
-    state.rooms.get(event.room.id).accountData.set("m.fully_read", { event_id: lastId });
-    state.slice.set(state.roomSlices.get(roomId));
-    state.api.sendReceipt(roomId, lastId);
+    event.room.accountData.set("m.fully_read", { event_id: lastId });
+    state.slice.set(state.roomSlices.get(event.room.id));
+    state.api.sendReceipt(event.room.id, lastId);
   }
 }
 
@@ -131,13 +130,14 @@ export function roomContext(room: Room): Array<ContextMenuOption> {
   }
   
 	function markRead(room: Room) {
-	  const lastId = state.roomTimelines.get(room.roomId).live.at(-1);
+	  const lastId = room.events.live.at(-1)?.id;
+    if (!lastId) return;
 	  state.log.debug(`mark ${lastId} as read`);
-	  state.rooms.get(room.id).accountData.set("m.fully_read", { event_id: lastId });
-	  if (state.focusedRoomId === room.roomId) state.slice.set(state.roomSlices.get(room.id));
-	  state.api.sendReceipt(room.id, lastId);
+	  room.accountData.set("m.fully_read", { event_id: lastId });
+	  if (state.focusedRoomId === room.id) state.slice.set(state.roomSlices.get(room.id));
+    state.api.sendReceipt(room.id, lastId);
     state.api.fetch("POST", `/rooms/${encodeURIComponent(room.id)}/receipt/m.read.private/${encodeURIComponent(lastId)}`, { thread_id: "main" });
-    
+
     if (room.type === "m.space") {
       for (let child of state.spaces.get(room.id)) markRead(child);
     }

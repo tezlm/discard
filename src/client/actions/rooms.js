@@ -1,5 +1,4 @@
 import { writable, get } from "svelte/store";
-import TimelineSet from "../matrix/timeline.js";
 
 export function handleAccount(_, event) {
   if (event.type === "m.fully_read" && state.syncer.status !== "starting") {
@@ -7,9 +6,8 @@ export function handleAccount(_, event) {
   }
 }
 
-export function handleJoin(room, batch) {
-  state.rooms.set(room.id, room)
-  state.roomTimelines.set(room.id, new TimelineSet(room.id, batch));  
+export function handleJoin(room) {
+  state.rooms.set(room.id, room);
 }
 
 export function handleState(_) {
@@ -54,32 +52,31 @@ export async function focus(room) {
     }
   }
   
-	state.focusedRoomId = room?.roomId ?? null;
+	state.focusedRoomId = room?.id ?? null;
 	state.focusedRoom.set(room);
-  state.log.debug("set room for " + room?.roomId);
+  state.log.debug("set room for " + room?.id);
   
   if (room) {
-  	if (!states.has(room.roomId)) states.set(room.roomId, getDefaultState());
+  	if (!states.has(room.id)) states.set(room.id, getDefaultState());
         
-    const newState = states.get(room.roomId);
+    const newState = states.get(room.id);
     for (let key in newState) {
     	state.roomState[key].set(newState[key]);
     }
     
-    const timeline = state.roomTimelines.get(room.roomId).live;
-    if (!timeline.length) await timeline.backwards();
-    state.log.debug("set slice for " + room?.roomId);
-    state.slice.set(actions.slice.get(room.roomId));
-  }
-
-  if (room) {
+    const timeline = room.events.live;
+    if (!timeline.length) await timeline.fetch("backwards");
+    state.log.debug("set slice for " + room.id);
+    state.slice.set(actions.slice.get(room));
+    
+    // update recent rooms
     const recent = state.recentRooms;
-    const recentIndex = recent.findIndex(i => i.roomId === room?.roomId);
+    const recentIndex = recent.findIndex(i => i.id === room.id);
     if (recentIndex >= 0) recent.splice(recentIndex, 1);
     recent.unshift(room);
     if (recent.length > 8) recent.pop();
   }
-    
+  
   function getDefaultState() {
     return {
       input: "",
