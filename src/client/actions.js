@@ -4,6 +4,7 @@ import * as timeline from "./actions/timeline.js";
 import * as rooms from "./actions/rooms.js";
 import * as slice from "./actions/slice.js";
 import * as spaces from "./actions/spaces.js";
+import * as pushrules from "./actions/pushrules.js";
 
 export default {
   client,
@@ -12,4 +13,5 @@ export default {
   parser,
   slice,
   spaces,
+  pushrules,
 };

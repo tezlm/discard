@@ -38,38 +38,38 @@ function getItems(room) {
   if (room.type === "m.space") {
     items.push(
         { category: "Room list permissions" },
-        { id: "rooms", power: power.getState("m.space.child") },
+        { id: "rooms", power: power.forState("m.space.child") },
     );
   } else {
     items.push(
       { category: "Basic permissions" },
-      { id: "message",  power: power.events_default ?? 0 },
-      { id: "reaction", power: power.getEvent("m.room.reaction") },
+      { id: "message",  power: power.eventsDefault ?? 0 },
+      { id: "reaction", power: power.forEvent("m.room.reaction") },
       { id: "redact",   power: power.redact ?? 0 },
-      { id: "ping",     power: power.notifications?.room ?? power.state_default ?? 50 },
+      { id: "ping",     power: power.notifications?.room ?? power.stateDefault },
     );
   }
   items.push(
       { category: "Membership permissions" },
-      { id: "invite", power: power.invite ?? 0 },
-      { id: "kick",   power: power.kick ?? 50 },
-      { id: "ban",    power: power.ban ?? 50 },    
+      { id: "invite", power: power.invite },
+      { id: "kick",   power: power.kick },
+      { id: "ban",    power: power.ban },    
       { category: `${room.type === "m.space" ? "Space" : "Room"} profile permissions` },
-      { id: "name",   power: power.getState("m.room.name") },
-      { id: "topic",  power: power.getState("m.room.topic") },
+      { id: "name",   power: power.forState("m.room.name") },
+      { id: "topic",  power: power.forState("m.room.topic") },
   );
   if (room.type === "m.space") {
-    items.push({ id: "avatar",   power: power.getState("m.room.avatar") });
+    items.push({ id: "avatar",   power: power.forState("m.room.avatar") });
   }
   items.push(
       { category: "Permission permissions" },
-      { id: "default",  power: power.users_default ?? 0 },
-      { id: "power",    power: power.getState("m.room.power_levels") },
-      // { name: "Manage Settings", id: "perms",    power: perms.state_default ?? 50 },
+      { id: "default",  power: power.usersDefault },
+      { id: "power",    power: power.forState("m.room.power_levels") },
+      // { name: "Manage Settings", id: "perms",    power: perms.stateDefault },
       { category: "????" },
-      { id: "upgrade",  power: power.getState("m.room.tombstone") },
-      { id: "history",  power: power.getState("m.room.history_visibility") },
-      { id: "encrypt",  power: power.getState("m.room.encryption") },
+      { id: "upgrade",  power: power.forState("m.room.tombstone") },
+      { id: "history",  power: power.forState("m.room.history_visibility") },
+      { id: "encrypt",  power: power.forState("m.room.encryption") },
   );
   return items;
 }
@@ -121,7 +121,7 @@ $: if (modified.size) {
         case "encrypt":  has("events"); levels.events["m.room.encryption"] = power; break;
       }
     }
-    await state.api.sendState(room.id, "m.room.power_levels", "", levels);
+    await room.sendState("m.room.power_levels", levels);
     modified.clear();
     // modified = modified;
   };
@@ -175,7 +175,7 @@ $: if (modified.size) {
       <Power
         value={item.power}
         max={perms.me}
-        disabled={perms.me < perms.getState("m.room.power_levels") || perms.me < item.power}
+        disabled={perms.me < perms.forState("m.room.power_levels") || perms.me < item.power}
         changed={power => handleChange(item, power)}
       />
     </div>

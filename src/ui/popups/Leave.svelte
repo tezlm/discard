@@ -10,7 +10,7 @@ function capitalize(str) {
 }
 
 async function leave() {
-  const roomId = current.room.roomId;
+  const roomId = current.room.id;
   state.log.debug("goodbye " + roomId);
   state.api.leaveRoom(roomId);
   state.popup.set({ ...current, id: null });

@@ -95,7 +95,7 @@ function matchesRule(cond, event) {
     }
   } else if (cond.kind === "sender_notification_permission") {
     if (!cond.key) return false;
-    const userPower = event.room.power.getUser(event.sender.userId);
+    const userPower = event.room.power.forUser(event.sender.id);
     const pingPower = event.room.power.notifications?.[cond.key] ?? 50;
     return userPower >= pingPower;
   }

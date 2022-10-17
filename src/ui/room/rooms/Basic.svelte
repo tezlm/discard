@@ -62,24 +62,6 @@ function handleResize() {
 }
 
 function handleKeyDown(e) {
-  if (e.key === "Escape") {
-		// e.stopPropagation();
-		// scrollTo && scrollTo(-1);
-	}
-  // if (e.key === "Escape") {
-  //   if ($edit) {
-  //     edit.set(null);
-  //   } if ($reply) {
-  //     reply.set(null);
-  //   } else {
-  //     const lastEvent = state.roomTimelines.get($room.roomId).live.at(-1);
-  //     state.log.debug(`mark ${lastEvent} as read`);
-  //     state.rooms.get($room.roomId).readEvent = lastEvent;
-  //     state.slice.set(state.roomSlices.get($room.roomId));
-  //     state.api.sendReceipt($room.roomId, lastEvent);  
-  //   }
-  // }
-
 	if (e.type === "keydown") return shiftKey = e.key === "Shift";
 	if (e.type === "keyup") return shiftKey = false;
 }

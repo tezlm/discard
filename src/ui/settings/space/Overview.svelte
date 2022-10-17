@@ -162,7 +162,7 @@ h1 {
       <Input
         bind:value={name}
         placeholder="amazing-room"
-        readonly={room.power.me < room.power.getState("m.room.name")}
+        readonly={room.power.me < room.power.forState("m.room.name")}
       />
     </div>
   </div>
@@ -171,7 +171,7 @@ h1 {
     <Textarea
       bind:value={topic}
       placeholder="what an amazing room"
-      readonly={room.power.me < room.power.getState("m.room.topic")}
+      readonly={room.power.me < room.power.forState("m.room.topic")}
     />
   </div>
   <div class="section">

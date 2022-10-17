@@ -9,7 +9,7 @@ let settings = state.settings;
 function getColor(sender) {
   if (!sender) return;
   if ($settings.get("namecolors") === "never") return;
-  if ($settings.get("namecolors") === "power" && room.power.getUser(sender.id) === 0) return;
+  if ($settings.get("namecolors") === "power" && room.power.forUser(sender.id) === 0) return;
   return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
 }
 </script>

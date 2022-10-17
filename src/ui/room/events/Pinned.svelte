@@ -20,8 +20,8 @@ function getColor(sender, settings) {
   const level = settings.get("namecolors");
   if (!sender) return;
   if (level === "never") return `var(--fg-content)`;
-  if (level === "power" && sender.power <= (room.power.users_default ?? 0)) return `var(--fg-content)`;
-  return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
+  if (level === "power" && sender.power <= room.power.usersDefault) return `var(--fg-content)`;
+  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
 }
 </script>
 <style>
@@ -58,16 +58,16 @@ time {
   <div class="icon">push_pin</div>
   <div>
     <span class="author" style:color={getColor(event.sender, $settings)}>
-      {event.sender.name || event.sender.userId}
+      {event.sender.name || event.sender.id}
     </span>
     {#if added.length === 0 && removed.length === 0}
     did nothing to the pins in this room.
     {:else if added.length === 1 && removed.length === 0}
-    pinned <b class="link" on:click={() => actions.slice.jump(room.roomId, added[0])}>a message</b> to this room.
+    pinned <b class="link" on:click={() => actions.slice.jump(room.id, added[0])}>a message</b> to this room.
     {:else if added.length > 1 && removed.length === 0}
     pinned {added.length} messages to this room.
     {:else if added.length === 0 && removed.length === 1}
-    unpinned <b class="link" on:click={() => actions.slice.jump(room.roomId, removed[0])}>a message</b> from this room.
+    unpinned <b class="link" on:click={() => actions.slice.jump(room.id, removed[0])}>a message</b> from this room.
     {:else if added.length === 0 && removed.length > 1}
     unpinned {removed.length} messages from this room.
     {:else}

@@ -9,6 +9,7 @@ defaultSettings.set("sendtyping", true);
 defaultSettings.set("autocomplete", true);
 defaultSettings.set("showembeds", "unencrypted");
 defaultSettings.set("autojoin", true);
+defaultSettings.set("reducemotion", false);
 
 export default class Settings extends Map {
   constructor(data) {

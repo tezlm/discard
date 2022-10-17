@@ -37,3 +37,8 @@ TODO: preview messages
   <Toggle checked={$settings.get(setting)} toggled={(val) => $settings.put(setting, val)}/>
 </div>
 {/each}
+<div class="title">Misc</div>
+<div class="option">
+  <b>Reduce motion</b>
+  <Toggle checked={$settings.get("reducemotion")} toggled={(val) => $settings.put("reducemotion", val)}/>
+</div>

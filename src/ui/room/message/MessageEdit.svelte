@@ -27,10 +27,10 @@ async function handleKeyDown(e) {
     if (input !== event.content.body) return;
     if (textarea.selectionStart !== 0) return;
     if (textarea.selectionEnd !== 0) return;
-    for (let i = $slice.events.findIndex(i => i.eventId === $edit) - 1; i >= 0; i--) {
+    for (let i = $slice.events.findIndex(i => i.id === $edit) - 1; i >= 0; i--) {
       const event = $slice.events[i];
-      if (event.sender.userId === state.userId) {
-        $edit = event.eventId;
+      if (event.sender.id === state.userId) {
+        $edit = event.id;
         return;
       }
     }
@@ -38,10 +38,10 @@ async function handleKeyDown(e) {
     if (input !== event.content.body) return;
     if (textarea.selectionStart !== input.length) return;
     if (textarea.selectionEnd !== input.length) return;
-    for (let i = $slice.events.findIndex(i => i.eventId === $edit) + 1; i < $slice.events.length; i++) {
+    for (let i = $slice.events.findIndex(i => i.id === $edit) + 1; i < $slice.events.length; i++) {
       const event = $slice.events[i];
-      if (event.sender.userId === state.userId) {
-        $edit = event.eventId;
+      if (event.sender.id === state.userId) {
+        $edit = event.id;
         return;
       }
     }
@@ -56,7 +56,7 @@ function save() {
   const newEvent = {
     "m.relates_to": {
       rel_type: "m.replace",
-      event_id: event.eventId,
+      event_id: event.id,
     },
     "m.new_content": {
       body: input.trim(),
@@ -67,7 +67,7 @@ function save() {
     body: "* " + input.trim(),
     msgtype: "m.text",
   };
-  state.api.sendEvent(event.roomId, "m.room.message", newEvent, Math.random());
+  state.api.sendEvent(event.room.id, "m.room.message", newEvent, Math.random());
   $edit = null;
 }
 

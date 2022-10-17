@@ -42,10 +42,10 @@ async function add() {
   <h2 slot="header">Add Existing Room (TODO)</h2>
   <div slot="content" class="rooms scroll">
     {#each [...state.rooms.values()] as room}
-      {#if !state.spaces.get(current.parent.roomId).includes(room)}
-        <label class="room" class:checked={checked[room.roomId]}>
+      {#if !state.spaces.get(current.parent.id).includes(room)}
+        <label class="room" class:checked={checked[room.id]}>
           <b>#</b> {room.name}
-          <input type="checkbox" bind:checked={checked[room.roomId]} />
+          <input type="checkbox" bind:checked={checked[room.id]} />
         </label>
       {/if}
     {/each}

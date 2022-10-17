@@ -1,19 +1,16 @@
-<script>
+<script type="ts">
 import Popup from "../atoms/Popup.svelte";
+import Button from "../atoms/Button.svelte";
 import hljs from "highlight.js";
 export let current;
 
-function copyId() {
-  navigator.clipboard.writeText(current.event.eventId);
+function copy(text: string) {
+  navigator.clipboard.writeText(text);
 }
 
 console.log(current.event);
 </script>
 <style>
-.copy {
-  cursor: pointer;
-}
-
 pre {
   max-width: 600px;
   overflow-y: auto;
@@ -23,11 +20,14 @@ pre {
 <Popup showClose>
   <h3 slot="header">View source</h3>
   <div slot="content">
-    <a class="copy" on:click|preventDefault={copyId}>copy event id</a>
     {#if current.event.flags.size}
       <div>discard flags: {[...current.event.flags].join(", ")}</div>
+      <br />
     {/if}
-    <br />
     <pre><code>{@html hljs.highlight("json", JSON.stringify(current.event.raw, null, 4)).value}</code></pre>
+  </div>
+  <div slot="footer">
+    <Button label="copy event id" type="primary" clicked={() => copy(current.event.id)} />
+    <Button label="copy room id"  type="primary" clicked={() => copy(current.event.room.id)} />
   </div>
 </Popup>

@@ -1,6 +1,6 @@
 <script>
 import Tooltip from "../atoms/Tooltip.svelte";
-import { parseMxc } from "../../util/content.ts";
+import Avatar from "../atoms/Avatar.svelte";
 import { roomContext } from "../../util/context";
 import { getLastMessage } from "../../util/timeline";
 let focusedSpace = state.focusedSpace;
@@ -57,26 +57,24 @@ function getHomeContextMenu() {
 
 .space {
 	position: relative;
+  margin-top: 8px;
 }
 
-.space img {
-  width: 48px;
-  height: 48px;
+.space .avatar {
   border-radius: 50%;
-  margin-top: 8px;
-  cursor: pointer;
+  overflow: hidden;
   transition: border-radius 0.3s;
 }
 
-.space:hover img {
+.space:hover .avatar {
   border-radius: 35%;
 }
 
-.space:active img {
+.space:active .avatar {
   transform: translateY(1px);
 }
 
-.space.focused img {
+.space.focused .avatar {
   border-radius: 35%;
 }
 
@@ -86,7 +84,7 @@ function getHomeContextMenu() {
   width: 8px;
   height: 0;
 	left: -24px;
-	top: 32px;
+	top: 22px;
 	background: var(--fg-notice);
   border-radius: 4px;
   opacity: 0;
@@ -100,17 +98,17 @@ function getHomeContextMenu() {
 
 .space.unread::before {
   height: 8px;
-	top: 28px;
+	top: 20px;
 }
 
 .space:hover::before {
   height: 18px;
-	top: 22px;
+	top: 14px;
 }
 
 .space.focused::before {
   height: 36px;
-	top: 14px;
+	top: 6px;
 }
 
 .separator {
@@ -139,19 +137,20 @@ function getHomeContextMenu() {
 	color: var(--fg-notice);
 	font-size: 12px;
 	font-weight: 700;
-	border-radius: 50%;
+	border-radius: 11px;
 }
 </style>
 <div class="nav scroll">
-  <div class="space" class:selected={$focusedSpace === null}>
+  <div
+    class="space"
+    class:focused={$focusedSpace === null}
+    on:click={() => actions.spaces.focus(null)}
+		on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getHomeContextMenu(), x: e.clientX, y: e.clientY })}
+  >
     <Tooltip position="right" tip="Home">
-      <img
-        class="space"
-        class:selected={$focusedSpace}
-        src={"https://celery.eu.org/_matrix/media/r0/download/celery.eu.org/Wm9T9Nnch8IUQsVaJAInkaoVsgCJlmGx"}
-        on:click={() => actions.spaces.focus(null)}
-    		on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getHomeContextMenu(), x: e.clientX, y: e.clientY })}
-      />
+      <div class="avatar" style="height: 48px; width: 48px">
+        <img src="https://celery.eu.org/_matrix/media/r0/download/celery.eu.org/Wm9T9Nnch8IUQsVaJAInkaoVsgCJlmGx" height=48 width=48 />
+      </div>
     </Tooltip>
   </div>
   <div class="separator"></div>
@@ -161,14 +160,13 @@ function getHomeContextMenu() {
     class="space"
     class:focused={$focusedSpace?.id === space.id}
     class:unread={!allRead(space.id)}
+    on:click={() => actions.spaces.focus(space)}
+		on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: roomContext(space), x: e.clientX, y: e.clientY })}
   >
-    <Tooltip position="right">
-      <!-- TODO: use <Avatar> (need to find out how to do border-radius) -->
-      <img
-        src={parseMxc(space?.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"}
-        on:click={() => actions.spaces.focus(space)}
-    		on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: roomContext(space), x: e.clientX, y: e.clientY })}
-      />
+    <Tooltip position="right" tip="arst">
+      <div class="avatar">
+        <Avatar square user={space} size={48} />
+      </div>
       <b slot="tip">{space?.name ?? "unknown..."}</b>
     </Tooltip>
     {#if pings}
@@ -180,7 +178,7 @@ function getHomeContextMenu() {
 <svelte:window on:keydown={(e) => {
 	// TODO: move into proper keybind handler
 	if (!(e.altKey && e.ctrlKey && !e.shiftKey) || (e.key !== "ArrowUp" && e.key !== "ArrowDown")) return;
-	const idx = $navSpaces.findIndex(i => i.id === state.focusedSpaceId);
+	const idx = $navSpaces.findIndex(i => i.id === $focusedSpace.id);
 	const newSpace = $navSpaces[(idx + (e.key === "ArrowUp" ? -1 : 1) + $navSpaces.length + 1) % ($navSpaces.length + 1)];
 	actions.spaces.focus(newSpace ?? null);
   e.preventDefault();

@@ -4,7 +4,6 @@ import fuzzysort from "fuzzysort";
 import shortJoypixels from "emojibase-data/en/shortcodes/joypixels.json";
 import shortEmojibase from "emojibase-data/en/shortcodes/emojibase.json";
 import emojis from "emojibase-data/en/compact.json";
-import Input from "../atoms/Input.svelte";
 import Search from "../atoms/Search.svelte";
 const groups = parseEmoji();
 export let selected;

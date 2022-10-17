@@ -9,8 +9,8 @@ function getColor(sender, settings) {
   const level = settings.get("namecolors");
   if (!sender) return;
   if (level === "never") return `var(--fg-content)`;
-  if (level === "power" && sender.power <= (room.power.users_default ?? 0)) return `var(--fg-content)`;
-  return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
+  if (level === "power" && sender.power <= room.power.usersDefault) return `var(--fg-content)`;
+  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
 }
 </script>
 <style>
@@ -47,7 +47,7 @@ time {
   <div class="icon">tag</div>
   <div>
     <span class="author" style:color={getColor(event.sender, $settings)} data-mx-ping={event.sender.id}>
-      {event.sender.name || event.sender.userId}
+      {event.sender.name || event.sender.id}
     </span>
     {#if event.content.alias}
     set the room's main alias to <b>{event.content.alias}</b>

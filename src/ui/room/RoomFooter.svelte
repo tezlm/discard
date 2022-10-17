@@ -66,7 +66,7 @@ $: if (!$edit) textarea?.focus();
   {#if $room.tombstone}
   {@const replacement = state.rooms.get($room.tombstone.replacement_room)}
   <div class="input disabled"><div class="center">{$room.tombstone?.body ?? "This room has been replaced"}{#if replacement}. Why not visit the <a on:click={() => actions.rooms.focus(replacement)}>new room</a>?{/if}</div></div>
-  {:else if $room.power?.getEvent("m.room.message") > $room.power?.me}
+  {:else if $room.power?.forEvent("m.room.message") > $room.power?.me}
   <div class="input disabled"><div class="center">You can't send messages here</div></div>
   {:else if $room.getState("m.room.encryption")}
   <div class="input disabled"><div class="center">You can't send messages in a e2ee room yet</div></div>

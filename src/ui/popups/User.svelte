@@ -3,6 +3,7 @@ import Popup from "../atoms/Popup.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 export let current;
 const users = state.users;
+let profilePromise = getProfile(current.userId);
 
 async function getProfile(userId) {
   if (users.has(userId)) return users.get(userId);
@@ -38,7 +39,7 @@ async function getProfile(userId) {
 </style>
 <Popup raw>
   <div slot="content" class="content">
-    {#await getProfile(current.userId)}
+    {#await profilePromise}
       <div class="header">
         <h2>loading..</h2>
       </div>

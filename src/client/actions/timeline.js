@@ -99,16 +99,12 @@ export function handle(event, toStart = false) {
   if (relation) {
     const original = state.events.get(relation.event_id);
     if (original) {
-      if (relation.rel_type === "m.replace") {
-        original.parseRelation(event, relation.rel_type);
-      } else if (relation.rel_type === "m.annotation") {
+      if (relation.rel_type === "m.annotation") {
         const key = relation.key;
         if (!original.reactions) original.reactions = new Map();
         if (!original.reactions.has(key)) original.reactions.set(key, []);
         original.reactions.get(relation.key).push(event);
-      } else {
-        original.parseRelation(event, relation.rel_type);
-      }
+      } 
     } else {
       return queueRelation(relation.event_id, event, toStart);
     }
@@ -126,15 +122,11 @@ export function handle(event, toStart = false) {
     if (relations.has(id)) {
       for (let ev of relations.get(id)) {
         const relation = getRelation(ev.content);
-        if (relation.rel_type === "m.replace") {
-          event.parseRelation(ev, relation.rel_type);
-        } else if (relation.rel_type === "m.annotation") {
+        if (relation.rel_type === "m.annotation") {
           const key = relation.key;
           if (!event.reactions) event.reactions = new Map();
           if (!event.reactions.has(key)) event.reactions.set(key, []);
           event.reactions.get(relation.key).push(ev);
-        } else {
-          event.parseRelation(ev, relation.rel_type);
         }
       }
       relations.delete(id);
@@ -142,7 +134,7 @@ export function handle(event, toStart = false) {
   }
 }
 
-export function redact(event) {
+function redact(event) {
   const id = event.raw.redacts ?? event.content.redacts;
   if (!state.events.has(id)) return;
   state.log.debug(`handle redaction in ${event.room.id} for ${id}`);

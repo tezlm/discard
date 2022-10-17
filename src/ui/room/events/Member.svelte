@@ -25,7 +25,7 @@ function getAction(event) {
   const changes = diff(content, prev);
   if (changes.size === 0 || changes.has("membership")) return getMembership(content.membership, prev.membership, event);
   if (changes.has("avatar_url"))  return { icon: "person", type: "avatar" };
-  if (changes.has("displayname")) return { icon: "person", type: "displayname", name: content.displayname || event.sender.userId };
+  if (changes.has("displayname")) return { icon: "person", type: "displayname", name: content.displayname || event.sender.id };
   return { icon: "help", type: "something" };
 }
 
@@ -50,8 +50,8 @@ function getColor(sender, settings) {
   const level = settings.get("namecolors");
   if (!sender) return;
   if (level === "never") return `var(--fg-content)`;
-  if (level === "power" && sender.power <= (room.power.users_default ?? 0)) return `var(--fg-content)`;
-  return `var(--mxid-${calculateHash(sender.userId) % 8 + 1})`
+  if (level === "power" && sender.power <= room.power.usersDefault) return `var(--fg-content)`;
+  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
 }
 
 function getJoinMessage(event) {
@@ -64,7 +64,7 @@ function getJoinMessage(event) {
     ["", " just landed"],
     ["", " arrived in time for the party"],
   ];
-  return messages[calculateHash(event.eventId) % messages.length];
+  return messages[calculateHash(event.id) % messages.length];
 }
 </script>
 <style>
