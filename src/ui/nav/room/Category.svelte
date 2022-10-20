@@ -5,8 +5,14 @@ import Room from "./Room.svelte";
 import { roomContext } from "../../../util/context";
 export let room;
 let expanded = true;
+let { pushRules } = state;
 $: rooms = state.spaces.get(room.id);
 
+function isMuted(room) {
+	const rule = $pushRules.rules.find(i => i.id === room.id);
+	if (!rule) return false;
+	return rule.actions.includes("dont_notify");
+}
 // TODO: persist `expanded`
 // TODO: subspace-specific menu?
 </script>
@@ -60,6 +66,6 @@ $: rooms = state.spaces.get(room.id);
 </div>
 {#if expanded}
 {#each rooms as room (room.id)}
-<Room {room} />
+<Room {room} muted={isMuted(room)} />
 {/each}
 {/if}
