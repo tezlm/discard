@@ -110,8 +110,6 @@ $: if (showPicker) {
   position: relative;
   align-items: center;
   flex-wrap: wrap;
-  margin-top: 4px;
-  margin-bottom: -4px;
   user-select: none;
 }
 

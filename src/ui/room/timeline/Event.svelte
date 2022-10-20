@@ -19,7 +19,7 @@ export let event;
 
 let toolbarEl;
 let showReactionPicker = false;
-let context = state.context;
+let { context, slice } = state;
 
 // messy/complex if statements, maybe i should clean it up..?
 function getToolbar(event, shiftKey) {
@@ -62,6 +62,18 @@ function getToolbar(event, shiftKey) {
     // $context = { items: eventContext(event, { showEmoji: () => showReactionPicker = true }), x: rect.left - 120, y: rect.top };
   }
 }
+
+function handleClick(e) {
+  if (e.altKey) {
+    const prev = $slice.events[$slice.events.findIndex(i => i.id === event.id) - 1];
+    if (prev) {
+      room.accountData.set("m.fully_read", { event_id: prev.id });
+      state.slice.set(state.roomSlices.get(event.room.id));
+      state.api.sendReceipt(event.room.id, prev.id);
+    }
+  }
+}
+
 
 function handleContext(e) {
 	if (e.target.tagName === "A") return;
@@ -125,7 +137,7 @@ $: if (showReactionPicker) {
 	display: block;
 }
 </style>
-<div class="event" class:create={event.type === "m.room.create"} on:contextmenu|stopPropagation={handleContext}>
+<div class="event" class:create={event.type === "m.room.create"} on:click={handleClick} on:contextmenu|stopPropagation={handleContext}>
 	{#if event.type === "m.room.create"}
 		<Create {room} {event} {shiftKey} />
 	{:else if event.type === "m.room.name" || event.type === "m.room.topic"}

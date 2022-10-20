@@ -22,13 +22,16 @@ async function parseEmoji() {
 }
 
 async function getFiltered(search) {
+  console.time("filter");
+  requestAnimationFrame(() => console.timeEnd("filter"));
   if (!search) return groups;
-  return (await groups).map(i => fuzzysort
+  const filtered = (await groups).map(i => fuzzysort
     .go(search, i, { key: "label", threshold: -1000 })
     .map(j => j.obj)
     .sort((a, b) => a.hexcode > b.hexcode ? 1 : -1)
     .sort((a, b) => a.order > b.order ? 1 : -1)
   );
+  return filtered;
 }
 
 function getGroupName(id) {
@@ -192,7 +195,7 @@ async function handleSubmit(value, e) {
         {#if emojis && emojis.length}
         <div class="label">{getGroupName(i)}</div>
         <div class="group">
-        {#each emojis as emoji (emoji.unicode)}
+        {#each emojis as emoji (emoji.hexcode)}
           <div
             class="emojiwrap"
             on:mouseover={() => hover = emoji}

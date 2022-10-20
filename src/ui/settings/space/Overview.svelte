@@ -3,13 +3,14 @@ import { parseMxc } from "../../../util/content.ts";
 import Input from "../../atoms/Input.svelte";
 import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
+import Avatar from "../../atoms/Avatar.svelte";
 export let room;
 export let save = null;
 let name, topic, avatar;
 
 export function reset() {
   name = room?.name ?? "";
-  topic = room?.topic ?? "";  
+  topic = room?.topic ?? "";
   avatar = null;
 }
 
@@ -49,8 +50,8 @@ h1 {
 }
 
 .avatar {
-  flex: 1;
   display: flex;
+  flex-direction: column;
 }
 
 .avatar .uploader {
@@ -59,14 +60,11 @@ h1 {
   margin: 0 10px;
 }
 
-.uploader img {
-  height: 100px;
-  width: 100px;
-  border-radius: 50%;
+.avatar .uploader {
   box-shadow: var(--shadow-high);
 }
 
-.uploader > .remove {
+.avatar > .remove {
   text-align: center;
   margin-top: 10px;
   color: var(--fg-muted);
@@ -75,20 +73,8 @@ h1 {
   cursor: pointer;
 }
 
-.uploader > .remove:hover {
+.avatar > .remove:hover {
   color: var(--fg-light);
-}
-
-.side {
-  display: flex;
-  flex-direction: column;
-  margin-left: 20px;
-}
-
-.side > .note {
-  color: var(--fg-light);
-  font-size: 14px;
-  margin-bottom: 10px;
 }
 
 .name {
@@ -111,13 +97,13 @@ h1 {
   border-bottom: none;
 }
 
-.avat {
+.uploader {
   position: relative;
   overflow: hidden;
   border-radius: 50%;
 }
 
-.avat > div {
+.uploader > div {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -135,7 +121,7 @@ h1 {
   font-size: 32px;
 }
 
-.avat:hover > div {
+.uploader:hover > .icon {
   opacity: 1;
 }
 </style>
@@ -143,19 +129,11 @@ h1 {
 <div>
   <div class="section" style="flex-direction: row">
     <div class="avatar">
-      <div class="uploader">
-        <!-- TODO: generate default avatars (use Avatar?) -->
-        <div class="avat" on:click={todo}>
-          <img src={parseMxc(room.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"} />
-          <!-- <div>Upload Image</div> -->
-          <div class="icon">edit</div>
-        </div>
-        <div class="remove">Remove</div>
+      <div class="uploader" on:click={todo}>
+        <Avatar user={room} size={100} />
+        <div class="icon">edit</div>
       </div>
-      <div class="side">
-        <div class="note">todo: add some helpful text.</div>
-        <div><Button label="Upload Image" type="hollow" /></div>
-      </div>
+      <div class="remove">Remove</div>
     </div>
     <div class="name">
       <div class="title">Space Name</div>
