@@ -56,7 +56,7 @@ export function eventContext(event: Event, config: { showEmoji: () => {} }): Arr
 
   function markUnread() {
     const timeline = event.room.events.live;
-    const index = timeline.lastIndexOf(event.id);
+    const index = timeline.lastIndexOf(event);
     const lastId = timeline[index - 1]?.id ?? event.id;
     state.log.debug(`mark ${lastId} as read`);
     event.room.accountData.set("m.fully_read", { event_id: lastId });

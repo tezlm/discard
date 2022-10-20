@@ -12,7 +12,7 @@ import { memberContext } from "../../../util/context";
 export let room, event, header = false;
 
 let { edit } = state.roomState;
-let { slice, settings } = state;
+let { settings } = state;
 let showUserPopout = false;
 
 function getReply(content) {
@@ -25,17 +25,6 @@ function getColor(sender, settings) {
   if (level === "never") return `var(--fg-content)`;
   if (level === "power" && sender.power <= room.power.usersDefault) return `var(--fg-content)`;
   return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
-}
-
-function handleClick(e) {
-  if (e.altKey) {
-    const prev = $slice.events[$slice.events.findIndex(i => i.id === event.eventId) - 1];
-    if (prev) {
-      room.accountData.set("m.fully_read", { event_id: prev.id });
-      state.slice.set(state.roomSlices.get(state.focusedRoomId));
-      state.api.sendReceipt(event.room.id, prev.id);
-    }
-  }
 }
 
 function fly(_, props) {
@@ -128,7 +117,7 @@ time {
   z-index: 1;
 }
 </style>
-<div class="message" on:click={handleClick}>
+<div class="message">
   <div class="side">
     {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
     {#if header}

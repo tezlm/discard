@@ -56,8 +56,7 @@ export function handle(event: Event, toStart = false) {
     console.log("got event with transaction id", tx, "of index", idx);
     if (idx !== -1) {
       state.log.matrix(`successfully sent to ${id} in ${room.id} (for ${tx})`);
-      // const [dummy] = timeline.splice(idx, 1);
-      timeline.splice(idx, 1);
+      timeline.splice(idx, 1, ...timeline.splice(timeline.lastIndexOf(event), 1));
       
       // const slice = state.roomSlices.get(room.id);
       // const sliceIdx = slice.events.lastIndexOf(dummy);
