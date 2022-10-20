@@ -3,13 +3,8 @@ import Room from "./room/Room.svelte";
 // import Room from "./room/RoomTall.svelte";
 import Home from "./room/Home.svelte";
 import Category from "./room/Category.svelte";
-let focusedSpace = state.focusedSpace;
-let focusedRoom = state.focusedRoom;
-let navRooms = state.navRooms;
-let pushRules = state.pushRules;
+let { focusedSpace, navRooms, pushRules } = state;
 $: flattenedRooms = state.spaces.get($focusedSpace?.id ?? "orphanRooms").flatMap(i => i.type === "m.space" ? state.spaces.get(i.id) : i);
-
-let focusTimeout;
 
 function isMuted(room) {
 	const rule = $pushRules.rules.find(i => i.id === room.id);
