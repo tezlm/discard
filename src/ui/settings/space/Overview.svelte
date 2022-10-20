@@ -1,7 +1,5 @@
 <script>
-import { parseMxc } from "../../../util/content.ts";
 import Input from "../../atoms/Input.svelte";
-import Button from "../../atoms/Button.svelte";
 import Textarea from "../../atoms/Textarea.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
 export let room;
@@ -11,20 +9,33 @@ let name, topic, avatar;
 export function reset() {
   name = room?.name ?? "";
   topic = room?.topic ?? "";
-  avatar = null;
+  avatar = { avatar: room?.avatar, id: room.id };
 }
 
 reset();
 
+function handleAvatarClick(e) {
+  if (avatar.avatar) {
+    e.preventDefault();
+    avatar.avatar = null;
+  }
+}
+
+function changeAvatar(e) {
+  avatar.file = e.target.files[0];
+  avatar.avatar = URL.createObjectURL(avatar.file);
+}
+
 $: {
   let nameChanged = name !== (room?.name ?? "");
   let topicChanged = topic !== (room?.topic ?? "");
-  if (nameChanged || topicChanged || avatar) {
+  let avatarChanged = avatar.avatar !== room?.avatar;
+  if (nameChanged || topicChanged || avatarChanged) {
     save = async () => {
       const proms = [];
       if (nameChanged) proms.push(state.api.sendState(room.id, "m.room.name", "", { name }));
       if (topicChanged) proms.push(state.api.sendState(room.id, "m.room.topic", "", { topic }));
-      if (avatar) {
+      if (avatarChanged) {
         if (avatar.file) {
           const prom = state.api.uploadFile(avatar.file).promise
             .then(url => state.api.sendState(room.id, "m.room.avatar", "", { url }));
@@ -32,7 +43,6 @@ $: {
         } else {
           proms.push(state.api.sendState(room.id, "m.room.avatar", "", { url:  null }));
         }
-        avatar = null;
       }
       await Promise.all(proms);
       save = null;
@@ -64,7 +74,7 @@ h1 {
   box-shadow: var(--shadow-high);
 }
 
-.avatar > .remove {
+.avatar > .button {
   text-align: center;
   margin-top: 10px;
   color: var(--fg-muted);
@@ -73,7 +83,7 @@ h1 {
   cursor: pointer;
 }
 
-.avatar > .remove:hover {
+.avatar > .button:hover {
   color: var(--fg-light);
 }
 
@@ -128,18 +138,20 @@ h1 {
 <h1>Space Overview</h1>
 <div>
   <div class="section" style="flex-direction: row">
-    <div class="avatar">
-      <div class="uploader" on:click={todo}>
-        <Avatar user={room} size={100} />
+    <label class="avatar">
+      <div class="uploader">
+        <Avatar user={avatar} size={100} />
         <div class="icon">edit</div>
       </div>
-      <div class="remove">Remove</div>
-    </div>
+      <div class="button" on:click={handleAvatarClick}>{#if avatar.avatar}Remove{:else}Upload{/if}</div>
+      <input type="file" style="display: none" on:change={changeAvatar} />
+    </label>
     <div class="name">
       <div class="title">Space Name</div>
       <Input
         bind:value={name}
         placeholder="amazing-room"
+        submitted={() => save && save()}
         readonly={room.power.me < room.power.forState("m.room.name")}
       />
     </div>
