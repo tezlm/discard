@@ -34,7 +34,7 @@ function isMuted(room) {
 <div class="nav scroll" tabindex=-1>
 	<div class="spacer"></div>
 	<Home />
-	{#each $navRooms as room}
+	{#each $navRooms as room (room.id)}
 		{#if room.type === "m.space"}
 		<Category {room} />
 		{:else}

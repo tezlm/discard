@@ -59,7 +59,7 @@ $: rooms = state.spaces.get(room.id);
   {/if}
 </div>
 {#if expanded}
-{#each rooms as room}
+{#each rooms as room (room.id)}
 <Room {room} />
 {/each}
 {/if}

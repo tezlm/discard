@@ -52,6 +52,7 @@ $: {
     <Input
       bind:value={name}
       placeholder="amazing-room"
+      submitted={() => save && save()}
       readonly={room.power.me < room.power.forState("m.room.name")}
     />
   </div>

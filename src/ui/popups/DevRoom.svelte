@@ -29,7 +29,7 @@ console.log(current.room);
         <pre><code>{@html hljs.highlight("json", JSON.stringify(data[1], null, 4)).value}</code></pre>
       {/each}
     {:else}
-      <div>room id: <code style="user-select: all">{current.room.roomId}</code></div><br />
+      <div>room id: <code style="user-select: all">{current.room.id}</code></div><br />
       <Button label="Room State" clicked={() => view = "state"}/>
       <Button label="Room Members" clicked={() => view = "members"}/>
       <Button label="Account Data" clicked={() => view = "account"}/>

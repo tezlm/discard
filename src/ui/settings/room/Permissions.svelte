@@ -161,7 +161,7 @@ $: if (modified.size) {
 }
 </style>
 {#if perms}
-{#each getItems(room) as item}
+{#each getItems(room) as item (item.id)}
 {#if item.category}
   <h3 class="category">{item.category}</h3>
 {:else}

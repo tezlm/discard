@@ -10,7 +10,7 @@ export let current;
 const scopes = [];
 if (current.room.type === "space") scopes.push(["This space", "space"]);
 if (current.room.type === "room") {
-  if (state.spaces.get("orphanRooms").find(i => i.roomId === current.room.roomId)) {
+  if (state.spaces.get("orphanRooms").find(i => i.id === current.room.id)) {
     scopes.push(["This room", "room"]);
   } else {
     scopes.push(["This space", "space"]);

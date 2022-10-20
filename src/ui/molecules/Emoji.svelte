@@ -25,6 +25,7 @@ async function getFiltered(search) {
   console.time("filter");
   requestAnimationFrame(() => console.timeEnd("filter"));
   if (!search) return groups;
+  // running fuzzy sort several times instead of just once probably isnt good for performance
   const filtered = (await groups).map(i => fuzzysort
     .go(search, i, { key: "label", threshold: -1000 })
     .map(j => j.obj)

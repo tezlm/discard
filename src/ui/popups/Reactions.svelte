@@ -73,7 +73,7 @@ $: selected = [...reacts.keys()][0];
 <Popup raw>
   <div slot="content" class="content">
     <div class="side scroll">
-      {#each [...reacts.entries()] as [key, events]}
+      {#each [...reacts.entries()] as [key, events] (key)}
         <Tooltip position="left">
           <div slot="tip">
             {#if key.startsWith("mxc://")}
@@ -94,7 +94,7 @@ $: selected = [...reacts.keys()][0];
       {/each}
     </div>
     <div class="main scroll">
-      {#each reacts.get(selected) as event}
+      {#each reacts.get(selected) as event (event.id)}
         <div class="sender">
           <Avatar size={24} user={event.sender} />
           <div class="name">{event.sender.name}</div>
