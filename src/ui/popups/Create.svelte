@@ -26,7 +26,7 @@ function capitalize(str) {
 
 async function create() {
   creating = true;
-  const parentId = current.parent?.roomId;
+  const parentId = current.parent?.id;
   const { room_id } = await state.api.createRoom({
     name: config.name,
     topic: config.topic,

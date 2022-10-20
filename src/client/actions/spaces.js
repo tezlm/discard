@@ -4,7 +4,7 @@ export function update() {
   for (let person in dms) {
     for (let roomId of dms[person]) {
       if (state.rooms.has(roomId)) {
-        state.dms.set(roomId, state.rooms.get(roomId).members.get(person) ?? { userId: person });
+        state.dms.set(roomId, state.rooms.get(roomId).members.get(person) ?? { id: person });
       }
     }
   }
@@ -17,11 +17,11 @@ export function update() {
       .map(i => ({ event: i, room: state.rooms.get(i.stateKey) }))
       .sort(orderSpaces)
       .map(i => i.room);
-    children.forEach(i => inSpaces.add(i.roomId));
+    children.forEach(i => inSpaces.add(i.id));
     state.spaces.set(id, children);
   }
   
-  const orphans = [...state.rooms.values()].filter(i => !inSpaces.has(i.roomId));
+  const orphans = [...state.rooms.values()].filter(i => !inSpaces.has(i.id));
   state.spaces.set("orphanRooms",  orphans.filter(i => i.type !== "m.space"));
   state.spaces.set("orphanSpaces", orphans.filter(i => i.type === "m.space"));
 	
@@ -35,13 +35,13 @@ export function update() {
     return cmp(a.event.order, b.event.order)
       || cmp(a.room.name, b.room.name)
       || cmp(a.event.date, b.event.date)
-      || cmp(a.room.roomId, b.room.roomId);
+      || cmp(a.room.id, b.room.id);
   }
 }
 
 export function focus(space) {
-  state.log.ui(`focus space ${space?.roomId}`);
-	state.focusedSpaceId = space?.roomId;
+  state.log.ui(`focus space ${space?.id}`);
+	state.focusedSpaceId = space?.id;
 	state.focusedSpace.set(space);
-	state.navRooms.set(state.spaces.get(space?.roomId ?? "orphanRooms") ?? []);
+	state.navRooms.set(state.spaces.get(space?.id ?? "orphanRooms") ?? []);
 }

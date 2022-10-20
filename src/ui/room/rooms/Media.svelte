@@ -143,7 +143,7 @@ function getContextMenu(event) {
   }
   menu.push({ label: "Copy Link",   icon: "link", clicked: () => navigator.clipboard.writeText(`https://matrix.to/#/${room.id}/${event.id}`) });
   if ((event.room.power.me >= event.room.power.forEvent("m.room.redaction") && event.sender.id === state.userId) || (event.room.power.me >= event.room.power.redact)) {
-    menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.roomId, event.eventId) } });
+    menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.room.id, event.id) } });
   }
   menu.push(null);
   menu.push({ label: "View Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
@@ -226,11 +226,11 @@ onMount(paginate);
     </div>
   </label>
   {/if}
-  {#each [...slice.events].reverse() as event (event.eventId)}
+  {#each [...slice.events].reverse() as event (event.id)}
   {#if event.type === "m.room.message"}
     {@const type = event.content.msgtype ?? event.type}
     {@const content= event.content}
-    <div class="item" eventid={event.eventId} on:contextmenu|stopPropagation={e => { if (e.target.tagName === "A") return; e.preventDefault(); state.context.set({ items: getContextMenu(event), x: e.clientX, y: e.clientY }) }}>
+    <div class="item" eventid={event.id} on:contextmenu|stopPropagation={e => { if (e.target.tagName === "A") return; e.preventDefault(); state.context.set({ items: getContextMenu(event), x: e.clientX, y: e.clientY }) }}>
       {#if type === "m.image"}
         <div style="margin: 4px; text-align: center">
           {content.body}

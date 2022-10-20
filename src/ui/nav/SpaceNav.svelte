@@ -154,7 +154,7 @@ function getHomeContextMenu() {
     </Tooltip>
   </div>
   <div class="separator"></div>
-	{#each $navSpaces as space}
+  {#each $navSpaces as space (space.id)}
   {@const pings = spaces.get(space.id).reduce((pings, room) => pings + room.notifications.highlight, 0)}
   <div
     class="space"
@@ -178,7 +178,7 @@ function getHomeContextMenu() {
 <svelte:window on:keydown={(e) => {
 	// TODO: move into proper keybind handler
 	if (!(e.altKey && e.ctrlKey && !e.shiftKey) || (e.key !== "ArrowUp" && e.key !== "ArrowDown")) return;
-	const idx = $navSpaces.findIndex(i => i.id === $focusedSpace.id);
+	const idx = $navSpaces.findIndex(i => i.id === $focusedSpace?.id);
 	const newSpace = $navSpaces[(idx + (e.key === "ArrowUp" ? -1 : 1) + $navSpaces.length + 1) % ($navSpaces.length + 1)];
 	actions.spaces.focus(newSpace ?? null);
   e.preventDefault();

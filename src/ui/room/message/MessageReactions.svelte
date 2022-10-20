@@ -190,13 +190,14 @@ $: if (showPicker) {
 }
 </style>
 <div class="reactions">
-{#each [...event.reactions.entries()] as [key, events]}
+{#each [...event.reactions.entries()] as [key, events] (key)}
+  {@const { shortcode } = events[0].content}
   <Tooltip>
     <span slot="tip">
       {@html formatPeople(events)}
       <span class="dim">reacted with</span>
       {#if key.startsWith("mxc://")}
-        <span class="dim">:</span>{events[0].content.shortcode}<span class="dim">:</span>
+        <span class="dim">:</span>{shortcode}<span class="dim">:</span>
       {:else}
         {key}
       {/if}
@@ -204,14 +205,15 @@ $: if (showPicker) {
     <div class="reaction" class:self={getMine(events)} on:click={() => handleClick(getMine(events), key)}>
       <div class="key">
         {#if key.startsWith("mxc://")}
-          <img src={parseMxc(key)} alt={events[0].content.shortcode}>
+          <img src={parseMxc(key)} alt={shortcode}>
         {:else}
           {@html getTwemoji(key)}
         {/if}
       </div>
       {#key events.length}
-        <!-- <div class="count" in:counterIn={{ count: events.length }} out:counterOut> -->
-        <div class="count">{events.length}</div>
+        <div class="count" in:counterIn|local={{ count: events.length }} out:counterOut|local>
+          {events.length}
+        </div>
       {/key}
       <div class="spacer">
       {events.length}
@@ -220,7 +222,7 @@ $: if (showPicker) {
   </Tooltip>
 {/each}
 <div class="add" bind:this={addEl}>
-  <div class="icon" class:show={showPicker} on:click={(e) => { e.stopImmediatePropagation(); showPicker = !showPicker }}>add_reaction</div>
+  <div class="icon" class:show={showPicker} on:click|stopPropagation={() => showPicker = !showPicker }>add_reaction</div>
 </div>
 </div>
 <svelte:window on:click={() => showPicker = false} />

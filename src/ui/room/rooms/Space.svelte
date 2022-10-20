@@ -1,7 +1,7 @@
 <script>
 import Input from "../../atoms/Input.svelte";
+import Avatar from "../../atoms/Avatar.svelte";
 import { parseHtml } from "../../../util/html.js";
-import { parseMxc } from "../../../util/content.ts";
 export let room;
 let members = false;
 
@@ -53,14 +53,12 @@ function formatJoinRule(rule) {
   user-select: text;
 }
 
-.header img {
+.header .avatar {
   position: absolute;
   top: 0;
   transform: translateY(-50%);
-  width: 72px;
-  height: 72px;
   border-radius: 8px;
-  object-fit: cover;
+  overflow: hidden;
 }
 
 .header h1 {
@@ -98,7 +96,9 @@ function formatJoinRule(rule) {
   </div>
   <div class="side">
     <div class="header">
-      <img src={parseMxc(room.avatar) ?? "https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg"} />
+      <div class="avatar">
+        <Avatar square user={room} size={72} />
+      </div>
       <div style:height="24px"></div>
       <h1>{room.name}</h1>
       <div class="info">
