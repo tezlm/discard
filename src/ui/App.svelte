@@ -44,8 +44,8 @@ function opacity() {
 
 function ease() {
   return {
-    duration: 300,
-    easing: bezier(.47, .07, .5, 1.37),
+    duration: 250,
+    easing: bezier(.24,.31,.6,1.23),
     css: t => $settings.get("reducemotion") ? `opacity: ${Math.min(t * 2, 1)}` : `opacity: ${Math.min(t * 2, 1)}; transform: scale(${1.1 - t / 10})`,
   }
 }
@@ -89,7 +89,7 @@ main > div {
 }
 
 .chat {
-  transition: transform 300ms cubic-bezier(.47, .07, .5, 1.37);
+  transition: transform 250ms cubic-bezier(.24,.31,.6,1.23);
 }
 
 .chat.hide {
