@@ -94,17 +94,23 @@ h1 {
     {#each members as member (member.id)}
     <div class="member" on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: memberContext(member), x: e.clientX, y: e.clientY })}>
       {#await getMember(member)}
-        <div class="avatar"></div>
+        <Avatar user={member} size={40} />
         <div class="name">
           {member.id}
           <span style="color: var(--fg-muted); font-size: 14px">{member.id}</span>
         </div>
       {:then member}
-      <Avatar user={member} size={40} />
-      <div class="name">
-        {member.name}
-        <span style="color: var(--fg-muted); font-size: 14px">{member.id}</span>
-      </div>
+        <Avatar user={member} size={40} />
+        <div class="name">
+          {member.name || member.id}
+          <span style="color: var(--fg-muted); font-size: 14px">{member.id}</span>
+        </div>
+      {:catch}
+        <Avatar user={member} size={40} />
+        <div class="name">
+          {member.name || member.id}
+          <span style="color: var(--fg-muted); font-size: 14px">{member.id}</span>
+        </div>
       {/await}
       <div style="margin-left: auto;"></div>
       {#if membership === "join"}

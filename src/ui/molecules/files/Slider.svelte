@@ -18,13 +18,13 @@ function handleBlur() {
 }
 
 function handleMove(e) {
-  if (!moving) return;
+  // if (!moving) return;
   const rect = wrapperEl.getBoundingClientRect();
   const cursor = vertical ? rect.height - (e.clientY - rect.top) : e.clientX - rect.left;
   const offset = vertical ? rect.height : rect.width;
   const pos = Math.min(Math.max(cursor, 8), offset - 8) - 8;
   select = max * (pos / (offset - 16));
-  if (e.buttons === 1) changed(select);
+  if (moving && e.buttons === 1) changed(select);
 }
 </script>
 <style>

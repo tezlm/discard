@@ -52,7 +52,7 @@ function getColor(sender) {
   height: 100%;
   display: flex;
   align-items: center;
-  margin-right: .25rem;
+  margin-right: .33rem;
 }
 
 .content {

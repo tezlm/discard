@@ -44,16 +44,15 @@ export function send(room: Room, type: string, content: any) {
 export function handle(event: Event, toStart = false) {
   if (event.type === "m.room.redaction") return toStart ? null : redact(event);
   if (event.unsigned?.redacted_because) return;
+  if (state.client.status !== "syncing") return;
     
   const { id, room } = event;
-  if (!event.room) console.log("event with no room?", event);
   
   // event echo, update local status
   if (event.unsigned?.transaction_id) {
     const tx = event.unsigned.transaction_id;
     const timeline = room.events.live;
     const idx = timeline.findLastIndex(i => i.id === tx);
-    console.log("got event with transaction id", tx, "of index", idx);
     if (idx !== -1) {
       state.log.matrix(`successfully sent to ${id} in ${room.id} (for ${tx})`);
       timeline.splice(idx, 1, ...timeline.splice(timeline.lastIndexOf(event), 1));
