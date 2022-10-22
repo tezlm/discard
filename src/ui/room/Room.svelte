@@ -46,7 +46,7 @@ $: if($navRooms) room = state.focusedRoom;
   <RoomHeader room={$room} bind:selectedTab />
   {#if $room && $slice}
 		<div class="content" style:flex-direction="row">
-			{#if $room.getState("m.room.encryption")}
+			{#if $room.getState("m.room.encryption") && false}
 				<Unverified room={$room} />
 			{:else if !type}
 				<div class="content">

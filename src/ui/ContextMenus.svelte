@@ -5,7 +5,7 @@ let menuEl;
 let x, y;
 
 function closeMenu() {
-  if ($context.items) state.context.set({});
+  if ($context.items) $context = {};
 }
 
 $: queueMicrotask(() => {
@@ -23,7 +23,7 @@ $: queueMicrotask(() => {
 </style>
 <div class="menu" bind:this={menuEl} style:left="{x}px" style:top="{y}px">
   {#if $context.items}
-  <Context items={$context.items} />
+  <Context items={$context.items} width={$context.width} />
   {/if}
 </div>
 <svelte:window on:contextmenu={closeMenu} />

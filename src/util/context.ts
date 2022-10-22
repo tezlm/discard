@@ -37,8 +37,10 @@ export function eventContext(event: Event, config: { showEmoji: () => {} }): Arr
   if (!event.isState() && ((power.me >= power.forEvent("m.room.redaction") && event.sender.id === state.id) || power.me >= (power.redact ?? 50))) {
     menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.flags.add("redacted"); state.api.redactEvent(event.room.id, event.id) } });
   }
-  menu.push(null);
-  menu.push({ label: "View Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
+  if (state.settingsRef.get("shadowdev")) {
+    menu.push(null);
+    menu.push({ label: "View Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });
+  }
   return menu;
 
   function addReaction(emoji: string) {
@@ -104,10 +106,14 @@ export function roomContext(room: Room): Array<ContextMenuOption> {
 	  { label: "Copy Link", clicked: copy(`https://matrix.to/#/${encodeURIComponent(room.getState("m.room.canonical_alias")?.content.alias ?? room.id)}`), icon: "link" },
 	  null,
 	  { label: "Leave", clicked: () => state.popup.set({ id: "leave", type: "room", room }), icon: "logout", color: "var(--color-red)" },
-	  null,
-	  { label: "Copy ID", clicked: copy(room.id), icon: "terminal" },
-	  { label: "Dev Tools", clicked: () => state.popup.set({ id: "dev-room", room }) },
 	);
+  if (state.settingsRef.get("shadowdev")) {
+    menu.push(
+  	  null,
+  	  { label: "Copy ID", clicked: copy(room.id), icon: "terminal" },
+  	  { label: "Dev Tools", clicked: () => state.popup.set({ id: "dev-room", room }) },
+  	);
+  }
   return menu;
   
   function mute() {
@@ -171,7 +177,11 @@ export function memberContext(member: Member): Array<ContextMenuOption> {
   
   const moderate = [];
   const membership = member.membership;
-  if (power.me >= power.redact) moderate.push({ label: "Remove Messages", icon: "delete", color: "var(--color-red)", clicked: () => state.popup.set({ id: "deleterecent", room: member.room, member }) });
+  if (state.settingsRef.get("shadowmod") && power.me >= power.redact) {
+    moderate.push({ label: "Remove Messages", icon: "delete", color: "var(--color-red)", clicked: () => state.popup.set({ id: "deleterecent", room: member.room, member }) });
+    // redact state event?
+    // moderate.push({ label: "Remove Name/Avatar", icon: "delete", color: "var(--color-red)", clicked: () => state.popup.set({ id: "deleterecent", room: member.room, member }) });
+  }
   if (power.me >= power.kick && power.me > member.power) {
     if (membership !== "ban" && membership !== "leave") {
       moderate.push({ label: `Kick ${name}`, icon: "person_remove", color: "var(--color-red)", clicked: () => state.popup.set({ id: "kick", room: member.room, member }) });
@@ -196,9 +206,14 @@ export function memberContext(member: Member): Array<ContextMenuOption> {
       { label: "Member - 0", clicked: todo },
       { label: "Suspicious Impostor", clicked: todo, icon: "check", color: "var(--color-accent)" },
     ] },
-    null,
-    { label: "Copy ID", clicked: copy(member.id), icon: "terminal" },
   );
+  
+  if (state.settingsRef.get("shadowdev")) {
+    menu.push(
+      null,
+      { label: "Copy ID", clicked: copy(member.id), icon: "terminal" },
+    );
+  }
   
   return menu;
       

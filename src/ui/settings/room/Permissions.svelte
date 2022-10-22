@@ -86,8 +86,10 @@ function handleChange(item, power) {
 export function reset() {
   modified.clear();
   modified = modified;
-  room = room;  
+  room = room;
 }
+
+reset();
 
 $: if (modified.size) {
   save = async () => {
@@ -185,4 +187,4 @@ $: if (modified.size) {
 {:else}
 <p>permissions failed to load!</p>
 {/if}
-<div style="padding: 1em"></div>
+<div style="min-height: 100px"></div>

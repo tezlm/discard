@@ -10,6 +10,7 @@ import UserMenu from '../user/UserMenu.svelte';
   display: flex;
   flex-direction: column;
 	width: 240px;
+  background: var(--bg-rooms-members);
 }
 </style>
 <div style="display: flex; flex-direction: column;">

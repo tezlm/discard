@@ -105,10 +105,12 @@ export function reset() {
   </div>
 </div>
 <div style="margin: 1em"></div>
-<div class="title">Message History</div>
+<div class="title">History Visibility</div>
+<p>Who can read message history?</p>
 <Radio bind:selected={historyVisibility} options={[
   { id: "world_readable", name: "Everyone", detail: "Includes guests. Good for public rooms.", color: "var(--color-accent)" },
   { id: "shared",         name: "Members",  detail: "All members since selecting this option.", color: "var(--color-green)" },
   { id: "invited",        name: "Members, after invite", detail: "All members since they were invited.", color: "var(--color-yellow)" },
   { id: "joined",         name: "Members, after join",   detail: "All members since they joined.", color: "var(--color-red)" },
 ]} />
+<div style="min-height: 100px"></div>
