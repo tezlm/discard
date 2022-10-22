@@ -94,7 +94,7 @@ onDestroy(() => state.syncer.off("status", onStatus));
 	justify-content: center;
 	align-items: center;
 	height: 40px;
-	font-weight: bold;
+	font-weight: 500;
 	color: var(--color-red);
 }
 

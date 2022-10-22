@@ -160,6 +160,7 @@ $: if (showPicker) {
 .count {
   position: absolute;
   right: 4px;
+  color: var(--fg-content);
 }
 
 .reaction.self {

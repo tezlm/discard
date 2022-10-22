@@ -34,10 +34,16 @@ function getHomeContextMenu() {
   padding: 8px 1rem;
   height: 48px;
 
-  background: var(--bg-rooms-members);
   font-weight: 700;
   box-shadow: var(--shadow-header);
   cursor: pointer;
+  user-select: none;
+  
+  transition: background .2s;
+}
+
+.header:hover, .header.showMenu {
+  background: var(--mod-lighten);
 }
 
 .menu {
@@ -91,12 +97,28 @@ function getHomeContextMenu() {
   color: var(--color-red);
 }
 
-.color-nitor {
-  color: #ff73fa;
+.header > .icon {
+  margin-left: auto;
+  margin-right: -8px;
+  color: var(--fg-interactive);
+  font-size: 22px;
+  height: 32px;
+  width: 32px;
+  transition: all 150ms;
 }
 </style>
-<div class="header" on:click={() => showMenu = !showMenu}  on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: $focusedSpace ? roomContext($focusedSpace) : getHomeContextMenu(), x: e.clientX, y: e.clientY })}>
-  <span>{$focusedSpace ? $focusedSpace?.name ?? "unknown" : "Home"}</span>
+<div
+  class="header"
+  class:showMenu
+  on:click={() => showMenu = !showMenu}
+  on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: $focusedSpace ? roomContext($focusedSpace) : getHomeContextMenu(), x: e.clientX, y: e.clientY })}
+>
+  {#if $focusedSpace}
+    <span>{$focusedSpace?.name ?? "unknown"}</span>
+    <span class="icon" style:transform={showMenu ? "rotate(180deg)" : "rotate(0deg)"}>expand_more</span>
+  {:else}
+    <span>Home</span>
+  {/if}
   {#if showMenu}
   {#if $focusedSpace}
   <div class="menu" transition:zoomIn>

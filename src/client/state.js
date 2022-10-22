@@ -9,6 +9,8 @@ import Settings from "./matrix/settings.js";
 const store = new Store();
 await store.init();
 
+const settings = new Settings();
+
 const log = {
   ui: (info) => console.info("%c[discard]%c " + info, "font-weight: bold; color: magenta", ""),
   matrix: (info) => console.info("%c[discount]%c " + info, "font-weight: bold; color: yellow", ""),
@@ -37,7 +39,8 @@ const state = {
   invites: writable(new Map()),
   spaces: new Map(),
   dms: new Map(),
-  settings: writable(new Settings()),
+  settings: writable(settings),
+  settingsRef: settings,
   accountData: writable(new Map()),
   accountDataRef: new Map(),
   pushRules: writable({ parse: () => false }),

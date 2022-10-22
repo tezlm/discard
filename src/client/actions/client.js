@@ -109,7 +109,11 @@ function start(api, syncer, userId) {
   });
   
   syncer.on("accountData", ({ type, content }) => {
-    if (type === "org.eu.celery.settings") state.settings.set(new Settings(content));
+    if (type === "org.eu.celery.settings") {
+      const settings = new Settings(content);
+      state.settings.set(settings);
+      state.settingsRef = settings;
+    }
     if (type === "m.push_rules") state.pushRules.set(new PushRules(content.global));
     state.accountDataRef.set(type, content);
     state.accountData.set(state.accountDataRef);
@@ -128,7 +132,7 @@ export async function logout() {
   state.log.debug("bye!");
   state.syncer.stop();
   state.api.logout();
-  localStorage.removeItem("token");
+  localStorage.clear();
   state.scene.set("auth");
   state.popup.set({});
   state.client = null;

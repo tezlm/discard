@@ -1,11 +1,9 @@
 <script>
 import Confirm from "./Confirm.svelte";
 export let views, options;
-let focused = views[0];
+let focused = views.find(i => i.view);
 let popup = state.popup;
 let save, reset;
-
-// TODO: categories
 
 function handleClick(view) {
   if (save) return alert("unsaved changes"); // TODO: replace with animation
@@ -38,10 +36,10 @@ nav {
 }
 
 .item {
-	margin: 2px 8px 0;
+ 	margin: 2px 8px 0;
 	padding: 6px 10px;
-	color: var(--fg-interactive);
 	border-radius: 4px;
+  color: var(--fg-interactive);
 	font-size: 16px;
   font-weight: 500;
 	cursor: pointer;
@@ -138,25 +136,28 @@ h1 {
 }
 
 .title {
-  margin-left: 18px;
-  color: var(--fg-muted);
+  margin: 12px 18px 6px;
+  color: var(--fg-dim);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
 <div class="settings">
   <div class="sidebar hidescroll">
     <nav>
-      {#each views as view}
-        {#if view?.label}
-        <div class="title">{view.label}</div>
-        {:else if view}
-        <div on:click={() => handleClick(view)} class="item" class:selected={view === focused} style:color={view.color}>
+      {#each views as view (view.id)}
+        {#if view.label || view.split}
+          {#if view.split}<div class="separator"></div>{/if}
+          {#if view.label}<div class="title">{view.label}</div>{/if}
+        {:else}
+        <div on:click={() => handleClick(view)} class="item" class:selected={view.id === focused.id} style:color={view.color}>
           {view.name}
           {#if view.icon}
           <div class="icon">{view.icon}</div>
           {/if}
         </div>
-        {:else}
-        <div class="separator"></div>
         {/if}
       {/each}
     </nav>

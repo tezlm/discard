@@ -1,15 +1,21 @@
 // TODO: local echo for settings?
 
 const defaultSettings = new Map();
+
+// appearance
 defaultSettings.set("showmemberlist", true);
 defaultSettings.set("namecolors", "always");
+defaultSettings.set("reducemotion", false);
 defaultSettings.set("showjoinleave", true);
 defaultSettings.set("shownickavatar", true);
+
+// text box
 defaultSettings.set("sendtyping", true);
 defaultSettings.set("autocomplete", true);
 defaultSettings.set("showembeds", "unencrypted");
+
+// misc
 defaultSettings.set("autojoin", true);
-defaultSettings.set("reducemotion", false);
 
 export default class Settings extends Map {
   constructor(data) {
