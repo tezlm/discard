@@ -7,6 +7,8 @@ import Button from "../atoms/Button.svelte";
 export const confirm = todo;
 export let current;
 
+$: name = current.member.name ?? current.member.id;
+
 const scopes = [];
 if (current.room.type === "space") scopes.push(["This space", "space"]);
 if (current.room.type === "room") {
@@ -34,7 +36,7 @@ let selected = "1h";
 }
 </style>
 <Popup>
-  <h2 slot="header">Remove messages from {current.member.name}?</h2>
+  <h2 slot="header">Remove {name}'{name[name.length - 1] === "s" ? "" : "s"} messages?</h2>
   <div slot="content">
     {#if scopes.length}
     <div class="title">Delete scope</div>

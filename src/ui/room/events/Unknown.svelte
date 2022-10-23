@@ -1,17 +1,8 @@
 <script>
 import { formatDate } from "../../../util/format.ts";
-import { calculateHash } from "../../../util/content.ts";
+import Name from "../../atoms/Name.svelte";
 export let room;
 export let event;
-let settings = state.settings;
-
-function getColor(sender, settings) {
-  const level = settings.get("namecolors");
-  if (!sender) return;
-  if (level === "never") return `var(--fg-content)`;
-  if (level === "power" && sender.power <= room.power.usersDefault) return `var(--fg-content)`;
-  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
-}
 </script>
 <style>
 .change {
@@ -27,15 +18,6 @@ function getColor(sender, settings) {
   width: 72px;
 }
 
-.author {
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.author:hover {
-  text-decoration: underline;
-}
-
 time {
   color: var(--fg-muted);
   font-size: 11px;
@@ -47,9 +29,7 @@ time {
   <div class="icon">info</div>
   <div>
     unknown event type <b>{event.type}</b> from
-    <span class="author" style:color={getColor(event.sender, $settings)} data-mx-ping={event.sender.id}>
-      {event.sender.name || event.sender.userId}
-    </span>
+    <Name bold member={event.sender} />
     <time datetime={event.date.toISOString()}>{formatDate(event.date)}</time>
   </div>
 </div>

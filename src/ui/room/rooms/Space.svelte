@@ -8,7 +8,7 @@ let members = false;
 $: {
   room.members.fetch().then(() => {
     members = room.members.with("join", false);
-  });  
+  });
 }
   
 function formatJoinRule(rule) {

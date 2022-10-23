@@ -1,9 +1,9 @@
 <script>
-import { formatDate } from "../../../util/format.ts";
-import { calculateHash } from "../../../util/content.ts";
+import { formatDate } from "../../../util/format";
+import { calculateHash } from "../../../util/content";
+import Name from "../../atoms/Name.svelte";
 export let room;
 export let event;
-let settings = state.settings;
 $: victim = room.members.get(event.stateKey) ?? { userId: event.stateKey };
 $: action = getAction(event);
 
@@ -46,14 +46,6 @@ function getMembership(current = "leave", old = "leave", event) {
   return { icon: "person", type: "membership" };
 }
 
-function getColor(sender, settings) {
-  const level = settings.get("namecolors");
-  if (!sender) return;
-  if (level === "never") return `var(--fg-content)`;
-  if (level === "power" && sender.power <= room.power.usersDefault) return `var(--fg-content)`;
-  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
-}
-
 function getJoinMessage(event) {
   const messages = [
     ["", " slid into the room"],
@@ -82,16 +74,6 @@ function getJoinMessage(event) {
   width: 72px;
 }
 
-.author {
-  color: var(--fg-content);
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.author:hover {
-  text-decoration: underline;
-}
-
 time {
   color: var(--fg-muted);
   font-size: 11px;
@@ -103,9 +85,7 @@ time {
   <div class="icon" style:color={action.color}>{action.icon}</div>
   <div>
     {#if action.type !== "join"}
-    <span class="author" style:color={getColor(victim, $settings)} data-mx-ping={victim.id}>
-      {victim.name || victim.id}
-    </span>
+    <Name bold member={victim} />
     {/if}
     {#if action.type === "something"}
       did something
@@ -115,7 +95,7 @@ time {
       changed their name to <b style:color="var(--fg-content)">{action.name}</b>
     {:else if action.type === "join"}
       {@const [before, after] = getJoinMessage(event)}
-      {before}<span class="author" style:color={getColor(victim, $settings)} data-mx-ping={victim.id}>{victim.name || victim.id}</span>{after}
+      {before}<Name bold member={victim} />{after}
     {:else if action.type === "invite"}
       was invited by
     {:else if action.type === "reject"}
@@ -136,9 +116,7 @@ time {
       {action}
     {/if}
     {#if event.sender.id !== event.stateKey}
-    <span class="author" style:color={getColor(event.sender, $settings)} data-mx-ping={event.sender.id}>
-      {event.sender.name || event.sender.id}
-    </span>
+    <Name bold member={event.sender} />
     {/if}
     {#if event.content.reason}
     <span>{event.content.reason}</span>

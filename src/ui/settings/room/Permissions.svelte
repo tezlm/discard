@@ -15,9 +15,9 @@ onDestroy(() => state.client.off("state", updateRoom));
 const info = {
   message:  { name: "Send Messages",   description: "The minimum power required to send messages." },
   reaction: { name: "Send Reactions",  description: "The minimum power required to add reactions to messages. Unlike discord, disabling this permission will also disallow reacting with existing reactions." },
-  invite:   { name: "Invite Users",    description: `The minimum power required to invite new people to this ${room.type}.` },
-  kick:     { name: "Kick Members",    description: `The minimum power required to remove other (lower-powered) members from this ${room.type}. Kicked members can rejoin with an invite ${room.joinRule === "public" ? "or a link." : ""}` },
-  ban:      { name: "Ban Members",     description: `The minimum power required to remove other (lower-powered) members from this ${room.type}. Bans last forever, or until an unban.` },
+  invite:   { name: "Invite Users",    description: `The minimum power required to invite new people to this ${room.type === "m.space" ? "space" : "room"}.` },
+  kick:     { name: "Kick Members",    description: `The minimum power required to remove other (lower-powered) members from this ${room.type === "m.space" ? "space" : "room"}. Kicked members can rejoin with an invite ${room.joinRule === "public" ? "or a link." : ""}` },
+  ban:      { name: "Ban Members",     description: `The minimum power required to remove other (lower-powered) members from this ${room.type === "m.space" ? "space" : "room"}. Bans last forever, or until an unban.` },
   redact:   { name: "Redact Messages", description: "The minimum power required to remove messages." },
   name:     { name: "Change Name",     description: `The minimum power required to change this ${room.type}'s name.` },
   topic:    { name: "Change Topic",    description: `The minimum power required to change this ${room.type}'s topic.` },
@@ -29,7 +29,7 @@ const info = {
   rooms:    { name: "Manage Rooms",    description: "The minimum power required to add/remove rooms to this space." },
   upgrade:  { name: "Upgrade",         description: "The minimum power required to upgrade this room to a nev version" },
   history:  { name: "History",         description: "The minimum power required to change history visibility" },
-  encrypt:  { name: "Encript",         description: "The minimum power required to enable end to end encryption" },
+  encrypt:  { name: "Encrypt",         description: "The minimum power required to enable end to end encryption" },
 };
 
 function getItems(room) {

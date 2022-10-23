@@ -1,17 +1,8 @@
 <script>
 import { formatDate } from "../../../util/format.ts";
-import { calculateHash } from "../../../util/content.ts";
+import Name from "../../atoms/Name.svelte";
 export let room;
 export let event;
-let settings = state.settings;
-
-function getColor(sender, settings) {
-  const level = settings.get("namecolors");
-  if (!sender) return;
-  if (level === "never") return `var(--fg-content)`;
-  if (level === "power" && sender.power <= room.power.usersDefault) return `var(--fg-content)`;
-  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
-}
 </script>
 <style>
 .change {
@@ -33,15 +24,6 @@ function getColor(sender, settings) {
   width: 72px;
 }
 
-.author {
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.author:hover {
-  text-decoration: underline;
-}
-
 .name {
   color: var(--fg-notice);
 }
@@ -56,9 +38,7 @@ time {
 <div class="change">
   <div class="icon">edit</div>
   <div class="content">
-    <span class="author" style:color={getColor(event.sender, $settings)}>
-      {event.sender.name || event.sender.id}
-    </span>
+    <Name bold member={event.sender} />
     {#if event.type === "m.room.name"}
     changed the room name to <b class="name">{event.content.name}</b>
     {:else if event.type === "m.room.topic"}

@@ -1,12 +1,11 @@
 <script>
 import { formatDate } from "../../../util/format.ts";
-import { calculateHash } from "../../../util/content.ts";
+import Name from "../../atoms/Name.svelte";
 export let room;
 export let event;
-let settings = state.settings;
 $: [added, removed] = getState(event);
 
-// TODO: clean up
+// TODO: make buttons/links work
 
 function getState(event) {
   const pinned = event.content.pinned;
@@ -14,14 +13,6 @@ function getState(event) {
   const added = pinned.filter(i => !prev.includes(i));
   const removed = prev.filter(i => !pinned.includes(i));
   return [added, removed];
-}
-
-function getColor(sender, settings) {
-  const level = settings.get("namecolors");
-  if (!sender) return;
-  if (level === "never") return `var(--fg-content)`;
-  if (level === "power" && sender.power <= room.power.usersDefault) return `var(--fg-content)`;
-  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
 }
 </script>
 <style>
@@ -38,12 +29,12 @@ function getColor(sender, settings) {
   width: 72px;
 }
 
-.author, .link {
+.link {
   font-weight: 700;
   cursor: pointer;
 }
 
-.author:hover, .link:hover {
+.link:hover {
   text-decoration: underline;
 }
 
@@ -57,11 +48,11 @@ time {
 <div class="change">
   <div class="icon">push_pin</div>
   <div>
-    <span class="author" style:color={getColor(event.sender, $settings)}>
-      {event.sender.name || event.sender.id}
-    </span>
+    <Name bold member={event.sender} />
     {#if added.length === 0 && removed.length === 0}
     did nothing to the pins in this room.
+    {:else if event.content.pinned.length === 0}
+    cleared all the pins in this room.
     {:else if added.length === 1 && removed.length === 0}
     pinned <b class="link" on:click={() => actions.slice.jump(room.id, added[0])}>a message</b> to this room.
     {:else if added.length > 1 && removed.length === 0}

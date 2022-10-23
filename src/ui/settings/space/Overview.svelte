@@ -138,14 +138,22 @@ h1 {
 <h1>Space Overview</h1>
 <div>
   <div class="section" style="flex-direction: row">
+    {#if room.power.me >= room.power.forState("m.room.avatar")}
     <label class="avatar">
       <div class="uploader">
         <Avatar user={avatar} size={100} />
         <div class="icon">edit</div>
       </div>
       <div class="button" on:click={handleAvatarClick}>{#if avatar.avatar}Remove{:else}Upload{/if}</div>
-      <input type="file" style="display: none" on:change={changeAvatar} />
+      <input type="file" accept="image/*" style="display: none" on:change={changeAvatar} />
     </label>
+    {:else}
+    <div class="avatar">
+      <div class="uploader">
+        <Avatar link user={avatar} size={100} />
+      </div>
+    </div>
+    {/if}
     <div class="name">
       <div class="title">Space Name</div>
       <Input
@@ -164,9 +172,11 @@ h1 {
       readonly={room.power.me < room.power.forState("m.room.topic")}
     />
   </div>
+  {#if state.settingsRef.get("shadowdev")}
   <div class="section">
     <div class="title">Developers</div>
     <p><b>Room Id:</b> <code style="user-select: all">{room.id}</code></p>
     <p><b>Room Version:</b> <code style="user-select: all">{room.getState("m.room.create")?.content.room_version ?? "no m.room.create!"}</code></p>
   </div>
+  {/if}
 </div>
