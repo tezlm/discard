@@ -179,8 +179,7 @@ export function memberContext(member: Member): Array<ContextMenuOption> {
   const membership = member.membership;
   if (state.settingsRef.get("shadowmod") && power.me >= power.redact) {
     moderate.push({ label: "Remove Messages", icon: "delete", color: "var(--color-red)", clicked: () => state.popup.set({ id: "deleterecent", room: member.room, member }) });
-    // redact state event?
-    // moderate.push({ label: "Remove Name/Avatar", icon: "delete", color: "var(--color-red)", clicked: () => state.popup.set({ id: "deleterecent", room: member.room, member }) });
+    moderate.push({ label: "Remove Name/Avatar", icon: "delete", color: "var(--color-red)", clicked: todo });
   }
   if (power.me >= power.kick && power.me > member.power) {
     if (membership !== "ban" && membership !== "leave") {

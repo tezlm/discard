@@ -4,27 +4,18 @@ import MessageContent from "./MessageContent.svelte";
 import MessageEdit from "./MessageEdit.svelte";
 import User from "../../molecules/User.svelte";
 import { formatDate, formatTime } from "../../../util/format.ts";
-import { calculateHash } from '../../../util/content.ts';
 import { quadOut } from "svelte/easing";
 import Avatar from "../../atoms/Avatar.svelte";
+import Name from "../../atoms/Name.svelte";
 import { memberContext } from "../../../util/context";
 
 export let room, event, header = false;
 
 let { edit } = state.roomState;
-let { settings } = state;
 let showUserPopout = false;
 
 function getReply(content) {
   return content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
-}
-
-function getColor(sender, settings) {
-  const level = settings.get("namecolors");
-  if (!sender) return;
-  if (level === "never") return `var(--fg-content)`;
-  if (level === "power" && sender.power <= room.power.usersDefault) return `var(--fg-content)`;
-  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
 }
 
 function fly(_, props) {
@@ -49,15 +40,8 @@ function fly(_, props) {
 }
 
 .author {
-	font-weight: 500;
   display: inline-block;
   height: 22px;
-  user-select: text;
-	cursor: pointer;
-}
-
-.author:hover {
-	text-decoration: underline;
 }
 
 .badge {
@@ -131,8 +115,10 @@ time {
   <div class="content">
     {#if getReply(event.content)}<MessageReply {room} eventId={getReply(event.content)} />{/if}
     {#if header}
-    <div class="top">
-      <span class="author" style:color={getColor(event.sender, $settings)} on:click|stopPropagation={() => state.popup.set({ id: "user", userId: event.sender.id })} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: memberContext(event.sender), x: e.clientX, y: e.clientY })}>{event.sender.name || event.sender.id}</span>
+    <div>
+      <div class="author">
+        <Name member={event.sender} />
+      </div>
       {#if event.content.msgtype === "m.notice"}
       <div class="badge">bot</div>
       {/if}
@@ -150,7 +136,7 @@ time {
       <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
     </div>
     {/if}
-    {#if event.eventId === $edit}
+    {#if event.id === $edit}
     <MessageEdit {event} />
     {:else}
     <MessageContent {event} />

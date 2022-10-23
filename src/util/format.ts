@@ -38,6 +38,7 @@ export function formatSize(size: number): string {
 }
 
 export function formatDuration(duration: number) {
+  if (duration < 0) return "-:--";
   let minutes = Math.floor(duration / 60);
   let seconds = duration % 60;
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;

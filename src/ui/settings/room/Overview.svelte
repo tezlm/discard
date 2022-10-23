@@ -64,9 +64,11 @@ $: {
       readonly={room.power.me < room.power.forState("m.room.topic")}
     />
   </div>
+  {#if state.settingsRef.get("shadowdev")}
   <div class="section">
     <div class="title">Developers</div>
     <p><b>Room Id:</b> <code style="user-select: all">{room?.id}</code></p>
     <p><b>Room Version:</b> <code style="user-select: all">{room.getState("m.room.create")?.content.room_version ?? "no m.room.create!"}</code></p>
   </div>
+  {/if}
 </div>

@@ -11,7 +11,7 @@ let started = false;
 let paused = true;
 // TODO: refactor?
 // let state = "pristine" | "playing" | "paused" | "finished"
-let duration = 1, currentTime = 0;
+let duration = -1, currentTime = 0;
 let volume = 1;
 let muted = false;
 let wrapperEl;
@@ -103,6 +103,7 @@ video {
 .info .name {
   font-weight: 500;
   color: var(--fg-content);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }

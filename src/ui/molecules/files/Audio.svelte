@@ -7,7 +7,7 @@ export let src;
 export let name = "title";
 export let size = 0;
 let audioEl;
-let duration = 1, currentTime = 0;
+let duration = -1, currentTime = 0;
 // let state = "pristine" | "playing" | "paused" | "finished"
 let paused = true;
 let muted = false;
@@ -27,6 +27,7 @@ function handleScrub(t) {
 </script>
 <style>
 .controls {
+  min-width: 400px;
   margin-top: .5rem;
   display: flex;
   background: rgba(4, 4, 5, .6);
@@ -68,7 +69,7 @@ function handleScrub(t) {
 <File {name} {size} {src}>
   <div class="controls">
     <div class="icon playpause" on:click={togglePlayPause}>
-      {#if currentTime > duration - .05}
+      {#if currentTime > duration - .05 && duration !== -1}
       replay
       {:else if paused}
       play_arrow
@@ -78,7 +79,7 @@ function handleScrub(t) {
     </div>
     <div class="time">{formatDuration(Math.floor(currentTime))}/{formatDuration(Math.floor(duration))}</div>
     <div class="slider">
-      <Slider value={currentTime} max={duration} changed={handleScrub} />
+      <Slider value={currentTime} max={duration} changed={handleScrub} tooltipify={t => formatDuration(Math.floor(t))} />
     </div>
     <Volume bind:volume={volume} bind:muted={muted} />
   </div>

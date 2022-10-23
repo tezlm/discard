@@ -1,17 +1,8 @@
 <script>
 import { formatDate } from "../../../util/format.ts";
-import { calculateHash } from "../../../util/content.ts";
+import Name from "../../atoms/Name.svelte";
 export let room;
 export let event;
-let settings = state.settings;
-
-function getColor(sender, settings) {
-  const level = settings.get("namecolors");
-  if (!sender) return;
-  if (level === "never") return `var(--fg-content)`;
-  if (level === "power" && sender.power <= room.power.usersDefault) return `var(--fg-content)`;
-  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
-}
 </script>
 <style>
 .change {
@@ -27,15 +18,6 @@ function getColor(sender, settings) {
   width: 72px;
 }
 
-.author {
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.author:hover {
-  text-decoration: underline;
-}
-
 time {
   color: var(--fg-muted);
   font-size: 11px;
@@ -46,9 +28,7 @@ time {
 <div class="change">
   <div class="icon">tag</div>
   <div>
-    <span class="author" style:color={getColor(event.sender, $settings)} data-mx-ping={event.sender.id}>
-      {event.sender.name || event.sender.id}
-    </span>
+    <Name bold member={event.sender} />
     {#if event.content.alias}
     set the room's main alias to <b>{event.content.alias}</b>
     {:else}
