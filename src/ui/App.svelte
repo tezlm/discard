@@ -96,7 +96,7 @@ main > div {
   transform: scale(0.9);
 }
 
-.chat.reducemotion {
+.chat.hide.reducemotion {
   transform: none;
 }
 

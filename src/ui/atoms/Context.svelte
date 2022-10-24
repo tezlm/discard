@@ -42,12 +42,18 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
   font-size: 14px;
   font-weight: 500;
   border-radius: 2px;
+  white-space: nowrap;
   cursor: pointer;
 }
 
 .item:hover {
   background: var(--color-blue);
   color: var(--fg-notice) !important;
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .icon {
@@ -94,7 +100,9 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
         style:color={item.color ?? "var(--fg-interactive)"}
         on:click={e => handleClick(item, e)}
       >
-        {item.label}
+        <div class="label">
+          {item.label}
+        </div>
         {#if item.icon}
         <div class="icon">{item.icon}</div>
         {/if}
