@@ -33,6 +33,9 @@ async function getMember(member) {
   if (users.has(member.id)) return users.get(member.id);
   const { displayname, avatar_url } = await state.api.fetchUser(member.id);
   const data = { avatar: avatar_url, name: displayname || member.id, id: member.id };
+  // mutation isnt that good of an idea, but oh well
+  member.name = data.name;
+  member.avatar = data.avatar;
   users.set(member.id, data);
   return data;
 }
@@ -99,11 +102,18 @@ h1 {
           {member.id}
           <span style="color: var(--fg-muted); font-size: 14px">{member.id}</span>
         </div>
-      {:then member}
-        <Avatar user={member} size={40} />
+      {:then data}
+        <Avatar user={data} size={40} />
         <div class="name">
-          {member.name || member.id}
-          <span style="color: var(--fg-muted); font-size: 14px">{member.id}</span>
+          <div>
+            {data.name || data.id}
+            <span style="color: var(--fg-muted); font-size: 14px">
+            {#if member.event?.content.reason}
+              ({member.event.content.reason})
+            {/if}
+            </span>
+          </div>
+          <span style="color: var(--fg-muted); font-size: 14px">{data.id}</span>
         </div>
       {:catch}
         <Avatar user={member} size={40} />

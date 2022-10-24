@@ -5,8 +5,15 @@ import Popup from "../atoms/Popup.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 import Button from "../atoms/Button.svelte";
 export let current;
+
+let search;
 let usersPromise = Promise.resolve(null);
 let inviteStates = new Map();
+
+function close() {
+  state.popup.set({ ...current, id: null });
+}
+
 function getLink() {
   if (current.room.joinRule !== "public") return null;
   const alias = current.room.getState("m.room.canonical_alias")?.content.alias;
@@ -21,32 +28,44 @@ function getLink() {
   }
 }
 
-const { users } = state;
-async function fetchUser(userId) {
-  if (users.has(userId)) return users.get(userId);
-	const { avatar_url, displayname } = await state.api.fetchUser(userId).catch(() => ({}));
-	const data = { avatar: avatar_url, name: displayname, id: userId };
-	users.set(userId, data);
-	return data;
+function handleSearch() {
+  if (/@.*:.+/.test(search)) {
+    invite(search);
+    close();
+  } else if (!search) {
+    usersPromise = null;
+  } else {
+    usersPromise = searchUsers(search);
+  }
 }
 
 async function searchUsers(term) {
   const { results } = await state.api.searchUsers(term);
   const users = results.map(i => ({ avatar: i.avatar_url, name: i.display_name, id: i.user_id }));
-  if (/@.*:.+/.test(term)) await fetchUser(term).then(user => users.push(user)).catch(() => {});
+  
   for (let user of users) {
     if (!state.users.has(user.id)) state.users.set(user.id, user);
     if (current.room.members.has(user.id)) inviteStates.set(user.id, getState(current.room.members.get(user.id)));
   }
-  return users;
   
-  function getState(member) {
-    switch(member.membership) {
-      case "join": return "joined";
-      case "ban": return "banned";
-      case "invite": return "invited";
-      default: return null;
-    }
+  return users;
+}
+
+function getState(member) {
+  switch(member.membership) {
+    case "join": return "joined";
+    case "ban": return "banned";
+    case "invite": return "invited";
+    default: return null;
+  }
+}
+
+function formatState(state) {
+  switch(state) {
+    case "inviting": return "Inviting";
+    case "joined": return "Joined";
+    case "banned": return "Banned";
+    default: return "Invite";
   }
 }
 
@@ -60,7 +79,7 @@ async function invite(userId) {
   } catch (err) {
     inviteStates.delete(userId);
     inviteStates = inviteStates;
-    console.error(err)
+    console.error(err);
   }
 }
 </script>
@@ -107,7 +126,7 @@ h2.title {
   <div slot="content" class="content">
     <div class="split-top">
       <h3>Invite friends to {current.room.name}</h3>
-      <Search placeholder="Search for people" size="tall" escaped={() => state.popup.set({ ...current, id: null })} submitted={(term) => usersPromise = term ? searchUsers(term) : null} autofocus />
+      <Search placeholder="Search for people" size="tall" bind:value={search} escaped={close} submitted={handleSearch} autofocus />
     </div>
     <div class="userlist scroll">
     {#await usersPromise}
@@ -124,7 +143,7 @@ h2.title {
           <div style="margin-left: 8px">
             <Button
               type="good small hollow"
-              label={({ inviting: "Inviting", invited: "Invited", joined: "Joined", banned: "Banned" })[inviteStates.get(user.id)] ?? "Invite"}
+              label={formatState(inviteStates.get(user.id))}
               disabled={inviteStates.get(user.id)}
               loading={inviteStates.get(user.id) === "inviting"}
               clicked={() => invite(user.id)}
@@ -134,6 +153,8 @@ h2.title {
         {:else}
         <h2 class="title">No results :(</h2>
         {/each}
+      {:else if /@.*:.+/.test(search)}
+        <h2 class="title">press enter to invite</h2>
       {:else}
         <h2 class="title">search for users</h2>
       {/if}
@@ -142,9 +163,7 @@ h2.title {
     {#if getLink()}
     <div class="split-btm">
       <div class="title">Or, send a link</div>
-      <!-- <div on:click={() => navigator.clipboard.writeText(getLink()).then(() => alert("copied!"))}> -->
-        <Input value={getLink()} autoselect />
-      <!-- </div> -->
+      <Input value={getLink()} autoselect />
     </div>
     {/if}
   </div>

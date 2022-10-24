@@ -184,14 +184,11 @@ async function handleUpload(file) {
 }
 
 async function handleDrop(e) {
-  console.log("drop", isShift)
   isDragging = false;
   for (let file of e.dataTransfer.files) {
     if (isShift) {
-      console.log("upload file direct")
       await handleUpload(file);
     } else {
-      console.log("upload file")
       await onfile(file);
     }
   }

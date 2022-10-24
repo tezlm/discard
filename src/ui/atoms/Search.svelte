@@ -9,7 +9,7 @@ export let escaped = (_: KeyboardEvent) => {};
 
 function handleKeyDown(e: KeyboardEvent) {
   if (e.key === "Enter") {
-    if (value) submitted(value, e);
+    submitted(value, e);
   } else if (e.key === "Escape") {
     if (value) {
       value = "";

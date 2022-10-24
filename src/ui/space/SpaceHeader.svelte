@@ -120,8 +120,8 @@ function getHomeContextMenu() {
     <span>Home</span>
   {/if}
   {#if showMenu}
-  {#if $focusedSpace}
   <div class="menu" transition:zoomIn>
+  {#if $focusedSpace}
       {#if $focusedSpace.power.me >= ($focusedSpace.power.invite ?? 0) || $focusedSpace.joinRule === "public"}
       <div class="item" on:click={() => showPopup("invite", { room: $focusedSpace })}><span class="color-accent">Invite People</span></div>
       <div class="spacer"></div>
@@ -136,15 +136,13 @@ function getHomeContextMenu() {
       <div class="spacer"></div>
       {/if}
       <div class="item" on:click={() => showPopup("leave", { room: $focusedSpace })}><span class="color-red">Leave Space</span></div>
-  </div>
   {:else}
-  <div class="menu" transition:zoomIn>
       <div class="item" on:click={() => showPopup("create", { type: "room" })}>Create Room</div>
       <div class="item" on:click={() => showPopup("create", { type: "space" })}>Create Space</div>
       <div class="item" on:click={() => showPopup("join")}>Join</div>
       <div class="spacer"></div>
       <div class="item" on:click={() => state.scene.set("user-settings") }>Settings</div>
-  </div>
   {/if}
+  </div>
   {/if}
 </div>

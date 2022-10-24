@@ -10,14 +10,13 @@ export let current;
 $: name = current.member.name ?? current.member.id;
 
 const scopes = [];
-if (current.room.type === "space") scopes.push(["This space", "space"]);
-if (current.room.type === "room") {
-  if (state.spaces.get("orphanRooms").find(i => i.id === current.room.id)) {
-    scopes.push(["This room", "room"]);
-  } else {
-    scopes.push(["This space", "space"]);
-    scopes.push(["Only this room", "room"]);
-  }
+if (current.room.type === "m.space") {
+  scopes.push(["This space", "space"]);
+} else if (state.spaces.get("orphanRooms").find(i => i.id === current.room.id)) {
+  scopes.push(["This room", "room"]);
+} else {
+  scopes.push(["This space", "space"]);
+  scopes.push(["Only this room", "room"]);
 }
 
 const since = [

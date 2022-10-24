@@ -14,15 +14,14 @@ const placeholders = [
   "i dont like them",
 ];
 
-const options = [];
-if (current.room.type === "space") options.push(["This space", "space"]);
-if (current.room.type === "room") {
-  if (state.spaces.get("orphanRooms").find(i => i.id === current.room.id)) {
-    options.push(["This room", "room"]);
-  } else {
-    options.push(["This space", "space"]);
-    options.push(["Only this room", "room"]);
-  }
+const scopes = [];
+if (current.room.type === "m.space") {
+  scopes.push(["This space", "space"]);
+} else if (state.spaces.get("orphanRooms").find(i => i.id === current.room.id)) {
+  scopes.push(["This room", "room"]);
+} else {
+  scopes.push(["This space", "space"]);
+  scopes.push(["Only this room", "room"]);
 }
 
 function kick() {
@@ -36,11 +35,11 @@ function kick() {
 }
 </style>
 <Popup>
-  <h2 slot="header">Kick {current.member.name}?</h2>
+  <h2 slot="header">Kick {current.member.name || current.member.id}?</h2>
   <div slot="content">
-    {#if false && options.length > 1}
+    {#if scopes.length > 1}
     <div class="title">Kick scope</div>
-    <Dropdown {options} />
+    <Dropdown options={scopes} />
     {/if}
     <div class="title">Reason for Kick</div>
     <Textarea autofocus placeholder={rnd(placeholders)} bind:value={reason} />
