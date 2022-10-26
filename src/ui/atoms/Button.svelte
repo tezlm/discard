@@ -1,4 +1,5 @@
 <script lang="ts">
+import { fastclick } from "../../util/use";
 export let label: string | undefined;
 export let type = "normal";
 export let clicked = () => {};
@@ -92,7 +93,8 @@ button {
   class:standard
   class:disabled
   class:loading
-  on:click={clicked}
+  use:fastclick
+  on:fastclick={clicked}
 >
   {#if label}
   {label}

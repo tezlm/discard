@@ -2,17 +2,17 @@
 import MessageReply from "./MessageReply.svelte";
 import MessageContent from "./MessageContent.svelte";
 import MessageEdit from "./MessageEdit.svelte";
-import User from "../../molecules/User.svelte";
 import { formatDate, formatTime } from "../../../util/format.ts";
 import { quadOut } from "svelte/easing";
 import Avatar from "../../atoms/Avatar.svelte";
 import Name from "../../atoms/Name.svelte";
 import { memberContext } from "../../../util/context";
+import { fastclick } from "../../../util/use";
 
 export let room, event, header = false;
 
+let { popout, context } = state;
 let { edit } = state.roomState;
-let showUserPopout = false;
 
 function getReply(content) {
   return content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
@@ -23,6 +23,27 @@ function fly(_, props) {
     duration: 200,
     easing: quadOut,
     css: t => `transform: translateX(${t * props.x - props.x}px)`,
+  };
+}
+
+const showMemberPopout = (e) => { 
+  const rect = e.target.getBoundingClientRect();
+  if ($popout._owner === e.target) return $popout = {};
+  $popout = {
+    id: "member",
+    member: event.sender,
+    animate: "right",
+    top: rect.y,
+    left: rect.x + rect.width + 8,
+    _owner: e.target,
+  };
+}
+
+const showMemberContext = (member) => (e) => {
+  $context = {
+    items: memberContext(member),
+    x: e.clientX,
+    y: e.clientY
   };
 }
 </script>
@@ -76,7 +97,7 @@ function fly(_, props) {
   transition: box-shadow .2s;
 }
 
-.avatar:hover, .avatar.selected {
+.avatar:hover {
   box-shadow: 0 4px 4px #00000022;
 }
 
@@ -96,17 +117,15 @@ time {
 .message:hover time {
   display: inline-block;
 }
-
-.message .user {
-  position: absolute;
-  z-index: 1;
-}
 </style>
-<div class="message">
+<div
+  class="message"
+  on:contextmenu={e => { const memberId = e.target.dataset.mxPing; if (memberId && room.members.has(memberId)) { e.preventDefault(); e.stopPropagation(); showMemberContext(room.members.get(memberId)) }}}
+>
   <div class="side">
     {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
     {#if header}
-    <div class="avatar" class:selected={showUserPopout} on:click|stopPropagation={() => showUserPopout = !showUserPopout} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: memberContext(event.sender), x: e.clientX, y: e.clientY })}>
+    <div class="avatar" use:fastclick on:fastclick={showMemberPopout} on:contextmenu|preventDefault|stopPropagation={showMemberContext(event.sender)}>
       <Avatar user={event.sender} size={40} />
     </div>
     {:else}
@@ -123,16 +142,6 @@ time {
       {#if event.content.msgtype === "m.notice"}
       <div class="badge">bot</div>
       {/if}
-      {#if showUserPopout}
-      <div
-        class="user"
-        style:top="{getReply(event.content) ? 24 : 0}px"
-        in:fly={{ x: -15 }}
-        on:click|stopPropagation
-      >
-        <User member={event.sender} />
-      </div>
-      {/if}
       <span style="margin-right: 0.25rem;"></span>
       <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
     </div>
@@ -144,4 +153,3 @@ time {
     {/if}
   </div>
 </div>
-<svelte:window on:click={() => { showUserPopout = false; }} />

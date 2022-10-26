@@ -1,11 +1,12 @@
 <script>
 import Avatar from "../atoms/Avatar.svelte";
 import { memberContext } from "../../util/context";
+import { fastclick } from "../../util/use";
 export let member;
+let { popup, popout, context } = state;
 
 function openMenu(e) {
-  e.stopPropagation();
-  state.context.set({ items: memberContext(member), x: e.clientX, y: e.clientY });
+  $context = { items: memberContext(member), x: e.clientX, y: e.clientY };
 }
 </script>
 <style>
@@ -44,11 +45,41 @@ function openMenu(e) {
   font-size: 14px;
   user-select: all;
 }
+
+.avatar {
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.view-profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  
+  background: #11111188;
+  font: 12px var(--font-display);
+  font-weight: 700;
+  cursor: pointer;
+  
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.view-profile:hover {
+  opacity: 1;
+}
 </style>
-<div class="popout" on:contextmenu|preventDefault={openMenu}>
+<div class="popout" on:contextmenu|preventDefault|stopPropagation={openMenu}>
   <div class="top">
-    <Avatar user={member} size={80} />
-    <div class="icon" on:click={openMenu}>more_vert</div>
+    <div class="avatar" use:fastclick on:fastclick={() => { $popout = {}; $popup = { id: "user", userId: member.id } }}>
+      <div class="view-profile">View Profile</div>
+      <Avatar user={member} size={80} />
+    </div>
+    <div class="icon" on:click|stopPropagation={openMenu}>more_vert</div>
   </div>
   <h3>{member.name || member.id}</h3>
   <div class="id">{member.id}</div>

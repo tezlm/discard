@@ -21,7 +21,7 @@ function card() {
 
 function opacity() {
   return {
-    duration: 300,
+    duration: 250,
     css: t => `opacity: ${t}`,
   }
 }
@@ -93,8 +93,8 @@ function opacity() {
   transition: color 0.4s;
 }
 </style>
-<div class="background" on:click={closePopup} transition:opacity>
-  <div class="card" on:click|stopPropagation class:raw transition:card>
+<div class="background" on:mousedown={closePopup} transition:opacity>
+  <div class="card" on:mousedown|stopPropagation class:raw transition:card>
     {#if showClose}
       <div class="icon close" on:click={closePopup}>close</div>
     {/if}
