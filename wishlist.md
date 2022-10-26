@@ -30,7 +30,6 @@ varying levels of difficulty
   - [x] make them save
   - [ ] appearance/theme settings
   - [ ] room settings
-  - [ ] space rooms
 - [ ] notifications
   - [ ] show # of unread messages
   - [ ] mentions list/inbox
@@ -43,18 +42,20 @@ varying levels of difficulty
 - [ ] spaces
   - [-] space home
   - [ ] add/remove rooms from spaces
-  - [ ] show correct order of rooms
+  - [x] show correct order of rooms
   - [ ] order top level spaces
   - [x] display sub-spaces
 - [ ] rooms
   - [x] create room
   - [x] leave room
   - [ ] join room
-  - [ ] room invites
-  - [ ] invite people
+  - [x] room invites
+  - [x] invite people
+- [ ] moderation
   - [x] ban/kick/unban people
+  - [ ] change power levels
 - [ ] timeline
-  - [ ] jump to reply
+  - [-] jump to reply
   - [ ] jump to unread
   - [ ] jump to latest
   - [ ] link embeds
@@ -66,13 +67,20 @@ varying levels of difficulty
   - [x] user colors
   - [x] view members by memberships
   - [x] view homeserver stats
-- [x] context menus
+- [-] context menus
+- [ ] search messages
+  - [ ] filtering
 - [ ] dms
   - [x] show dms differently
   - [ ] dm-only list
   - [ ] start dms
 - [ ] router (change title/hash/favicon)
-- [ ] e2ee
+- [ ] persist
+  - [ ] save state/accountdata
+  - [ ] save e2ee keys
+  - [ ] save timeline
+  - [ ] resume after disconnect
+- [ ] e2ee (VERY DIFFICULT)
   - [ ] basic implementation
   - [ ] attachments
   - [ ] import/export keys
@@ -96,3 +104,4 @@ after the base stuff is done, i might start looking at other features
   - [ ] documents  
 - [ ] threads
 - [ ] voice channels
+- [ ] index and search encrypted room events

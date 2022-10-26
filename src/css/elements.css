@@ -40,6 +40,10 @@ pre {
   overflow-x: scroll;
 }
 
+pre code {
+  padding: 0;
+}
+
 kbd {
   display: inline-block;
   box-shadow: 0 2px 0 var(--bg-spaces);

@@ -55,6 +55,13 @@ async function getProfile(userId) {
     <div class="info">
       more text here, foo bar baz<br />
       even more text here<br />
+      <ul>
+        <li>send message</li>
+        <li>(un)block</li>
+        <li>presence?</li>
+        <li>notes?</li>
+        <li>about me and other profile data?</li>
+      </ul>
     </div>
     {/await}
   </div>

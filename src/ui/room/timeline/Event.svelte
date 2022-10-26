@@ -33,7 +33,7 @@ function getToolbar(event, shiftKey) {
     toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
   } else if (shiftKey) {
     if (!event.isState() && ((fromMe && room.power.me >= room.power.forEvent("m.room.redact")) || (room.power.me >= room.power.redact))) {
-      toolbar.push({ name: "Delete", icon: "delete", color: "var(--color-red)", clicked: () => { event.flags.add("redacted"); state.api.redactEvent(event.room.id, event.id) }});
+      toolbar.push({ name: "Redact", icon: "delete", color: "var(--color-red)", clicked: () => { event.flags.add("redacted"); state.api.redactEvent(event.room.id, event.id) }});
     }
     if (event.type === "m.room.message" && room.power.me >= room.power.forEvent("m.room.message")) {
       toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });

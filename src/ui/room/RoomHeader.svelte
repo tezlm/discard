@@ -4,7 +4,7 @@ import { parseHtml } from "../../util/html.js";
 import { roomContext } from "../../util/context";
 export let room;
 let space = state.focusedSpace;
-let settings = state.settings;
+let { settings } = state;
 $: dark = $space && !room;
 
 let { popout, invites, dms } = state;

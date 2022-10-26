@@ -5,24 +5,19 @@ const env = DISCARD;
 <div>
   {env.package.name} version {env.package.version}, commit <a href="https://git.celery.eu.org/tezlm/discard/commit/{env.commit}">{env.commit}</a>
   <br>
-  <br>
-  made with the following dependencies:
+  <div style="margin: 1em 0">made with the following dependencies:</div>
   <table>
     <tr><th>name</th><th>version</th></tr>
     {#each Object.entries(env.package.dependencies) as [pkg, ver]}
     <tr><td><a href="https://npmjs.com/package/{pkg}">{pkg}</a></td><td>{ver.replace(/^\^/, "")}</td></tr>
     {/each}
   </table>
-  <ul>
-    {#each Object.entries(env.package.dependencies) as [pkg, ver]}
-    <li><a href="https://npmjs.com/package/{pkg}">{pkg}</a> version {ver.replace(/^\^/, "")}</li>
-    {/each}
-  </ul>
-  <br>
-  along with the following, for development:
-  <ul>
+  <div style="margin: 1em 0">along with the following, for development:</div>
+  <table>
+    <tr><th>name</th><th>version</th></tr>
     {#each Object.entries(env.package.devDependencies) as [pkg, ver]}
-    <li><a href="https://npmjs.com/package/{pkg}">{pkg}</a> version {ver.replace(/^\^/, "")}</li>
+    <tr><td><a href="https://npmjs.com/package/{pkg}">{pkg}</a></td><td>{ver.replace(/^\^/, "")}</td></tr>
     {/each}
-  </ul>
+  </table>
+  <div style="margin: 3em 0"></div>
 </div>

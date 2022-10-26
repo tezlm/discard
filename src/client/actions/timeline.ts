@@ -76,8 +76,7 @@ export function handle(event: Event, toStart = false) {
 function redact(event: Event) {
   const id = event.raw.redacts ?? event.content.redacts;
   state.log.debug(`handle redaction in ${event.room.id} for ${id}`);
-  reslice(event.room);
-  
+  reslice(event.room, true);
   
   // const timeline = event.room.events.live;
   // const index = timeline.lastIndexOf(event);
@@ -92,6 +91,6 @@ function redact(event: Event) {
     // const sliceIndex = slice.events.findIndex(i => i.id === id);
     // if (sliceIndex !== -1) slice.events.splice(sliceIndex, 1);
     // state.slice.set(slice);
-    reslice(event.room);
+    // reslice(event.room);
   // }
 }

@@ -20,6 +20,20 @@ let embed = {
   "og:image:type": "image/jpeg",
   "matrix:image:size": 63761
 }
+
+function thing(node) {
+  const handleClick = () => {
+    alert("asdf");
+  };
+  
+  node.addEventListener("click", handleClick);
+  
+  return {
+    destroy() {
+      node.removeEventListener("click", handleClick);
+    }
+  }
+}
 </script>
 <style>
 .join {
@@ -79,6 +93,8 @@ let embed = {
 }
 </style>
 <p>testbed for random stuff</p>
+<div style="min-height: 1em"></div>
+<div use:thing>hello world</div>
 <div style="min-height: 1em"></div>
 <div>
   <div class="join">
