@@ -5,7 +5,10 @@ import Power from "../../atoms/Power.svelte";
 import { memberContext } from "../../../util/context";
 
 export let room, membership;
-let users = state.users;
+
+let { users } = state;
+let { power } = room;
+let resets = {};
 
 let allMembers = false;
 let members = false;
@@ -38,6 +41,33 @@ async function getMember(member) {
   member.avatar = data.avatar;
   users.set(member.id, data);
   return data;
+}
+
+function changePower(member, pl) {
+  if (pl === member.power) return;
+  if (pl === power.me) {
+    state.popup.set({
+      id: "dialog",
+      title: "Change power level?",
+      html: "You are about to change this member's power level to the same level as yourself! You will <b>not</b> be able to demote them after this change. Are you absolutely sure you want to do this?",
+      button: "Promote!",
+      danger: true,
+      clicked: () => member.setPower(pl),
+      cancel: () => resets[member.id]?.(),
+    });
+  } else if (member.id === state.userId) {
+    state.popup.set({
+      id: "dialog",
+      title: "Change power level?",
+      html: "You are about to demote yourself! You will <b>not</b> be able to undo this. Are you absolutely sure you want to demote yourself?",
+      button: "Demote!",
+      danger: true,
+      clicked: () => member.setPower(pl),
+      cancel: () => resets[member.id]?.(),
+    });
+  } else {
+    member.setPower(pl);
+  }
 }
 </script>
 <style>
@@ -124,7 +154,14 @@ h1 {
       {/await}
       <div style="margin-left: auto;"></div>
       {#if membership === "join"}
-      <Power showDefault value={member.power} disabled={(member.power >= room.power.me || room.power.me < room.power.forState("m.room.power_levels")) && member.id !== state.client.userId} max={room.power.me} />
+      <!-- FIXME: this is very broken in general and doesn't update power levels -->
+      <Power
+        value={member.power}
+        disabled={(power.me < power.forState("m.room.power_levels") || (power.me <= member.power && member.id !== state.userId))}
+        max={power.me}
+        changed={(level) => changePower(member, level)}
+        bind:reset={resets[member.id]}
+      />
       {/if}
       <div class="icon menu" on:click|stopPropagation={e => state.context.set({ items: memberContext(member), x: e.clientX, y: e.clientY })}>more_vert</div>
     </div>

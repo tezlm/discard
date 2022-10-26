@@ -2,6 +2,7 @@
 import RoomFooter from './RoomFooter.svelte';
 import RoomHeader from './RoomHeader.svelte';
 import RoomMembers from './RoomMembers.svelte';
+import RoomSearch from './RoomSearch.svelte';
 
 import BasicRoom from './rooms/Basic.svelte';
 import SpaceRoom from './rooms/Space.svelte';
@@ -13,10 +14,9 @@ import UnknownRoom from './rooms/Unknown.svelte';
 import MediaRoom from './rooms/Media.svelte';
 import ForumRoom from './rooms/Forum.svelte';
 
-let room = state.focusedRoom;
-let space = state.focusedSpace;
-let slice = state.slice;
-let settings = state.settings;
+let { focusedRoom: room, focusedSpace: space, roomState, slice, settings } = state;
+let { search } = roomState;
+
 let selectedTab;
 $: type = $room?.getState("m.room.create")?.content.type;
 
@@ -63,7 +63,9 @@ $: if($navRooms) room = state.focusedRoom;
 			{:else}
 				<UnknownRoom room={$room} />
 			{/if}
-			{#if $settings.get("showmemberlist")}
+			{#if $search}
+			<RoomSearch room={$room} search={$search} />
+			{:else if $settings.get("showmemberlist")}
 			<RoomMembers room={$room} />
 			{/if}
 		</div>

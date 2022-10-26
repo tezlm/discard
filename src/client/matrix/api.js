@@ -227,7 +227,7 @@ export default class Api {
   	return this.fetch("PUT", `/pushrules/global/${encode(kind)}/${encode(ruleId)}`, rule);
   }
   
-  deleteRule(kind, roomId) {
-  	return this.fetch("DELETE", `/pushrules/global/${encode(kind)}/${encode(roomId)}`);
+  deleteRule(kind, ruleId) {
+  	return this.fetch("DELETE", `/pushrules/global/${encode(kind)}/${encode(ruleId)}`);
   }
 }

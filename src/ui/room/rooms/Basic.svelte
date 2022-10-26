@@ -235,7 +235,6 @@ function isRead(room) {
 		items={slice.events}
 		itemKey="id"
 		direction="up"
-		margin={300}
 		bind:scrollTop={scrollTop}
 		bind:scrollMax={scrollMax}
 		bind:scrollTo={scrollTo}

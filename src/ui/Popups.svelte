@@ -6,6 +6,8 @@ import Error from "./popups/Error.svelte";
 import Logout from "./popups/Logout.svelte";
 import Switcher from "./popups/Switcher.svelte";
 
+import Dialog from "./popups/Dialog.svelte";
+
 import Create from "./popups/Create.svelte";
 import Join from "./popups/Join.svelte";
 import Info from "./popups/Info.svelte";
@@ -33,6 +35,7 @@ popups.set("todo", Todo);
 popups.set("error", Error);
 popups.set("logout", Logout);
 popups.set("switcher", Switcher);
+popups.set("dialog", Dialog);
 
 // rooms
 popups.set("create", Create);
@@ -67,14 +70,14 @@ $: if ($current.id) {
 }
 
 function closePopup() {
-  setTimeout(() => state.popup.set({ ...$current, id: null }));
+  state.popup.set({ ...$current, id: null });
 }
 
 function handleKeyDown(e) {
   if (e.code === "KeyK" && e.ctrlKey) {
     if ($current.id === "switcher") {
       closePopup();
-    } else if(!$current.id) {
+    } else if (!$current.id) {
       state.popup.set({ id: "switcher" });
     }
     e.preventDefault();

@@ -75,19 +75,19 @@ export async function focus(room) {
     if (recentIndex >= 0) recent.splice(recentIndex, 1);
     recent.unshift(room);
     if (recent.length > 8) recent.pop();
-  }
-  
-  function getDefaultState() {
-    return {
-      input: "",
-      rows: 1,
-      reply: null,
-      edit: null,
-      focused: null,
-      upload: null,
-      typing: [],
-      slice: [],
-      search: null,
-    };
-  }
+  }  
+}
+
+export function getDefaultState() {
+  return {
+    input: "",
+    rows: 1,
+    reply: null,
+    edit: null,
+    focused: null,
+    upload: null,
+    typing: [],
+    slice: [],
+    search: null,
+  };
 }

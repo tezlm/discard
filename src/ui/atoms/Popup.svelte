@@ -7,6 +7,7 @@ let current = state.popup;
 let settings = state.settings;
 
 function closePopup() {
+  $current.cancel && $current.cancel();
   state.popup.set({ ...$current, id: null });
 }
 

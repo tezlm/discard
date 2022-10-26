@@ -1,27 +1,42 @@
 <script lang="ts">
-// export let default = null;
-export let showDefault = false;
+// this code is quite hacky and should be cleaned up someday...
+
 export let disabled = false;
 export let value = 0;
 export let max = 100;
 export let changed = (_: number) => {};
-let original = value;
+let newVal = value;
 let focus = false;
 let inputEl: HTMLInputElement;
 
-$: changed(value);
+function setPower(level: number) {
+  queueMicrotask(() => newVal = level);
+  changed(level);
+}
 
 function handleKeyDown(e: KeyboardEvent) {
   if (e.key === "Escape") {
-    value = original;
+    newVal = value;
     focus = false;
-    e.stopImmediatePropagation();
     inputEl.blur();
   } else if (e.key === "Enter") {
+    if (newVal !== value) setPower(newVal);
     focus = false;
-    e.stopImmediatePropagation();
     inputEl.blur();
   }
+}
+
+function handleBlur() {
+  if (newVal !== value) setPower(newVal);
+  focus = false;
+}
+
+function handleFocus() {
+  focus = true;
+}
+
+export function reset() {
+  newVal = value;
 }
 </script>
 <style>
@@ -78,7 +93,7 @@ input::-webkit-inner-spin-button {
 
 .options div {
   cursor: pointer;
-  padding: 4px;
+  padding: 4px 8px;
   border-radius: 3px;
 }
 
@@ -108,27 +123,17 @@ input::-webkit-inner-spin-button {
       {disabled}
       {max}
       type="number"
-      placeholder={disabled ? "" : "edit"}
-      bind:value={value}
+      bind:value={newVal}
       bind:this={inputEl}
-      on:focus={() => focus = !disabled}
-      on:blur={() => focus = false}
-      on:keydown={handleKeyDown}
+      on:focus={handleFocus}
+      on:blur={handleBlur}
+      on:keydown|stopPropagation={handleKeyDown}
     >
     <div class="options">
       <hr />
-      {#if showDefault}
-      <div on:mousedown={() => value = null} class:selected={value === null}>Default</div>
-      {/if}
-      {#if max >= 0}
-      <div on:mousedown={() => value = 0}    class:selected={value === 0}>User - 0</div>
-      {/if}
-      {#if max >= 50}
-      <div on:mousedown={() => value = 50}   class:selected={value === 50}>Moderator - 50</div>
-      {/if}
-      {#if max >= 100}
-      <div on:mousedown={() => value = 100}  class:selected={value === 100}>Admin - 100</div>
-      {/if}
+      {#if max >= 0}  <div on:mousedown={() => setPower(0)}    class:selected={newVal === 0}>User - 0</div> {/if}
+      {#if max >= 50} <div on:mousedown={() => setPower(50)}   class:selected={newVal === 50}>Moderator - 50</div> {/if}
+      {#if max >= 100}<div on:mousedown={() => setPower(100)}  class:selected={newVal === 100}>Admin - 100</div> {/if}
     </div>
   </div>
 </div>

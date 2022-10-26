@@ -3,6 +3,7 @@
 import Button from "../atoms/Button.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 import { memberContext } from "../../util/context";
+import { circOut } from "svelte/easing";
 export let room;
 let count = 30;
 
@@ -42,6 +43,8 @@ $: if (room.id !== oldId) {
 	console.time("room members")
 	queueMicrotask(() => console.timeEnd("room members"));
 }
+
+// TODO: resize room members when search box closed
 </script>
 <style>
 .members {

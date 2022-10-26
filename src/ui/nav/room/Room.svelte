@@ -113,7 +113,7 @@ function getIcon(room) {
 	<div class="name">{getName(room)}</div>
 	<div class="spacer"></div>
 	{#if room.notifications.highlight}<div class="mentions">{room.notifications.highlight}</div>{/if}
-	{#if room.power.me >= (room.power.invite ?? 0) || room.joinRule === "public"}
+	{#if room.power.me >= room.power.invite || room.joinRule === "public"}
 	<div class="settings hover" class:focused on:click|stopPropagation={(e) => state.popup.set({ id: "invite", type: "room", room })}>
 		<Tooltip tip="Send Invite">
 			<span class="icon">person_add</span>
