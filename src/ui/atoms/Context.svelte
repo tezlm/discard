@@ -1,5 +1,6 @@
 <script>
 import { tick } from "svelte";
+import { fastclick } from "../../util/use";
 export let items = [];
 export let width = null;
 export let x;
@@ -105,7 +106,8 @@ function handleClick(item, e) {
       <div
         class="item"
         style:color={item.color ?? "var(--fg-interactive)"}
-        on:click|stopPropagation={e => handleClick(item, e)}
+        use:fastclick
+        on:fastclick={e => handleClick(item, e)}
       >
         <div class="label">
           {item.label}

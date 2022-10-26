@@ -3,9 +3,11 @@
 import Button from "../atoms/Button.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 import { memberContext } from "../../util/context";
-import { circOut } from "svelte/easing";
+import { fastclick } from "../../util/use";
 export let room;
 let count = 30;
+
+let { popout, context } = state;
 
 async function fetchList(room) {
   if (!room.request) await room.members.fetch();
@@ -13,25 +15,25 @@ async function fetchList(room) {
   if (state.dms.has(room.id)) {
     return [{ title: `members: ${members.length}`, id: "members" }, ...members];
   }
-  const sections = { admins: [], moderators: [], members: [] };
+  const sections = { admins: [], moderators: [], notable: [], members: [], gone: [] };
   for (let member of members) {
     if (member.power >= 100) {
       sections.admins.push(member);
     } else if (member.power >= 50) {
       sections.moderators.push(member);
+    } else if (member.power > room.power.usersDefault) {
+      sections.notable.push(member);
+    } else if (member.power < room.power.usersDefault) {
+      sections.gone.push(member);
     } else {
       sections.members.push(member);
     } 
   }
   const rendered = [];
-  if (sections.admins.length) {
-    rendered.push({ title: `admins - ${sections.admins.length}`, id: "admins" }, ...sections.admins);
-  }
-  if (sections.moderators.length) {
-    rendered.push({ title: `moderators - ${sections.moderators.length}`, id: "moderators" }, ...sections.moderators);
-  }
-  if (sections.members.length) {
-    rendered.push({ title: `members - ${sections.members.length}`, id: "members" }, ...sections.members);
+  for (let section in sections) {
+    if (sections[section].length) {
+      rendered.push({ title: `${section}- ${sections[section].length}`, id: section }, ...sections[section]);
+    }
   }
   return rendered;
 }
@@ -42,6 +44,27 @@ $: if (room.id !== oldId) {
   oldId = room.id;
 	console.time("room members")
 	queueMicrotask(() => console.timeEnd("room members"));
+}
+
+function showMemberPopout(e, member) {
+  const rect = e.target.getBoundingClientRect();
+  if ($popout._owner === e.target) return $popout = {};
+  $popout = {
+    id: "member",
+    member,
+    animate: "left",
+    top: rect.y,
+    right: window.innerWidth - rect.x + 8,
+    _owner: e.target,
+  };
+}
+
+function showContext(e, member) {
+  $context = {
+    items: memberContext(member),
+    x: e.clientX,
+    y: e.clientY,
+  };
 }
 
 // TODO: resize room members when search box closed
@@ -69,6 +92,7 @@ $: if (room.id !== oldId) {
   height: 42px;
   padding: 4px 8px;
   border-radius: 4px;
+  pointer-events: none;
 }
 
 .wrapper:hover > .member {
@@ -101,9 +125,13 @@ $: if (room.id !== oldId) {
       {#if member.title}
         <div class="title">{member.title}</div>
       {:else}
-        <!-- TODO: open members popout instead of user popup -->
         <!-- TODO: optimize by putting single click/context listener on wrapper instead of each element -->
-        <div class="wrapper" on:click={() => state.popup.set({ id: "user", userId: member.id })} on:contextmenu|preventDefault|stopPropagation={(e) => state.context.set({ items: memberContext(member), x: e.clientX, y: e.clientY })}>
+        <div
+          class="wrapper"
+          use:fastclick
+          on:fastclick={(e) => showMemberPopout(e, member)}
+          on:contextmenu|preventDefault|stopPropagation={(e) => showContext(e, member)}
+        >
           <div class="member">
             <Avatar user={member} size={32} />
             <div class="name">{member.name || member.id}</div>

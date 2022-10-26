@@ -148,8 +148,8 @@ onDestroy(() => state.syncer.off("status", onStatus));
 		</div>
 		<div class="info" on:click={handleCopyClick} on:mouseleave={resetCopy}>
 			<Tooltip tip={copyText} color={copyCount > 0 ? "var(--color-green)" : null}>
-				<div class="displayname">{profile.name || userId}</div>
-				<div class="userid">{userId}</div>
+				<div class="displayname" tabindex="-1">{profile.name || userId}</div>
+				<div class="userid" tabindex="-1">{userId}</div>
 			</Tooltip>
 		</div>
 		{/await}
@@ -162,7 +162,7 @@ onDestroy(() => state.syncer.off("status", onStatus));
 		</Tooltip>
 		-->
 		<Tooltip tip="User Settings" style="height: 30px">
-			<span class="icon" on:click={() => state.scene.set("user-settings")}>settings</span>
+			<div class="icon" on:click={() => state.scene.set("user-settings")} tabindex="0">settings</div>
 		</Tooltip>
 	</div>
 </div>
