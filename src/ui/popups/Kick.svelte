@@ -12,6 +12,7 @@ const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const placeholders = [
   "they disagree with my opinion",
   "i dont like them",
+  "they were acting sussy",
 ];
 
 const scopes = [];

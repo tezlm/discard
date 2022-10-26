@@ -31,15 +31,21 @@ function getHomeContextMenu() {
   display: flex;
   align-items: center;
   position: relative;
-  padding: 8px 1rem;
+  padding: 8px 16px;
   height: 48px;
 
   font-weight: 700;
   box-shadow: var(--shadow-header);
   cursor: pointer;
-  user-select: none;
+  user-select: none;  
   
   transition: background .2s;
+}
+
+.name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header:hover, .header.showMenu {
@@ -114,7 +120,7 @@ function getHomeContextMenu() {
   on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: $focusedSpace ? roomContext($focusedSpace) : getHomeContextMenu(), x: e.clientX, y: e.clientY })}
 >
   {#if $focusedSpace}
-    <span>{$focusedSpace?.name ?? "unknown"}</span>
+    <span class="name" title={$focusedSpace?.name ?? "unknown"}>{$focusedSpace?.name ?? "unknown"}</span>
     <span class="icon" style:transform={showMenu ? "rotate(180deg)" : "rotate(0deg)"}>expand_more</span>
   {:else}
     <span>Home</span>

@@ -85,6 +85,8 @@ async function invite(userId) {
 </script>
 <style>
 .content {
+  display: flex;
+  flex-direction: column;
   width: 420px;
   min-height: 200px;
   border-radius: 5px;
@@ -121,9 +123,17 @@ h2.title {
   text-align: center;
   font-size: 18px;
 }
+
+.linkonly {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
 </style>
 <Popup raw>
   <div slot="content" class="content">
+    {#if current.room.power.me >= current.room.power.invite}
     <div class="split-top">
       <h3>Invite friends to {current.room.name}</h3>
       <Search placeholder="Search for people" size="tall" bind:value={search} escaped={close} submitted={handleSearch} autofocus />
@@ -166,5 +176,13 @@ h2.title {
       <Input value={getLink()} autoselect />
     </div>
     {/if}
-  </div>
+  {:else}
+    <div class="linkonly">
+      <h3>Invite friends to {current.room.name}</h3>
+      <div style="flex: 1; margin: 16px 0; color: var(--fg-light)">
+        You don't seem to have enough power to invite people directly, share this link instead.
+      </div>
+      <Input value={getLink()} autoselect />
+    </div>
+  {/if}
 </Popup>

@@ -93,15 +93,15 @@ reset();
 
 $: if (modified.size) {
   save = async () => {
-    const levels = room.getState("m.room.power_levels")?.content;
+    const levels = structuredClone(room.getState("m.room.power_levels")?.content);
     for (let [id, power] of modified) {
       const has = (key) => levels[key] ?? (levels[key] = {});
       switch(id) {
         case "message":  {
           // make sure disabling messages doesn't disable anything else
-          if (!levels.events?.["m.room.reaction"]) {
+          if (!levels.events || !("m.room.reaction" in levels.events)) {
             has("events");
-            levels.events["m.room.reaction"] = levels.events_default;
+            levels.events["m.room.reaction"] = levels.events_default ?? 0;
           }
           levels.events_default = power;
           break;
@@ -125,7 +125,6 @@ $: if (modified.size) {
     }
     await room.sendState("m.room.power_levels", levels);
     modified.clear();
-    // modified = modified;
   };
 } else {
   save = null;

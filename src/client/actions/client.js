@@ -114,7 +114,10 @@ function start(api, syncer, userId) {
       state.settings.set(settings);
       state.settingsRef = settings;
     }
-    if (type === "m.push_rules") state.pushRules.set(new PushRules(content.global));
+    if (type === "m.push_rules") {
+      state.pushRules.set(new PushRules(content.global));
+      actions.rooms.update();
+    }
     state.accountDataRef.set(type, content);
     state.accountData.set(state.accountDataRef);
     state.store.account.put(type, content);

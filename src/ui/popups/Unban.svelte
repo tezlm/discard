@@ -11,9 +11,8 @@ let reason;
 const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const placeholders = [
   "they have matured and grown as a person",
-  "i got free wifi anywhere i went",
-  "they really *are* a nigerian prince",
   "i misclicked",
+  "they were not the impostor",
 ];
 
 const scopes = [];

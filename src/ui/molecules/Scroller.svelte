@@ -2,6 +2,7 @@
 // considering there is only one place that uses/needs this (room content), this may just be a useless abstraction
 // this could be combined with room content to make a room timeline scroller instead
 // TODO: redo, instead of rendering a slice render a full array with methods to load more/less
+// plus, this is kind of a mess anyways
 export let fetchBackwards = async () => {};
 export let fetchForwards = async () => {};
 export let getDefault = () => {};
@@ -41,8 +42,8 @@ async function paginate() {
 
   const scrollTop = scrollEl.scrollTop;
   const scrollBottom = scrollEl.scrollHeight - scrollEl.offsetHeight - scrollTop;
-  const atScrollTop = scrollTop < margin + contentEl.offsetTop;
-  const atScrollBottom = scrollBottom < margin + (scrollEl.scrollHeight - contentEl.offsetTop - contentEl.offsetHeight);
+  const atScrollTop = scrollTop < (margin + contentEl.offsetTop);
+  const atScrollBottom = scrollBottom < (margin + (scrollEl.scrollHeight - contentEl.offsetTop - contentEl.offsetHeight));
 
   if (atScrollTop && !atItemsTop) {
     state.log.debug("paginate backwards");
@@ -55,7 +56,7 @@ async function paginate() {
     const childNode = contentEl.children[contentEl.children.length - 1];
     const scrollPos = childNode?.offsetTop;
     [atItemsTop, atItemsBottom] = (await fetchForwards() ?? [false, false]);
-    if (childNode) queueMicrotask(() => scrollEl.scrollTop = scrollTop + childNode.offsetTop - scrollPos);
+    if (document.body.contains(childNode)) queueMicrotask(() => scrollEl.scrollTop = scrollTop + childNode.offsetTop - scrollPos);
   }
 
   paginating = false;

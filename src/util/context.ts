@@ -1,7 +1,9 @@
 import type { Event, Room, Member } from "discount";
+import { getRoomNotifRule, putRoomNotifRule } from "../client/matrix/notifications";
+import * as notif from "../client/matrix/notifications";
+globalThis.notif = notif;
 
 declare global {
-  const state: any;
   const todo: () => {};
 }
 
@@ -68,17 +70,29 @@ export function eventContext(event: Event, config: { showEmoji: () => {} }): Arr
 }
 
 export function roomContext(room: Room): Array<ContextMenuOption> {
+  const notif = getRoomNotifRule(room);
+  
+  function getNotifItem(label: string, type: "default" | "all" | "mentions" | "muted") {
+    if (notif.level === type) {
+      return { label, clicked: () => {}, icon: "radio_button_checked", color: "var(--color-accent)" };
+    } else {
+      return { label, clicked: () => { putRoomNotifRule(room, { ...notif, level: type }) }, icon: "radio_button_unchecked" };
+    }
+  }
+  
   const menu: Array<ContextMenuOption> = [
 	  { label: "Mark As Read",  clicked: () => markRead(room), icon: "done" },
+    ...(room.type === "m.space" ? [] : [
 	  { label: "Notifications", clicked: todo, submenu: [
-	    { label: "Default",        clicked: todo, icon: "radio_button_checked", color: "var(--color-accent)" },
-	    { label: "All Messages",   clicked: todo, icon: "radio_button_unchecked" },
-	    { label: "Only @mentions", clicked: todo, icon: "radio_button_unchecked" },
-	    { label: "Nothing",        clicked: todo, icon: "radio_button_unchecked" },
+      getNotifItem("Default", "default"),
+      getNotifItem("All Messages", "all"),
+      getNotifItem("Only @mentions", "mentions"),
+      getNotifItem("Nothing", "muted"),
 			null,
 	    { label: "Suppress @room", clicked: todo, icon: "check_box_outline_blank" },
 	    // { label: "Suppress @room", clicked: todo, icon: "check_box" },
 	  ] },
+    ]),
 	  null,
 	  { label: "Settings", clicked: openSettings(room), icon: "settings", /* submenu: [
 	    { label: "Overview",     icon: "info", clicked: todo },
@@ -101,11 +115,13 @@ export function roomContext(room: Room): Array<ContextMenuOption> {
       null,
     );
   }
-	if (room.power.me >= room.power.invite) menu.push({ label: "Invite", clicked: () => state.popup.set({ id: "invite", type: "room", room }), icon: "person_add", color: "var(--color-accent)" });
+	if (room.power.me >= room.power.invite || room.joinRule === "public") {
+    menu.push({ label: "Invite", clicked: () => state.popup.set({ id: "invite", type: "room", room }), icon: "person_add", color: "var(--color-accent)" });
+  }
   menu.push(
 	  { label: "Copy Link", clicked: copy(`https://matrix.to/#/${encodeURIComponent(room.getState("m.room.canonical_alias")?.content.alias ?? room.id)}`), icon: "link" },
 	  null,
-	  { label: "Leave", clicked: () => state.popup.set({ id: "leave", type: "room", room }), icon: "logout", color: "var(--color-red)" },
+	  { label: "Leave", clicked: () => state.popup.set({ id: "leave", type: room.type === "m.space" ? "space" : "room", room }), icon: "logout", color: "var(--color-red)" },
 	);
   if (state.settingsRef.get("shadowdev")) {
     menu.push(
@@ -114,26 +130,7 @@ export function roomContext(room: Room): Array<ContextMenuOption> {
   	  { label: "Dev Tools", clicked: () => state.popup.set({ id: "dev-room", room }) },
   	);
   }
-  return menu;
-  
-  function mute() {
-    // state.accountDataRef.get("m.push_rules").global.room.find(i => i.rule_id === room.id);
-    
-    // state.api.putRule('override', room.id, {
-    //   conditions: [
-    //     {
-    //       kind: 'event_match',
-    //       key: 'room_id',
-    //       pattern: room.id,
-    //     },
-    //   ],
-    //   actions: [
-    //     'dont_notify',
-    //   ],
-    // });
-    
-    todo();
-  }
+  return menu;  
   
 	function markRead(room: Room) {
 	  const lastId = room.events.live.at(-1)?.id;
@@ -196,16 +193,49 @@ export function memberContext(member: Member): Array<ContextMenuOption> {
   if (moderate.length > 0) moderate.push(null);
   menu.push(...moderate);
   
-  menu.push(
-    { label: "Power", clicked: () => {}, submenu: [
-      { label: member.power.toString(), clicked: () => {}, icon: "bolt" },
-      null,
-      { label: "Admin - 100", clicked: todo },
-      { label: "Moderator - 50", clicked: todo },
-      { label: "Member - 0", clicked: todo },
-      { label: "Suspicious Impostor", clicked: todo, icon: "check", color: "var(--color-accent)" },
-    ] },
-  );
+  function getPowerMenu() {
+    if (power.me > power.forState("m.room.power_levels") && (power.me > member.power || member.id === state.userId)) {
+      const setPower = (pl: number) => {
+        if (pl === power.me) {
+          state.popup.set({
+            id: "dialog",
+            title: "Change power level?",
+            html: "You are about to change this member's power level to the same level as yourself! You will <b>not</b> be able to demote them after this change. Are you absolutely sure you want to do this?",
+            button: "Promote!",
+            danger: true,
+            clicked: () => member.setPower(pl),
+          });
+        } else if (member.id === state.userId) {
+          state.popup.set({
+            id: "dialog",
+            title: "Change power level?",
+            html: "You are about to demote yourself! You will <b>not</b> be able to undo this. Are you absolutely sure you want to demote yourself?",
+            button: "Demote!",
+            danger: true,
+            clicked: () => member.setPower(pl),
+          });
+        } else {
+          member.setPower(pl);
+        }
+      };
+      const getItem = (pl: number, name: string): any => {
+        if (member.power === pl) {
+          return { label: `${name} - ${pl}`, clicked: () => setPower(pl), icon: "check", color: "var(--color-accent)" };
+        } else {
+          return { label: `${name} - ${pl}`, clicked: () => setPower(pl) };
+        }
+      };
+      const submenu = [{ label: `Power: ${member.power}`, clicked: () => {}, icon: "bolt" }, null];
+      if (power.me >= 100) submenu.push(getItem(100, "Admin"));
+      if (power.me >= 50) submenu.push(getItem(50, "Moderator"));
+      if (power.me >= power.usersDefault) submenu.push(getItem(power.usersDefault, "Member"));
+      return { label: "Power", clicked: () => {}, submenu };
+    } else {
+      return { label: `Power: ${member.power}`, clicked: () => {}, icon: "bolt" };
+    }
+  }
+  
+  menu.push(getPowerMenu());
   
   if (state.settingsRef.get("shadowdev")) {
     menu.push(

@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
-import Store from "./matrix/store.js";
-import Settings from "./matrix/settings.js";
+import Store from "./matrix/store";
+import Settings from "./matrix/settings";
+import { getDefaultState } from "./actions/rooms";
 
 // TODO: reset state on logout
 
@@ -18,6 +19,11 @@ const log = {
   debug: (info) => console.info("%c[debug]%c " + info, "font-weight: bold; color: turquoise", ""),
   error: (info) => console.error("%c[error]%c " + info, "font-weight: bold; color: red", ""),
 };
+
+const defaultRoomState = getDefaultState();
+for (let i in defaultRoomState) {
+  defaultRoomState[i] = writable(defaultRoomState[i]);
+}
 
 const state = {
   api: null,
@@ -59,7 +65,7 @@ const state = {
   roomTimelines: new Map(),
   roomSlices: new Map(),
   roomStates: new Map(),
-  roomState: null,
+  roomState: defaultRoomState,
   slice: writable(null),
   
   // cache

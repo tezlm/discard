@@ -32,7 +32,7 @@ let pinned = room.getState("m.room.pinned_events")?.content.pinned ?? [];
 .item {
   border: solid var(--bg-spaces) 1px;
   background: var(--bg-content);
-  padding: 8px;
+  padding: 8px 0;
   border-radius: 4px;
   margin-top: 8px;
 }
