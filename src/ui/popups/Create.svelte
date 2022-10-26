@@ -14,7 +14,6 @@ let config = {
   name: "",
   topic: null,
   joinRule: "invite",
-  
 };
 
 let creating = false;

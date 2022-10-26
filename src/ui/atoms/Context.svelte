@@ -1,27 +1,40 @@
 <script>
+import { tick } from "svelte";
 export let items = [];
 export let width = null;
+export let x;
+export let y;
 let menuEl;
-let right = false;
 
-// FIXME: submenu can exist outside of window
+let box = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+};
 
-function tooRight(menuEl) {
-  if (!menuEl) return;
-  const rect = menuEl.getBoundingClientRect();
-  return rect.width * 2 + rect.left > window.innerWidth;
+function calcBounds(el, x, y) {
+  const rect = el.getBoundingClientRect();
+  return {
+    x: Math.min(Math.max(x, 8), window.innerWidth - rect.width - 8),
+    y: Math.min(Math.max(y, 8), window.innerHeight - rect.height - 8),
+    width: rect.width,
+    height: rect.height,
+  };
 }
+
+$: if (menuEl && items) box = calcBounds(menuEl, x, y);
+$: right = box.width * 2 + box.x > window.innerWidth;
+$: css = `top: ${box.y}px; left: ${box.x}px`;
 
 function handleClick(item, e) {
   item.clicked(e);
   state.context.set({});
-  e.stopPropagation();
 }
-
-$: if (items) setTimeout(() => right = tooRight(menuEl));
 </script>
 <style>
 .menu {
+  position: fixed;
   left: 10%;
   padding: 6px 8px;
   min-width: 180px;
@@ -47,7 +60,7 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
 }
 
 .item:hover {
-  background: var(--color-blue);
+  background: var(--color-accent);
   color: var(--fg-notice) !important;
 }
 
@@ -64,41 +77,35 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
 .spacer {
   height: 1px;
   width: 100%;
-  margin: 5px auto;
+  margin: 4px auto;
   background: var(--bg-misc);
 }
 
 .submenu {
   position: absolute;
-  top: -8px;
-  padding: 0 12px;
+  width: calc(100% + 32px);
+  height: calc(100% + 8px);
+  top: -4px;
+  left: -16px;
   visibility: hidden;
-}
-
-.submenu:not(.right) {
-  left: calc(100%);
-}
-
-.submenu.right {
-  right: calc(100%);
 }
 
 .item:hover > .submenu {
   visibility: visible;
 }
 </style>
-<div class="menu scroll" style:width={width + "px"} bind:this={menuEl}>
+<div class="menu scroll" style={css} style:width={width + "px"} bind:this={menuEl}>
 {#each items as item}
   {#if item}
     {#if item.component}
-      <div on:click={e => e.stopPropagation()}>
+      <div on:click|stopPropagation>
         <svelte:component this={item.component} />
       </div>
     {:else}
       <div
         class="item"
         style:color={item.color ?? "var(--fg-interactive)"}
-        on:click={e => handleClick(item, e)}
+        on:click|stopPropagation={e => handleClick(item, e)}
       >
         <div class="label">
           {item.label}
@@ -110,8 +117,14 @@ $: if (items) setTimeout(() => right = tooRight(menuEl));
         {#if !item.icon}
         <div class="icon">navigate_next</div>
         {/if}
-        <div class="submenu" class:right>
-          <svelte:self items={item.submenu} />
+        <div class="submenu" bind:this={item.element}>
+          {#await tick().then(() => box) then box}
+          <svelte:self
+            items={item.submenu}
+            x={right ? (box.x - box.width - 4) : (box.x + box.width + 4)}
+            y={(item.element?.getBoundingClientRect().y ?? 4) - 4}
+          />
+          {/await}
         </div>
         {/if}
       </div>

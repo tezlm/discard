@@ -141,3 +141,8 @@ export async function logout() {
   state.spaces.clear();
   state.dms.clear();
 }
+
+// TEMP: there is no local echo for settings account data
+export function reloadSettings() {
+  state.settings.set(state.settingsRef);
+}

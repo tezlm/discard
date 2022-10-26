@@ -1,29 +1,19 @@
 <script>
 import Context from "./atoms/Context.svelte";
-let context = state.context;
-let menuEl;
-let x, y;
+let { context } = state;
 
 function closeMenu() {
   if ($context.items) $context = {};
 }
-
-$: queueMicrotask(() => {
-  if (!menuEl) return;
-  const rect = menuEl.getBoundingClientRect();
-  x = Math.min(Math.max($context.x, 8), window.innerWidth  - rect.width  - 8);
-  y = Math.min(Math.max($context.y, 8), window.innerHeight - rect.height - 8);  
-});
 </script>
-<style>
-.menu {
-  position: fixed;
-  pointer-events: auto;
-}
-</style>
-<div class="menu" bind:this={menuEl} style:left="{x}px" style:top="{y}px">
-  {#if $context.items}
-  <Context items={$context.items} width={$context.width} />
-  {/if}
+<div style="pointer-events: auto">
+{#if $context.items}
+<Context
+  items={$context.items}
+  width={$context.width}
+  x={$context.x}
+  y={$context.y}
+/>
+{/if}
 </div>
 <svelte:window on:contextmenu={closeMenu} />

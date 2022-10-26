@@ -71,10 +71,10 @@ export function roomContext(room: Room): Array<ContextMenuOption> {
   const menu: Array<ContextMenuOption> = [
 	  { label: "Mark As Read",  clicked: () => markRead(room), icon: "done" },
 	  { label: "Notifications", clicked: todo, submenu: [
-	    { label: "Default",      clicked: todo, icon: "radio_button_checked", color: "var(--color-accent)" },
-	    { label: "All Messages", clicked: todo, icon: "radio_button_unchecked" },
-	    { label: "Mentions",     clicked: todo, icon: "radio_button_unchecked" },
-	    { label: "Nothing",      clicked: mute, icon: "radio_button_unchecked" },
+	    { label: "Default",        clicked: todo, icon: "radio_button_checked", color: "var(--color-accent)" },
+	    { label: "All Messages",   clicked: todo, icon: "radio_button_unchecked" },
+	    { label: "Only @mentions", clicked: todo, icon: "radio_button_unchecked" },
+	    { label: "Nothing",        clicked: todo, icon: "radio_button_unchecked" },
 			null,
 	    { label: "Suppress @room", clicked: todo, icon: "check_box_outline_blank" },
 	    // { label: "Suppress @room", clicked: todo, icon: "check_box" },

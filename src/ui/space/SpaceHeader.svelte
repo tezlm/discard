@@ -74,7 +74,7 @@ function getHomeContextMenu() {
 }
 
 .menu .item:hover {
-  background: var(--color-blue);
+  background: var(--color-accent);
   color: #fff;
 }
 

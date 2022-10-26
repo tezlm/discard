@@ -84,11 +84,35 @@ function getColor(sender) {
 }
 
 .content :global([data-mx-ping]) {
-  color: var(--fg-notice);
+  position: relative;
+  color: var(--color-accent);
   font-weight: 500;
-  background: var(--ping-bgalpha);
   padding: 0 2px;
+  cursor: pointer;
+}
+
+.content :global([data-mx-ping]::after) {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
   border-radius: 3px;
+  background: var(--color-accent);
+  opacity: .1;
+}
+
+.content :global([data-mx-ping="room"]) {
+  color: var(--color-purple);
+}
+
+.content :global([data-mx-ping="room"]::after) {
+  background: var(--color-purple);
+}
+
+.content :global([data-mx-ping]:hover::after) {
+  opacity: .2;
 }
 </style>
 {#await eventPromise}
@@ -106,7 +130,7 @@ function getColor(sender) {
     {:else if event.content.body}
       {event.content.body.replace(/\n/g, " ")}
     {:else}
-      <i style="color: var(--fg-muted)">failed to render event</i>
+      <i style="color: var(--fg-muted)">failed to render {event.type} event</i>
     {/if}
     {/if}
   </div>
