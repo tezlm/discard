@@ -117,7 +117,7 @@ function twemojifyHtml(html) {
 }
 
 export function parseHtml(html, opts = { linkify: true, sanitize: true, inline: false, twemojify: true }) {
-	html = html.replace(/@room/, "<span data-mx-ping='room'>@room</span>"); // this *may* break
+	html = html.replace(/@room/g, "<span data-mx-ping='room'>@room</span>"); // this *may* break
 	if (opts.sanitize)  html = sanitizeHtml(html, opts.inline ? sanitizeOptsInline : sanitizeOpts);
 	if (opts.linkify)   html = linkifyHtml(html, { ignoreTags: ["pre", "code"] });
 	if (opts.twemojify) html = twemojifyHtml(html);

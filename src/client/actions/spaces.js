@@ -9,6 +9,8 @@ export function update() {
     }
   }
 	
+  // FIXME: break out loops
+  
   const inSpaces = new Set();
   for (let [id, room] of state.rooms) {
     if (room.type !== "m.space") continue;

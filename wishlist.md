@@ -23,7 +23,7 @@ varying levels of difficulty
   - [ ] file too big warning
   - [x] drag and drop to upload file
 - [x] reactions
-- [ ] members
+- [x] members
   - [x] member popout
   - [x] members list
 - [ ] settings

@@ -1,33 +1,42 @@
-<script>
+<script lang="ts">
 import fuzzysort from "fuzzysort";
 import Input from "../atoms/Input.svelte";
 import Popup from "../atoms/Popup.svelte";
+import type { Room } from "discount";
 let search = "";
 let highlighted = 0;
 $: results = getRooms(search);
 
-let dms = state.dms;
+let { dms, rooms, spaces } = state;
 
-// this code is a mess, surely there's a better way
-
-// TODO: handle spaces
-function getRooms(search) {
-  if (!search) return state.recentRooms.slice(1);
-  const rooms = [...state.rooms.values()].map(room => ({ name: sanitize(room.name ?? dms.get(room.id)?.name), room }));
-  return fuzzysort.go(search, rooms, { key: "name", limit: 5 });
+function getRooms(search: string): Array<{ name: string, room: Room, fuzzy?: Fuzzysort.Result }> {
+  if (!search) return state.recentRooms.slice(1).map(i => ({ name: sanitize(i.name ?? dms.get(i.id)?.name), room: i }));
+  const type = search[0] === "#" ? "room"
+    : search[0] === "@" ? "dm"
+    : search[0] === "*" ? "space"
+    : null;
+  if (type) search = search.slice(1);
+  let options = [...rooms.values()].map(room => ({ name: sanitize(room.name ?? dms.get(room.id)?.name), room }));
+  if (type === "space") options = options.filter(i => i.room.type === "m.space");
+  if (type === "room") options = options.filter(i => i.room.type !== "m.space" && !dms.has(i.room.id));
+  if (type === "dm") options = options.filter(i => dms.has(i.room.id));
+  if (!search) return options.slice(0, 5);
+  return fuzzysort
+    .go(search, options, { key: "name", limit: 5 })
+    .map(i => ({ ...i.obj, fuzzy: i }));
 }
 
 // TODO: move into utility function
-function sanitize(str) {
+function sanitize(str: string): string {
   return str
     ?.replace(/&amp;/g, "&")
     .replace(/>/g, "&gt;")
     .replace(/</g, "&lt;");
 }
 
-function focusRoom(room) {
+function focusRoom(room: Room) {
   if (!room) return;
-  if (state.spaces.has(room.id)) {
+  if (spaces.has(room.id)) {
     actions.spaces.focus(room);
   } else {
     actions.rooms.focus(room);
@@ -48,17 +57,19 @@ function handleKeyDown(e) {
     } else {
         highlighted = Math.max(highlighted - 1, 0);
     }
-  } else return;
+  } else {
+    return;
+  }
   e.preventDefault();
   e.stopPropagation();
   e.stopImmediatePropagation();
 }
 
-function findParent(room) {
-  if (state.spaces.get("orphanRooms").includes(room)) return null;
-  if (state.spaces.get("orphanSpaces").includes(room)) return null;
-  for (let [id, rooms] of state.spaces) {
-    if (rooms.includes(room)) return state.rooms.get(id);
+function findParent(room: Room): Room | null {
+  if (spaces.get("orphanRooms").includes(room)) return null;
+  if (spaces.get("orphanSpaces").includes(room)) return null;
+  for (let [id, children] of spaces) {
+    if (children.includes(room)) return rooms.get(id);
   }
   return null;
 }
@@ -95,41 +106,28 @@ function findParent(room) {
       optional
       autofocus
       bind:value={search}
-      submitted={() => focusRoom(search ? results[highlighted].obj.room : results[highlighted])}
+      submitted={() => focusRoom(results[highlighted].room)}
     />
     <div class="rooms">
-      <!-- this is horrible and i should feel bad -->
-      {#if !search}
-        {#each results as room, i (room.id)}
-          {@const parent = findParent(room)}
-          <div
-            class="room"
-            class:highlighted={highlighted === i}
-            on:click={() => focusRoom(room)}
-            on:mouseover={() => highlighted = i}
-            on:focus={() => highlighted = i}
-          >
-            <span class="icon">{#if dms.has(room.id)}@{:else}#{/if}</span>
-            {room.name}
-            {#if parent}<span class="dim">- {parent.name}</span>{/if}
-          </div>
-        {/each}
-      {:else}
-        {#each results as result, i}
-          {@const room = result.obj.room}
-          {@const parent = findParent(room)}
-          <div
-            class="room"
-            class:highlighted={highlighted === i}
-            on:click={() => focusRoom(room)}
-          >
-            <!-- <span class="icon">{#if dms.has(room.id)}@{:else if state.spaces.has(room.id)}folder{:else}#{/if}</span> -->
-            <span class="icon">{#if dms.has(room.id)}@{:else if state.spaces.has(room.id)}*{:else}#{/if}</span>
-            {@html fuzzysort.highlight(result, "<span style='color: var(--color-accent)'>", "</span>")}
-            {#if parent}<span class="dim">- {parent.name}</span>{/if}
-          </div>
-        {/each}
-      {/if}
+      {#each results as result, i (result.room.id)}
+        {@const room = result.room}
+        {@const parent = findParent(room)}
+        <div
+          class="room"
+          class:highlighted={highlighted === i}
+          on:click={() => focusRoom(room)}
+        >
+          <span class="icon">{#if dms.has(room.id)}@{:else if spaces.has(room.id)}*{:else}#{/if}</span>
+          {#if result.fuzzy}
+            {@html fuzzysort.highlight(result.fuzzy, "<span style='color: var(--color-accent)'>", "</span>")}
+          {:else}
+            {result.name}
+          {/if}
+          {#if parent}
+            <span class="dim">- {parent.name}</span>
+          {/if}
+        </div>
+      {/each}
     </div>
   </div>
 </Popup>

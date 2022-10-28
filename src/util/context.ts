@@ -194,7 +194,7 @@ export function memberContext(member: Member): Array<ContextMenuOption> {
   menu.push(...moderate);
   
   function getPowerMenu() {
-    if (power.me > power.forState("m.room.power_levels") && (power.me > member.power || member.id === state.userId)) {
+    if (power.me >= power.forState("m.room.power_levels") && (power.me > member.power || member.id === state.userId)) {
       const setPower = (pl: number) => {
         if (pl === power.me) {
           state.popup.set({

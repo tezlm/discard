@@ -74,6 +74,7 @@ setTimeout(setPos);
   bind:this={wrapperEl}
   on:mouseover={setPos}
   on:focus={setPos}
+  role="tooltip"
 >
   <div class="tooltip {position}" bind:this={tooltipEl}>
     {#if $$slots.tip}

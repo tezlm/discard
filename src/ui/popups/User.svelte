@@ -1,6 +1,7 @@
 <script>
 import Popup from "../atoms/Popup.svelte";
 import Avatar from "../atoms/Avatar.svelte";
+import Loading from "../atoms/Loading.svelte";
 export let current;
 const users = state.users;
 let profilePromise = getProfile(current.userId);
@@ -41,7 +42,10 @@ async function getProfile(userId) {
   <div slot="content" class="content">
     {#await profilePromise}
       <div class="header">
-        <h2>loading..</h2>
+        <Loading />
+        <div style="margin-left: 12px;">
+          <h2>loading...</h2>
+        </div>
       </div>
       <div class="info"></div>
     {:then user}
@@ -55,6 +59,7 @@ async function getProfile(userId) {
     <div class="info">
       more text here, foo bar baz<br />
       even more text here<br />
+      this is a work in progress, what should i put here?<br />
       <ul>
         <li>send message</li>
         <li>(un)block</li>

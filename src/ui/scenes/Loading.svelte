@@ -6,11 +6,17 @@ import Loading from "../atoms/Loading.svelte";
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 
   width: 100%;
   background: var(--bg-spaces);
 }
+
+.title {
+  margin-top: 1em;
+}
 </style>
 <div class="wrapper">
-  <Loading text="syncing..." />
+  <Loading color="var(--fg-dim)" />
+  <div class="title">syncing...</div>
 </div>

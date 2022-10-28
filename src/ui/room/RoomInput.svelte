@@ -49,7 +49,12 @@ function handleKeyDown(e) {
         return;
       }
     }
-  } else if (e.key === "ArrowDown") {
+  } else if (e.key === "PageUp") {
+    const el = document.getElementById("scrollTEMPIDWILLBEREMOVED");
+    el.scrollBy({ top: -window.innerHeight / 2, behavior: "smooth" });
+  } else if (e.key === "PageDown") {
+    const el = document.getElementById("scrollTEMPIDWILLBEREMOVED");
+    el.scrollBy({ top: window.innerHeight / 2, behavior: "smooth" });
   }
 }
 

@@ -1,5 +1,4 @@
 <script>
-// TODO: move emoji picker and user popout here
 // TODO: there has to be a cleaner way of doing this
 import Todo from "./popups/Todo.svelte";
 import Error from "./popups/Error.svelte";
