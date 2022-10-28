@@ -210,7 +210,7 @@ function isRead(room) {
 	font-weight: 500;
 	box-shadow: var(--shadow-high);
 	cursor: pointer;
-	z-index: 1;
+	z-index: 2;
 	user-select: none;
 }
 
@@ -219,18 +219,23 @@ function isRead(room) {
 }
 </style>
 <div class="content" style:display={room ? null : "none"}>
-	<!--
-	{#if !isRead(room)}
+	{#if !isRead(room) && false}
 	<div class="unread" on:click={() => actions.slice.jump(room.id, room.readEvent)}>
 		<div style="flex: 1;">
-		{5} new messages
+		{"???"} new messages
 		</div>
-		<div style="display: flex; font-weight: 700">
+		<div style="display: flex; font-weight: 700" on:click={() => {
+      const lastEvent = room.events.live.at(-1)?.id;
+      state.log.debug(`mark ${lastEvent} as read`);
+      state.rooms.get(room.id).accountData.set("m.fully_read", { event_id: lastEvent });
+      state.slice.set(state.roomSlices.get(room.id));
+      state.api.sendReceipt(room.id, lastEvent);
+      state.api.fetch("POST", `/rooms/${encodeURIComponent(room.id)}/receipt/m.read.private/${encodeURIComponent(lastEvent)}`, { thread_id: "main" });
+		}}>
 			Mark As Read <div class="icon" style="margin-left: 4px">mark_chat_read</div>
 		</div>
 	</div>
 	{/if}
-	-->
 	<Scroller
 		items={slice.events}
 		itemKey="id"

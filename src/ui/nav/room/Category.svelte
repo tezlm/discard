@@ -2,6 +2,7 @@
 import Tooltip from "../../atoms/Tooltip.svelte";
 import Room from "./Room.svelte";
 // import Room from "./RoomTall.svelte";
+import Category from "./Category.svelte";
 import { roomContext } from "../../../util/context";
 export let room;
 let expanded = true;
@@ -66,6 +67,10 @@ function isMuted(room) {
 </div>
 {#if expanded}
 {#each rooms as room (room.id)}
+{#if room.type === "m.space"}
+<!-- <Category {room} /> -->
+{:else}
 <Room {room} muted={isMuted(room)} />
+{/if}
 {/each}
 {/if}

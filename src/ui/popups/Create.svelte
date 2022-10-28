@@ -14,7 +14,14 @@ let config = {
   name: "",
   topic: null,
   joinRule: "invite",
+  noFederate: false,
 };
+
+let joinRules = [
+  ["Private (Invite only)", "invite"],
+  ...(current.parent ? [["Restricted (Space members can join)", "restricted"]] : []),
+  ["Public (Anyone can join)", "public"],
+];
 
 let creating = false;
 
@@ -26,17 +33,29 @@ function capitalize(str) {
 async function create() {
   creating = true;
   const parentId = current.parent?.id;
+  const initialState = [], creationContent = {};
+  
+  if (parentId) {
+    initialState.push(
+      { content: { canonical: true }, type: "m.space.parent", state_key: parentId },
+      { content: { join_rule: "restricted", allow: [{ room_id: parentId, type: "m.room_membership" }] }, type: "m.room.join_rules" },
+    );
+  }
+  
+  if (config.noFederate) {
+    creationContent["m.federate"] = false;
+  }
+  
+  if (current.type === "space") {
+    creationContent.type = "m.space";
+  }
+  
   const { room_id } = await state.api.createRoom({
     name: config.name,
     topic: config.topic,
     creator: state.userId,
-    ...(current.type === "space" && { type: "m.space" }),
-    ...(parentId && {
-      state: [
-        { content: { canonical: true }, type: "m.space.parent", state_key: parentId },
-        { content: { join_rule: "restricted", allow: [{ room_id: parentId, type: "m.room_membership" }] }, type: "m.room.join_rules" },
-      ],
-    }),
+    state: initialState,
+    creationContent,
   });
 
   if (parentId) {
@@ -75,7 +94,7 @@ async function create() {
     everything below this is not implemented currently
     </div>
     <span class="title" style="margin-top: 1em">Room visibility</span>
-    <Dropdown options={[["Private (Invite only)", "invite"], ["Restricted (Space members can join)", "restricted"], ["Public (Anyone can join)", "public"]]} bind:selected={config.joinRule} />
+    <Dropdown options={joinRules} bind:selected={config.joinRule} />
     {#if current.type !== "space" && config.joinRule !== "public"}
     <div style="display:flex; margin-top: 1em; max-width: 440px">
       <div style="flex: 1">
@@ -96,7 +115,7 @@ async function create() {
         <div>Disable federation</div>
         <div class="dim" style="margin-top: 4px">Prevents anyone not part of <strong>{localStorage.getItem("homeserver")}</strong> from ever joining this {current.type}</div>
       </div>
-      <Toggle />
+      <Toggle bind:checked={config.noFederate} />
     </div>
   </div>
   <div slot="footer">

@@ -146,13 +146,13 @@ h1 {
 </style>
 <div class="settings">
   <div class="sidebar hidescroll">
-    <nav>
+    <nav role="tablist">
       {#each views as view (view.id)}
         {#if view.label || view.split}
           {#if view.split}<div class="separator"></div>{/if}
           {#if view.label}<div class="title">{view.label}</div>{/if}
         {:else}
-        <div on:click={() => handleClick(view)} class="item" class:selected={view.id === focused.id} style:color={view.color}>
+        <div on:click={() => handleClick(view)} class="item" class:selected={view.id === focused.id} style:color={view.color} role="tab">
           {view.name}
           {#if view.icon}
           <div class="icon">{view.icon}</div>
@@ -163,7 +163,7 @@ h1 {
     </nav>
   </div>
   <div class="main scroll">
-    <div class="wrapper">
+    <div class="wrapper" role="tabpanel">
       {#if !focused.raw}
       <h1>{focused.name}</h1>
       {/if}
