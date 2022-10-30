@@ -45,13 +45,14 @@ async function getProfile() {
 }
 
 
-let offline = false;
+let offline = state.client.status === "reconnecting";
 function onStatus(status) {
+	console.info("status: " + status);
 	offline = status === "reconnecting";
 }
 
-state.syncer.on("status", onStatus);
-onDestroy(() => state.syncer.off("status", onStatus));
+state.client.on("status", onStatus);
+onDestroy(() => state.client.off("status", onStatus));
 </script>
 <style>
 .wrapper > div {
@@ -91,11 +92,23 @@ onDestroy(() => state.syncer.off("status", onStatus));
 }
 
 .offline {
-	justify-content: center;
 	align-items: center;
 	height: 40px;
 	font-weight: 500;
 	color: var(--color-red);
+}
+
+.offline::after {
+	animation: dots infinite 1s;
+	content: "";
+}
+
+.online {
+	align-items: center;
+	height: 40px;
+	font-weight: 500;
+	color: var(--color-green);
+	animation: fadeout .5s 1s both;
 }
 
 .info {
@@ -124,10 +137,29 @@ onDestroy(() => state.syncer.off("status", onStatus));
 	text-overflow: ellipsis;
 	line-height: 14px;
 }
+
+@keyframes dots {
+ 0% { content: "" }
+ 33% { content: "." }
+ 67% { content: ".." }
+ 100% { content: "..." }
+}
+
+@keyframes fadeout {
+	0% { opacity: 1 }
+	99% { opacity: 0; height: 40px }
+	100% { opacity: 0; height: 0 }
+}
 </style>
 <div class="wrapper">
-	{#if !navigator.onLine || offline}
-	<div class="offline">Offline!</div>
+	{#if offline}
+	<div class="offline">
+	reconnecting
+	</div>
+	{:else if false}
+	<div class="online">
+	connected!
+	</div>
 	{/if}
 	{#if false}
 	<div class="voice">

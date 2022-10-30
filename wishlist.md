@@ -23,17 +23,19 @@ varying levels of difficulty
   - [ ] file too big warning
   - [x] drag and drop to upload file
 - [x] reactions
-- [x] members
+- [-] members
   - [x] member popout
   - [x] members list
+  - [ ] lazy load full member list
 - [ ] settings
   - [x] make them save
   - [ ] appearance/theme settings
   - [ ] room settings
 - [ ] notifications
-  - [ ] show # of unread messages
+  - [ ] show # of unread messages(?)
   - [ ] mentions list/inbox
   - [x] highlight mentions
+  - [ ] change favicon based on notifs
 - [ ] rich input
   - [ ] markdown preview
   - [ ] slash commands
@@ -53,7 +55,7 @@ varying levels of difficulty
   - [x] invite people
 - [ ] moderation
   - [x] ban/kick/unban people
-  - [ ] change power levels
+  - [x] change power levels
 - [ ] timeline
   - [-] jump to reply
   - [ ] jump to unread
@@ -70,11 +72,12 @@ varying levels of difficulty
 - [-] context menus
 - [ ] search messages
   - [ ] filtering
+  - [ ] sorting(?)
 - [ ] dms
   - [x] show dms differently
   - [ ] dm-only list
   - [ ] start dms
-- [ ] router (change title/hash/favicon)
+- [ ] router (change title/url)
 - [ ] persist
   - [ ] save state/accountdata
   - [ ] save e2ee keys

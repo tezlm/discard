@@ -1,4 +1,3 @@
-// import { Store } from "../matrix/store.js";
 import Api from "../matrix/api.js";
 import Settings from "../matrix/settings.js";
 import PushRules from "../../util/push.js";
@@ -120,7 +119,6 @@ function start(api, syncer, userId) {
     }
     state.accountDataRef.set(type, content);
     state.accountData.set(state.accountDataRef);
-    state.store.account.put(type, content);
   });
   
   syncer.on("ready", () => {
