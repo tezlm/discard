@@ -1,21 +1,33 @@
 <script>
 import Confirm from "./Confirm.svelte";
 export let views, options;
-let focused = views.find(i => i.view);
-let { popup } = state;
+let focused = views.find(i => options.tab ? i.id === options.tab : i.view);
+let { path, popup, scene, focusedRoom, focusedSpace } = state;
 let save, reset;
 
 function handleClick(view) {
   if (save) return alert("unsaved changes"); // TODO: replace with animation
+  actions.to(`/${$scene}/${options?.room ? options.room.id + "/" : ""}${view.id}`);
   view.clicked ? view.clicked() : focused = view;
 }
 
 let oldPopup;
 $: setTimeout(() => oldPopup = $popup);
+$: tab = $path.split("/").slice(options?.room ? 4 : 3);
 
 function handleKeyDown(e) {
   if (e.key === "Escape" && !oldPopup?.id) {
-    state.scene.set("chat");
+    close();
+  }
+}
+
+function close() {
+  if ($focusedRoom) {
+		actions.to(`/room/${$focusedRoom.id}`);
+  } else if ($focusedSpace) {
+		actions.to(`/space/${$focusedSpace.id}`);
+  } else {
+    actions.to("/home");
   }
 }
 </script>
@@ -33,6 +45,8 @@ function handleKeyDown(e) {
 }
 
 nav {
+  display: flex;
+  flex-direction: column;
   width: 218px;
   margin: 4em 0;
   margin-left: auto;
@@ -43,6 +57,7 @@ nav {
 	padding: 6px 10px;
 	border-radius: 4px;
   color: var(--fg-interactive);
+  text-align: left;
 	font-size: 16px;
   font-weight: 500;
 	cursor: pointer;
@@ -155,12 +170,12 @@ h1 {
           {#if view.split}<div class="separator"></div>{/if}
           {#if view.label}<div class="title">{view.label}</div>{/if}
         {:else}
-        <div on:click={() => handleClick(view)} class="item" class:selected={view.id === focused.id} style:color={view.color} role="tab">
+        <button on:click={() => handleClick(view)} class="item" class:selected={view.id === focused.id} style:color={view.color} role="tab">
           {view.name}
           {#if view.icon}
           <div class="icon">{view.icon}</div>
           {/if}
-        </div>
+        </button>
         {/if}
       {/each}
     </nav>
@@ -170,13 +185,13 @@ h1 {
       {#if !focused.raw}
       <h1>{focused.name}</h1>
       {/if}
-      <svelte:component this={focused.view} {...options} {...focused.props} bind:save={save} bind:reset={reset} />
+      <svelte:component this={focused.view} {...{ ...options, tab }} {...focused.props} bind:save={save} bind:reset={reset} />
       {#if save}
       <Confirm {save} reset={() => reset ? reset() : todo} />
       {/if}
     </div>
     <div class="exit">
-      <div class="close icon" on:click={() => state.scene.set("chat")}>close</div>
+      <button class="close icon" on:click={() => close()}>close</button>
       <div class="keybind">ESC</div>
     </div>
   </div>

@@ -12,4 +12,8 @@ export default {
   parser,
   slice,
   spaces,
+  to(route) {
+    state.pathRef = route;
+    state.path.set(route);
+  }
 };

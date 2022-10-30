@@ -4,13 +4,15 @@ export let toggled = (_: boolean) => {};
 </script>
 <style>
 .checkbox {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: solid var(--bg-spaces) 2px;
   height: 24px;
   width: 24px;
   border-radius: 4px;
   cursor: pointer;
-  
+  user-select: none;
 }
 
 .checkbox.checked {

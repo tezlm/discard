@@ -33,7 +33,7 @@ function getHomeContextMenu() {
 	  { label: "Create Space", clicked: () => state.popup.set({ id: "create", type: "space" }), icon: "folder" },
 	  { label: "Join",         clicked: () => state.popup.set({ id: "join" }), icon: "add" },
 	  null,
-	  { label: "Settings", clicked: () => state.scene.set("user-settings"), icon: "settings" /* submenu: [
+	  { label: "Settings", clicked: () => actions.to("/user-settings"), icon: "settings" /* submenu: [
 	    { label: "Foo", clicked: todo },
 	    { label: "Bar", clicked: todo },
 	    { label: "Baz", clicked: todo },

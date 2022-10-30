@@ -31,7 +31,7 @@ h3 {
 {:else}
 <p>This session doesn't support end-to-end encryption yet</p>
 {/if}
-<div style="height: 16px"></div>
+<div style="min-height: 16px"></div>
 <h3>Sessions</h3>
 {#await state.api.fetch("GET", "/devices")}
 <p>Loading sessions...</p>

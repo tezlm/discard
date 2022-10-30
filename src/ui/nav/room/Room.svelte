@@ -5,7 +5,7 @@ import { roomContext } from "../../../util/context";
 import { getLastMessage } from "../../../util/timeline";
 export let room;
 export let muted = false;
-let focusedRoom = state.focusedRoom;
+let { focusedRoom, popup } = state;
 let dms = state.dms;
 $: focused= $focusedRoom?.id === room.id;
 
@@ -26,7 +26,7 @@ function isRead(room) {
 function openSettings(room) {
 	return () => {
 		state.selectedRoom.set(room);
-		state.scene.set("room-settings");	
+		actions.to(`/room-settings/${room.id}`);
 	};
 }
 
@@ -47,6 +47,11 @@ function getIcon(room) {
 		return "tag";
 	}
 	return "help";
+}
+
+function focusRoom() {
+	actions.to(`/room/${room.id}`);
+	actions.rooms.focus(room);
 }
 </script>
 <style>
@@ -106,7 +111,7 @@ function getIcon(room) {
 	{focused}
 	{muted}
 	unread={!isRead(room)}
-	clicked={() => actions.rooms.focus(room)}
+	clicked={() => focusRoom()}
 	getContext={() => roomContext(room)}
 >
 	<div class="icon room-icon">{getIcon(room)}</div>
@@ -114,7 +119,7 @@ function getIcon(room) {
 	<div class="spacer"></div>
 	{#if room.notifications.highlight}<div class="mentions">{room.notifications.highlight}</div>{/if}
 	{#if room.power.me >= room.power.invite || room.joinRule === "public"}
-	<div class="settings hover" class:focused on:click|stopPropagation={(e) => state.popup.set({ id: "invite", type: "room", room })}>
+	<div class="settings hover" class:focused on:click|stopPropagation={(e) => $popup = { id: "invite", type: "room", room }}>
 		<Tooltip tip="Send Invite">
 			<span class="icon">person_add</span>
 		</Tooltip>

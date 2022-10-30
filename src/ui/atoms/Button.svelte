@@ -11,11 +11,8 @@ $: standard = ["normal", "primary", "good", "warn", "danger"].some(i => type.spl
 button {
   position: relative;
   display: inline-block;
-  font: inherit;
   border-radius: 3px;
-  border: none;
   color: var(--fg-notice);
-  cursor: pointer;
   padding: 10px 16px;
   font-size: 14px;
   font-weight: 500;
@@ -60,11 +57,11 @@ button {
 .warn:not(.hollow) { background: var(--color-yellow) }
 .danger:not(.hollow) { background: var(--color-red) }
 
-.normal.hollow { border: solid var(--bg-misc) 1px; }
-.primary.hollow { border: solid var(--color-accent) 1px; }
-.good.hollow { border: solid var(--color-green) 1px; }
-.warn.hollow { border: solid var(--color-yellow) 1px; }
-.danger.hollow { border: solid var(--color-red) 1px; }
+.normal.hollow { border-color: var(--bg-misc); }
+.primary.hollow { border-color: var(--color-accent); }
+.good.hollow { border-color: var(--color-green); }
+.warn.hollow { border-color: var(--color-yellow); }
+.danger.hollow { border-color: var(--color-red); }
 
 .link {
   background: transparent;

@@ -84,3 +84,14 @@ tr:nth-child(odd) {
 summary {
   cursor: pointer;
 }
+
+button, input[type=text], input[type=password] {
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}

@@ -14,7 +14,7 @@ async function leave() {
   state.log.debug("goodbye " + roomId);
   state.api.leaveRoom(roomId);
   state.popup.set({ ...current, id: null });
-  state.scene.set("chat");
+  actions.to("/chat");
 }
 </script>
 <Popup>

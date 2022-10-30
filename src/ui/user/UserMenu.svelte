@@ -47,12 +47,11 @@ async function getProfile() {
 
 let offline = state.client.status === "reconnecting";
 function onStatus(status) {
-	console.info("status: " + status);
 	offline = status === "reconnecting";
 }
 
 state.client.on("status", onStatus);
-onDestroy(() => state.client.off("status", onStatus));
+onDestroy(() => state.client?.off("status", onStatus));
 </script>
 <style>
 .wrapper > div {
@@ -184,16 +183,8 @@ onDestroy(() => state.client.off("status", onStatus));
 			</Tooltip>
 		</div>
 		{/await}
-		<!--
 		<Tooltip tip="User Settings" style="height: 30px">
-			<span class="icon" on:click={() => state.scene.set("user-settings")}>mic</span>
-		</Tooltip>
-		<Tooltip tip="User Settings" style="height: 30px">
-			<span class="icon" on:click={() => state.scene.set("user-settings")}>headset</span>
-		</Tooltip>
-		-->
-		<Tooltip tip="User Settings" style="height: 30px">
-			<div class="icon" on:click={() => state.scene.set("user-settings")} tabindex="0">settings</div>
+			<button class="icon" on:click={() => actions.to("/user-settings")} tabindex="0">settings</button>
 		</Tooltip>
 	</div>
 </div>

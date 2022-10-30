@@ -10,7 +10,7 @@ import Popouts from "./Popouts.svelte";
 import ContextMenus from "./ContextMenus.svelte";
 import { quadInOut } from "svelte/easing";
 let scene = state.scene;
-let { context, popup, settings } = state;
+let { path, context, popup, settings } = state;
 
 // bezier code from https://gist.github.com/pushkine/fbc7cf18e0a40ffb02b3b3a20b74f4f1
 // when will svelte add a builtin `bezier()` easing function ;-;
@@ -61,19 +61,18 @@ function handleClick(e) {
 
   const ping = e.target.getAttribute("data-mx-ping");
   if (ping) {
-    state.popup.set({ id: "user", userId: ping });
+    $popup = { id: "user", userId: ping };
   }
 }
 
-// let focusedRoom = state.focusedRoom;
 $: state.log.ui("switch scene to " + $scene);
-
-  // disabled for now because copied link doesn't actually do anything
-  // location.hash = `/${$scene}/${$focusedRoom?.roomId ?? ""}`; // TODO: better routing
-
-// focusedRoom.subscribe(() => {
-  // location.hash = `/${$scene}/${$focusedRoom?.roomId ?? ""}`; // TODO: better routing
-// });
+let argv = [];
+$: {
+  location.hash = "#" + $path;
+  const [head, ...newArgv] = $path.split("/").slice(1);
+  argv = newArgv;
+  $scene = head;
+}
 </script>
 <style>
 main {
@@ -121,18 +120,18 @@ main > div {
   {#if $scene === "chat"}
   <div class="chat" transition:easeRev><Chat /></div>
   -->
-  {#if $scene.endsWith("-settings") || $scene === "chat"}
-  <div class="chat" class:hide={$scene !== "chat"} class:reducemotion={$settings.get("reducemotion")}><Chat /></div>
+  {#if $scene !== "auth"}
+  <div class="chat" class:hide={!["room", "space", "home"].includes($scene)} class:reducemotion={$settings.get("reducemotion")}><Chat /></div>
   {/if}
   {#if $scene === "user-settings"}
-  <div class="settings" transition:ease><UserSettings /></div>
+  <div class="settings" transition:ease><UserSettings tab={argv[0]} /></div>
   {:else if $scene === "space-settings"}
-  <div class="settings" transition:ease><SpaceSettings /></div>
+  <div class="settings" transition:ease><SpaceSettings tab={argv[1]} /></div>
   {:else if $scene === "room-settings"}
-  <div class="settings" transition:ease><RoomSettings /></div>
+  <div class="settings" transition:ease><RoomSettings tab={argv[1]} /></div>
   {:else if $scene === "auth"}
   <LoginRegister />
-  {:else if $scene !== "chat"}
+  {:else if !["room", "space", "home"].includes($scene)}
   <div class="loading" transition:opacity><Loading /></div>
   {/if}
 </main>

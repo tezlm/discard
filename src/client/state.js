@@ -19,12 +19,18 @@ for (let i in defaultRoomState) {
   defaultRoomState[i] = writable(defaultRoomState[i]);
 }
 
+const p = location.hash.slice(1) || "/";
+
 const state = {
   api: null,
   syncer: null,
   client: null,
   userId: null,
   log: log,
+  
+  // routing
+  pathRef: p,
+  path: writable(p),
   
   // layers
   scene: writable({}),

@@ -104,7 +104,7 @@ function formatJoinRule(rule) {
       <div class="info">
         {formatJoinRule(room.joinRule)} ·
         {members?.length ?? "???"} {members?.length === 1 ? "member" : "members"} ·
-        <a href="#" on:click={(e) => { e.preventDefault(); state.selectedRoom.set(room); state.scene.set("space-settings") }}>edit</a>
+        <a href="#" on:click={(e) => { e.preventDefault(); state.selectedRoom.set(room); actions.to(`/space-settings/${room.id}`) }}>edit</a>
       </div>
       <div class="topic">{@html room.topic ? parseHtml(room.topic, { linkify: true }) : "<i>no topic</i>"}</div>
     </div>

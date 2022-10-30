@@ -22,7 +22,7 @@ function getHomeContextMenu() {
     { label: "Create Space", icon: "folder", clicked: () => state.popup.set({ id: "create", type: "space" }) },
 	  { label: "Join",         icon: "add",    clicked: () => state.popup.set({ id: "join" }) },
     null,
-	  { label: "Settings", clicked: () => state.scene.set("user-settings"), icon: "settings" },
+	  { label: "Settings", clicked: () => actions.to("/user-settings"), icon: "settings" },
   ];
 }
 </script>
@@ -132,7 +132,7 @@ function getHomeContextMenu() {
       <div class="item" on:click={() => showPopup("invite", { room: $focusedSpace })}><span class="color-accent">Invite People</span></div>
       <div class="spacer"></div>
       {/if}
-      <div class="item" on:click={() => { state.selectedRoom.set($focusedSpace); state.scene.set("space-settings") }}>Space Settings</div>
+      <div class="item" on:click={() => { state.selectedRoom.set($focusedSpace); actions.to(`/space-settings/${$focusedSpace.id}`) }}>Space Settings</div>
       <div class="item" on:click={todo}>Notification Settings</div>
       <div class="spacer"></div>
       {#if $focusedSpace.power.me >= $focusedSpace.power.forState("m.space.child")}
@@ -147,7 +147,7 @@ function getHomeContextMenu() {
       <div class="item" on:click={() => showPopup("create", { type: "space" })}>Create Space</div>
       <div class="item" on:click={() => showPopup("join")}>Join</div>
       <div class="spacer"></div>
-      <div class="item" on:click={() => state.scene.set("user-settings") }>Settings</div>
+      <div class="item" on:click={() => actions.to("/user-settings") }>Settings</div>
   {/if}
   </div>
   {/if}

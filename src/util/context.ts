@@ -5,6 +5,7 @@ globalThis.notif = notif;
 
 declare global {
   const todo: () => {};
+  const actions: any;
 }
 
 interface ContextMenuOption {
@@ -177,7 +178,7 @@ export function roomContext(room: Room): Array<ContextMenuOption> {
   function openSettings(room: Room) {
   	return () => {
   		state.selectedRoom.set(room);
-  		state.scene.set(`${room.type === "m.space" ? "space" : "room"}-settings`);	
+  		actions.to(`${room.type === "m.space" ? "space" : "room"}-settings/${room.id}`);	
   	};
   }
 }
@@ -190,7 +191,7 @@ export function memberContext(member: Member): Array<ContextMenuOption> {
   const menu = [];
   menu.push(
     { label: "Profile", icon: "person",        clicked: () => { state.popout.set({}); state.popup.set({ id: "user", userId: member.id }) } },
-    { label: "Mention", icon: "notifications", clicked: () => { const { input } = state.roomState; input.set(get(input) + member.id); state.scene.set("chat") } },
+    { label: "Mention", icon: "notifications", clicked: () => { const { input } = state.roomState; input.set(get(input) + member.id); actions.to("/chat") } },
     { label: "Message", icon: "message",       clicked: todo },
     { label: "Block",   icon: "block",         clicked: todo },
     null,

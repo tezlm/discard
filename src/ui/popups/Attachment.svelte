@@ -26,7 +26,7 @@ img {
 </style>
 <Popup raw>
   <div slot="content">
-    <img src={current.url} />
+    <img src={current.url} alt={current.alt} />
     <a href={current.url} class="original">Open original</a>
   </div>
 </Popup>

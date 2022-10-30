@@ -9,6 +9,7 @@ import Audit from "../settings/space/Audit.svelte";
 import Emoji from "../settings/room/Emoji.svelte";
 import Members from "../settings/room/Members.svelte";
 
+export let tab;
 let room = state.selectedRoom;
 
 $: views = [
@@ -27,4 +28,4 @@ $: views = [
   { id: "leave", clicked: () => state.popup.set({ id: "leave", type: "space", room: $room, confirm: () => queueMicrotask(todo) }), name: "Leave Space", color: "var(--color-red)", icon: "logout" },
 ];
 </script>
-<Settings {views} options={{ room: $room }} />
+<Settings {views} options={{ room: $room, tab }} />

@@ -32,7 +32,7 @@ function isRead(room) {
 function openSettings(room) {
 	return () => {
 		state.selectedRoom.set(room);
-		state.scene.set("room-settings");	
+		actions.to(`/room-settings/${room.id}`);
 	};
 }
 
