@@ -35,7 +35,7 @@ export function eventContext(event: Event, config: { showEmoji: () => {} }): Arr
     menu.push({ label: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });
   }
   if (power.me >= power.forState("m.room.pinned_events")) {
-    const events = event.room.getState("m.room.pinned_events")?.content.pinned;
+    const events = event.room.getState("m.room.pinned_events")?.content.pinned ?? [];
     function pinOrUnpin(e) {
       if (events.includes(event.id)) {
         events.splice(events.indexOf(event.id), 1);

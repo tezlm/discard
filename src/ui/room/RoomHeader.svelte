@@ -23,19 +23,32 @@ let searchfocus = false;
 let showPins = false;
 let pinButtonEl;
 
+function showHeader() {
+  const content = room.getState("m.room.topic")?.content ?? {};
+  const html = (content["org.matrix.msc3765.topic"] ?? content["m.topic"])?.find(i => i.mimetype === "text/html")?.body;
+  state.popup.set({
+    id: "info",
+    head: room.name,
+    body: html
+      ? parseHtml(html, { sanitize: true, linkify: true, twemojify: true })
+      : parseHtml(room.topic, { linkify: true, twemojify: true }),
+    html: true,
+  });
+}
+
 $: if (showPins) {
   queueMicrotask(() => {
     const rect = pinButtonEl.getBoundingClientRect();
-    state.popout.set({
+    $popout = {
       id: "pinned",
       animate: "bottom",
       top: rect.top + rect.height + 16,
       right: window.innerWidth - rect.right,
       room
-    });
+    };
   });
 } else {
-  state.popout.set({});
+  $popout = {};
 }
 </script>
 <style>
@@ -160,7 +173,7 @@ $: if (showPins) {
 	color: var(--fg-notice);
 	font-size: 12px;
 	font-weight: 700;
-	border-radius: 50%;
+	border-radius: 11px;
 }
 </style>
 <div class="header" class:dark={dark} on:contextmenu|preventDefault|stopPropagation={(e) => room && state.context.set({ items: roomContext(room), x: e.clientX, y: e.clientY })}>
@@ -178,7 +191,7 @@ $: if (showPins) {
   </span>
   {#if room?.topic}
   <div class="spacer"></div>
-  <div class="topic" on:click={() => state.popup.set({ id: "info", head: room.name, body: parseHtml(room.topic, { linkify: true, twemojify: true }), html: true })}>
+  <div class="topic" on:click={showHeader}>
     {@html parseHtml(room.topic, { linkify: true, twemojify: true })}
   </div>
   {:else if !room && !$space}

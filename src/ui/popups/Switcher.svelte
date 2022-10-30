@@ -110,7 +110,7 @@ function findParent(room: Room): Room | null {
     />
     <div class="rooms">
       {#each results as result, i (result.room.id)}
-        {@const room = result.room}
+        {@const { room } = result}
         {@const parent = findParent(room)}
         <div
           class="room"

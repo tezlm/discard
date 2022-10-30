@@ -47,6 +47,15 @@ function close() {
   $popup = { ...current, id: null };
 }
 
+function findParent(room: Room): Room | null {
+  if (spaces.get("orphanRooms").includes(room)) return null;
+  if (spaces.get("orphanSpaces").includes(room)) return null;
+  for (let [id, children] of spaces) {
+    if (children.includes(room)) return rooms.get(id);
+  }
+  return null;
+}
+
 async function add() {
   loading = true;
   const roomIds = Object.entries(checked).filter(i => i[1]).map(i => i[0]);
@@ -118,6 +127,7 @@ async function add() {
   <div slot="content" class="rooms">
     {#each results as result}
       {@const { room } = result}
+      {@const parent = findParent(room)}
       {#if !spaces.get(current.parent.id).includes(room)}
         <label class="room" class:checked={checked[room.id]}>
           <div class="name">
@@ -126,6 +136,9 @@ async function add() {
             {@html fuzzysort.highlight(result.fuzzy, "<span style='color: var(--color-accent)'>", "</span>")}
           {:else}
             {result.name}
+          {/if}
+          {#if parent}
+            <span class="dim">- {parent.name}</span>
           {/if}
           </div>
           <Checkbox bind:checked={checked[room.id]} />

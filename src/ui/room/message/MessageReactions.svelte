@@ -10,6 +10,8 @@ export let event;
 let showPicker = false;
 let addEl;
 
+let { popout } = state;
+
 function getTwemoji(unicode) {
   return twemoji.parse(unicode, {
     attributes: () => ({ loading: 'lazy' }),
@@ -80,7 +82,7 @@ function handleClick(mine, key) {
 $: if (showPicker) {
   queueMicrotask(() => {
     const rect = addEl.getBoundingClientRect();
-    state.popout.set({
+    $popout = {
       id: "emoji",
       animate: "right",
       top: rect.top,
@@ -98,10 +100,10 @@ $: if (showPicker) {
         }
         if (!keepOpen) showPicker = false;
       },
-    });
+    };
   });
 } else {
-  state.popout.set({});
+  $popout = {};
 }
 </script>
 <style>

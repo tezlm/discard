@@ -95,7 +95,7 @@ function getIcon(room) {
 	color: var(--fg-notice);
 	font-size: 12px;
 	font-weight: 700;
-	border-radius: 50%;
+	border-radius: 11px;
 }
 
 .hover.focused {

@@ -46,7 +46,7 @@ let pinned = room.getState("m.room.pinned_events")?.content.pinned ?? [];
   height: 200px;
 }
 </style>
-<div class="pins scroll">
+<div class="pins scroll" on:click|stopPropagation>
   <div class="header">Pinned Messages</div>
   <div class="content">
   {#each pinned as eventId (eventId)}

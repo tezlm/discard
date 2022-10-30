@@ -164,7 +164,7 @@ $: if (showReactionPicker) {
 	  <Toolbar items={getToolbar(event, shiftKey)} />
 	</div>
 	{/if}
-  {#if event.reactions}
+  {#if event.reactions && !noInteract}
 	<div style:margin-left={event.type === "m.room.create" ? "16px" : "72px"}>
 		<MessageReactions {event} />
 	</div>
