@@ -11,7 +11,7 @@ function close() {
 }
 
 export function confirm() {
-  const events = event.room.getState("m.room.pinned_events")?.content.pinned;
+  const events = event.room.getState("m.room.pinned_events")?.content.pinned ?? [];
   event.room.sendState("m.room.pinned_events", { pinned: [event.id, ...events] });
   close();
 }

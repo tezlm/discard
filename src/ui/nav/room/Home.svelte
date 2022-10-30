@@ -33,7 +33,7 @@ let { focusedRoom, invites } = state;
 	color: var(--fg-notice);
 	font-size: 12px;
 	font-weight: 700;
-	border-radius: 50%;
+	border-radius: 11px;
 }
 </style>
 <Item focused={!$focusedRoom?.id} clicked={() => actions.rooms.focus(null)}>

@@ -2,7 +2,7 @@
 import Confirm from "./Confirm.svelte";
 export let views, options;
 let focused = views.find(i => i.view);
-let popup = state.popup;
+let { popup } = state;
 let save, reset;
 
 function handleClick(view) {
@@ -10,8 +10,11 @@ function handleClick(view) {
   view.clicked ? view.clicked() : focused = view;
 }
 
+let oldPopup;
+$: setTimeout(() => oldPopup = $popup);
+
 function handleKeyDown(e) {
-  if (e.key === "Escape" && !$popup.id) {
+  if (e.key === "Escape" && !oldPopup?.id) {
     state.scene.set("chat");
   }
 }

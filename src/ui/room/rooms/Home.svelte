@@ -16,7 +16,11 @@ function join(invite) {
   
   const interval = setInterval(() => {
     if (!state.rooms.has(invite.id)) return;
-    actions.rooms.focus(state.rooms.get(invite.id));
+    if (invite.type === "m.space") {
+      actions.spaces.focus(state.rooms.get(invite.id));
+    } else {
+      actions.rooms.focus(state.rooms.get(invite.id));
+    }
     clearInterval(interval);
   }, 10);
 }

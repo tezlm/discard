@@ -27,7 +27,8 @@ function handleScrub(t) {
 </script>
 <style>
 .controls {
-  min-width: 400px;
+  width: 100%;
+  min-width: 300px;
   margin-top: .5rem;
   display: flex;
   background: rgba(4, 4, 5, .6);

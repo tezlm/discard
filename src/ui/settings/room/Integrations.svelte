@@ -2,6 +2,7 @@
 import Avatar from "../../atoms/Avatar.svelte";
 import Toolbar from "../../atoms/Toolbar.svelte";
 export let room;
+let { popup, settings } = state;
 </script>
 <style>
 h3 {
@@ -19,14 +20,14 @@ h4 {
 
   border: solid var(--bg-spaces) 1px;
   background: var(--bg-rooms-members);
-  padding: 8px;
+  padding: 16px;
   border-radius: 4px;
   margin-top: 8px;
 }
 
 .bridge .info {
   flex: 1;
-  margin-left: 8px;
+  margin-left: 16px;
   line-height: 1.4;
 }
 
@@ -64,26 +65,65 @@ h4 {
 .bridge:hover .toolbar {
 	display: block;
 }
+
+.card {
+  display: inline-flex;
+  border: solid var(--bg-spaces) 1px;
+  border-radius: 4px;
+  margin-left: 2px;
+}
+
+.card .type {
+  background: var(--bg-spaces);
+  padding: 0 4px;
+}
+
+.card .value {
+  background: var(--bg-misc);
+  padding: 0 4px;
+}
 </style>
 <h3>Bridges</h3>
-{#each room.getAllState("uk.half-shot.bridge") as event}
+{#each room.getAllState("m.bridge") as event}
   {@const bridge = event.content}
+  {@const bot = room.members.get(bridge.bridgebot)}
   <div class="bridge">
-    <Avatar user={{ id: bridge.protocol.id, avatar: bridge.protocol.avatar_url }} size={72} link={true} />
+    <Avatar user={{ id: bridge.protocol.id, avatar: bridge.protocol.avatar_url }} size={64} link={true} />
     <div class="info">
-      <h4>{bridge.protocol.displayname ?? bridge.protocol.id}</h4>
-      Currently being bridged to {bridge.channel.displayname ?? room.name}
+      <h4>{bridge.protocol?.displayname ?? bridge.protocol?.id}</h4>
+      This room is currently being bridged to: 
+      {#if bridge.channel}
+      <div class="card">
+        <div class="type">Channel:</div>
+        <div class="value">{bridge.channel.displayname ?? bridge.channel.id}</div>
+      </div>
+      {/if}
+      {#if bridge.network}
+      <div class="card">
+        <div class="type">Network:</div>
+        <div class="value">{bridge.network.displayname ?? bridge.network.id}</div>
+      </div>
+      {/if}
+      {#if bridge.protocol}
+      <div class="card">
+        <div class="type">Protocol:</div>
+        <div class="value">{bridge.protocol.displayname ?? bridge.protocol.id}</div>
+      </div>
+      {/if}
       <hr />
-      <!--This bridge was created by <span data-mx-ping={bridge.creator}>{bridge.creator}</span><br />-->
-      This bridge is managed by <span data-mx-ping={bridge.bridgebot}>{bridge.bridgebot}</span><br />
+      This bridge is managed by <span data-mx-ping={bridge.bridgebot}>{bot?.name ? ("@" + bot.name) : bridge.bridgebot}</span>
     </div>
+    {#if $settings.get("shadowdev")}
     <div class="toolbar">
-      <Toolbar items={[{ clicked: () => state.popup.set({ id: "dev-event", event }), name: "view source", icon: "terminal" }]} />
+      <Toolbar items={[{ clicked: () => $popup = { id: "dev-event", event }, name: "view source", icon: "terminal" }]} />
     </div>
+    {/if}
   </div>
 {:else}
-no bridges
+<i style="margin-top: 12px">There are no bridges here!</i>
 {/each}
+<!--
 <div style="height: 18px"></div>
 <h3>Bots</h3>
 [waiting on msc - please hold...]
+-->
