@@ -71,7 +71,11 @@ function getJoinMessage(event) {
 .icon {
   color: var(--fg-muted);
   font-size: 22px;
-  width: 72px;
+  min-width: 72px;
+}
+
+.text {
+  padding-right: 8px;
 }
 
 time {
@@ -83,7 +87,7 @@ time {
 </style>
 <div class="change">
   <div class="icon" style:color={action.color}>{action.icon}</div>
-  <div>
+  <div class="text">
     {#if action.type !== "join"}
     <Name bold member={victim} />
     {/if}

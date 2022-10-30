@@ -5,6 +5,7 @@ import { fastclick } from "../../util/use";
 
 export let member;
 export let bold = false;
+export let light = false;
 let { settings, popout, context } = state;
 
 function getColor(member, settings) {
@@ -30,7 +31,6 @@ function showPopout(e) {
 </script>
 <style>
 .member {
-  font-weight: 700;
   cursor: pointer;
 }
 
@@ -41,7 +41,7 @@ function showPopout(e) {
 <span
   class="member"
   style:color={getColor(member, $settings)}
-  style:font-weight={bold ? "700" : "500"}
+  style:font-weight={bold ? "700" : light ? null : "500"}
   use:fastclick
   on:fastclick={showPopout}
   on:contextmenu|preventDefault|stopPropagation={e => $context = { items: memberContext(member), x: e.clientX, y: e.clientY }}

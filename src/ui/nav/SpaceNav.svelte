@@ -158,7 +158,7 @@ function getHomeContextMenu() {
     class:focused={$focusedSpace?.id === space.id}
     class:unread={!allRead(space.id)}
     on:click={() => actions.spaces.focus(space)}
-		on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: roomContext(space), x: e.clientX, y: e.clientY })}
+    on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: roomContext(space), x: e.clientX, y: e.clientY })}
   >
     <Tooltip position="right" tip="arst">
       <div class="avatar">

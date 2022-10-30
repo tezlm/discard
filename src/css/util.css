@@ -1,5 +1,4 @@
-.title {
-  color: var(--fg-light);
+.title { color: var(--fg-light);
   font-family: var(--font-display);
   font-size: 12px;
   font-weight: 500;
@@ -32,11 +31,16 @@
   background: var(--bg-rooms-members);
 }
 
+::-webkit-scrollbar:hover {
+  width: 6px;
+  height: 6px;
+}
+
 ::-webkit-scrollbar-thumb {
   background: var(--bg-spaces);
 }
 
-::-webkit-scrollbar-button {
+::-webkit-scrollbar-button, ::-webkit-scrollbar-corner {
   display: none;
 }
 

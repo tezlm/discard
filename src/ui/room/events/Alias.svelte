@@ -15,7 +15,11 @@ export let event;
 .icon {
   color: var(--fg-muted);
   font-size: 22px;
-  width: 72px;
+  min-width: 72px;
+}
+
+.text {
+  padding-right: 8px;
 }
 
 time {
@@ -27,7 +31,7 @@ time {
 </style>
 <div class="change">
   <div class="icon">tag</div>
-  <div>
+  <div class="text">
     <Name bold member={event.sender} />
     {#if event.content.alias}
     set the room's main alias to <b>{event.content.alias}</b>

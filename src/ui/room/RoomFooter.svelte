@@ -11,7 +11,7 @@ async function sendMessage(content, theRoom = $room) {
   if ($reply) {
     content["m.relates_to"] = {};
     content["m.relates_to"]["m.in_reply_to"] = {};
-    content["m.relates_to"]["m.in_reply_to"]["event_id"] = $reply.eventId;
+    content["m.relates_to"]["m.in_reply_to"]["event_id"] = $reply.id;
     reply.set(null);
   }
 

@@ -1,6 +1,8 @@
 <script>
-// import Event from "../room/timeline/Event.svelte";
+import Event from "../room/timeline/Event.svelte";
 import Message from "../room/message/Message.svelte";
+import { eventContext } from "../../util/context.ts";
+
 export let room;
 let pinned = room.getState("m.room.pinned_events")?.content.pinned ?? [];
 </script>
@@ -52,7 +54,7 @@ let pinned = room.getState("m.room.pinned_events")?.content.pinned ?? [];
     {#await room.events.fetch(eventId)}
     loading {eventId}
     {:then event}
-    <Message header {room} {event} />
+    <Event noInteract header {room} {event} />
     {:catch error}
     error loading event. {error.error}
     {/await}

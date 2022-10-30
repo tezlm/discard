@@ -34,10 +34,34 @@ export function eventContext(event: Event, config: { showEmoji: () => {} }): Arr
     if (event.sender.id === state.userId && event.type === "m.room.message") menu.push({ label: "Edit Message", icon: "edit", clicked: () => state.roomState.edit.set(event.id) });
     menu.push({ label: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });
   }
+  if (power.me >= power.forState("m.room.pinned_events")) {
+    const events = event.room.getState("m.room.pinned_events")?.content.pinned;
+    function pinOrUnpin(e) {
+      if (events.includes(event.id)) {
+        events.splice(events.indexOf(event.id), 1);
+        event.room.sendState("m.room.pinned_events", { pinned: events });
+        return;
+      }
+      if (e.detail.shiftKey) {
+        event.room.sendState("m.room.pinned_events", { pinned: [event.id, ...events] });
+      } else {
+        state.popup.set({ id: "pin", event });
+      }
+    }
+    menu.push({ label: `${events.includes(event.id) ? "Unpin" : "Pin"} Message`, icon: "push_pin", clicked: pinOrUnpin });
+  }
   menu.push({ label: "Mark Unread", icon: "mark_chat_unread", clicked: markUnread });
   menu.push({ label: "Copy Link",   icon: "link", clicked: () => navigator.clipboard.writeText(`https://matrix.to/#/${event.room.id}/${event.id}`) });
   if (!event.isState() && ((power.me >= power.forEvent("m.room.redaction") && event.sender.id === state.id) || power.me >= (power.redact ?? 50))) {
-    menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.flags.add("redacted"); state.api.redactEvent(event.room.id, event.id) } });
+    function redact(e) {
+      if (e.detail.shiftKey) {
+        event.flags.add("redacted");
+        event.redact();
+      } else {
+        state.popup.set({ id: "redact", event });
+      }
+    }
+    menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: redact });
   }
   if (state.settingsRef.get("shadowdev")) {
     menu.push(null);
@@ -165,7 +189,7 @@ export function memberContext(member: Member): Array<ContextMenuOption> {
   
   const menu = [];
   menu.push(
-    { label: "Profile", icon: "person",        clicked: () => state.popup.set({ id: "user", userId: member.id }) },
+    { label: "Profile", icon: "person",        clicked: () => { state.popout.set({}); state.popup.set({ id: "user", userId: member.id }) } },
     { label: "Mention", icon: "notifications", clicked: () => { const { input } = state.roomState; input.set(get(input) + member.id); state.scene.set("chat") } },
     { label: "Message", icon: "message",       clicked: todo },
     { label: "Block",   icon: "block",         clicked: todo },

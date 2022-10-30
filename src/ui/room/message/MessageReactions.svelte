@@ -64,7 +64,7 @@ function counterOut() {
 function handleClick(mine, key) {
   // instantly respond with reaction/local echo?
   if (mine) {
-    state.api.redactEvent(mine.room.id, mine.id);
+    mine.redact();
   } else {
     const reaction = {
       "m.relates_to": {

@@ -26,7 +26,11 @@ function getState(event) {
 .icon {
   color: var(--fg-muted);
   font-size: 22px;
-  width: 72px;
+  min-width: 72px;
+}
+
+.text {
+  padding-right: 8px;
 }
 
 .link {
@@ -47,7 +51,7 @@ time {
 </style>
 <div class="change">
   <div class="icon">push_pin</div>
-  <div>
+  <div class="text">
     <Name bold member={event.sender} />
     {#if added.length === 0 && removed.length === 0}
     did nothing to the pins in this room.

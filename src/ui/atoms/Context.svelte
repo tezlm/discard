@@ -73,6 +73,7 @@ function handleClick(item, e) {
 .icon {
   padding-left: 8px;
   margin-left: auto;
+  transform: scale(1.2);
 }
 
 .spacer {
