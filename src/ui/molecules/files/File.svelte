@@ -30,6 +30,7 @@ export let size = 0;
   padding: 0 1em;
   display: flex;
   flex-direction: column;
+  gap: 8px;
   overflow: hidden;
 }
 
@@ -63,7 +64,7 @@ export let size = 0;
   <div class="header">
     <img src={fileIcon} alt="file icon" />
     <div class="info">
-      <a class="name" href={src} title={name}>{name}</a><br />
+      <a class="name" href={src} title={name}>{name}</a>
       {#if size === null}
       <span class="size">??? kb</span>
       {:else}

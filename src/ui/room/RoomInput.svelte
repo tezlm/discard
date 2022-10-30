@@ -233,8 +233,9 @@ function slide() {
 }
 
 .upload {
-  padding: 8px 16px 0;
-  align-items: start;
+  display: flex;
+  padding: 0 16px;
+  justify-content: center;
   font-size: 24px;
   color: var(--fg-light);
   cursor: pointer;
@@ -299,7 +300,7 @@ function slide() {
   {#if reply}
     <Reply
       event={reply}
-      onclick={() => actions.slice.jump(reply.roomId, reply.eventId)}
+      onclick={() => actions.slice.jump(reply.room.id, reply.id)}
       onclose={() => reply = null}
     />
   {/if}

@@ -43,6 +43,10 @@ async function handleSubmit() {
   padding: 32px;
 }
 
+.main {
+  min-width: 440px;
+}
+
 .side {
   text-align: center;
   width: 240px;

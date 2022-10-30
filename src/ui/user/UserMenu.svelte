@@ -116,7 +116,6 @@ onDestroy(() => state.syncer.off("status", onStatus));
 	font-family: var(--font-display);
 	font-size: 0.9em;
 	text-overflow: ellipsis;
-	line-height: 16px;
 }
 
 .userid {

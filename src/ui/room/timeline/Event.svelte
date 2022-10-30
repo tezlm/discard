@@ -13,6 +13,7 @@ import Unknown from "../events/Unknown.svelte";
 import { eventContext } from "../../../util/context";
 
 export let shiftKey = false;
+export let noInteract = false;
 export let header = true;
 export let room;
 export let event;
@@ -33,7 +34,7 @@ function getToolbar(event, shiftKey) {
     toolbar.push({ name: "Cancel", icon: "delete", color: "var(--color-red)", clicked: todo });
   } else if (shiftKey) {
     if (!event.isState() && ((fromMe && room.power.me >= room.power.forEvent("m.room.redact")) || (room.power.me >= room.power.redact))) {
-      toolbar.push({ name: "Redact", icon: "delete", color: "var(--color-red)", clicked: () => { event.flags.add("redacted"); state.api.redactEvent(event.room.id, event.id) }});
+      toolbar.push({ name: "Redact", icon: "delete", color: "var(--color-red)", clicked: () => { event.flags.add("redacted"); event.redact() }});
     }
     if (event.type === "m.room.message" && room.power.me >= room.power.forEvent("m.room.message")) {
       toolbar.push({ name: "Reply", icon: "reply", clicked: () => state.roomState.reply.set(event) });
@@ -64,6 +65,7 @@ function getToolbar(event, shiftKey) {
 }
 
 function handleClick(e) {
+	if (noInteract) return;
   if (e.altKey) {
     const prev = $slice.events[$slice.events.findIndex(i => i.id === event.id) - 1];
     if (prev) {
@@ -76,6 +78,7 @@ function handleClick(e) {
 
 
 function handleContext(e) {
+	if (noInteract) return;
 	if (e.target.tagName === "A") return;
 	e.preventDefault();
 	$context = {
@@ -110,7 +113,7 @@ $: if (showReactionPicker) {
       },
     });
   });
-} else {
+} else if (!noInteract) {
   state.popout.set({});
 }
 </script>
@@ -120,7 +123,7 @@ $: if (showReactionPicker) {
 	user-select: text;
 }
 
-.event:not(.create):hover {
+.event:not(.create, .noInteract):hover {
   background: var(--mod-darken);
 }
 
@@ -133,11 +136,11 @@ $: if (showReactionPicker) {
   z-index: 1;
 }
 
-.event:hover .toolbar {
+.event:not(.noInteract):hover .toolbar {
 	display: block;
 }
 </style>
-<div class="event" class:create={event.type === "m.room.create"} on:click={handleClick} on:contextmenu|stopPropagation={handleContext}>
+<div class="event" class:noInteract class:create={event.type === "m.room.create"} on:click={handleClick} on:contextmenu|stopPropagation={handleContext}>
 	{#if event.type === "m.room.create"}
 		<Create {room} {event} {shiftKey} />
 	{:else if event.type === "m.room.name" || event.type === "m.room.topic"}
@@ -156,7 +159,7 @@ $: if (showReactionPicker) {
 	{:else}
 		<Unknown {room} {event} />
 	{/if}
-	{#if event.type !== "m.room.create"}
+	{#if event.type !== "m.room.create" && !noInteract}
   <div class="toolbar" bind:this={toolbarEl} style:display={showReactionPicker ? "block" : null}>
 	  <Toolbar items={getToolbar(event, shiftKey)} />
 	</div>

@@ -14,6 +14,8 @@ import Leave from "./popups/Leave.svelte";
 import AddExisting from "./popups/AddExisting.svelte";
 import DevRoom from "./popups/DevRoom.svelte";
 
+import Redact from "./popups/Redact.svelte";
+import Pin from "./popups/Pin.svelte";
 import Reactions from "./popups/Reactions.svelte";
 import DevEvent from "./popups/DevEvent.svelte";
 
@@ -45,6 +47,8 @@ popups.set("addexisting", AddExisting);
 popups.set("dev-room", DevRoom);
 
 // events
+popups.set("redact", Redact);
+popups.set("pin", Pin);
 popups.set("reactions", Reactions);
 popups.set("dev-event", DevEvent);
 

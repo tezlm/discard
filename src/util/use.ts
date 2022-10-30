@@ -4,7 +4,15 @@ export function fastclick(node) {
     const validKeyDown = e.type === "keydown" && (e.key === " " || e.key === "Enter");
     if (validMouseDown || validKeyDown) {
       e.stopPropagation();
-      node.dispatchEvent(new CustomEvent("fastclick", { clientX: e.clientX, clientY: e.clientY }));
+      node.dispatchEvent(new CustomEvent("fastclick", {
+        detail: {
+          clientX: e.clientX,
+          clientY: e.clientY,
+          shiftKey: e.shiftKey,
+          ctrlKey: e.ctrlKey,
+          altKey: e.altKey,
+        }
+      }));
     }
   }
   

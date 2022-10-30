@@ -42,20 +42,19 @@ let oldId = null;
 $: if (room.id !== oldId) {
   count = 20;
   oldId = room.id;
-	console.time("room members")
-	queueMicrotask(() => console.timeEnd("room members"));
 }
 
 function showMemberPopout(e, member) {
   const rect = e.target.getBoundingClientRect();
-  if ($popout._owner === e.target) return $popout = {};
+  const _owner = `memberlist-${member.id}`;
+  if ($popout._owner === _owner) return $popout = {};
   $popout = {
     id: "member",
     member,
     animate: "left",
     top: rect.y,
     right: window.innerWidth - rect.x + 8,
-    _owner: e.target,
+    _owner,
   };
 }
 
@@ -96,7 +95,11 @@ function showContext(e, member) {
 }
 
 .wrapper:hover > .member {
-  background: rgba(79, 84, 92, 0.4);
+  background: var(--mod-lighten);
+}
+
+.wrapper:active > .member, .wrapper.selected > .member {
+  background: var(--mod-lightener);
 }
 
 .member .name {
@@ -128,6 +131,7 @@ function showContext(e, member) {
         <!-- TODO: optimize by putting single click/context listener on wrapper instead of each element -->
         <div
           class="wrapper"
+          class:selected={$popout._owner === "memberlist-" + member.id}
           use:fastclick
           on:fastclick={(e) => showMemberPopout(e, member)}
           on:contextmenu|preventDefault|stopPropagation={(e) => showContext(e, member)}

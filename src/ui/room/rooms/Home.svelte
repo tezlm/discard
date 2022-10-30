@@ -43,8 +43,10 @@ function join(invite) {
 
 .buttons {
   display: grid;
+  width: 608px;
+  max-width: 50vw;
   grid-gap: 8px;
-  grid-template-columns: 300px 300px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   margin-top: 1em;
 }
 

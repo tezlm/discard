@@ -1,17 +1,9 @@
 <script>
 import { parseHtml } from "../../../util/html.js";
-import { calculateHash } from '../../../util/content.ts';
+import Name from "../../atoms/Name.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
 export let room, eventId;
 let eventPromise = room.events.fetch(eventId);
-let settings = state.settings;
-
-function getColor(sender) {
-  if (!sender) return;
-  if ($settings.get("namecolors") === "never") return;
-  if ($settings.get("namecolors") === "power" && room.power.forUser(sender.id) === 0) return;
-  return `var(--mxid-${calculateHash(sender.id) % 8 + 1})`
-}
 </script>
 <style>
 .reply {
@@ -122,7 +114,9 @@ function getColor(sender) {
   <div class="avatar">
     <Avatar user={event.sender} size={16} />
   </div>
-  <span class="author" style:color={getColor(event.sender)} data-mx-ping={event.sender.id}>{event.sender.name || event.sender.id}</span>
+  <span class="author">
+    <Name light member={event.sender} />
+  </span>
   <div class="content" on:click={() => actions.slice.jump(event.room.id, event.id)}>
     {#if !event.content}empty event?{:else}
     {#if event.content.format === "org.matrix.custom.html"}

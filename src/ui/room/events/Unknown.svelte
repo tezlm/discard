@@ -15,7 +15,11 @@ export let event;
 .icon {
   color: var(--fg-muted);
   font-size: 22px;
-  width: 72px;
+  min-width: 72px;
+}
+
+.text {
+  padding-right: 8px;
 }
 
 time {
@@ -27,7 +31,7 @@ time {
 </style>
 <div class="change">
   <div class="icon">info</div>
-  <div>
+  <div class="text">
     unknown event type <b>{event.type}</b> from
     <Name bold member={event.sender} />
     <time datetime={event.date.toISOString()}>{formatDate(event.date)}</time>

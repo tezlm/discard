@@ -13,15 +13,14 @@ export let event;
   padding: 2px 0;
 }
 
-.content {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .icon {
   color: var(--fg-muted);
   font-size: 22px;
-  width: 72px;
+  min-width: 72px;
+}
+
+.text {
+  padding-right: 8px;
 }
 
 .name {
@@ -37,7 +36,7 @@ time {
 </style>
 <div class="change">
   <div class="icon">edit</div>
-  <div class="content">
+  <div class="text">
     <Name bold member={event.sender} />
     {#if event.type === "m.room.name"}
     changed the room name to <b class="name">{event.content.name}</b>

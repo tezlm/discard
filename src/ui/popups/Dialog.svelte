@@ -5,7 +5,7 @@ export let current;
 let { popup } = state;
 
 function close() {
-  state.popup.set({ ...$popup, id: null });
+  $popup = { ...$popup, id: null };
 }
 
 function cancel() {

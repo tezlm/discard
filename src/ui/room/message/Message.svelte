@@ -28,14 +28,15 @@ function fly(_, props) {
 
 const showMemberPopout = (e) => { 
   const rect = e.target.getBoundingClientRect();
-  if ($popout._owner === e.target) return $popout = {};
+  const _owner = `${event.id}-${event.sender.id}`;
+  if ($popout._owner === _owner) return $popout = {};
   $popout = {
     id: "member",
     member: event.sender,
     animate: "right",
     top: rect.y,
     left: rect.x + rect.width + 8,
-    _owner: e.target,
+    _owner,
   };
 }
 
@@ -97,7 +98,7 @@ const showMemberContext = (member) => (e) => {
   transition: box-shadow .2s;
 }
 
-.avatar:hover {
+.avatar:hover, .avatar.selected {
   box-shadow: 0 4px 4px #00000022;
 }
 
@@ -125,7 +126,13 @@ time {
   <div class="side">
     {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
     {#if header}
-    <div class="avatar" use:fastclick on:fastclick={showMemberPopout} on:contextmenu|preventDefault|stopPropagation={showMemberContext(event.sender)}>
+    <div
+      class="avatar"
+      class:selected={$popout._owner === `${event.id}-${event.sender.id}`}
+      use:fastclick
+      on:fastclick={showMemberPopout}
+      on:contextmenu|preventDefault|stopPropagation={showMemberContext(event.sender)}
+    >
       <Avatar user={event.sender} size={40} />
     </div>
     {:else}
