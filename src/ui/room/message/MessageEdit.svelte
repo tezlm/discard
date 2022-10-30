@@ -10,9 +10,15 @@ let slice = state.slice;
 $: rows = Math.min(input.split("\n").length, 10);
 
 function replacePing(input) {
+  function getName(id) {
+    const member = event.room.members.get(id);
+    if (!member) return id;
+    return "@" + (member.name ?? member.id).replace(/^@/, "");
+  }
+
   return input.replace(
     /@[a-z0-9-_/]+:[a-z0-9.-]+/ig,
-    (match) => `<a href="https://matrix.to/#/${match}">@${getName(match)}</a>`
+    (match) => `<a href="https://matrix.to/#/${match}">${getName(match)}</a>`
   );
 }
 
