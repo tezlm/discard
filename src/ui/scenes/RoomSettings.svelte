@@ -8,6 +8,7 @@ import Integrations from '../settings/room/Integrations.svelte';
 import Emoji from "../settings/room/Emoji.svelte";
 import Members from "../settings/room/Members.svelte";
 
+export let tab;
 let room = state.selectedRoom;
 
 $: views = [
@@ -25,4 +26,4 @@ $: views = [
   { id: "leave", clicked: () => state.popup.set({ id: "leave", type: "room", room: $room }), name: "Leave Room", color: "var(--color-red)", icon: "logout" },
 ];
 </script>
-<Settings {views} options={{ room: $room }} />
+<Settings {views} options={{ room: $room, tab }} />

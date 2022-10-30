@@ -2,6 +2,7 @@
 import Avatar from "../../atoms/Avatar.svelte";
 import Button from "../../atoms/Button.svelte";
 import Tooltip from "../../atoms/Tooltip.svelte";
+import { Link } from "svelte-routing";
 
 export let selectedTab;
 let invites = state.invites;
@@ -175,7 +176,7 @@ function join(invite) {
           </div>
         </div>
       </Button>
-      <Button clicked={() => state.scene.set("user-settings")}>
+      <Button clicked={() => actions.to("/user-settings")}>
         <div class="button">
           <div class="icon">settings</div>
           <div style="flex: 1">

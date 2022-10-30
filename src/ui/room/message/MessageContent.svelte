@@ -158,21 +158,23 @@ img {
   bind:this={wrapper}
 >
   {#if type === "m.image"}
+  {@const name = content.filename ?? content.body}
   <img
     src={parseMxc(content.url, dimensions.width, dimensions.height)}
-    alt={content.body}
-    title={content.body}
+    alt={name}
+    title={name}
     style={dimensions.css}
-    on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
+    on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + name, alt: name })}
   />
   {:else if type === "m.sticker"}
   <!-- note that this will fetch the full res sticker, which might not be ideal -->
+  {@const name = content.filename ?? content.body}
   <img
     src={parseMxc(content.url)}
-    alt={content.body}
-    title={content.body}
+    alt={name}
+    title={name}
     style="height: 128px"
-    on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
+    on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + name, alt: name })}
   />
   <!--
   <div class="sticker-popout">

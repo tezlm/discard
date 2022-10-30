@@ -21,7 +21,7 @@ export async function fetch() {
   const userId = localStorage.getItem("userid");
   const token = localStorage.getItem("token");
   if (!homeserver || !userId || !token) {
-    state.scene.set("auth");
+    actions.to("/auth");
     return null;
   }
   
@@ -76,7 +76,7 @@ function start(api, syncer, userId) {
   state.syncer = syncer;
   state.client = syncer;
   state.userId = userId;
-  state.scene.set("loading");
+  actions.to("/loading");
   
   syncer.on("join", (room) => actions.rooms.handleJoin(room));
   syncer.on("leave", (room) => actions.rooms.handleLeave(room.id));
@@ -125,7 +125,7 @@ function start(api, syncer, userId) {
     state.log.matrix("ready");
     actions.rooms.update();
     actions.spaces.update();
-    state.scene.set("chat");
+    actions.to("/chat");
   });
 }
 
@@ -134,7 +134,7 @@ export async function logout() {
   state.syncer.stop();
   state.api.logout();
   localStorage.clear();
-  state.scene.set("auth");
+  actions.to("/auth");
   state.popup.set({});
   state.client = null;
 

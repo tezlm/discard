@@ -96,7 +96,7 @@ function opacity() {
 <div class="background" on:mousedown={closePopup} transition:opacity>
   <div class="card" on:mousedown|stopPropagation class:raw transition:card role="dialog">
     {#if showClose}
-      <div class="icon close" on:click={closePopup}>close</div>
+      <button class="icon close" on:click={closePopup}>close</button>
     {/if}
     {#if raw}
       <slot name="content"></slot>

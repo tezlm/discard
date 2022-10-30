@@ -2,11 +2,12 @@
 import Search from "../../atoms/Search.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
 import Power from "../../atoms/Power.svelte";
+import Loading from "../../atoms/Loading.svelte";
 import { memberContext } from "../../../util/context";
 
 export let room, membership;
 
-let { users } = state;
+let { users, popup } = state;
 let { power } = room;
 let resets = {};
 
@@ -46,7 +47,7 @@ async function getMember(member) {
 function changePower(member, pl) {
   if (pl === member.power) return;
   if (pl === power.me) {
-    state.popup.set({
+    $popup = {
       id: "dialog",
       title: "Change power level?",
       html: "You are about to change this member's power level to the same level as yourself! You will <b>not</b> be able to demote them after this change. Are you absolutely sure you want to do this?",
@@ -54,9 +55,9 @@ function changePower(member, pl) {
       danger: true,
       clicked: () => member.setPower(pl),
       cancel: () => resets[member.id]?.(),
-    });
+    };
   } else if (member.id === state.userId) {
-    state.popup.set({
+    $popup = {
       id: "dialog",
       title: "Change power level?",
       html: "You are about to demote yourself! You will <b>not</b> be able to undo this. Are you absolutely sure you want to demote yourself?",
@@ -64,7 +65,7 @@ function changePower(member, pl) {
       danger: true,
       clicked: () => member.setPower(pl),
       cancel: () => resets[member.id]?.(),
-    });
+    };
   } else {
     member.setPower(pl);
   }
@@ -168,6 +169,8 @@ h1 {
     {:else}
     <p>hmmm, seems like nobody's here?</p>
     {/each}
+  {:else}
+    <Loading color="var(--fg-muted)" />
   {/if}
 {:else}
 <i>something really wrong happened, try again?</i>

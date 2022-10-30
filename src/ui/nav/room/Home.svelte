@@ -2,7 +2,16 @@
 import Item from "./Item.svelte";
 import Tooltip from "../../atoms/Tooltip.svelte";
 export let room;
-let { focusedRoom, invites } = state;
+let { focusedRoom, focusedSpace, invites } = state;
+
+function focus() {
+	actions.rooms.focus(null);
+	if ($focusedSpace) {
+		actions.to(`/space/${$focusedSpace.id}`);
+	} else {
+		actions.to("/home");
+	}
+}
 </script>
 <style>
 .icon {
@@ -36,7 +45,7 @@ let { focusedRoom, invites } = state;
 	border-radius: 11px;
 }
 </style>
-<Item focused={!$focusedRoom?.id} clicked={() => actions.rooms.focus(null)}>
+<Item focused={!$focusedRoom?.id} clicked={() => focus()}>
 	<div class="icon">home</div>
 	<div class="name">Home</div>
 	{#if $invites.size}<div class="mentions">{$invites.size}</div>{/if}

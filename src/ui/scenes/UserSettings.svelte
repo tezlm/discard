@@ -19,6 +19,7 @@ import Version from '../settings/user/Version.svelte';
 import Testbed from '../settings/user/Testbed.svelte'; // temporary
 import Shadow from '../settings/user/Shadow.svelte';
 
+export let tab;
 let { settings } = state;
 
 $: shadow  = $settings.get("shadowsettings") ? [{ id: "shadow", view: Shadow,  name: "Shadow Settings", color: "#a76ee5", icon: "circle", raw: true }] : [];
@@ -46,4 +47,4 @@ $: views = [
   { id: "logout", name: "Log Out", color: "var(--color-red)", clicked: () => state.popup.set({ id: "logout", confirm: actions.client.logout }), icon: "logout" },
 ];
 </script>
-<Settings {views} />
+<Settings {views} options={{ tab }} />

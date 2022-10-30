@@ -7,7 +7,7 @@ $: topic = room.topic;
 
 function edit() {
   state.selectedRoom.set(room);
-  state.scene.set("room-settings");
+  actions.to(`/room-settings/${room.id}`);
 }
 
 function invite() {

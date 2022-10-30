@@ -78,3 +78,7 @@ body {
   background: var(--bg-spaces);
   text-rendering: optimizeLegibility;
 }
+
+*:focus {
+  outline: 10px blue;
+}

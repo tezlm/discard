@@ -3,6 +3,7 @@ import Markdown from "../../molecules/Markdown.svelte";
 import Embed from "../../molecules/Embed.svelte";
 import Button from "../../atoms/Button.svelte";
 import Checkbox from "../../atoms/Checkbox.svelte";
+export let tab;
 let input = "";
 let embed = {
   "url": "https://www.freecodecamp.org/news/what-is-open-graph-and-how-can-i-use-it-for-my-website/",
@@ -95,6 +96,12 @@ function thing(node) {
 </style>
 <p>testbed for random stuff</p>
 <div style="min-height: 1em"></div>
+<div>
+  tab: {tab}
+  <a style="cursor: pointer" on:click|preventDefault={() => actions.to("/user-settings/test/foo")}>foo</a>
+  <a style="cursor: pointer" on:click|preventDefault={() => actions.to("/user-settings/test/bar")}>bar</a>
+  <a style="cursor: pointer" on:click|preventDefault={() => actions.to("/user-settings/test/baz")}>baz</a>
+</div>
 <div>
   <Checkbox />
 </div>
