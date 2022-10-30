@@ -9,10 +9,10 @@ export let color;
 }
 
 .spinner {
-  width: 50px;
-  height: 50px;
+  width: 32px;
+  height: 32px;
   /* background: conic-gradient(var(--mxid-2), var(--mxid-3), var(--mxid-4), var(--mxid-5), var(--mxid-2)); */
-  border: solid var(--bg-spaces) 8px;
+  border: solid var(--bg-spaces) 4px;
   border-top-color: transparent;
   border-bottom-color: transparent;
   border-radius: 50%;

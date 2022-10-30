@@ -44,7 +44,7 @@ export function send(room: Room, type: string, content: any) {
 export function handle(event: Event, toStart = false) {
   if (event.type === "m.room.redaction") return toStart ? null : redact(event);
   if (event.unsigned?.redacted_because) return;
-  if (state.client.status !== "syncing") return;
+  if (state.client.status === "starting") return;
     
   const { id, room } = event;
   
@@ -74,8 +74,9 @@ export function handle(event: Event, toStart = false) {
 }
 
 function redact(event: Event) {
-  const id = event.raw.redacts ?? event.content.redacts;
-  state.log.debug(`handle redaction in ${event.room.id} for ${id}`);
+  if (state.client.status === "starting") return;
+  // const id = event.raw.redacts ?? event.content.redacts;
+  // state.log.debug(`handle redaction in ${event.room.id} for ${id}`);
   reslice(event.room, true);
   
   // const timeline = event.room.events.live;

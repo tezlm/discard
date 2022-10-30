@@ -1,14 +1,8 @@
 import { writable } from "svelte/store";
-import Store from "./matrix/store";
 import Settings from "./matrix/settings";
 import { getDefaultState } from "./actions/rooms";
 
 // TODO: reset state on logout
-
-
-// persist state
-const store = new Store();
-await store.init();
 
 const settings = new Settings();
 
@@ -30,7 +24,6 @@ const state = {
   syncer: null,
   client: null,
   userId: null,
-  store: store,
   log: log,
   
   // layers
@@ -72,7 +65,5 @@ const state = {
   missingAvatars: new Set(),
   users: new Map(),
 };
-
-// setInterval(() => store.save(state), 1000 * 5);
 
 export default state;
