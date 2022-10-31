@@ -21,7 +21,7 @@ let selectedTab;
 $: type = $room?.getState("m.room.create")?.content.type;
 
 let navRooms = state.navRooms;
-$: if($navRooms) room = state.focusedRoom;
+$: if ($navRooms) room = state.focusedRoom;
 </script>
 <style>
 .room {

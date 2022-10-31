@@ -37,9 +37,9 @@ function sanitize(str: string): string {
 function focusRoom(room: Room) {
   if (!room) return;
   if (spaces.has(room.id)) {
-    actions.spaces.focus(room);
+    actions.to(`/space/${room.id}`);
   } else {
-    actions.rooms.focus(room);
+    actions.to(`/room/${room.id}`);
   }
   state.popup.set({});
 }

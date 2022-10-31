@@ -5,7 +5,6 @@ export let room;
 let { focusedRoom, focusedSpace, invites } = state;
 
 function focus() {
-	actions.rooms.focus(null);
 	if ($focusedSpace) {
 		actions.to(`/space/${$focusedSpace.id}`);
 	} else {
@@ -45,7 +44,7 @@ function focus() {
 	border-radius: 11px;
 }
 </style>
-<Item focused={!$focusedRoom?.id} clicked={() => focus()}>
+<Item focused={!$focusedRoom?.id} clicked={focus}>
 	<div class="icon">home</div>
 	<div class="name">Home</div>
 	{#if $invites.size}<div class="mentions">{$invites.size}</div>{/if}

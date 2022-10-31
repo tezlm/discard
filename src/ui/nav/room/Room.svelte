@@ -48,11 +48,6 @@ function getIcon(room) {
 	}
 	return "help";
 }
-
-function focusRoom() {
-	actions.to(`/room/${room.id}`);
-	actions.rooms.focus(room);
-}
 </script>
 <style>
 .room-icon {
@@ -111,7 +106,7 @@ function focusRoom() {
 	{focused}
 	{muted}
 	unread={!isRead(room)}
-	clicked={() => focusRoom()}
+	clicked={() => actions.to(`/room/${room.id}`)}
 	getContext={() => roomContext(room)}
 >
 	<div class="icon room-icon">{getIcon(room)}</div>

@@ -1,5 +1,6 @@
 import type { Event, Room, Member } from "discount";
 import { getRoomNotifRule, putRoomNotifRule } from "../client/matrix/notifications";
+import { get } from "svelte/store";
 import * as notif from "../client/matrix/notifications";
 globalThis.notif = notif;
 
@@ -183,15 +184,25 @@ export function roomContext(room: Room): Array<ContextMenuOption> {
   }
 }
 
-import { get } from "svelte/store";
 export function memberContext(member: Member): Array<ContextMenuOption> {
   const name = member.name || member.id;
   const { power } = member.room;
-  
+
+  // this is an ugly hack
+  function close() {
+    if (get(state.focusedRoom)) {
+  		actions.to(`/room/${(get(state.focusedRoom) as any).id}`);
+    } else if (get(state.focusedSpace)) {
+  		actions.to(`/space/${(get(state.focusedSpace) as any).id}`);
+    } else {
+      actions.to("/home");
+    }
+  }
+
   const menu = [];
   menu.push(
     { label: "Profile", icon: "person",        clicked: () => { state.popout.set({}); state.popup.set({ id: "user", userId: member.id }) } },
-    { label: "Mention", icon: "notifications", clicked: () => { const { input } = state.roomState; input.set(get(input) + member.id); actions.to("/chat") } },
+    { label: "Mention", icon: "notifications", clicked: () => { const { input } = state.roomState; input.set(get(input) + member.id); close() } },
     { label: "Message", icon: "message",       clicked: todo },
     { label: "Block",   icon: "block",         clicked: todo },
     null,

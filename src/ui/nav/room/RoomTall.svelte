@@ -108,7 +108,7 @@ function getIcon(room) {
 	{focused}
 	{muted}
 	unread={!isRead(room)}
-	clicked={() => actions.rooms.focus(room)}
+	clicked={() => actions.to(`/room/${room.id}`)}
 	getContext={() => roomContext(room)}
 >
 	<div class="avatar"><Avatar user={{ ...room, avatar: getAvatar(room) }} size={32} /></div>

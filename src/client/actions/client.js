@@ -125,7 +125,7 @@ function start(api, syncer, userId) {
     state.log.matrix("ready");
     actions.rooms.update();
     actions.spaces.update();
-    actions.to("/chat");
+    actions.to("/home");
   });
 }
 

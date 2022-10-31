@@ -52,8 +52,8 @@ export async function focus(room) {
     }
   }
   
-	state.focusedRoomId = room?.id ?? null;
-	state.focusedRoom.set(room);
+  state.focusedRoomId = room?.id ?? null;
+  state.focusedRoom.set(room);
   state.log.debug("set room for " + room?.id);
   
   if (room) {

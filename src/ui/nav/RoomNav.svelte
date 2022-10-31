@@ -43,5 +43,5 @@ function isMuted(room) {
 	if (!(e.altKey && !e.ctrlKey && !e.shiftKey) || (e.key !== "ArrowUp" && e.key !== "ArrowDown")) return;
 	const idx = flattenedRooms.findIndex(i => i.id === state.focusedRoomId);
 	const newRoom = flattenedRooms[(idx + (e.key === "ArrowUp" ? -1 : 1) + flattenedRooms.length + 1) % (flattenedRooms.length + 1)];
-	actions.rooms.focus(newRoom);
+	actions.to(`/room/${newRoom.id}`);
 }} />

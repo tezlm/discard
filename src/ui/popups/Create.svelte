@@ -66,10 +66,10 @@ async function create() {
     if (!state.rooms.has(room_id)) return;
     if (current.type === "space") {
       if (!current.parent) {
-        actions.spaces.focus(state.rooms.get(room_id));
+        actions.to(`/space/${room_id}`);
       }
     } else {
-      actions.rooms.focus(state.rooms.get(room_id));  
+      actions.to(`/room/${room_id}`);
     }
     state.popup.set({ type: current.type });
     clearInterval(interval);

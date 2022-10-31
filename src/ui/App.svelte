@@ -9,8 +9,7 @@ import Popups from "./Popups.svelte";
 import Popouts from "./Popouts.svelte";
 import ContextMenus from "./ContextMenus.svelte";
 import { quadInOut } from "svelte/easing";
-let scene = state.scene;
-let { path, context, popup, settings } = state;
+let { path, scene, context, popup, settings } = state;
 
 // bezier code from https://gist.github.com/pushkine/fbc7cf18e0a40ffb02b3b3a20b74f4f1
 // when will svelte add a builtin `bezier()` easing function ;-;
@@ -72,6 +71,22 @@ $: {
   const [head, ...newArgv] = $path.split("/").slice(1);
   argv = newArgv;
   $scene = head;
+  
+  if (head === "space") {
+    const space = state.rooms.get(argv[0]);
+    if (space) {
+      actions.spaces.focus(space);
+      actions.rooms.focus(null);
+    }
+  } else if (head === "room" && state.focusedRoomId !== argv[0]) {
+    const room = state.rooms.get(argv[0]);
+    if (room) {
+      actions.rooms.focus(room);
+    }
+  } else if (head === "home") {
+    actions.spaces.focus(null);
+    actions.rooms.focus(null);
+  }
 }
 </script>
 <style>
@@ -116,10 +131,6 @@ main > div {
 .layer.layer-3 { z-index: 30; }
 </style>
 <main>
-  <!--
-  {#if $scene === "chat"}
-  <div class="chat" transition:easeRev><Chat /></div>
-  -->
   {#if $scene !== "auth"}
   <div class="chat" class:hide={!["room", "space", "home"].includes($scene)} class:reducemotion={$settings.get("reducemotion")}><Chat /></div>
   {/if}

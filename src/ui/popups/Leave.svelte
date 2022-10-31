@@ -3,6 +3,7 @@ import Button from "../atoms/Button.svelte";
 import Popup from "../atoms/Popup.svelte";
 export const confirm = leave;
 export let current;
+let { focusedSpace, popup } = state;
 
 function capitalize(str) {
   if (!str?.length) return str;
@@ -13,8 +14,13 @@ async function leave() {
   const roomId = current.room.id;
   state.log.debug("goodbye " + roomId);
   state.api.leaveRoom(roomId);
-  state.popup.set({ ...current, id: null });
-  actions.to("/chat");
+  $popup = { ...current, id: null };
+  
+  if ($focusedSpace) {
+		actions.to(`/space/${$focusedSpace.id}`);
+  } else {
+    actions.to("/home");
+  }
 }
 </script>
 <Popup>
