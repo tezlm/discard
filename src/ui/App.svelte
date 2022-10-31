@@ -9,8 +9,7 @@ import Popups from "./Popups.svelte";
 import Popouts from "./Popouts.svelte";
 import ContextMenus from "./ContextMenus.svelte";
 import { quadInOut } from "svelte/easing";
-let scene = state.scene;
-let { context, popup, popout, settings, focusedRoom } = state;
+let { path, scene, context, popup, popout, settings, focusedRoom  } = state;
 
 // bezier code from https://gist.github.com/pushkine/fbc7cf18e0a40ffb02b3b3a20b74f4f1
 // when will svelte add a builtin `bezier()` easing function ;-;
@@ -60,26 +59,42 @@ function handleClick(e) {
     if (e.target === $popout._owner) return $popout = {};
     if (!$focusedRoom.members.has(ping)) return;
     const rect = e.target.getBoundingClientRect();
+    const right = (rect.x + rect.width) > (window.innerWidth - 300);
     $popout = {
       id: "member",
       member: $focusedRoom.members.get(ping),
-      animate: "right",
+      animate: right ? "left" : "right",
       top: rect.y,
-      left: rect.x + rect.width + 8,
+      ...(right ? { right: window.innerWidth - rect.x + 8 } : { left: rect.x + rect.width + 8 }),
       _owner: e.target,
     };
   }
 }
 
-// let focusedRoom = state.focusedRoom;
 $: state.log.ui("switch scene to " + $scene);
-
-  // disabled for now because copied link doesn't actually do anything
-  // location.hash = `/${$scene}/${$focusedRoom?.roomId ?? ""}`; // TODO: better routing
-
-// focusedRoom.subscribe(() => {
-  // location.hash = `/${$scene}/${$focusedRoom?.roomId ?? ""}`; // TODO: better routing
-// });
+let argv = [];
+$: {
+  location.hash = "#" + $path;
+  const [head, ...newArgv] = $path.split("/").slice(1);
+  argv = newArgv;
+  $scene = head;
+  
+  if (head === "space") {
+    const space = state.rooms.get(argv[0]);
+    if (space) {
+      actions.spaces.focus(space);
+      actions.rooms.focus(null);
+    }
+  } else if (head === "room" && state.focusedRoomId !== argv[0]) {
+    const room = state.rooms.get(argv[0]);
+    if (room) {
+      actions.rooms.focus(room);
+    }
+  } else if (head === "home") {
+    actions.spaces.focus(null);
+    actions.rooms.focus(null);
+  }
+}
 </script>
 <style>
 main {
@@ -123,22 +138,18 @@ main > div {
 .layer.layer-3 { z-index: 30; }
 </style>
 <main>
-  <!--
-  {#if $scene === "chat"}
-  <div class="chat" transition:easeRev><Chat /></div>
-  -->
-  {#if $scene.endsWith("-settings") || $scene === "chat"}
-  <div class="chat" class:hide={$scene !== "chat"} class:reducemotion={$settings.get("reducemotion")}><Chat /></div>
+  {#if $scene !== "auth"}
+  <div class="chat" class:hide={!["room", "space", "home"].includes($scene)} class:reducemotion={$settings.get("reducemotion")}><Chat /></div>
   {/if}
   {#if $scene === "user-settings"}
-  <div class="settings" transition:ease><UserSettings /></div>
+  <div class="settings" transition:ease><UserSettings tab={argv[0]} /></div>
   {:else if $scene === "space-settings"}
-  <div class="settings" transition:ease><SpaceSettings /></div>
+  <div class="settings" transition:ease><SpaceSettings tab={argv[1]} /></div>
   {:else if $scene === "room-settings"}
-  <div class="settings" transition:ease><RoomSettings /></div>
+  <div class="settings" transition:ease><RoomSettings tab={argv[1]} /></div>
   {:else if $scene === "auth"}
   <LoginRegister />
-  {:else if $scene !== "chat"}
+  {:else if !["room", "space", "home"].includes($scene)}
   <div class="loading" transition:opacity><Loading /></div>
   {/if}
 </main>
