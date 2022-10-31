@@ -9,15 +9,11 @@ export let name = "title";
 export let size;
 let started = false;
 let paused = true;
-// TODO: refactor?
-// let state = "pristine" | "playing" | "paused" | "finished"
 let duration = -1, currentTime = 0;
 let volume = 1;
 let muted = false;
-let wrapperEl;
-let videoEl;
-let fullscreen = false;
-let fullShowDebounce = null;
+let wrapperEl, videoEl;
+let fullscreen = false, fullShowDebounce = null;
 
 function handlePlay() {
   started = true;
@@ -213,7 +209,7 @@ video {
   align-items: center;
   font-family: var(--font-monospace);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: bold;
 }
 
 @keyframes appear {
@@ -236,10 +232,10 @@ video {
   <video
     {src}
     alt={name}
-    bind:muted={muted}
-    bind:volume={volume}
-    bind:duration={duration}
-    bind:currentTime={currentTime}
+    bind:muted
+    bind:volume
+    bind:duration
+    bind:currentTime
     bind:this={videoEl}
     on:play={handlePlay}
     on:pause={handlePause}

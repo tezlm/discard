@@ -8,7 +8,6 @@ export let name = "title";
 export let size = 0;
 let audioEl;
 let duration = -1, currentTime = 0;
-// let state = "pristine" | "playing" | "paused" | "finished"
 let paused = true;
 let muted = false;
 let volume = 1;
@@ -64,7 +63,6 @@ function handleScrub(t) {
   align-items: center;
   font-family: var(--font-monospace);
   font-size: 12px;
-  font-weight: 500;
 }
 </style>
 <File {name} {size} {src}>
@@ -87,10 +85,10 @@ function handleScrub(t) {
   <audio
     {src}
     alt={name}
-    bind:muted={muted}
-    bind:volume={volume}
-    bind:duration={duration}
-    bind:currentTime={currentTime}
+    bind:muted
+    bind:volume
+    bind:duration
+    bind:currentTime
     bind:this={audioEl}
     on:play={() => paused = false}
     on:pause={() => paused = true}

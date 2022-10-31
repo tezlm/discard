@@ -4,10 +4,11 @@ import { quadOut } from 'svelte/easing';
 export let raw = false;
 export let showClose = false;
 let current = state.popup;
-let settings = state.settings;
+let { settings, context } = state;
 
 function closePopup() {
   $current.cancel && $current.cancel();
+  $context = {};
   state.popup.set({ ...$current, id: null });
 }
 
@@ -93,7 +94,7 @@ function opacity() {
   transition: color 0.4s;
 }
 </style>
-<div class="background" on:mousedown={closePopup} transition:opacity>
+<div class="background" on:mousedown|stopPropagation={closePopup} transition:opacity on:click|stopPropagation>
   <div class="card" on:mousedown|stopPropagation class:raw transition:card role="dialog">
     {#if showClose}
       <button class="icon close" on:click={closePopup}>close</button>

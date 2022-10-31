@@ -140,6 +140,7 @@ function handleMove(e) {
   bind:this={wrapperEl}
   on:mousedown={handleFocus}
   on:mousemove={handleMove}
+  on:mouseup={handleBlur}
 >
   <div style="position: relative; height: 100%">
     {#if vertical}
@@ -161,4 +162,6 @@ function handleMove(e) {
     {/if}
     </div>
 </div>
+<!--
 <svelte:window on:mousemove={handleMove} on:mouseup={handleBlur} />
+-->

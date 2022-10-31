@@ -118,4 +118,4 @@ $: if ($popout.id === "emoji") loadedEmoji = true;
 </div>
 {/key}
 {/if}
-<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} on:mousedown={() => $popout = {}} />
+<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} on:mousedown={() => $popout = { _owner: $popout._owner }} />
