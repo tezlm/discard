@@ -44,6 +44,7 @@ function showPopout(e) {
   style:font-weight={bold ? "700" : light ? null : "500"}
   use:fastclick
   on:fastclick={showPopout}
+  on:click|stopPropagation
   on:contextmenu|preventDefault|stopPropagation={e => $context = { items: memberContext(member), x: e.clientX, y: e.clientY }}
 >
   {member.name || member.id}

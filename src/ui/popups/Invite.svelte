@@ -135,7 +135,7 @@ h2.title {
   <div slot="content" class="content">
     {#if current.room.power.me >= current.room.power.invite}
     <div class="split-top">
-      <h3>Invite friends to {current.room.name}</h3>
+      <h3>Invite some people to {current.room.name}</h3>
       <Search placeholder="Search for people" size="tall" bind:value={search} escaped={close} submitted={handleSearch} autofocus />
     </div>
     <div class="userlist scroll">
@@ -178,7 +178,7 @@ h2.title {
     {/if}
   {:else}
     <div class="linkonly">
-      <h3>Invite friends to {current.room.name}</h3>
+      <h3>Invite some people to to {current.room.name}</h3>
       <div style="flex: 1; margin: 16px 0; color: var(--fg-light)">
         You don't seem to have enough power to invite people directly, share this link instead.
       </div>

@@ -63,6 +63,7 @@ function handleScrub(t) {
   align-items: center;
   font-family: var(--font-monospace);
   font-size: 12px;
+  font-weight: 500;
 }
 </style>
 <File {name} {size} {src}>

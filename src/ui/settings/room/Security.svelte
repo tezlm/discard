@@ -42,9 +42,9 @@ let historyVisibility = getHistoryVisibility();
 let joinRule = structuredClone(getJoinRule());
 
 $: radioJoinRule = joinRule === "knock" ? "public" : joinRule === "knock_restricted" ? "restricted" : joinRule.join_rule;
-$: allowKnock = ["knock", "knock_restricted"].includes(joinRule.join_rule);
+let allowKnock = ["knock", "knock_restricted"].includes(joinRule.join_rule);
 
-state.api.roomDirVisibility(room.id);
+// state.api.roomDirVisibility(room.id);
 
 $: {
   let histVisChanged = historyVisibility !== getHistoryVisibility();

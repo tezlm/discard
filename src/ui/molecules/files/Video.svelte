@@ -209,7 +209,7 @@ video {
   align-items: center;
   font-family: var(--font-monospace);
   font-size: 12px;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 @keyframes appear {

@@ -2,7 +2,6 @@
 import Avatar from "../../atoms/Avatar.svelte";
 import Button from "../../atoms/Button.svelte";
 import Tooltip from "../../atoms/Tooltip.svelte";
-import { Link } from "svelte-routing";
 
 export let selectedTab;
 let invites = state.invites;

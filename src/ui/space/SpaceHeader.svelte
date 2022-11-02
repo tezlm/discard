@@ -1,7 +1,7 @@
 <script>
 import { quadOut } from "svelte/easing";
-import { roomContext } from "../../util/context";
-let focusedSpace = state.focusedSpace;
+import { roomContext, homeContext } from "../../util/context";
+let { focusedSpace, context, popup } = state;
 let showMenu = false;
 
 function zoomIn() {
@@ -13,17 +13,7 @@ function zoomIn() {
 }
 
 function showPopup(id, opts) {
-  state.popup.set({ id, type: "space", ...opts }); 
-}
-
-function getHomeContextMenu() {
-  return [
-    { label: "Create Room",  icon: "tag",    clicked: () => state.popup.set({ id: "create", type: "room" }) },
-    { label: "Create Space", icon: "folder", clicked: () => state.popup.set({ id: "create", type: "space" }) },
-	  { label: "Join",         icon: "add",    clicked: () => state.popup.set({ id: "join" }) },
-    null,
-	  { label: "Settings", clicked: () => actions.to("/user-settings"), icon: "settings" },
-  ];
+  $popup = { id, type: "space", ...opts }; 
 }
 </script>
 <style>
@@ -117,7 +107,7 @@ function getHomeContextMenu() {
   class="header"
   class:showMenu
   on:click={() => showMenu = !showMenu}
-  on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: $focusedSpace ? roomContext($focusedSpace) : getHomeContextMenu(), x: e.clientX, y: e.clientY })}
+  on:contextmenu|preventDefault|stopPropagation={e => $context = { items: $focusedSpace ? roomContext($focusedSpace) : homeContext(), x: e.clientX, y: e.clientY }}
 >
   {#if $focusedSpace}
     <span class="name" title={$focusedSpace?.name ?? "unknown"}>{$focusedSpace?.name ?? "unknown"}</span>

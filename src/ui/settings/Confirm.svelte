@@ -4,12 +4,13 @@ import { backInOut } from "svelte/easing";
 export let save;
 export let reset;
 let saving = false;
+let { settings } = state;
 
 function fly() {
   return {
     duration: 500,
     easing: backInOut ,
-    css: (t) => `transform: translateY(${72 - t * 72}px)`,
+    css: (t) => $settings.get("reducemotion") ? `opacity: ${t}` : `transform: translateY(${72 - t * 72}px)`,
   }
 }
 </script>

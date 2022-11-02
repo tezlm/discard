@@ -16,6 +16,9 @@ const placeholders = [
   "goofy ahh telegram scam",
 ];
 
+// const banWords = ["banned", "yeeted", "purged", "banished", "eliminated", "neutralized", "exiled", "expelled", "discontinued", "abolished", "discharged", "vanquished", "ejected"];
+// const banModifiers = ["violently", "thoroughly", "briskly"];
+
 const scopes = [];
 if (current.room.type === "m.space") {
   scopes.push(["This space", "space"]);

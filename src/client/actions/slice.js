@@ -13,7 +13,7 @@ export function get(room) {
 export async function backwards() {
   const slice = actions.slice.get(state.rooms.get(state.focusedRoomId));
   const top = slice.events[0]?.id;
-  await slice.backwards();
+  await slice.backwards(Math.floor(window.innerHeight / 32 * 4));
   const success = top !== slice.events[0]?.id;
   if (success) state.slice.set(slice);
   return success;
@@ -22,7 +22,7 @@ export async function backwards() {
 export async function forwards() {
   const slice = actions.slice.get(state.rooms.get(state.focusedRoomId));
   const bottom = slice.events.at(-1)?.id;
-  await slice.forwards();
+  await slice.forwards(Math.floor(window.innerHeight / 32 * 4));
   const success = bottom !== slice.events.at(-1)?.id;
   if (success) state.slice.set(slice);
   return success;

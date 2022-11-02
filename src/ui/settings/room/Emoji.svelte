@@ -2,7 +2,8 @@
 import hljs from "highlight.js";
 export let room;
 </script>
-<p>pretty much exactly the same ui as discord</p>
+<p>TODO: use pretty much the same ui as discord</p>
+<p>there are multiple packs, how to do it?</p>
 <br />
 <div>
 {#each room.getAllState("im.ponies.room_emotes") as ev}

@@ -9,12 +9,12 @@ function close() {
 }
 
 function cancel() {
-  current.cancel();
+  current.cancel?.();
   close();
 }
 
 export function confirm() {
-  current.clicked();
+  current.clicked?.();
   close();
 }
 </script>
@@ -28,7 +28,11 @@ export function confirm() {
     {/if}
   </div>
   <div slot="footer">
-    <Button type="link" label="Nevermind" clicked={cancel} />
-    <Button type={current.danger ? "danger" : "primary"} label={current.button} clicked={confirm} />
+    {#if current.button}
+      <Button type="link" label="Nevermind" clicked={cancel} />
+      <Button type={current.danger ? "danger" : "primary"} label={current.button} clicked={confirm} />
+    {:else}
+      <Button type="primary" label="Alright" clicked={confirm} />
+    {/if}
   </div>
 </Popup>

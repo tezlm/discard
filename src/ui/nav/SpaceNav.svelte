@@ -1,9 +1,9 @@
 <script>
 import Tooltip from "../atoms/Tooltip.svelte";
 import Avatar from "../atoms/Avatar.svelte";
-import { roomContext } from "../../util/context";
+import { roomContext, homeContext } from "../../util/context";
 import { getLastMessage } from "../../util/timeline";
-let { focusedSpace, navSpaces, spaces, pushRules } = state;
+let { focusedSpace, navSpaces, spaces, context, popup, pushRules } = state;
 
 function isMuted(room) {
 	const rule = $pushRules.rules.find(i => i.id === room.id);
@@ -16,7 +16,7 @@ function isRead(room) {
 
 	const tl = room.events.live;
   if (getLastMessage(tl, room.readEvent) === getLastMessage(tl)) {
-    return room.type === "m.space" ? state.spaces.get(room.id).every(i => isRead(i)) : true;
+    return room.type === "m.space" ? spaces.get(room.id).every(i => isRead(i)) : true;
   } else {
     return false;
   }  
@@ -24,21 +24,6 @@ function isRead(room) {
 
 function allRead(spaceId) {
   return spaces.get(spaceId).every(room => isRead(room));
-}
-
-function getHomeContextMenu() {
-	return [
-	  // { label: "Mark As Read",  clicked: markRead, icon: "done" },
-	  { label: "Create Room",  clicked: () => state.popup.set({ id: "create", type: "room" }),  icon: "tag" },
-	  { label: "Create Space", clicked: () => state.popup.set({ id: "create", type: "space" }), icon: "folder" },
-	  { label: "Join",         clicked: () => state.popup.set({ id: "join" }), icon: "add" },
-	  null,
-	  { label: "Settings", clicked: () => actions.to("/user-settings"), icon: "settings" /* submenu: [
-	    { label: "Foo", clicked: todo },
-	    { label: "Bar", clicked: todo },
-	    { label: "Baz", clicked: todo },
-	  ]*/ },
-	];
 }
 </script>
 <style>
@@ -137,12 +122,14 @@ function getHomeContextMenu() {
 	border-radius: 11px;
 }
 </style>
-<div class="nav scroll">
+<div
+  class="nav scroll"
+	on:contextmenu|preventDefault|stopPropagation={e => $context = { items: homeContext(), x: e.clientX, y: e.clientY }}
+>
   <div
     class="space"
     class:focused={$focusedSpace === null}
     on:click={() => actions.spaces.focus(null)}
-		on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: getHomeContextMenu(), x: e.clientX, y: e.clientY })}
   >
     <Tooltip position="right" tip="Home">
       <div class="avatar" style="height: 48px; width: 48px">
@@ -158,7 +145,7 @@ function getHomeContextMenu() {
     class:focused={$focusedSpace?.id === space.id}
     class:unread={!allRead(space.id)}
     on:click={() => actions.spaces.focus(space)}
-    on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: roomContext(space), x: e.clientX, y: e.clientY })}
+    on:contextmenu|preventDefault|stopPropagation={e => $context = { items: roomContext(space), x: e.clientX, y: e.clientY }}
   >
     <Tooltip position="right" tip="arst">
       <div class="avatar">

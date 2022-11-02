@@ -44,13 +44,17 @@ $: if (room.id !== oldId) {
   oldId = room.id;
 }
 
-function showMemberPopout(e, member) {
-  const rect = e.target.getBoundingClientRect();
-  const _owner = `memberlist-${member.id}`;
+function handleClick(e) {
+  const target = e.explicitOriginalTarget;
+  const memberId = target?.dataset.memberId;
+  if (!memberId) return;
+  const rect = target.getBoundingClientRect();
+  const _owner = `memberlist-${memberId}`;
   if ($popout._owner === _owner) return $popout = {};
+  e.stopPropagation();
   $popout = {
     id: "member",
-    member,
+    member: room.members.get(memberId),
     animate: "left",
     top: rect.y,
     right: window.innerWidth - rect.x + 8,
@@ -58,9 +62,11 @@ function showMemberPopout(e, member) {
   };
 }
 
-function showContext(e, member) {
+function handleContext(e) {
+  const memberId = e.explicitOriginalTarget?.dataset.memberId;
+  if (!memberId) return;
   $context = {
-    items: memberContext(member),
+    items: memberContext(room.members.get(memberId)),
     x: e.clientX,
     y: e.clientY,
   };
@@ -73,6 +79,7 @@ function showContext(e, member) {
   background: var(--bg-rooms-members);
   height: 100%;
   width: 240px;
+  user-select: none;
 }
 
 .title {
@@ -111,7 +118,14 @@ function showContext(e, member) {
   overflow: hidden;
 }
 </style>
-<div class="members scroll" tabindex="-1">
+<div
+  class="members scroll"
+  tabindex="-1"
+  use:fastclick
+  on:fastclick={handleClick}
+  on:contextmenu|preventDefault|stopPropagation={handleContext}
+  on:click={e => e.explicitOriginalTarget?.dataset.memberId && e.stopPropagation()}
+>
   {#await fetchList(room)}
     <div class="title">Loading...</div>
     {#each Array(count) as _}
@@ -128,14 +142,7 @@ function showContext(e, member) {
       {#if member.title}
         <div class="title">{member.title}</div>
       {:else}
-        <!-- TODO: optimize by putting single click/context listener on wrapper instead of each element -->
-        <div
-          class="wrapper"
-          class:selected={$popout._owner === "memberlist-" + member.id}
-          use:fastclick
-          on:fastclick={(e) => showMemberPopout(e, member)}
-          on:contextmenu|preventDefault|stopPropagation={(e) => showContext(e, member)}
-        >
+        <div class="wrapper" class:selected={$popout._owner === "memberlist-" + member.id} data-member-id={member.id}>
           <div class="member">
             <Avatar user={member} size={32} />
             <div class="name">{member.name || member.id}</div>

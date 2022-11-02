@@ -1,20 +1,21 @@
 import { writable, get } from "svelte/store";
+import type { Room } from "discount";
 
-export function handleAccount(_, event) {
+export function handleAccount(_: void, event: { type: string, content: any }) {
   if (event.type === "m.fully_read" && state.syncer.status !== "starting") {
-    update();
+    actions.spaces.refresh();
   }
 }
 
-export function handleJoin(room) {
+export function handleJoin(room: Room) {
   state.rooms.set(room.id, room);
 }
 
-export function handleState(_) {
-  if (state.syncer.status !== "starting") update();
+export function handleState(_: void) {
+  if (state.syncer.status !== "starting") actions.spaces.refresh();
 }
 
-export function handleLeave(roomId) {
+export function handleLeave(roomId: string) {
   if (roomId === state.focusedSpaceId) {
     state.focusedSpace.set(null);
     state.focusedSpaceId = null;
@@ -27,16 +28,19 @@ export function handleLeave(roomId) {
   }
   state.rooms.delete(roomId);
   actions.spaces.update();
-  update();
-  state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
 }
 
-export function update() {
-  actions.spaces.update();
-  state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
+export function markRead(room: Room, eventId?: string) {
+	  const lastId = eventId ?? room.events.live.at(-1)?.id;
+    if (!lastId) return;
+	  state.log.debug(`mark ${lastId} as read`);
+	  room.accountData.set("m.fully_read", { event_id: lastId });
+    state.api.sendReceipt(room.id, lastId);
+    if (!lastId) state.api.fetch("POST", `/rooms/${encodeURIComponent(room.id)}/receipt/m.read.private/${encodeURIComponent(lastId)}`, { thread_id: "main" });
+	  if (state.focusedRoomId === room.id) state.slice.set(state.roomSlices.get(room.id));
 }
 
-export async function focus(room) {
+export async function focus(room: Room) {
   state.log.ui("set focused room to " + room?.id);
   const states = state.roomStates;
   if (!state.roomState) {

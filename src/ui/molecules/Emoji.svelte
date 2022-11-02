@@ -7,7 +7,7 @@ import emojis from "emojibase-data/en/compact.json";
 import Search from "../atoms/Search.svelte";
 const groups = parseEmoji();
 export let selected;
-let search = "";
+export let search = "";
 let hover;
 
 // TODO: custom emoji support

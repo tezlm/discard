@@ -153,16 +153,6 @@ function mention(id) {
 .editor :global(.link) {
   color: var(--color-link);
 }
-
-.editor :global([data-mx-ping]) {
-  display: inline-block;
-  color: var(--fg-notice);
-  font-weight: 500;
-  background: var(--ping-bgalpha);
-  padding: 0 2px;
-  border-radius: 3px;
-  cursor: pointer;
-}
 </style>
 <div class="editor" contenteditable bind:this={editorEl}></div>
 <div style="min-height: 1em"></div>

@@ -1,7 +1,7 @@
 <script>
 import Confirm from "./Confirm.svelte";
 export let views, options;
-let focused = views.find(i => options.tab ? i.id === options.tab : i.view);
+let focused = views.find(i => options.tab ? i.id === options.tab : i.view) ?? views.find(i => i.view);
 let { path, popup, scene, focusedRoom, focusedSpace } = state;
 let save, reset;
 

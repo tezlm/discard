@@ -15,6 +15,7 @@ const defaultFilter = {
 
 // try to fetch the current client
 export async function fetch() {
+  actions.to("/loading");
   state.log.debug("hello, there!");
   
   const homeserver = localStorage.getItem("homeserver");
@@ -36,6 +37,8 @@ export async function fetch() {
 
 // login to the homeserver and create a new client
 export async function login({ localpart, homeserver, password }) {
+  actions.to("/loading");
+  
   const userId = `@${localpart}:${homeserver}`;
   const api = new Api(await resolveWellKnown(homeserver));
 
@@ -76,7 +79,6 @@ function start(api, syncer, userId) {
   state.syncer = syncer;
   state.client = syncer;
   state.userId = userId;
-  actions.to("/loading");
   
   syncer.on("join", (room) => actions.rooms.handleJoin(room));
   syncer.on("leave", (room) => actions.rooms.handleLeave(room.id));
@@ -99,8 +101,7 @@ function start(api, syncer, userId) {
   });
   
   syncer.on("notifications", (_room, _notifs) => {
-    actions.rooms.update();
-    actions.spaces.update();
+    actions.spaces.refresh();
   });
   
   syncer.on("roomAccountData", (room, event) => {
@@ -115,7 +116,7 @@ function start(api, syncer, userId) {
     }
     if (type === "m.push_rules") {
       state.pushRules.set(new PushRules(content.global));
-      actions.rooms.update();
+      actions.spaces.refresh();
     }
     state.accountDataRef.set(type, content);
     state.accountData.set(state.accountDataRef);
@@ -123,7 +124,6 @@ function start(api, syncer, userId) {
   
   syncer.on("ready", () => {
     state.log.matrix("ready");
-    actions.rooms.update();
     actions.spaces.update();
     actions.to("/home");
   });

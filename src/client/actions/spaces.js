@@ -27,8 +27,7 @@ export function update() {
   state.spaces.set("orphanRooms",  orphans.filter(i => i.type !== "m.space"));
   state.spaces.set("orphanSpaces", orphans.filter(i => i.type === "m.space"));
 	
-  state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms"));
-  state.navSpaces.set(state.spaces.get("orphanSpaces"));
+  refresh();
   
   function orderSpaces(a, b) {
     const cmp = (a, b) => a > b ? 1 : a < b ? -1 : 0;
@@ -39,6 +38,11 @@ export function update() {
       || cmp(a.event.date, b.event.date)
       || cmp(a.room.id, b.room.id);
   }
+}
+
+export function refresh() {
+  state.navRooms.set(state.spaces.get(state.focusedSpaceId ?? "orphanRooms") ?? []);
+  state.navSpaces.set(state.spaces.get("orphanSpaces") ?? []);
 }
 
 export function focus(space) {

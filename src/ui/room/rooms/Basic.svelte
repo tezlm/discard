@@ -12,7 +12,7 @@ let { focused, reply, edit, upload } = state.roomState;
 let settings = state.settings;
 let shiftKey = false;
 let scrollTop, scrollMax, scrollTo, reset;
-let pushRules = state.pushRules;
+let { pushRules } = state;
 
 $: if (slice) refocus();
 
@@ -218,7 +218,7 @@ function isRead(room) {
 	top: 0;
 }
 </style>
-<div class="content" style:display={room ? null : "none"}>
+<div class="content">
 	{#if !isRead(room) && false}
 	<div class="unread" on:click={() => actions.slice.jump(room.id, room.readEvent)}>
 		<div style="flex: 1;">
@@ -253,7 +253,7 @@ function isRead(room) {
 		<div slot="top" style="margin-top: auto"></div>
 		<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
 		<div>
-			{#if !event.flags?.has("redacted") && shouldRender(event.type, $settings)}
+			{#if shouldRender(event.type, $settings)}
 				<div
 					class:header={shouldSplit(slice.events[index - 1], event) ? true : null}
 					class:ping={shouldPing(event)}

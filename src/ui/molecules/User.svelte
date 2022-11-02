@@ -1,21 +1,24 @@
 <script>
 import Avatar from "../atoms/Avatar.svelte";
-import { memberContext } from "../../util/context";
+import { memberContext, roomContext } from "../../util/context";
 import { fastclick } from "../../util/use";
+import { Room } from "discount";
 export let member;
 let { popup, popout, context } = state;
+$: isRoomPing = member instanceof Room;
 
 function openMenu(e) {
-  $context = { items: memberContext(member), x: e.clientX, y: e.clientY };
+  $context = { items: isRoomPing ? roomContext(member) : memberContext(member), x: e.clientX, y: e.clientY };
 }
 </script>
 <style>
 .popout {
-  min-width: 300px;
+  width: 300px;
   padding: 16px;
   background: var(--bg-context);
   border-radius: 8px;
   box-shadow: var(--shadow-popup);
+  overflow: hidden;
 }
 
 .popout .top {
@@ -44,6 +47,9 @@ function openMenu(e) {
   color: var(--fg-muted);
   font-size: 14px;
   user-select: all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .avatar {
@@ -72,15 +78,35 @@ function openMenu(e) {
 .view-profile:hover {
   opacity: 1;
 }
+
+.info {
+  margin: -16px;
+  margin-top: 8px;
+  padding: 16px;
+  background: var(--bg-spaces);
+  color: var(--fg-dim);
+}
 </style>
-<div class="popout" on:contextmenu|preventDefault|stopPropagation={openMenu}>
+<div class="popout" on:click|stopPropagation on:contextmenu|preventDefault|stopPropagation={openMenu}>
   <div class="top">
+    {#if isRoomPing}
+    <Avatar link user={member} size={80} />
+    {:else}
     <div class="avatar" use:fastclick on:fastclick={() => { $popout = {}; $popup = { id: "user", userId: member.id } }}>
       <div class="view-profile">View Profile</div>
       <Avatar user={member} size={80} />
     </div>
+    {/if}
     <div class="icon" on:click|stopPropagation={openMenu}>more_vert</div>
   </div>
   <h3>{member.name || member.id}</h3>
   <div class="id">{member.id}</div>
+  {#if isRoomPing}
+  <div class="info">
+    Ah, the humble <span data-mx-ping="room">@room</span>, which mentions everyone in a room. Similar to <span style="background: white; color: black; font-weight: bold; padding: 0 4px; border-radius: 12px; cursor: pointer">@all</span> or <span data-mx-ping>@everyone</span> in other platforms.
+  </div>
+  {:else}
+  <br />
+  This person has a power level of <code>{member.power}</code>.
+  {/if}
 </div>

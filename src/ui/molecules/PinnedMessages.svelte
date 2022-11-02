@@ -1,6 +1,5 @@
 <script>
 import Event from "../room/timeline/Event.svelte";
-import Message from "../room/message/Message.svelte";
 import { eventContext } from "../../util/context.ts";
 
 export let room;

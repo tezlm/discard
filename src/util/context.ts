@@ -88,10 +88,7 @@ export function eventContext(event: Event, config: { showEmoji: () => {} }): Arr
     const timeline = event.room.events.live;
     const index = timeline.lastIndexOf(event);
     const lastId = timeline[index - 1]?.id ?? event.id;
-    state.log.debug(`mark ${lastId} as read`);
-    event.room.accountData.set("m.fully_read", { event_id: lastId });
-    state.slice.set(state.roomSlices.get(event.room.id));
-    state.api.sendReceipt(event.room.id, lastId);
+    actions.rooms.markRead(event.room, lastId);
   }
 }
 
@@ -104,6 +101,30 @@ export function roomContext(room: Room): Array<ContextMenuOption> {
     } else {
       return { label, clicked: () => { putRoomNotifRule(room, { ...notif, level: type }) }, icon: "radio_button_unchecked" };
     }
+  }
+  
+  function getSettingsSubmenu() {
+    const goto = (type: string) => () => {
+  		state.selectedRoom.set(room);
+      actions.to(`/${room.type === "m.space" ? "space-settings" : "room-settings"}/${room.id}/${type}`);
+    };
+    const settings = [
+	    { label: "Overview",    icon: "info", clicked: goto("overview") },
+	    { label: "Permissions", icon: "flag", clicked: goto("permissions") },
+	    { label: "Security",    icon: "security", clicked: goto("security") },
+      ...(room.type === "m.space" ? [
+        { label: "Rooms",     icon: "tag", clicked: goto("rooms") },
+        { label: "Audit Log", icon: "assignment", clicked: goto("audit") },
+      ] : [
+  	    { label: "Integrations", icon: "link", clicked: goto("integrations") },
+      ]),
+	    { label: "Emoji",   icon: "emoji_emotions", clicked: goto("emoji") },
+      null,
+	    { label: "Members", icon: "people", clicked: goto("members") },
+	    { label: "Bans",    icon: "person_remove", clicked: goto("bans") },
+	    { label: "Invites", icon: "person_add_alt_1", clicked: goto("invites") },
+    ];
+    return settings;
   }
   
   const menu: Array<ContextMenuOption> = [
@@ -120,17 +141,7 @@ export function roomContext(room: Room): Array<ContextMenuOption> {
 	  ] },
     ]),
 	  null,
-	  { label: "Settings", clicked: openSettings(room), icon: "settings", /* submenu: [
-	    { label: "Overview",     icon: "info", clicked: todo },
-	    { label: "Permissions",  icon: "flag", clicked: todo },
-	    { label: "Security",     icon: "security", clicked: todo },
-	    { label: "Integrations", icon: "link", clicked: todo },
-	    { label: "Emoji",        icon: "emoji_emotions", clicked: todo },
-      null,
-	    { label: "Members",      icon: "people", clicked: todo },
-	    { label: "Bans",         icon: "person_remove", clicked: todo },
-	    { label: "Invites",      icon: "person_add_alt_1", clicked: todo },
-	  ] */ },
+	  { label: "Settings", clicked: openSettings(room), icon: "settings", submenu: getSettingsSubmenu() },
 	  null,
   ];
   if (room.type === "m.space" && room.power.me >= room.power.forState("m.space.child")) {
@@ -159,14 +170,7 @@ export function roomContext(room: Room): Array<ContextMenuOption> {
   return menu;  
   
 	function markRead(room: Room) {
-	  const lastId = room.events.live.at(-1)?.id;
-    if (!lastId) return;
-	  state.log.debug(`mark ${lastId} as read`);
-	  room.accountData.set("m.fully_read", { event_id: lastId });
-	  if (state.focusedRoomId === room.id) state.slice.set(state.roomSlices.get(room.id));
-    state.api.sendReceipt(room.id, lastId);
-    state.api.fetch("POST", `/rooms/${encodeURIComponent(room.id)}/receipt/m.read.private/${encodeURIComponent(lastId)}`, { thread_id: "main" });
-
+    actions.rooms.markRead(room);
     if (room.type === "m.space") {
       for (let child of state.spaces.get(room.id)) markRead(child);
     }
@@ -179,7 +183,7 @@ export function roomContext(room: Room): Array<ContextMenuOption> {
   function openSettings(room: Room) {
   	return () => {
   		state.selectedRoom.set(room);
-  		actions.to(`${room.type === "m.space" ? "space" : "room"}-settings/${room.id}`);	
+  		actions.to(`/${room.type === "m.space" ? "space" : "room"}-settings/${room.id}`);	
   	};
   }
 }
@@ -188,12 +192,11 @@ export function memberContext(member: Member): Array<ContextMenuOption> {
   const name = member.name || member.id;
   const { power } = member.room;
 
-  // this is an ugly hack
   function close() {
-    if (get(state.focusedRoom)) {
-  		actions.to(`/room/${(get(state.focusedRoom) as any).id}`);
+    if (state.focusedRoomId) {
+  		actions.to(`/room/${state.focusedRoomId}`);
     } else if (get(state.focusedSpace)) {
-  		actions.to(`/space/${(get(state.focusedSpace) as any).id}`);
+  		actions.to(`/space/${state.focusedSpaceId}`);
     } else {
       actions.to("/home");
     }
@@ -285,4 +288,45 @@ export function memberContext(member: Member): Array<ContextMenuOption> {
 	function copy(text: string) {
 		return () => navigator.clipboard.writeText(text);
 	}
+}
+
+export function homeContext() {
+  const goto = (where: string) => () => actions.to(`/user-settings/${where}`);
+	return [
+	  { label: "Mark As Read",  clicked: markEverythingRead, icon: "done" },
+	  { label: "Create Room",  clicked: () => state.popup.set({ id: "create", type: "room" }),  icon: "tag" },
+	  { label: "Create Space", clicked: () => state.popup.set({ id: "create", type: "space" }), icon: "folder" },
+	  { label: "Join",         clicked: () => state.popup.set({ id: "join" }), icon: "add" },
+	  null,
+	  { label: "Settings", clicked: () => actions.to("/user-settings"), icon: "settings", submenu: [
+      { label: "My Account",           clicked: goto("account"),    icon: "account_circle" },
+      { label: "Privacy and Security", clicked: goto("privsec"),    icon: "security" },
+      { label: "Homeserver",           clicked: goto("homeserver"), icon: "storage" },
+      null,
+      { label: "Appearance",       clicked: goto("appearance"),    icon: "palette" },
+      { label: "Text and Images",  clicked: goto("text-images"),   icon: "message" },
+      { label: "Rooms and Spaces", clicked: goto("rooms-spaces"),  icon: "grid_3x3" },
+      { label: "Notifications",    clicked: goto("notifications"), icon: "notifications" },
+      { label: "Keybinds",         clicked: goto("keybinds"),      icon: "keyboard" },
+      { label: "Language",         clicked: goto("language"),      icon: "language" },
+      null,
+      { label: "Changelog", clicked: goto("changelog"), icon: "assignment" },
+      { label: "Help",      clicked: goto("help"),      icon: "help" },
+      { label: "Credits",   clicked: goto("version"),   icon: "groups" },
+	  ] },
+	];
+  
+  function markEverythingRead() {
+    state.popup.set({
+      id: "dialog",
+      title: "a clean slate",
+      html: `Heya, this will mark <b>all ${state.rooms.size} rooms</b> you're in as read. Just checking you didn't misclick.`,
+      button: "Do it already!",
+      clicked() {
+        for (let [_, room] of state.rooms) {
+          actions.rooms.markRead(room);
+        }
+      },
+    });
+  }
 }

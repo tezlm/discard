@@ -9,7 +9,7 @@ import Popups from "./Popups.svelte";
 import Popouts from "./Popouts.svelte";
 import ContextMenus from "./ContextMenus.svelte";
 import { quadInOut } from "svelte/easing";
-let { path, scene, context, popup, popout, settings, focusedRoom  } = state;
+let { path, scene, context, popup, popout, settings, focusedRoom, selectedRoom } = state;
 
 // bezier code from https://gist.github.com/pushkine/fbc7cf18e0a40ffb02b3b3a20b74f4f1
 // when will svelte add a builtin `bezier()` easing function ;-;
@@ -50,24 +50,26 @@ function ease() {
 }
 
 function handleClick(e) {
+  const ping = e.target.dataset.mxPing;
   if ($context.items) {
     $context = {};
-  }
-  
-  const ping = e.target.getAttribute("data-mx-ping");
-  if (ping) {
+  } else if (ping) {
     if (e.target === $popout._owner) return $popout = {};
-    if (!$focusedRoom.members.has(ping)) return;
+    const room = $scene.endsWith("-settings") ? $selectedRoom : $focusedRoom;
+    const member = room.members.get(ping);
+    if (!member && ping !== "room") return;
     const rect = e.target.getBoundingClientRect();
     const right = (rect.x + rect.width) > (window.innerWidth - 300);
     $popout = {
       id: "member",
-      member: $focusedRoom.members.get(ping),
+      member: ping === "room" ? room : member,
       animate: right ? "left" : "right",
       top: rect.y,
       ...(right ? { right: window.innerWidth - rect.x + 8 } : { left: rect.x + rect.width + 8 }),
       _owner: e.target,
     };
+  } else if ($popout.id) {
+    $popout = {};
   }
 }
 

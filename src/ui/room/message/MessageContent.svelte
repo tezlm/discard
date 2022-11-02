@@ -96,38 +96,6 @@ img {
   white-space: normal;
 }
 
-.text :global([data-mx-ping]) {
-  position: relative;
-  color: var(--color-accent);
-  font-weight: 500;
-  padding: 0 2px;
-  cursor: pointer;
-}
-
-.text :global([data-mx-ping]::after) {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  border-radius: 3px;
-  background: var(--color-accent);
-  opacity: .1;
-}
-
-.text :global([data-mx-ping="room"]) {
-  color: var(--color-purple);
-}
-
-.text :global([data-mx-ping="room"]::after) {
-  background: var(--color-purple);
-}
-
-.text :global([data-mx-ping]:hover::after) {
-  opacity: .2;
-}
-
 .sticker-popout {
   position: absolute;
   left: 128px;
@@ -226,6 +194,10 @@ img {
     {#if event.flags?.has("edited")}
     <span class="edited">(edited)</span>
     {/if}
+  </div>
+  {:else}
+  <div class="text">
+    <i style:color="var(--fg-dim)">no content</i>
   </div>
   {/if}
 </div>

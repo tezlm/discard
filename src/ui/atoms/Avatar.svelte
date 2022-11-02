@@ -35,7 +35,7 @@ function handleError(e) {
 >
   <img
     class="avatar"
-    alt={"avatar for " + user.name ?? user.id}
+    alt={"avatar for " + user.name || user.id}
     loading="lazy"
     style:border-radius={!square && size / 2 + "px"}
     style:height={size + "px"}

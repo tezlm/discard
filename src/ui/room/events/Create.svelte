@@ -49,7 +49,7 @@ h1 {
 <div class="top">
   {#if event.content.predecessor}
   <h1>Welcome back to {name}!</h1>
-  <div class="info">This is a <a on:click={() => actions.rooms.focus(state.rooms.get(event.content.predecessor.room_id))} style="cursor: pointer">continuation</a> of the {name} room. {#if topic}{topic}{/if}</div>
+  <div class="info">This is a <a on:click={() => actions.to(`/room/${event.content.predecessor.room_id}`)} style="cursor: pointer">continuation</a> of the {name} room. {#if topic}{topic}{/if}</div>
   {:else}
   <h1>Welcome to {name}!</h1>
   <div class="info">This is the start of the <b>{name}</b> room. {#if topic}{topic}{/if}</div>

@@ -3,7 +3,6 @@ import MessageReply from "./MessageReply.svelte";
 import MessageContent from "./MessageContent.svelte";
 import MessageEdit from "./MessageEdit.svelte";
 import { formatDate, formatTime } from "../../../util/format.ts";
-import { quadOut } from "svelte/easing";
 import Avatar from "../../atoms/Avatar.svelte";
 import Name from "../../atoms/Name.svelte";
 import { memberContext } from "../../../util/context";
@@ -16,14 +15,6 @@ let { edit } = state.roomState;
 
 function getReply(content) {
   return content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
-}
-
-function fly(_, props) {
-  return {
-    duration: 200,
-    easing: quadOut,
-    css: t => `transform: translateX(${t * props.x - props.x}px)`,
-  };
 }
 
 const showMemberPopout = (e) => { 
@@ -52,13 +43,14 @@ const showMemberContext = (member) => (e) => {
 .message {
   display: flex;
   padding: 2px 72px 4px;
+  padding-left: 0;
   position: relative;
   color: var(--fg-content);
 }
 
 .content {
   color: var(--fg-content);
-  width: 100%;
+  flex: 1;
 }
 
 .author {
@@ -82,10 +74,10 @@ const showMemberContext = (member) => (e) => {
 }
 
 .side {
-  position: absolute;
-  display: block;
-  left: 16px;
-  top: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 72px;
 }
 
 .avatar {
@@ -131,6 +123,7 @@ time {
       class:selected={$popout._owner === `${event.id}-${event.sender.id}`}
       use:fastclick
       on:fastclick={showMemberPopout}
+      on:click|stopPropagation
       on:contextmenu|preventDefault|stopPropagation={showMemberContext(event.sender)}
     >
       <Avatar user={event.sender} size={40} />

@@ -21,7 +21,12 @@ function getPosition(popout, element) {
   return css;
 }
 
-$: if ($popout.id === "emoji") loadedEmoji = true;
+let emojiSearch = "";
+
+$: if ($popout.id === "emoji") {
+  loadedEmoji = true;
+  emojiSearch = "";
+}
 </script>
 <style>
 .popout {
@@ -83,7 +88,7 @@ $: if ($popout.id === "emoji") loadedEmoji = true;
   on:mousedown|stopPropagation
   bind:this={emojiEl}
 >
-  <Emoji selected={$popout.selected} />
+  <Emoji selected={$popout.selected} search={emojiSearch} />
 </div>
 {/if}
 {#if $popout.id === "pinned"}
@@ -98,7 +103,7 @@ $: if ($popout.id === "emoji") loadedEmoji = true;
   on:mousedown|stopPropagation
   bind:this={pinnedEl}
 >
-  <PinnedMessages room={$popout.room}/>
+  <PinnedMessages room={$popout.room} />
 </div>
 {/if}
 {#if $popout.id === "member"}
@@ -118,4 +123,4 @@ $: if ($popout.id === "emoji") loadedEmoji = true;
 </div>
 {/key}
 {/if}
-<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} on:mousedown={() => $popout = { _owner: $popout._owner }} />
+<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />

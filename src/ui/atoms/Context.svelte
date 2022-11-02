@@ -30,6 +30,7 @@ $: css = `top: ${box.y}px; left: ${box.x}px`;
 
 function handleClick(item, e) {
   item.clicked(e);
+  state.popout.set({}); // this will cause problems later :)
   state.context.set({});
 }
 </script>

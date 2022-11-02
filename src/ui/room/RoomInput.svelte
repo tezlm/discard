@@ -30,12 +30,7 @@ function handleKeyDown(e) {
     } else if (reply) {
       reply = null;
     } else {
-      const lastEvent = $room.events.live.at(-1)?.id;
-      state.log.debug(`mark ${lastEvent} as read`);
-      state.rooms.get($room.id).accountData.set("m.fully_read", { event_id: lastEvent });
-      state.slice.set(state.roomSlices.get($room.id));
-      state.api.sendReceipt($room.id, lastEvent);
-      state.api.fetch("POST", `/rooms/${encodeURIComponent($room.id)}/receipt/m.read.private/${encodeURIComponent(lastEvent)}`, { thread_id: "main" });
+      actions.rooms.markRead($room);
     }
     e.preventDefault();
     e.stopImmediatePropagation();

@@ -5,7 +5,7 @@ let textarea;
 let room = state.focusedRoom;
 let { reply, edit, input, typing } = state.roomState;
 
-const getName = id => ($room.members.get(id)?.name ?? id.replace(/^@/, ""));
+const getName = id => ($room.members.get(id)?.name ?? id);
 
 async function sendMessage(content, theRoom = $room) {
   if ($reply) {

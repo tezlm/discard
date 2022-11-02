@@ -31,30 +31,6 @@ h4 {
   line-height: 1.4;
 }
 
-[data-mx-ping] {
-  position: relative;
-  color: var(--color-accent);
-  font-weight: 500;
-  padding: 0 2px;
-  cursor: pointer;
-}
-
-[data-mx-ping]::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  border-radius: 3px;
-  background: var(--color-accent);
-  opacity: .1;
-}
-
-[data-mx-ping]:hover::after {
-  opacity: .2;
-}
-
 .toolbar {
   position: absolute;
   right: 8px;
@@ -86,7 +62,7 @@ h4 {
 <h3>Bridges</h3>
 {#each room.getAllState("m.bridge") as event}
   {@const bridge = event.content}
-  {@const bot = room.members.get(bridge.bridgebot)}
+  {@const botPromise = room.members.fetch(bridge.bridgebot)}
   <div class="bridge">
     <Avatar user={{ id: bridge.protocol.id, avatar: bridge.protocol.avatar_url }} size={64} link={true} />
     <div class="info">
@@ -111,7 +87,14 @@ h4 {
       </div>
       {/if}
       <hr />
-      This bridge is managed by <span data-mx-ping={bridge.bridgebot}>{bot?.name ? ("@" + bot.name) : bridge.bridgebot}</span>
+      This bridge is managed by
+      <span data-mx-ping={bridge.bridgebot}>
+        {#await botPromise}
+        {bridge.bridgebot}
+        {:then bot}
+        {bot?.name ? ("@" + bot.name) : bridge.bridgebot}
+        {/await}
+      </span>
     </div>
     {#if $settings.get("shadowdev")}
     <div class="toolbar">

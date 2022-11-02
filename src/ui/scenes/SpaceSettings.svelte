@@ -25,7 +25,7 @@ $: views = [
   { id: "bans",    view: Members,     name: "Bans",        icon: "person_remove",    raw: true, props: { membership: "ban" }},
   { id: "invites", view: Members,     name: "Invites",     icon: "person_add_alt_1", raw: true, props: { membership: "invite" }},
   { id: "etc/", split: true },
-  { id: "leave", clicked: () => state.popup.set({ id: "leave", type: "space", room: $room, confirm: () => queueMicrotask(todo) }), name: "Leave Space", color: "var(--color-red)", icon: "logout" },
+  { id: "leave", clicked: () => state.popup.set({ id: "leave", type: "space", room: $room }), name: "Leave Space", color: "var(--color-red)", icon: "logout" },
 ];
 </script>
 <Settings {views} options={{ room: $room, tab }} />
