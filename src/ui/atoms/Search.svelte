@@ -4,17 +4,19 @@ export let placeholder = "Search";
 export let autofocus = false;
 export let focus = false;
 export let size: "small" | "input" | "tall" = "small";
-export let submitted: (_: string, _1: KeyboardEvent) => {};
-export let escaped = (_: KeyboardEvent) => {};
+export let submitted: (_: string, _1: KeyboardEvent) => void;
+export let escaped: ((_: KeyboardEvent) => void) | null = null;
 
 function handleKeyDown(e: KeyboardEvent) {
   if (e.key === "Enter") {
-    submitted(value, e);
+    submitted?.(value, e);
   } else if (e.key === "Escape") {
     if (value) {
       value = "";
-    } else {
+    } else if (escaped) {
       escaped(e);
+    } else {
+      return;
     }
   } else {
     return;
@@ -31,7 +33,7 @@ function handleKeyDown(e: KeyboardEvent) {
   height: 24px;
 
   background: var(--bg-spaces);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 input {
@@ -40,12 +42,7 @@ input {
   padding: 0 6px;
 
   background: var(--bg-spaces);
-  color: var(--fg-content);
-  font-family: inherit;
   font-size: 14px;
-  font-weight: 500;
-  outline: none;
-  border: none;
   border-radius: 3px;
 }
 
@@ -73,15 +70,16 @@ input {
 }
 
 .wrapper.size-tall {
-  height: 36px;
+  height: 40px;
 }
 
 .wrapper.size-tall input {
-  padding: 16px 8px;
+  padding: 10px;
+  font-size: 16px;
 }
 
 .wrapper.size-tall .icon {
-  padding: 16px 8px;
+  padding: 10px;
   font-size: 20px;
 }
 

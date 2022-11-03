@@ -89,12 +89,10 @@ $: {
     }
   } else if (head === "room" && state.focusedRoomId !== argv[0]) {
     const room = state.rooms.get(argv[0]);
-    if (room) {
-      actions.rooms.focus(room);
-    }
-  } else if (head === "home") {
-    actions.spaces.focus(null);
-    actions.rooms.focus(null);
+    if (room) actions.rooms.focus(room);
+  } else if (head === "home" || head === "invites") {
+    if (state.focusedSpaceId) actions.spaces.focus(null);
+    if (state.focusedRoomId) actions.rooms.focus(null);
   }
 }
 </script>
@@ -141,7 +139,7 @@ main > div {
 </style>
 <main>
   {#if $scene !== "auth"}
-  <div class="chat" class:hide={!["room", "space", "home"].includes($scene)} class:reducemotion={$settings.get("reducemotion")}><Chat /></div>
+  <div class="chat" class:hide={!["room", "space", "home", "invites"].includes($scene)} class:reducemotion={$settings.get("reducemotion")}><Chat /></div>
   {/if}
   {#if $scene === "user-settings"}
   <div class="settings" transition:ease><UserSettings tab={argv[0]} /></div>
@@ -151,7 +149,7 @@ main > div {
   <div class="settings" transition:ease><RoomSettings tab={argv[1]} /></div>
   {:else if $scene === "auth"}
   <LoginRegister />
-  {:else if !["room", "space", "home"].includes($scene)}
+  {:else if !["room", "space", "home", "invites"].includes($scene)}
   <div class="loading" transition:opacity><Loading /></div>
   {/if}
 </main>

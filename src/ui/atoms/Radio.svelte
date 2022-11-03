@@ -41,7 +41,9 @@ function select(option) {
 }
 
 .dot {
-  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 20px;
   width: 20px;
   padding: 4px;
@@ -51,11 +53,6 @@ function select(option) {
 }
 
 .dot > div {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
   height: 10px;
   width: 10px;
   background: var(--fg-light);

@@ -72,7 +72,7 @@ img {
   display: block;
   border-radius: 3px;
   /* background: var(--bg-rooms-members); */
-  margin: 4px 0;
+  margin: 2px 0;
 }
 
 img {

@@ -20,7 +20,7 @@ function isRead(room) {
 	if (muted) return true;
 
 	const tl = room.events.live;
-	return getLastMessage(tl, room.readEvent)	=== getLastMessage(tl);
+	return getLastMessage(tl, room.readEvent) === getLastMessage(tl);
 }
 
 function openSettings(room) {

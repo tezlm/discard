@@ -6,7 +6,7 @@ let textarea;
 let rows = 1;
 let input = event.content.body;
 let { edit } = state.roomState;
-let slice = state.slice;
+let { slice, popup } = state;
 $: rows = Math.min(input.split("\n").length, 10);
 
 function replacePing(input) {
@@ -25,7 +25,6 @@ function replacePing(input) {
 async function handleKeyDown(e) {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
-    if (!input.trim()) return;
     save();
   } else if (e.key === "Escape") {
     $edit = null;
@@ -55,9 +54,29 @@ async function handleKeyDown(e) {
   }
 }
 
-function save() {
+async function save() {
   if (!input.trim()) {
-    // TODO: delete message
+     // FIXME: find a better way than ugly hack
+    $edit = null;
+    setTimeout(() => {
+      $popup = { id: "redact", event };
+      document.activeElement.blur();
+      new Promise(res => {
+        let unsub;
+        unsub = popup.subscribe(({ id }) => {
+          if (id) return;
+          unsub();
+          res();
+        });
+      }).then(() => {
+        $edit = event.id;
+        $edit = null;
+      });
+    });
+    return;
+  } else if (input.trim() === event.content.body) {
+    $edit = null;
+    return;
   }
   const newEvent = {
     "m.relates_to": {

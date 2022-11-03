@@ -7,7 +7,7 @@ export let toggled = (_: boolean) => {};
   display: flex;
   align-items: center;
   justify-content: center;
-  border: solid var(--bg-spaces) 2px;
+  border: solid var(--fg-interactive) 1px;
   height: 24px;
   width: 24px;
   border-radius: 4px;

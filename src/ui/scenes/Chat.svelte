@@ -6,6 +6,35 @@ import SpaceHeader from '../space/SpaceHeader.svelte';
 import UserMenu from '../user/UserMenu.svelte';
 </script>
 <style>
+.wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  overflow: scroll;
+}
+
+.content-with-banner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.banner {
+  background: var(--color-accent);
+  border-top-left-radius: 8px;
+  padding: 8px;
+  text-align: center;
+  font-weight: 500;
+}
+
 .nav {
   display: flex;
   flex-direction: column;
@@ -13,14 +42,17 @@ import UserMenu from '../user/UserMenu.svelte';
   background: var(--bg-rooms-members);
 }
 </style>
-<div style="display: flex; flex-direction: column;">
-  <div style="display: flex; flex-direction: row; flex: 1; height: 0">
-    <SpaceNav />
-    <div class="nav">
-      <SpaceHeader />
-      <RoomNav />
-      <UserMenu />
+<div class="wrapper">
+  <SpaceNav />
+  <div class="content-with-banner">
+    <div hidden class="banner">Something important here</div>
+    <div class="content">
+      <div class="nav">
+        <SpaceHeader />
+        <RoomNav />
+        <UserMenu />
+      </div>
+      <Room />
     </div>
   </div>
 </div>
-<Room />

@@ -13,11 +13,11 @@ let room = state.selectedRoom;
 
 $: views = [
   { id: "home/", label: `${$room.name}` },
-  { id: "overview",     view: Overview,     name: "Overview",     icon: "info" },
-  { id: "permissions",  view: Permissions,  name: "Permissions",  icon: "flag" },
-  { id: "security",     view: Security,     name: "Security",     icon: "security" },
-  { id: "integrations", view: Integrations, name: "Integrations", icon: "link" }, // maybe use `webhook`
-  { id: "emoji",        view: Emoji,        name: "Emoji",        icon: "emoji_emotions" },
+  { id: "overview",     view: Overview,     name: "Overview",           icon: "info" },
+  { id: "permissions",  view: Permissions,  name: "Permissions",        icon: "flag" },
+  { id: "security",     view: Security,     name: "Security",           icon: "security" },
+  { id: "integrations", view: Integrations, name: "Integrations",       icon: "link" }, // maybe use `webhook`
+  { id: "emoji",        view: Emoji,        name: "Emoji and Stickers", icon: "emoji_emotions" },
   { id: "usr/", split: true, label: "users" },
   { id: "members", view: Members,     name: "Members",     icon: "people",           raw: true, props: { membership: "join" }},
   { id: "bans",    view: Members,     name: "Bans",        icon: "person_remove",    raw: true, props: { membership: "ban" }},

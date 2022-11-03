@@ -9,10 +9,9 @@ import { getLastMessage } from "../../../util/timeline";
 export let room;
 export let slice;
 let { focused, reply, edit, upload } = state.roomState;
-let settings = state.settings;
+let { settings, pushRules } = state;
 let shiftKey = false;
 let scrollTop, scrollMax, scrollTo, reset;
-let { pushRules } = state;
 
 $: if (slice) refocus();
 
@@ -29,7 +28,7 @@ function shouldSplit(prev, ev) {
 }
 
 function dividerProps(prev, ev) {
-	const room = state.rooms.get(ev.room.id);
+	const room = ev.room;
 	return {
 		unpad: shouldSplit(prev, ev),
 		unread: room.readEvent === prev.id,
@@ -50,7 +49,7 @@ async function fetchForwards() {
 }
 
 function refocus() {
-	if (scrollTo && scrollTop === scrollMax) {
+	if (scrollTo && scrollTop > scrollMax - 16) {
 		queueMicrotask(() => scrollTo(-1));
 	}
 }
@@ -224,14 +223,7 @@ function isRead(room) {
 		<div style="flex: 1;">
 		{"???"} new messages
 		</div>
-		<div style="display: flex; font-weight: 700" on:click={() => {
-      const lastEvent = room.events.live.at(-1)?.id;
-      state.log.debug(`mark ${lastEvent} as read`);
-      state.rooms.get(room.id).accountData.set("m.fully_read", { event_id: lastEvent });
-      state.slice.set(state.roomSlices.get(room.id));
-      state.api.sendReceipt(room.id, lastEvent);
-      state.api.fetch("POST", `/rooms/${encodeURIComponent(room.id)}/receipt/m.read.private/${encodeURIComponent(lastEvent)}`, { thread_id: "main" });
-		}}>
+		<div style="display: flex; font-weight: 700" on:click={() => actions.rooms.markRead(room)}>
 			Mark As Read <div class="icon" style="margin-left: 4px">mark_chat_read</div>
 		</div>
 	</div>
@@ -255,7 +247,7 @@ function isRead(room) {
 		<div>
 			{#if shouldRender(event.type, $settings)}
 				<div
-					class:header={shouldSplit(slice.events[index - 1], event) ? true : null}
+					class:header={shouldSplit(slice.events[index - 1], event)}
 					class:ping={shouldPing(event)}
 					class:focused={$focused === event.id}
 					class:editing={$edit === event.id}
@@ -265,7 +257,7 @@ function isRead(room) {
 				>
 				  <Event
 						{shiftKey} {room} {event}
-						header={shouldSplit(slice.events[index - 1], event) ? true : null}
+						header={shouldSplit(slice.events[index - 1], event)}
 					/>
 				</div>
 			{/if}

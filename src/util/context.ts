@@ -118,7 +118,7 @@ export function roomContext(room: Room): Array<ContextMenuOption> {
       ] : [
   	    { label: "Integrations", icon: "link", clicked: goto("integrations") },
       ]),
-	    { label: "Emoji",   icon: "emoji_emotions", clicked: goto("emoji") },
+	    { label: "Emoji and Stickers",   icon: "emoji_emotions", clicked: goto("emoji") },
       null,
 	    { label: "Members", icon: "people", clicked: goto("members") },
 	    { label: "Bans",    icon: "person_remove", clicked: goto("bans") },
@@ -307,7 +307,7 @@ export function homeContext() {
       { label: "Text and Images",  clicked: goto("text-images"),   icon: "message" },
       { label: "Rooms and Spaces", clicked: goto("rooms-spaces"),  icon: "grid_3x3" },
       { label: "Notifications",    clicked: goto("notifications"), icon: "notifications" },
-      { label: "Keybinds",         clicked: goto("keybinds"),      icon: "keyboard" },
+      // { label: "Keybinds",         clicked: goto("keybinds"),      icon: "keyboard" },
       { label: "Language",         clicked: goto("language"),      icon: "language" },
       null,
       { label: "Changelog", clicked: goto("changelog"), icon: "assignment" },

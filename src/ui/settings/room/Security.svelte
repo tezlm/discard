@@ -113,4 +113,4 @@ export function reset() {
   { id: "invited",        name: "Members, after invite", detail: "All members since they were invited.", color: "var(--color-yellow)" },
   { id: "joined",         name: "Members, after join",   detail: "All members since they joined.", color: "var(--color-red)" },
 ]} />
-<div style="min-height: 100px"></div>
+<div style="min-height: 64px"></div>

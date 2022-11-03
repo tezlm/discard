@@ -7,7 +7,7 @@ import { memberContext } from "../../../util/context";
 
 export let room, membership;
 
-let { users, popup } = state;
+let { users, popup, context } = state;
 let { power } = room;
 let resets = {};
 
@@ -21,7 +21,7 @@ $: setTimeout(async () => {
 });
 
 $: if (allMembers) {
-  members = allMembers.filter(i => i.name?.includes(filter) || i.id.includes(filter));
+  members = filter ? allMembers.filter(i => i.name?.includes(filter) || i.id.includes(filter)) : allMembers;
 }
 
 function getTitle(membership) {
@@ -35,7 +35,8 @@ function getTitle(membership) {
 async function getMember(member) {
   if (membership === "join") return member;
   if (users.has(member.id)) return users.get(member.id);
-  const { displayname, avatar_url } = await state.api.fetchUser(member.id);
+  const { displayname, avatar_url } = await state.api.fetchUser(member.id)
+    .catch(() => ({ displayname: member.name, avatar_url: member.avatar }));
   const data = { avatar: avatar_url, name: displayname || member.id, id: member.id };
   // mutation isnt that good of an idea, but oh well
   member.name = data.name;
@@ -43,6 +44,14 @@ async function getMember(member) {
   users.set(member.id, data);
   return data;
 }
+
+ /*_/| 
+ =0-0=
+ \'I'|
+ |<|,,\_
+ |[>,,/,\ 
+ |[|,\_,,)
+ ((J(=_*/
 
 function changePower(member, pl) {
   if (pl === member.power) return;
@@ -120,56 +129,56 @@ h1 {
 }
 </style>
 {#if room}
-  <div class="header">
-    <h1>{members ? members.length || "No" : "Loading"} {filter ? "Filtered " : ""}{getTitle(membership)}{members.length !== 1 ? "s" : ""}</h1>
-    <div><Search width={220} placeholder="Filter {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
-  </div>
   {#if members}
-    {#each members as member (member.id)}
-    <div class="member" on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: memberContext(member), x: e.clientX, y: e.clientY })}>
-      {#await getMember(member)}
-        <Avatar user={member} size={40} />
-        <div class="name">
-          {member.id}
-          <span style="color: var(--fg-muted); font-size: 14px">{member.id}</span>
-        </div>
-      {:then data}
-        <Avatar user={data} size={40} />
-        <div class="name">
-          <div>
-            {data.name || data.id}
-            <span style="color: var(--fg-muted); font-size: 14px">
-            {#if member.event?.content.reason}
-              ({member.event.content.reason})
-            {/if}
-            </span>
+    {#await Promise.all(members.map(i => getMember(i)))}
+      <div class="header">
+        <h1>Fetching {getTitle(membership)}s</h1>
+        <div style:width="220px"><Search width={220} placeholder="Filter {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
+      </div>
+      <i style="margin-bottom: 16px">this may take a while - i should redo this!</i>
+      <Loading color="var(--fg-muted)" />
+    {:then memberData}
+      <div class="header">
+        <h1>{members ? members.length || "No" : "Loading"} {filter ? "Filtered " : ""}{getTitle(membership)}{members.length !== 1 ? "s" : ""}</h1>
+        <div style:width="220px"><Search width={220} placeholder="Filter {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
+      </div>
+      {#each memberData as data, i (members[i].id)}
+        {@const member = members[i]}
+        <div class="member" on:contextmenu|preventDefault|stopPropagation={e => $context = { items: memberContext(member), x: e.clientX, y: e.clientY }}>
+          <Avatar link user={data} size={40} />
+          <div class="name">
+            <div>
+              {data.name || data.id}
+              <span style="color: var(--fg-muted); font-size: 14px">
+              {#if member.event?.content.reason}
+                ({member.event.content.reason})
+              {/if}
+              </span>
+            </div>
+            <span style="color: var(--fg-muted); font-size: 14px">{data.id}</span>
           </div>
-          <span style="color: var(--fg-muted); font-size: 14px">{data.id}</span>
+          <div style="margin-left: auto;"></div>
+          {#if membership === "join"}
+          <!-- FIXME: this is very broken in general and doesn't update power levels -->
+          <Power
+            value={member.power}
+            disabled={(power.me < power.forState("m.room.power_levels") || (power.me <= member.power && member.id !== state.userId))}
+            max={power.me}
+            changed={(level) => changePower(member, level)}
+            bind:reset={resets[member.id]}
+          />
+          {/if}
+          <div class="icon menu" on:click|stopPropagation={e => $context = { items: memberContext(member), x: e.clientX, y: e.clientY }}>more_vert</div>
         </div>
-      {:catch}
-        <Avatar user={member} size={40} />
-        <div class="name">
-          {member.name || member.id}
-          <span style="color: var(--fg-muted); font-size: 14px">{member.id}</span>
-        </div>
-      {/await}
-      <div style="margin-left: auto;"></div>
-      {#if membership === "join"}
-      <!-- FIXME: this is very broken in general and doesn't update power levels -->
-      <Power
-        value={member.power}
-        disabled={(power.me < power.forState("m.room.power_levels") || (power.me <= member.power && member.id !== state.userId))}
-        max={power.me}
-        changed={(level) => changePower(member, level)}
-        bind:reset={resets[member.id]}
-      />
-      {/if}
-      <div class="icon menu" on:click|stopPropagation={e => state.context.set({ items: memberContext(member), x: e.clientX, y: e.clientY })}>more_vert</div>
-    </div>
-    {:else}
-    <p>hmmm, seems like nobody's here?</p>
-    {/each}
+      {:else}
+        <i>hmmm, seems like nobody's here?</i>
+      {/each}
+    {/await}
   {:else}
+    <div class="header">
+      <h1>Loading {getTitle(membership)}s</h1>
+      <div style:width="220px"><Search width={220} placeholder="Filter {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
+    </div>
     <Loading color="var(--fg-muted)" />
   {/if}
 {:else}

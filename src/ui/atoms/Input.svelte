@@ -30,16 +30,12 @@ function handleFocus(e: FocusEvent) {
 </script>
 <style>
 input {
-  font-family: var(--font-primary);
   font-size: 16px;
   padding: 10px;
   width: 100%;
   height: 40px;
-  border: none;
   border-radius: 3px;
-  color: inherit;
   background: var(--bg-spaces);
-  outline: none;
 }
 
 .small {

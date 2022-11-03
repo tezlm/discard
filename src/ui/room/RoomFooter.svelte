@@ -82,7 +82,7 @@ $: if (!$edit) textarea?.focus();
   {/if}
   <div class="typing">
     {#if $typing.length}
-    <Typing users={[...$typing].map(getName)} />
+    <Typing room={$room} users={[...$typing].map(getName)} />
     {/if}
   </div>
 </div>

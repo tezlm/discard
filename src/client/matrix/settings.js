@@ -6,8 +6,10 @@ const defaultSettings = new Map();
 defaultSettings.set("showmemberlist", true);
 defaultSettings.set("namecolors", "always");
 defaultSettings.set("reducemotion", false);
-defaultSettings.set("showjoinleave", true);
-defaultSettings.set("shownickavatar", true);
+defaultSettings.set("showjoinleave", "always");
+defaultSettings.set("shownickavatar", "always");
+defaultSettings.set("showmoderation", "always");
+defaultSettings.set("showunknown", "always");
 
 // text box
 defaultSettings.set("sendtyping", true);

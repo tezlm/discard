@@ -35,7 +35,7 @@ $: views = [
   { id: "text-images",   view: TextImages,    name: "Text and Images",      icon: "message" },
   { id: "rooms-spaces",  view: RoomsSpaces,   name: "Rooms and Spaces",     icon: "grid_3x3" },
   { id: "notifications", view: Notifications, name: "Notifications",        icon: "notifications" },
-  { id: "keybinds",      view: Keybinds,      name: "Keybinds",             icon: "keyboard" },
+  // { id: "keybinds",      view: Keybinds,      name: "Keybinds",             icon: "keyboard" },
   { id: "language",      view: Language,      name: "Language",             icon: "language" },
   ...shadow,
   { id: "/info", split: true, label: "Info" },
@@ -44,7 +44,18 @@ $: views = [
   { id: "help",      view: Help,          name: "Help",                 icon: "help" },
   { id: "version",   view: Version,       name: "Credits",              icon: "groups" },
   { id: "/etc", split: true },
-  { id: "logout", name: "Log Out", color: "var(--color-red)", clicked: () => state.popup.set({ id: "logout", confirm: actions.client.logout }), icon: "logout" },
+  { id: "logout", name: "Log Out", color: "var(--color-red)", clicked: logout, icon: "logout" },
 ];
+
+function logout() {
+  state.popup.set({
+    id: "logout",
+    title: "Log Out",
+    body: "Are you sure you want to logout?",
+    button: "Log Out",
+    danger: true,
+    clicked: actions.client.logout,
+  });
+}
 </script>
 <Settings {views} options={{ tab }} />

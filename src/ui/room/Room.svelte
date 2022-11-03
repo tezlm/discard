@@ -14,13 +14,11 @@ import UnknownRoom from './rooms/Unknown.svelte';
 import MediaRoom from './rooms/Media.svelte';
 import ForumRoom from './rooms/Forum.svelte';
 
-let { focusedRoom: room, focusedSpace: space, roomState, slice, settings } = state;
+let { focusedRoom: room, focusedSpace: space, navRooms, roomState, slice, settings } = state;
 let { search } = roomState;
 
 let selectedTab;
 $: type = $room?.getState("m.room.create")?.content.type;
-
-let navRooms = state.navRooms;
 $: if ($navRooms) room = state.focusedRoom;
 </script>
 <style>
@@ -28,7 +26,6 @@ $: if ($navRooms) room = state.focusedRoom;
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-  width: 100%;
   background: var(--bg-content);
 	overflow: hidden;
 }
@@ -41,7 +38,6 @@ $: if ($navRooms) room = state.focusedRoom;
 	overflow: hidden;
 }
 </style>
-<!-- TODO: currently shows a flash when switching between room types, either hide it or show loading -->
 <div class="room">
   <RoomHeader room={$room} bind:selectedTab />
   {#if $room && $slice}

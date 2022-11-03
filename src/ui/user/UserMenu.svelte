@@ -1,6 +1,7 @@
 <script>
 import Tooltip from "../atoms/Tooltip.svelte";
 import Avatar from "../atoms/Avatar.svelte";
+import { homeContext } from "../../util/context.ts";
 import { onDestroy } from "svelte";
 let { userId, users } = state;
 let copyCount = 0, copyText = getCopyText();
@@ -184,7 +185,12 @@ onDestroy(() => state.client?.off("status", onStatus));
 		</div>
 		{/await}
 		<Tooltip tip="User Settings" style="height: 30px">
-			<button class="icon" on:click={() => actions.to("/user-settings")} tabindex="0">settings</button>
+			<button
+				class="icon"
+				on:click={() => actions.to("/user-settings")}
+				on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: homeContext(), x: e.clientX, y: e.clientY })}
+				tabindex="0"
+			>settings</button>
 		</Tooltip>
 	</div>
 </div>

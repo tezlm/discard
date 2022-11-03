@@ -3,8 +3,7 @@ import Search from "../atoms/Search.svelte";
 import { parseHtml } from "../../util/html.js";
 import { roomContext } from "../../util/context";
 export let room;
-let space = state.focusedSpace;
-let { settings } = state;
+let { focusedSpace: space, settings, scene } = state;
 $: dark = $space && !room;
 
 let { popout, invites, dms } = state;
@@ -16,6 +15,11 @@ function getName(room) {
 }
 
 export let selectedTab = "home";
+$: if ($scene === "home") {
+  selectedTab = "home";
+} else if ($scene === "invites") {
+  selectedTab = "invites";
+}
 
 let search;
 let searchfocus = false;
@@ -55,7 +59,7 @@ $: if (showPins) {
 .header {
   display: flex;
   align-items: center;
-  padding: 8px;
+  padding: 0 8px;
   height: 48px;
   box-shadow: var(--shadow-header);
   z-index: 2;
@@ -143,21 +147,24 @@ $: if (showPins) {
   background: var(--bg-spaces);
 }
 
+.tab-wrap {
+  padding: 16px 2px;
+  cursor: pointer;
+}
+
 .tab {
   display: flex;
   align-items: center;
   border-radius: 3px;
   padding: 2px 8px;
-  margin-right: 4px;
-  cursor: pointer;
   font-weight: 500;
 }
 
-.tab:hover {
+.tab-wrap:hover .tab {
   background: var(--mod-lighten);
 }
 
-.tab.selected {
+.tab-wrap.selected .tab {
   background: var(--mod-lightener);
   color: var(--fg-notice);
 }
@@ -197,8 +204,8 @@ $: if (showPins) {
   {:else if !room && !$space}
   <div class="spacer"></div>
   <div style="flex:1;display:flex">
-    <div class="tab" class:selected={selectedTab === "home"}    on:click={() => selectedTab = "home"}>Dashboard</div>
-    <div class="tab" class:selected={selectedTab === "invites"} on:click={() => selectedTab = "invites"}>Invites {#if $invites.size}<span class="ping">{$invites.size}</span>{/if}</div>
+    <div class="tab-wrap" class:selected={selectedTab === "home"}    on:click={() => actions.to("/home")}><div class="tab">Dashboard</div></div>
+    <div class="tab-wrap" class:selected={selectedTab === "invites"} on:click={() => actions.to("/invites")}><div class="tab">Invites {#if $invites.size}<span class="ping">{$invites.size}</span>{/if}</div></div>
   </div>
   {:else}
   <div style:flex={1}></div>
@@ -223,6 +230,7 @@ $: if (showPins) {
   >
     people
   </div>
+  <div class="spacer"></div>
   {/if}
   <!--
   <div class="roomsearch" class:focus={searchfocus || !!search}>
@@ -241,7 +249,8 @@ $: if (showPins) {
   {/if}
   <div class="spacer"></div>
   <div class="icon" on:click={todo}>inbox</div>
-  <div class="icon" on:click={todo}>help</div>
   -->
+  <!-- TODO: if i have time, i should write in-app help -->
+  <div class="icon" on:click={() => actions.to("/user-settings/help")}>help</div>
 </div>
 <svelte:window on:click={() => { showPins = false }} />

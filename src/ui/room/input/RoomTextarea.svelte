@@ -36,7 +36,7 @@ textarea {
 }
 
 textarea::placeholder {
-  color: rgb(114, 118, 125);
+  color: var(--fg-dim);
 }
 </style>
 <textarea

@@ -64,7 +64,12 @@ h4 {
   {@const bridge = event.content}
   {@const botPromise = room.members.fetch(bridge.bridgebot)}
   <div class="bridge">
-    <Avatar user={{ id: bridge.protocol.id, avatar: bridge.protocol.avatar_url }} size={64} link={true} />
+    {#if $settings.get("shadowdev")}
+    <div class="toolbar">
+      <Toolbar items={[{ clicked: () => $popup = { id: "dev-event", event }, name: "view source", icon: "terminal" }]} />
+    </div>
+    {/if}
+    <Avatar link user={{ id: bridge.protocol.id, avatar: bridge.protocol.avatar_url }} size={64} />
     <div class="info">
       <h4>{bridge.protocol?.displayname ?? bridge.protocol?.id}</h4>
       This room is currently being bridged to: 
@@ -96,11 +101,6 @@ h4 {
         {/await}
       </span>
     </div>
-    {#if $settings.get("shadowdev")}
-    <div class="toolbar">
-      <Toolbar items={[{ clicked: () => $popup = { id: "dev-event", event }, name: "view source", icon: "terminal" }]} />
-    </div>
-    {/if}
   </div>
 {:else}
 <i style="margin-top: 12px">There are no bridges here!</i>

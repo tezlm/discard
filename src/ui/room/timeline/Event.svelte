@@ -14,12 +14,13 @@ import { eventContext } from "../../../util/context";
 
 export let shiftKey = false;
 export let noInteract = false;
-export let header = true;
-export let room;
+export let header = false;
 export let event;
 
 let toolbarEl;
+let { room } = event;
 let { context, popout, slice } = state;
+let { edit } = state.roomState;
 
 // messy/complex if statements, maybe i should clean it up..?
 function getToolbar(event, shiftKey) {
@@ -28,13 +29,10 @@ function getToolbar(event, shiftKey) {
 	const { power } = room;
 	
   function markUnread() {
-    const timeline = event.room.events.live;
+    const timeline = room.events.live;
     const index = timeline.lastIndexOf(event);
     const lastId = timeline[index - 1]?.id ?? event.id;
-    state.log.debug(`mark ${lastId} as read`);
-    event.room.accountData.set("m.fully_read", { event_id: lastId });
-    state.slice.set(state.roomSlices.get(event.room.id));
-    state.api.sendReceipt(event.room.id, lastId);
+		actions.rooms.markRead(room, lastId);
   }
 
   if (event.flags?.has("errored")) {
@@ -50,7 +48,7 @@ function getToolbar(event, shiftKey) {
       toolbar.push({ name: "Edit", icon: "edit", clicked: () => state.roomState.edit.set(event.id) });
 		}
 		toolbar.push({ name: "Mark Unread", icon: "mark_chat_unread", clicked: markUnread });
-		if (power.me >= power.forEvent("m.room.pinned_events")) {
+		if (power.me >= power.forState("m.room.pinned_events")) {
 	    const pins = event.room.getState("m.room.pinned_events")?.content.pinned ?? [];
 			toolbar.push({ name: pins.includes(event.id) ? "Unpin" : "Pin", icon: "push_pin", clicked: () => {
 	      if (pins.includes(event.id)) {
@@ -91,7 +89,7 @@ function getToolbar(event, shiftKey) {
 
 function handleClick(e) {
 	if (noInteract) return;
-  if (e.altKey) {
+	if (e.altKey) {
     const prev = $slice.events[$slice.events.findIndex(i => i.id === event.id) - 1];
     if (prev) {
       room.accountData.set("m.fully_read", { event_id: prev.id });
@@ -153,7 +151,7 @@ function showReactionPicker(overrideRect) {
 	user-select: text;
 }
 
-.event:not(.create, .noInteract):hover {
+.event:not(.create, .noInteract, .edit):hover {
   background: var(--mod-darken);
 }
 
@@ -170,7 +168,7 @@ function showReactionPicker(overrideRect) {
 	display: block;
 }
 </style>
-<div class="event" class:noInteract class:create={event.type === "m.room.create"} on:click={handleClick} on:contextmenu|stopPropagation={handleContext}>
+<div class="event" class:edit={$edit === event.id} class:noInteract class:create={event.type === "m.room.create"} on:click={handleClick} on:contextmenu|stopPropagation={handleContext}>
 	{#if event.type === "m.room.create"}
 		<Create {room} {event} {shiftKey} />
 	{:else if event.type === "m.room.name" || event.type === "m.room.topic"}
@@ -189,7 +187,7 @@ function showReactionPicker(overrideRect) {
 	{:else}
 		<Unknown {room} {event} />
 	{/if}
-	{#if event.type !== "m.room.create" && !noInteract}
+	{#if event.type !== "m.room.create" && !noInteract && $edit !== event.id}
   <div class="toolbar" bind:this={toolbarEl} style:display={$popout._owner === "event-" + event.id ? "block" : null}>
 	  <Toolbar items={getToolbar(event, shiftKey)} />
 	</div>

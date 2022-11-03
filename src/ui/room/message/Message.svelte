@@ -56,6 +56,7 @@ const showMemberContext = (member) => (e) => {
 .author {
   display: inline-block;
   height: 22px;
+  line-height: 22px;
 }
 
 .badge {
@@ -99,6 +100,7 @@ const showMemberContext = (member) => (e) => {
 }
 
 time {
+  margin-top: 4px;
   color: var(--fg-muted);
   font-size: 11px;
   font-family: var(--font-display);

@@ -5,7 +5,7 @@ export let type = "normal";
 export let clicked = () => {};
 export let disabled = false;
 export let loading = false;
-$: standard = ["normal", "primary", "good", "warn", "danger"].some(i => type.split(" ").includes(i)) && !type.includes("hollow");
+$: standard = ["normal", "primary", "gray", "good", "warn", "danger"].some(i => type.split(" ").includes(i)) && !type.includes("hollow");
 </script>
 <style>
 button {
@@ -43,7 +43,8 @@ button {
 }
 
 .small {
-  padding: 6px 16px;
+  padding: 8px 16px;
+  min-width: 4rem;
 }
 
 .hollow {
@@ -53,15 +54,17 @@ button {
 
 .normal:not(.hollow) { background: var(--bg-misc) }
 .primary:not(.hollow) { background: var(--color-accent) }
+.gray:not(.hollow) { background: var(--color-gray-light) }
 .good:not(.hollow) { background: var(--color-green) }
 .warn:not(.hollow) { background: var(--color-yellow) }
 .danger:not(.hollow) { background: var(--color-red) }
 
-.normal.hollow { border-color: var(--bg-misc); }
-.primary.hollow { border-color: var(--color-accent); }
-.good.hollow { border-color: var(--color-green); }
-.warn.hollow { border-color: var(--color-yellow); }
-.danger.hollow { border-color: var(--color-red); }
+.normal.hollow { border-color: var(--bg-misc) }
+.primary.hollow { border-color: var(--color-accent) }
+.gray.hollow { border-color: var(--color-gray-light) }
+.good.hollow { border-color: var(--color-green) }
+.warn.hollow { border-color: var(--color-yellow) }
+.danger.hollow { border-color: var(--color-red) }
 
 .link {
   background: transparent;
@@ -70,6 +73,7 @@ button {
 .hollow:hover { background: var(--button-outline) }
 .normal.hollow:hover { background: var(--bg-misc) }
 .primary.hollow:hover { background: var(--color-accent) }
+.gray.hollow:hover { background: var(--color-gray-light) }
 .good.hollow:hover { background: var(--color-green) }
 .warn.hollow:hover { background: var(--color-yellow) }
 .danger.hollow:hover { background: var(--color-red) }

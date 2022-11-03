@@ -11,7 +11,7 @@
 //   return null;
 // }
 
-export function getLastMessage(timeline: any, fromEventId: string): string | null {
+export function getLastMessage(timeline: any, fromEventId?: string): string | null {
   for (let i = fromEventId ? timeline.findLastIndex(i => i.id === fromEventId) : timeline.length - 1; i >= 0; i--) {
     const event = timeline[i];
     if (event && event.type === "m.room.message" && !event.flags?.has("redacted") && !event.unsigned?.redacted_because) return event.id;

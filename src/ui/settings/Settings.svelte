@@ -7,8 +7,12 @@ let save, reset;
 
 function handleClick(view) {
   if (save) return alert("unsaved changes"); // TODO: replace with animation
-  actions.to(`/${$scene}/${options?.room ? options.room.id + "/" : ""}${view.id}`);
-  view.clicked ? view.clicked() : focused = view;
+  if (view.clicked) {
+    view.clicked();
+  } else {
+    actions.to(`/${$scene}/${options?.room ? options.room.id + "/" : ""}${view.id}`);
+    focused = view;
+  }
 }
 
 let oldPopup;

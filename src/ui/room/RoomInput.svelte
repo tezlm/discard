@@ -15,8 +15,7 @@ export let input = "";
 export let textarea;
 let showEmoji = false;
 
-let room = state.focusedRoom;
-let slice = state.slice;
+let { focusedRoom: room, slice, popup } = state;
 let edit = state.roomState.edit;
 
 let isDragging = false;
@@ -92,7 +91,7 @@ function oninput(input) {
 function onfile(file) {
   if (!file) return;
   textarea.blur();
-  state.popup.set({
+  $popup = {
     id: "upload",
     file,
     confirm() {
@@ -102,9 +101,9 @@ function onfile(file) {
     cancel() {
       textarea.focus();
     },
-  });
+  };
   return new Promise(res => {
-    const unsub = state.popup.subscribe(({ id }) => {
+    const unsub = popup.subscribe(({ id }) => {
       if (id) return;
       unsub();
       res();
@@ -229,8 +228,9 @@ function slide() {
 
 .upload {
   display: flex;
-  padding: 0 16px;
   justify-content: center;
+  align-items: center;
+  padding: 0 16px;
   font-size: 24px;
   color: var(--fg-light);
   cursor: pointer;
@@ -302,10 +302,8 @@ function slide() {
   <div class="input" class:withreply={reply}>
     {#if showUpload}
     <label class="upload">
-      <div class="icon">
-          add_circle
-          <input type="file" on:change={e => onfile(e.target.files[0])} />
-      </div>
+      <div class="icon">add_circle</div>
+      <input type="file" on:change={e => onfile(e.target.files[0])} />
     </label>
     {/if}
     <RoomTextarea {placeholder} bind:input={input} bind:textarea={textarea} {onfile} {oninput} />

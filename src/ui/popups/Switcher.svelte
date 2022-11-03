@@ -1,7 +1,8 @@
 <script lang="ts">
 import fuzzysort from "fuzzysort";
-import Input from "../atoms/Input.svelte";
+import Search from "../atoms/Search.svelte";
 import Popup from "../atoms/Popup.svelte";
+import { getLastMessage } from "../../util/timeline";
 import type { Room } from "discount";
 let search = "";
 let highlighted = 0;
@@ -75,7 +76,19 @@ function findParent(room: Room): Room | null {
 }
 </script>
 <style>
+.content {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-content);
+  padding: 16px;
+  border-radius: 4px;
+  min-width: 480px;
+  min-height: 280px;
+  overflow: hidden;
+}
+
 .rooms {
+  flex: 1;
   margin-top: 8px;
 }
 
@@ -83,7 +96,12 @@ function findParent(room: Room): Room | null {
   /* display: flex; */
   padding: 4px;
   border-radius: 4px;
+  color: var(--fg-content);
   cursor: pointer;
+}
+
+.room.unread {
+  color: var(--fg-notice);
 }
 
 .room .icon {
@@ -97,13 +115,24 @@ function findParent(room: Room): Room | null {
 .rooms:not(:hover) .room.highlighted, .room:hover {
   background: var(--mod-lighten);
 }
+
+.help {
+  margin: -16px;
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--bg-misc);
+  color: var(--fg-dim);
+}
+
+.help code {
+  color: var(--fg-content);
+}
 </style>
-<Popup>
-  <div slot="content" on:keydown={handleKeyDown}>
-    <div style="height: 16px"></div>
-    <Input
+<Popup raw>
+  <div slot="content" class="content" on:keydown={handleKeyDown}>
+    <Search
+      size="tall"
       placeholder="Where do you want to go"
-      optional
       autofocus
       bind:value={search}
       submitted={() => focusRoom(results[highlighted].room)}
@@ -114,6 +143,7 @@ function findParent(room: Room): Room | null {
         {@const parent = findParent(room)}
         <div
           class="room"
+          class:unread={getLastMessage(room.events.live, room.readEvent) !== getLastMessage(room.events.live)}
           class:highlighted={highlighted === i}
           on:click={() => focusRoom(room)}
         >
@@ -128,6 +158,9 @@ function findParent(room: Room): Room | null {
           {/if}
         </div>
       {/each}
+    </div>
+    <div class="help">
+      <code>*</code> for spaces, <code>#</code> for rooms, <code>@</code> for dms. Keybind: <kbd>ctrl+k</kbd>
     </div>
   </div>
 </Popup>
