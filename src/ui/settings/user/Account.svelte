@@ -45,7 +45,7 @@ let { userId, users } = state;
 }
 
 .danger {
-  margin: 8px -16px;
+  margin: 8px 0;
   padding: 16px;
   border: solid var(--color-red) 1px;
   border-radius: 4px;
@@ -102,3 +102,4 @@ let { userId, users } = state;
   <div style="height: 1em"></div>
   <Button type="danger" label="Disable account" clicked={todo} />
 </fieldset>
+<div style="min-height: 64px"></div>

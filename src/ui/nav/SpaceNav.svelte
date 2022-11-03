@@ -3,7 +3,7 @@ import Tooltip from "../atoms/Tooltip.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 import { roomContext, homeContext } from "../../util/context";
 import { getLastMessage } from "../../util/timeline";
-let { focusedSpace, navSpaces, spaces, context, popup, pushRules } = state;
+let { focusedSpace, navSpaces, spaces, context, pushRules } = state;
 
 function isMuted(room) {
 	const rule = $pushRules.rules.find(i => i.id === room.id);

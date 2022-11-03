@@ -150,7 +150,7 @@ main > div {
   {:else if $scene === "auth"}
   <LoginRegister />
   {:else if !["room", "space", "home", "invites"].includes($scene)}
-  <div class="loading" transition:opacity><Loading /></div>
+  <div class="loading" out:opacity><Loading /></div>
   {/if}
 </main>
 <div class="layer layer-1"><Popouts /></div>

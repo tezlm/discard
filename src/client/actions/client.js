@@ -29,16 +29,14 @@ export async function fetch() {
   const api = new Api(await resolveWellKnown(homeserver), token);
   const filter = await api.postFilter(userId, defaultFilter);
   api.useFilter(filter);
+  const client = new Client({ baseUrl: api.baseUrl, token, userId });
   state.log.matrix("starting sync");  
-  const syncer = new Client({ baseUrl: api.baseUrl, token, userId });
-  syncer.start();
-  start(api, syncer, userId);
+  client.start();
+  return start(api, client, userId);
 }
 
 // login to the homeserver and create a new client
 export async function login({ localpart, homeserver, password }) {
-  actions.to("/loading");
-  
   const userId = `@${localpart}:${homeserver}`;
   const api = new Api(await resolveWellKnown(homeserver));
 
@@ -51,10 +49,11 @@ export async function login({ localpart, homeserver, password }) {
     localStorage.setItem("userid", userId);
     localStorage.setItem("deviceid", deviceId);
     localStorage.setItem("token", accessToken);
-    const syncer = new Client({ baseUrl: api.baseUrl, token: accessToken, userId });
-    syncer.start();
-    start(api, syncer, userId);
+    const client = new Client({ baseUrl: api.baseUrl, token: accessToken, userId });
     state.log.matrix("starting sync");
+    actions.to("/loading");
+    client.start();
+    return start(api, client, userId);
   } catch(err) {
     switch(err.errcode) {
       case "M_FORBIDDEN": throw "Incorrect username or password";
@@ -66,7 +65,7 @@ export async function login({ localpart, homeserver, password }) {
 
 async function resolveWellKnown(domain) {
   try {
-    const req = await window.fetch(`https://${domain}/.well-known/matrix/client`);
+    const req = await window.fetch(`http://${domain}/.well-known/matrix/client`);
     const json = await req.json();
     return json["m.homeserver"]?.base_url;
   } catch {
@@ -74,22 +73,22 @@ async function resolveWellKnown(domain) {
   }
 }
 
-function start(api, syncer, userId) {
+function start(api, client, userId) {
   state.api = api;
-  state.syncer = syncer;
-  state.client = syncer;
+  state.syncer = client;
+  state.client = client;
   state.userId = userId;
-  
-  syncer.on("join", (room) => actions.rooms.handleJoin(room));
-  syncer.on("leave", (room) => actions.rooms.handleLeave(room.id));
+ 
+  client.on("join", (room) => actions.rooms.handleJoin(room));
+  client.on("leave", (room) => actions.rooms.handleLeave(room.id));
 
-  syncer.on("invite", () => state.invites.set(syncer.invites));
-  syncer.on("leave-invite", () => state.invites.set(syncer.invites));
-  syncer.on("join", () => state.invites.set(syncer.invites));  
+  client.on("invite", () => state.invites.set(client.invites));
+  client.on("leave-invite", () => state.invites.set(client.invites));
+  client.on("join", () => state.invites.set(client.invites));  
     
-  syncer.on("state", (state) => actions.rooms.handleState(state));
-  syncer.on("event", (event) => actions.timeline.handle(event));
-  syncer.on("ephemeral", (edu) => {
+  client.on("state", (state) => actions.rooms.handleState(state));
+  client.on("event", (event) => actions.timeline.handle(event));
+  client.on("ephemeral", (edu) => {
     if (edu.type !== "m.typing") return;
   
     const roomState = state.roomStates.get(edu.room.id);
@@ -100,15 +99,15 @@ function start(api, syncer, userId) {
     }
   });
   
-  syncer.on("notifications", (_room, _notifs) => {
+  client.on("notifications", (_room, _notifs) => {
     actions.spaces.refresh();
   });
   
-  syncer.on("roomAccountData", (room, event) => {
+  client.on("roomAccountData", (room, event) => {
     actions.rooms.handleAccount(room, event);
   });
   
-  syncer.on("accountData", ({ type, content }) => {
+  client.on("accountData", ({ type, content }) => {
     if (type === "org.eu.celery.settings") {
       const settings = new Settings(content);
       state.settings.set(settings);
@@ -122,7 +121,7 @@ function start(api, syncer, userId) {
     state.accountData.set(state.accountDataRef);
   });
   
-  syncer.on("ready", () => {
+  client.on("ready", () => {
     state.log.matrix("ready");
     actions.spaces.update();
     actions.to("/home");
@@ -131,13 +130,16 @@ function start(api, syncer, userId) {
 
 export async function logout() {
   state.log.debug("bye!");
-  state.syncer.stop();
+  state.client.stop();
   state.api.logout();
   localStorage.clear();
   actions.to("/auth");
   state.popup.set({});
   state.client = null;
 
+	state.navRooms.set([]);
+	state.navSpaces.set([]);
+  
   state.rooms.clear();
   state.spaces.clear();
   state.dms.clear();

@@ -49,7 +49,7 @@ $: views = [
 
 function logout() {
   state.popup.set({
-    id: "logout",
+    id: "dialog",
     title: "Log Out",
     body: "Are you sure you want to logout?",
     button: "Log Out",

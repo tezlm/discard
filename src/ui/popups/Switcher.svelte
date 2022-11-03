@@ -23,7 +23,7 @@ function getRooms(search: string): Array<{ name: string, room: Room, fuzzy?: Fuz
   if (type === "dm") options = options.filter(i => dms.has(i.room.id));
   if (!search) return options.slice(0, 5);
   return fuzzysort
-    .go(search, options, { key: "name", limit: 5 })
+    .go(search, options, { key: "name", limit: 7 })
     .map(i => ({ ...i.obj, fuzzy: i }));
 }
 
@@ -83,7 +83,7 @@ function findParent(room: Room): Room | null {
   padding: 16px;
   border-radius: 4px;
   min-width: 480px;
-  min-height: 280px;
+  min-height: 220px;
   overflow: hidden;
 }
 
@@ -95,6 +95,7 @@ function findParent(room: Room): Room | null {
 .room {
   /* display: flex; */
   padding: 4px;
+  margin-top: 2px;
   border-radius: 4px;
   color: var(--fg-content);
   cursor: pointer;
@@ -118,7 +119,7 @@ function findParent(room: Room): Room | null {
 
 .help {
   margin: -16px;
-  margin-top: 16px;
+  margin-top: 8px;
   padding: 16px;
   background: var(--bg-misc);
   color: var(--fg-dim);
@@ -156,6 +157,10 @@ function findParent(room: Room): Room | null {
           {#if parent}
             <span class="dim">- {parent.name}</span>
           {/if}
+        </div>
+      {:else}
+        <div style="display: flex; align-items: center; justify-content: center; flex: 1; height: 120px">
+          <i>no rooms, typo?</i>
         </div>
       {/each}
     </div>

@@ -2,7 +2,7 @@ import { writable, get } from "svelte/store";
 import type { Room } from "discount";
 
 export function handleAccount(_: void, event: { type: string, content: any }) {
-  if (event.type === "m.fully_read" && state.syncer.status !== "starting") {
+  if (event.type === "m.fully_read") {
     actions.spaces.refresh();
   }
 }
@@ -12,7 +12,7 @@ export function handleJoin(room: Room) {
 }
 
 export function handleState(_: void) {
-  if (state.syncer.status !== "starting") actions.spaces.refresh();
+  actions.spaces.refresh();
 }
 
 export function handleLeave(roomId: string) {
@@ -27,7 +27,7 @@ export function handleLeave(roomId: string) {
     state.focusedRoom.set(null);
   }
   state.rooms.delete(roomId);
-  actions.spaces.update();
+  if (state.client.status !== "starting") actions.spaces.update();
 }
 
 export function markRead(room: Room, eventId?: string) {
