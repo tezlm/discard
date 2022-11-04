@@ -87,12 +87,12 @@ function openMenu(e) {
   color: var(--fg-dim);
 }
 </style>
-<div class="popout" on:click|stopPropagation on:contextmenu|preventDefault|stopPropagation={openMenu}>
+<div class="popout" on:click|stopPropagation={() => $context = {}} on:contextmenu|preventDefault|stopPropagation={openMenu}>
   <div class="top">
     {#if isRoomPing}
     <Avatar link user={member} size={80} />
     {:else}
-    <div class="avatar" use:fastclick on:fastclick={() => { $popout = {}; $popup = { id: "user", userId: member.id } }}>
+    <div class="avatar" use:fastclick on:fastclick={() => { $popout = {}; $context = {}; $popup = { id: "user", userId: member.id } }}>
       <div class="view-profile">View Profile</div>
       <Avatar user={member} size={80} />
     </div>

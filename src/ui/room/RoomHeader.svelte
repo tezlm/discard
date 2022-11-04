@@ -1,6 +1,6 @@
 <script>
 import Search from "../atoms/Search.svelte";
-import { parseHtml } from "../../util/html.js";
+import { parseHtml } from "../../util/html";
 import { roomContext } from "../../util/context";
 export let room;
 let { focusedSpace: space, settings, scene } = state;
@@ -78,7 +78,7 @@ $: if (showPins) {
 
 .spacer {
   width: 1px;
-  background: var(--color-gray);
+  background: var(--color-gray-light);
   height: 1.5em;
   margin: 8px;
 }

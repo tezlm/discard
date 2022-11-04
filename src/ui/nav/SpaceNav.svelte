@@ -25,6 +25,11 @@ function isRead(room) {
 function allRead(spaceId) {
   return spaces.get(spaceId).every(room => isRead(room));
 }
+
+function getPings(space, _) {
+  return spaces.get(space.id)
+    .reduce((pings, room) => pings + (room.type === "m.space" ? getPings(room) : room.notifications.highlight), 0);
+}
 </script>
 <style>
 .nav {
@@ -139,7 +144,7 @@ function allRead(spaceId) {
   </div>
   <div class="separator"></div>
   {#each $navSpaces as space (space.id)}
-  {@const pings = spaces.get(space.id).reduce((pings, room) => pings + room.notifications.highlight, 0)}
+  {@const pings = getPings(space, $navSpaces)}
   <div
     class="space"
     class:focused={$focusedSpace?.id === space.id}

@@ -1,8 +1,7 @@
 <script>
-import { parseHtml } from "../../../util/html.js";
+import { parseHtml } from "../../../util/html";
 import { parseMxc } from "../../../util/content.ts";
 import hljs from "highlight.js";
-import Button from "../../atoms/Button.svelte";
 import File from "../../molecules/files/File.svelte";
 import Audio from "../../molecules/files/Audio.svelte";
 import Video from "../../molecules/files/Video.svelte";
@@ -41,6 +40,10 @@ $: if (wrapper) {
 }
 </script>
 <style>
+.content {
+  max-width: 100%;
+}
+
 .sending {
   color: var(--fg-muted);
 }
@@ -95,28 +98,6 @@ img {
 .text :global(blockquote), .text :global(ol), .text :global(ul), .text :global(li), .text :global(details) {
   white-space: normal;
 }
-
-.sticker-popout {
-  position: absolute;
-  left: 128px;
-  top: 24px;
-
-  display: inline-flex;
-  width: 300px;
-  padding: 16px;
-  background: var(--bg-context);
-  border-radius: 8px;
-  box-shadow: var(--shadow-popup);
-}
-
-.sticker-popout > img {
-  margin-right: 16px;
-}
-
-.sticker-popout > div {
-  display: flex;
-  flex-direction: column;
-}
 </style>
 <div
   class="content"
@@ -144,23 +125,6 @@ img {
     style="height: 128px"
     on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + name, alt: name })}
   />
-  <!--
-  <div class="sticker-popout">
-    <img
-      src={parseMxc(content.url, dimensions.width, dimensions.height)}
-      alt={content.body}
-      title={content.body}
-      style={dimensions.css}
-      on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
-    />
-    <div>
-      <b>{content.body}</b>
-      <span>maybe some additional metadata or info can be here...</span>
-      <div style="height:16px"></div>
-      <Button label="steal" type="primary" clicked={todo} />
-    </div>
-  </div>
-  -->
   {:else if type === "m.video"}
   <Video src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
   {:else if type === "m.audio"}
@@ -190,7 +154,7 @@ img {
   {:else if content.body}
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}
-    {@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/\n/g, "<br />"), { linkify: true })}
+    {@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/\n/g, "<br />"))}
     {#if event.flags?.has("edited")}
     <span class="edited">(edited)</span>
     {/if}

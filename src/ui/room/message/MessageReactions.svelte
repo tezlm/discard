@@ -64,7 +64,6 @@ function counterOut() {
 }
 
 function handleClick(mine, key) {
-  // instantly respond with reaction/local echo?
   if (mine) {
     mine.redact();
   } else {
@@ -75,7 +74,7 @@ function handleClick(mine, key) {
         event_id: event.id,
       },
     };
-    state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
+    event.room.sendEvent("m.reaction", reaction);
   }
 }
 
@@ -96,7 +95,7 @@ $: if (showPicker) {
               event_id: event.id,
             },
           };
-          state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
+          event.room.sendEvent("m.reaction", reaction);
         }
         if (!keepOpen) showPicker = false;
       },

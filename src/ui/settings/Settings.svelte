@@ -1,8 +1,8 @@
 <script>
 import Confirm from "./Confirm.svelte";
 export let views, options;
-let focused = views.find(i => options.tab ? i.id === options.tab : i.view) ?? views.find(i => i.view);
 let { path, popup, scene, focusedRoom, focusedSpace } = state;
+let focused = views.find(i => options.tab ? i.id === options.tab : i.view) ?? views.find(i => i.view);
 let save, reset;
 
 function handleClick(view) {
@@ -10,19 +10,17 @@ function handleClick(view) {
   if (view.clicked) {
     view.clicked();
   } else {
-    actions.to(`/${$scene}/${options?.room ? options.room.id + "/" : ""}${view.id}`);
     focused = view;
+    actions.to(`/${$scene}/${options?.room ? options.room.id + "/" : ""}${focused.id}`);
   }
 }
 
 let oldPopup;
 $: setTimeout(() => oldPopup = $popup);
-$: tab = $path.split("/").slice(options?.room ? 4 : 3);
+$: tab = $path.split("/")[options?.room ? 4 : 3];
 
 function handleKeyDown(e) {
-  if (e.key === "Escape" && !oldPopup?.id) {
-    close();
-  }
+  if (e.key === "Escape" && !oldPopup?.id) close();
 }
 
 function close() {
@@ -189,7 +187,7 @@ h1 {
       {#if !focused.raw}
       <h1>{focused.name}</h1>
       {/if}
-      <svelte:component this={focused.view} {...{ ...options, tab }} {...focused.props} bind:save={save} bind:reset={reset} />
+      <svelte:component this={focused.view} {...options} {...focused.props} {tab} bind:save bind:reset />
       {#if save}
       <Confirm {save} reset={() => reset ? reset() : todo} />
       {/if}

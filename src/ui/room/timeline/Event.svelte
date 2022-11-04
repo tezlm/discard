@@ -22,6 +22,7 @@ let { room } = event;
 let { context, popout, slice } = state;
 let { edit } = state.roomState;
 
+// FIXME: context menu reaction picker broke
 // messy/complex if statements, maybe i should clean it up..?
 function getToolbar(event, shiftKey) {
 	const toolbar = [];
@@ -81,9 +82,9 @@ function getToolbar(event, shiftKey) {
 	return toolbar;
 
   function showMore() {
-    const rect = toolbarEl.getBoundingClientRect();
+		const rect = toolbarEl.getBoundingClientRect();
     if ($context.items) return $context = {};
-    $context = { items: eventContext(event, { showEmoji: () => showReactionPicker(rect) }), x: rect.left, y: rect.top + 40 };
+    $context = { items: eventContext(event, { showEmoji: () => showReactionPicker() }), x: rect.left, y: rect.top + 40 };
   }
 }
 
@@ -103,10 +104,9 @@ function handleContext(e) {
 	if (noInteract) return;
 	if (["A", "IMG", "VIDEO"].includes(e.target.tagName)) return;
 	e.preventDefault();
-  const rect = toolbarEl.getBoundingClientRect();
 	$context = {
 		items: eventContext(event, {
-			showEmoji: () => showReactionPicker(rect),
+			showEmoji: () => showReactionPicker(),
 		}),
 		x: e.clientX,
 		y: e.clientY,
@@ -137,7 +137,7 @@ function showReactionPicker(overrideRect) {
             event_id: event.id,
           },
         };
-        state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
+				event.room.send("m.reaction", reaction);
       }
       if (!keepOpen) $popout = {}
     },

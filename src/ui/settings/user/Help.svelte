@@ -1,3 +1,7 @@
+<script>
+export let tab;
+const goto = (where) => () => actions.to(`/user-settings/help/${where}`);
+</script>
 <p>todo for v1</p>
 <ul>
   <li>differences from discord</li>

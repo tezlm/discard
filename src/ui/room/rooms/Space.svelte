@@ -1,7 +1,7 @@
 <script>
 import Input from "../../atoms/Input.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
-import { parseHtml } from "../../../util/html.js";
+import { parseHtml } from "../../../util/html";
 export let room;
 let members = false;
 

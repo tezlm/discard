@@ -15,9 +15,11 @@ async function fetchList(room) {
   if (state.dms.has(room.id)) {
     return [{ title: `members: ${members.length}`, id: "members" }, ...members];
   }
-  const sections = { admins: [], moderators: [], notable: [], members: [], gone: [] };
+  const sections = { goku: [], admins: [], moderators: [], notable: [], members: [], gone: [] };
   for (let member of members) {
-    if (member.power >= 100) {
+    if (member.power > 9000) {
+      sections.goku.push(member);
+    } else if (member.power >= 100) {
       sections.admins.push(member);
     } else if (member.power >= 50) {
       sections.moderators.push(member);

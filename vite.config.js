@@ -23,6 +23,7 @@ export default defineConfig({
           ],
           "sanitize-html": ["sanitize-html"],
           "highlight.js": ["highlight.js"],
+          "lexical": ["lexical", "@lexical/selection", "@lexical/history", "@lexical/utils"],
         }
       }
     }

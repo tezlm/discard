@@ -13,7 +13,7 @@ function replacePing(input) {
   function getName(id) {
     const member = event.room.members.get(id);
     if (!member) return id;
-    return "@" + (member.name ?? member.id).replace(/^@/, "");
+    return member.name ? ("@" + member.name) : member.id;
   }
 
   return input.replace(
@@ -78,7 +78,7 @@ async function save() {
     $edit = null;
     return;
   }
-  const newEvent = {
+  const newContent = {
     "m.relates_to": {
       rel_type: "m.replace",
       event_id: event.id,
@@ -92,7 +92,7 @@ async function save() {
     body: "* " + input.trim(),
     msgtype: "m.text",
   };
-  state.api.sendEvent(event.room.id, "m.room.message", newEvent, Math.random());
+  event.room.sendEvent("m.room.message", newContent);
   $edit = null;
 }
 

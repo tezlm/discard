@@ -68,7 +68,7 @@ function handleAvatarChange(e) {
   opacity: 1;
 }
 </style>
-<label>
+<label style="display: block">
   <div class="uploader">
     <Avatar user={newData} {size} />
     <div class="icon">edit</div>

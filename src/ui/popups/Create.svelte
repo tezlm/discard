@@ -7,6 +7,7 @@ import Popup from "../atoms/Popup.svelte";
 import Toggle from "../atoms/Toggle.svelte";
 import Dropdown from "../atoms/Dropdown.svelte";
 import IdInput from "../atoms/IdInput.svelte";
+import AvatarUpload from "../atoms/AvatarUpload.svelte";
 
 export const confirm = create;
 export let current;
@@ -82,18 +83,25 @@ async function create() {
   <!--<h2 slot="header" style="text-align: center">Customize {capitalize(current.type)}</h2>-->
   <h3 slot="header">Create {capitalize(current.type)}</h3>
   <div slot="content" style="display: flex; flex-direction: column;">
-    <!--<div style="margin-bottom: 1em; max-width: 440px; text-align: center">
-      Customize your {capitalize(current.type)} with an name, topic, and avatar. You can always change these later.
+    <!--
+    <div style="display: flex; margin-bottom: 16px">
+      <div>
+        <AvatarUpload user={{ id: Date.now().toString() }} size={64} />
+      </div>
+      <div style="flex: 1; margin-left: 16px">
+        <h3 class="title">{capitalize(current.type)} Name</h3>
+        <Input placeholder="awesome-{current.type}" bind:value={config.name} submitted={create} autofocus />
+      </div>
     </div>
-    <img src="https://www.adweek.com/wp-content/uploads/2018/07/confused-guy-meme-content-2018.jpg" style="height: 80px; width: 80px; border-radius: 50%; margin: 0 auto"/>-->
-    <span class="title">{capitalize(current.type)} Name</span>
+    -->
+    <h3 class="title">{capitalize(current.type)} Name</h3>
     <Input placeholder="awesome-{current.type}" bind:value={config.name} submitted={create} autofocus />
-    <span class="title" style="margin-top: 1em">{capitalize(current.type)} Topic </span>
+    <h3 class="title" style="margin-top: 1em">{capitalize(current.type)} Topic </h3>
     <Textarea placeholder="optional topic for your {current.type}" bind:value={config.topic} />
     <div style="border: solid var(--event-ping) 2px; background: var(--event-ping-bg); border-radius: 4px; padding: 8px; margin: 1em 0 8px;">
     everything below this is not implemented currently
     </div>
-    <span class="title" style="margin-top: 1em">Room visibility</span>
+    <h3 class="title" style="margin-top: 1em">Room visibility</h3>
     <Dropdown options={joinRules} bind:selected={config.joinRule} />
     {#if current.type !== "space" && config.joinRule !== "public"}
     <div style="display:flex; margin-top: 1em; max-width: 440px">
@@ -105,7 +113,7 @@ async function create() {
     </div>
     {/if}
     {#if config.joinRule === "public"}
-    <span class="title" style="margin-top: 1em">Room address</span>
+    <h3 class="title" style="margin-top: 1em">Room address</h3>
     <div style="display: flex; flex-direction: column">
       <IdInput kind="alias" homeserver={localStorage.getItem("homeserver")} lockHomeserver />
     </div>

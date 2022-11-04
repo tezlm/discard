@@ -40,15 +40,15 @@ $: {
   if (nameChanged || topicChanged || avatarChanged) {
     save = async () => {
       const proms = [];
-      if (nameChanged) proms.push(state.api.sendState(room.id, "m.room.name", "", { name }));
-      if (topicChanged) proms.push(state.api.sendState(room.id, "m.room.topic", "", { topic }));
+      if (nameChanged) proms.push(room.sendState("m.room.name", { name }));
+      if (topicChanged) proms.push(room.sendState("m.room.topic", { topic }));
       if (avatarChanged) {
         if (avatar.file) {
           const prom = state.api.uploadFile(avatar.file).promise
-            .then(url => state.api.sendState(room.id, "m.room.avatar", "", { url }));
+            .then(url => room.sendState("m.room.avatar", { url }));
           proms.push(prom);
         } else {
-          proms.push(state.api.sendState(room.id, "m.room.avatar", "", { url:  null }));
+          proms.push(room.sendState("m.room.avatar", { url:  null }));
         }
       }
       await Promise.all(proms);

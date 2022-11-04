@@ -88,6 +88,7 @@ function start(api, client, userId) {
     
   client.on("state", (state) => actions.rooms.handleState(state));
   client.on("event", (event) => actions.timeline.handle(event));
+  client.on("redact", (event) => actions.timeline.handle(event));
   client.on("ephemeral", (edu) => {
     if (edu.type !== "m.typing") return;
   
@@ -97,6 +98,14 @@ function start(api, client, userId) {
     if (edu.room.id === state.focusedRoomId) {
       state.roomState.typing.set(edu.content.user_ids);
     }
+  });
+  
+  client.on("remoteEcho", (echo, txnId) => {
+    const { id, room } = echo;
+    state.log.matrix(`successfully sent ${id} in ${room.id} (for ${txnId})`);
+    room.accountData.set("m.fully_read", id);
+    state.api.sendReceipt(room.id, id);
+    actions.timeline.reslice(room, true);
   });
   
   client.on("notifications", (_room, _notifs) => {

@@ -1,5 +1,5 @@
 <script>
-import { parseHtml } from "../../../util/html.js";
+import { parseHtml } from "../../../util/html";
 import Name from "../../atoms/Name.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
 export let room, eventId;
@@ -11,6 +11,7 @@ let eventPromise = room.events.fetch(eventId);
   align-items: center;
   position: relative;
   margin-bottom: 8px;
+  margin-right: 16px;
   height: 14px;
 
   font-size: 14px;

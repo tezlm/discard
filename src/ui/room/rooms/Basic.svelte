@@ -81,6 +81,7 @@ function shouldRender(_type, _settings) {
 }
 
 function shouldPing(event) {
+	// FIXME: doesnt parse pings in muted rooms
 	const parsed = $pushRules.parse(event);
 	if (!parsed) return false;
 	const highlight = parsed.actions.find(i => i.set_tweak === "highlight");
@@ -166,7 +167,6 @@ function isRead(room) {
 
 .ping {
 	position: relative;
-	background: var(--event-ping-bg);
 }
 
 .editing {
@@ -178,13 +178,21 @@ function isRead(room) {
 	position: relative;
 }
 
-.ping::after {
+.ping::before, .ping::after {
 	content: "";
 	position: absolute;
 	top: 0;
 	height: 100%;
-	width: 2px;
 	background: var(--event-ping);
+}
+
+.ping::before {
+	width: 100%;
+	opacity: .1;
+}
+
+.ping::after {
+	width: 2px;
 }
 
 .focused {
@@ -218,12 +226,12 @@ function isRead(room) {
 }
 </style>
 <div class="content">
-	{#if !isRead(room) && false}
+	{#if false && !isRead(room)}
 	<div class="unread" on:click={() => actions.slice.jump(room.id, room.readEvent)}>
 		<div style="flex: 1;">
-		{"???"} new messages
+		{room.notifications.unread} new messages
 		</div>
-		<div style="display: flex; font-weight: 700" on:click={() => actions.rooms.markRead(room)}>
+		<div style="display: flex; font-weight: 700" on:click|stopPropagation={() => actions.rooms.markRead(room)}>
 			Mark As Read <div class="icon" style="margin-left: 4px">mark_chat_read</div>
 		</div>
 	</div>
@@ -255,10 +263,7 @@ function isRead(room) {
 					class:highlight={getHighlight(event, $reply)}
 					style:--color={getHighlight(event, $reply)}
 				>
-				  <Event
-						{shiftKey} {room} {event}
-						header={shouldSplit(slice.events[index - 1], event)}
-					/>
+				  <Event {shiftKey} {event} header={shouldSplit(slice.events[index - 1], event)} />
 				</div>
 			{/if}
 			{#if index < slice.events.length - 1}

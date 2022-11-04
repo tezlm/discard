@@ -160,7 +160,7 @@ function getContextMenu(event) {
           event_id: event.id,
         },
       };
-      state.api.sendEvent(event.room.id, "m.reaction", reaction, Math.random());  
+      event.room.sendEvent("m.reaction", reaction);  
     }
   }
 }

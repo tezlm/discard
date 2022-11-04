@@ -252,7 +252,11 @@ video {
       {/if}
     </div>
     <div class="time">{formatDuration(Math.floor(currentTime))}/{formatDuration(Math.floor(duration))}</div>
+    {#if videoEl?.clientWidth > 200}
     <Slider value={currentTime} max={duration} tooltipify={t => formatDuration(Math.floor(t))} changed={handleScrub} />
+    {:else}
+    <div style="flex: 1"></div>
+    {/if}
     <Volume bind:volume={volume} bind:muted={muted} />
     <div class="icon" on:click={toggleFullscreen}>fullscreen</div>
   </div>

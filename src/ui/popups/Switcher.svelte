@@ -103,6 +103,11 @@ function findParent(room: Room): Room | null {
 
 .room.unread {
   color: var(--fg-notice);
+  font-weight: 500;
+}
+
+.room.unread .icon {
+  color: var(--fg-notice);
 }
 
 .room .icon {
@@ -160,7 +165,11 @@ function findParent(room: Room): Room | null {
         </div>
       {:else}
         <div style="display: flex; align-items: center; justify-content: center; flex: 1; height: 120px">
-          <i>no rooms, typo?</i>
+          {#if search}
+            <i>no rooms, typo?</i>
+          {:else}
+            <i>no recent rooms</i>
+          {/if}
         </div>
       {/each}
     </div>

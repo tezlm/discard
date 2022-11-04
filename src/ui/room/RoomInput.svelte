@@ -16,7 +16,7 @@ export let textarea;
 let showEmoji = false;
 
 let { focusedRoom: room, slice, popup } = state;
-let edit = state.roomState.edit;
+let { edit } = state.roomState;
 
 let isDragging = false;
 let isShift = false;
@@ -57,7 +57,7 @@ function oninput(input) {
     function getName(id) {
       const member = $room.members.get(id);
       if (!member) return id;
-      return "@" + (member.name ?? member.id).replace(/^@/, "");
+      return member.name ? ("@" + member.name) : member.id;
     }
 
     return input.replace(

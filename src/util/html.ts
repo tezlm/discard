@@ -1,9 +1,10 @@
 // a lot (but not all) of this was copied from cinny
 // NOTE: linkifyjs seems to take a long time (20%) to linkify text when loading messages
+// NOTE: sanitize-html has a large bundle size
 import linkifyHtml from "linkifyjs/html";
 import sanitizeHtml from "sanitize-html";
 import twemoji from "twemoji";
-import { parseMxc } from "./content.ts";
+import { parseMxc } from "./content";
 
 const permittedHtmlTagsInline = [
   "font", "del", /*"p", */ "a", "sup", "sub", "b", "i",
@@ -108,7 +109,7 @@ const sanitizeOptsInline = {
 	},
 }
 
-function twemojifyHtml(html) {
+function twemojifyHtml(html: string): string {
   return twemoji.parse(html, {
     attributes: () => ({ loading: 'lazy' }),
     folder: "svg",
@@ -116,7 +117,7 @@ function twemojifyHtml(html) {
   });
 }
 
-export function parseHtml(html, opts = { linkify: true, sanitize: true, inline: false, twemojify: true }) {
+export function parseHtml(html: string, opts = { linkify: true, sanitize: true, inline: false, twemojify: true }) {
 	html = html.replace(/@room/g, "<span data-mx-ping='room'>@room</span>"); // this *may* break
 	if (opts.sanitize)  html = sanitizeHtml(html, opts.inline ? sanitizeOptsInline : sanitizeOpts);
 	if (opts.linkify)   html = linkifyHtml(html, { ignoreTags: ["pre", "code"] });

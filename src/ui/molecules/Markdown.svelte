@@ -99,9 +99,9 @@ onMount(() => {
   registerPlainText(editor);
   registerHistory(editor, createEmptyHistoryState(), 1000);
   
-  editor.registerNodeTransform(lexical.TextNode, (node) => {
+  // editor.registerNodeTransform(lexical.TextNode, (node) => {
     // console.log(renderHTML(node));
-  });
+  // });
 });
 
 const users = [];

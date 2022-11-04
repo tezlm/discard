@@ -15,11 +15,10 @@ async function sendMessage(content, theRoom = $room) {
     reply.set(null);
   }
 
-  actions.timeline.send(theRoom, "m.room.message", content);
+  const id = `~${Math.random().toString(36).slice(2)}`;
+  theRoom.accountData.set("m.fully_read", id);
+  theRoom.sendEvent("m.room.message", content, id);
   state.log.debug("send event to " + theRoom.id);
-
-  // const { event_id } = await state.client.sendEvent($room.roomId, null, "m.room.message", content);
-  // state.client.sendReadReceipt($room.timeline.find(i => i.getId() === event_id)); // FIXME: flash of unread on message send
 }
 
 $: if ($input) textarea?.focus();
