@@ -8,8 +8,8 @@ interface Notifications {
 function getRules(room: Room): Array<any> {
   const pushRules = state.accountDataRef.get("m.push_rules").global;
   return [
-    pushRules.room.find(i => i.rule_id === room.id),
-    pushRules.override.find(i => i.rule_id === room.id),
+    pushRules.room?.find(i => i.rule_id === room.id),
+    pushRules.override?.find(i => i.rule_id === room.id),
   ];
 }
 

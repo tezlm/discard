@@ -62,7 +62,7 @@ function handleClick(item, e) {
 }
 
 .item:hover {
-  background: var(--color-accent);
+  background: var(--bg);
   color: var(--fg-notice) !important;
 }
 
@@ -108,6 +108,7 @@ function handleClick(item, e) {
       <div
         class="item"
         style:color={item.color ?? "var(--fg-interactive)"}
+        style:--bg={item.color ?? "var(--color-accent)"}
         use:fastclick
         on:fastclick={e => handleClick(item, e)}
       >

@@ -33,14 +33,18 @@ function capitalize(str) {
 
 async function create() {
   creating = true;
-  const parentId = current.parent?.id;
+  const { parent } = current;
   const initialState = [], creationContent = {};
   
-  if (parentId) {
-    initialState.push(
-      { content: { canonical: true }, type: "m.space.parent", state_key: parentId },
-      { content: { join_rule: "restricted", allow: [{ room_id: parentId, type: "m.room_membership" }] }, type: "m.room.join_rules" },
-    );
+  if (config.joinRule !== "restricted") {
+    initialState.push({ content: { join_rule: config.joinRule }, type: "m.room.join_rules" });
+  }
+  
+  if (parent) {
+    initialState.push({ content: { canonical: true }, type: "m.space.parent", state_key: parent.id });
+    if (config.joinRule === "restricted") {
+      initialState.push({ content: { join_rule: "restricted", allow: [{ room_id: parent.id, type: "m.room_membership" }] }, type: "m.room.join_rules" });
+    }
   }
   
   if (config.noFederate) {
@@ -59,8 +63,8 @@ async function create() {
     creationContent,
   });
 
-  if (parentId) {
-    state.api.sendState(parentId, "m.space.child", room_id, { auto_join: false, suggested: false, via: [room_id.match(/:.+/)[0].slice(1)] });  
+  if (parent) {
+    parent.sendState("m.space.child", { suggested: false, via: [room_id.match(/:.+/)[0].slice(1)] }, room_id);
   }
 
   const interval = setInterval(() => {

@@ -65,11 +65,12 @@ export async function login({ localpart, homeserver, password }) {
 
 async function resolveWellKnown(domain) {
   try {
-    const req = await window.fetch(`http://${domain}/.well-known/matrix/client`);
+    const req = await window.fetch(`https://${domain}/.well-known/matrix/client`)
+      .catch(() => window.fetch(`http://${domain}/.well-known/matrix/client`));
     const json = await req.json();
     return json["m.homeserver"]?.base_url;
   } catch {
-    return "https://" + domain;
+    return "//" + domain;
   }
 }
 
@@ -84,7 +85,7 @@ function start(api, client, userId) {
 
   client.on("invite", () => state.invites.set(client.invites));
   client.on("leave-invite", () => state.invites.set(client.invites));
-  client.on("join", () => state.invites.set(client.invites));  
+  client.on("join", () => state.invites.set(client.invites));
     
   client.on("state", (state) => actions.rooms.handleState(state));
   client.on("event", (event) => actions.timeline.handle(event));
@@ -101,10 +102,12 @@ function start(api, client, userId) {
   });
   
   client.on("remoteEcho", (echo, txnId) => {
-    const { id, room } = echo;
+    const { id, room, type } = echo;
     state.log.matrix(`successfully sent ${id} in ${room.id} (for ${txnId})`);
-    room.accountData.set("m.fully_read", id);
-    state.api.sendReceipt(room.id, id);
+    if (type === "m.room.message") {
+      room.accountData.set("m.fully_read", id);
+      state.api.sendReceipt(room.id, id);
+    }
     actions.timeline.reslice(room, true);
   });
   

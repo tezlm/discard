@@ -100,6 +100,7 @@ let { userId, users } = state;
 <fieldset class="danger">
   <h3>danger zone</h3>
   <div style="height: 1em"></div>
+  <Button type="danger" label="Change password" clicked={todo} />
   <Button type="danger" label="Disable account" clicked={todo} />
 </fieldset>
 <div style="min-height: 64px"></div>

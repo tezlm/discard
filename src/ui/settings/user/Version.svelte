@@ -3,7 +3,12 @@
 const env = DISCARD;
 </script>
 <div>
-  {env.package.name} version {env.package.version}, commit <a href="https://git.celery.eu.org/tezlm/discard/commit/{env.commit}">{env.commit}</a>
+  {env.package.name} version {env.package.version},
+  {#if import.meta.env.DEV}
+  in development
+  {:else}
+  commit <a href="https://git.celery.eu.org/tezlm/discard/commit/{env.commit}">{env.commit}</a>
+  {/if}
   <br>
   <div style="margin: 1em 0">made with the following dependencies:</div>
   <table style="width: 100%">

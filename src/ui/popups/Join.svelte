@@ -9,9 +9,13 @@ let loading = false;
 
 async function join() {
   loading = true;
-  await state.api.joinAlias(`#${localpart}:${homeserver}`);
+  const res = await state.api.joinAlias(`#${localpart}:${homeserver}`);
   loading = false;
-  state.popup.set({ ...current, id: null });
+  if (res.error) {
+    state.popup.set({ id: "dialog", title: "error", body: res.errcode });
+  } else {
+    state.popup.set({ ...current, id: null });
+  }
 }
 </script>
 <Popup showClose>

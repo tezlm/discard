@@ -22,15 +22,13 @@ async function parseEmoji() {
 }
 
 async function getFiltered(search) {
-  console.time("filter");
-  requestAnimationFrame(() => console.timeEnd("filter"));
   if (!search) return groups;
   // running fuzzy sort several times instead of just once probably isnt good for performance
   const filtered = (await groups).map(i => fuzzysort
+    // .go(search, i, { keys: ["label", "shortcode"], threshold: -1000 })
     .go(search, i, { key: "label", threshold: -1000 })
     .map(j => j.obj)
-    .sort((a, b) => a.hexcode > b.hexcode ? 1 : -1)
-    .sort((a, b) => a.order > b.order ? 1 : -1)
+    .sort((a, b) => (a.hexcode - b.hexcode) || (a.order > b.order))
   );
   return filtered;
 }
@@ -78,7 +76,7 @@ async function handleSubmit(value, e) {
 .selector {
   display: grid;
   grid-template-columns: 48px auto;
-  grid-template-rows: 64px auto 48px;
+  grid-template-rows: auto auto 48px;
   height: 420px;
   width: 420px;
   border-radius: 8px;
@@ -89,6 +87,7 @@ async function handleSubmit(value, e) {
 
 .header {
   grid-column: 1/3;
+  display: flex;
   background: var(--bg-rooms-members);
   box-shadow: var(--shadow-header);
   z-index: 1;
@@ -168,13 +167,17 @@ async function handleSubmit(value, e) {
 </style>
 <div class="selector" on:click|stopPropagation>
   <div class="header">
-    <Search
-      placeholder="shift for multiple, ctrl for raw text"
-      size="input"
-      bind:value={search}
-      submitted={handleSubmit}
-      escaped={() => selected(null, false)}
-    />
+    <div style="flex: 1">
+      <Search
+        placeholder="shift for multiple, ctrl for raw text"
+        size="input"
+        bind:value={search}
+        submitted={handleSubmit}
+        escaped={() => selected(null, false)}
+      />
+    </div>
+    <!-- TODO: (low priority) skin tone -->
+    <div style="font-size: 24px; height: 28px; width: 28px; margin-left: 8px; cursor: pointer" hidden>{@html getTwemoji("👏")}</div>
   </div>
   <div class="categories scroll">
     <div class="icon">history</div>

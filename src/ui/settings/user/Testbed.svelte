@@ -52,49 +52,34 @@ function thing(node) {
   width: 48px;
 }
 
-.group input {
-  display: none;
-}
-
-.config {
-  display: flex;
-  align-items: center;
+.threeway {
+  display: inline-flex;
   border: solid var(--bg-spaces) 1px;
+  background: var(--bg-rooms-members);
   border-radius: 4px;
-  padding: 8px;
-  margin-top: 8px;
-  padding-right: 0;
+  overflow: hidden;
 }
 
-.group {
-  display: flex;
-}
-
-.group label {
-  display: block;
-  border-left: solid var(--bg-spaces) 1px;
-}
-
-.group label > div {
-  position: relative;
-  height: 28px;
-  width: 28px;
-  margin: 0 8px;
-  border: solid var(--fg-dim) 1px;
-  border-radius: 50%;
-  margin-right: 8px;
-}
-
-.group label > div .icon {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: var(--color-green);
+.threeway .icon {
+  padding: 4px;
   font-size: 18px;
+  height: 26px;
+  width: 32px;
+}
+
+.threeway .icon:hover {
+  background: var(--mod-lighten);
 }
 </style>
 <p>testbed for random stuff</p>
+<div style="min-height: 1em"></div>
+<div>
+  <div class="threeway">
+    <button class="icon" style="color: var(--color-red)">close</button>
+    <button class="icon" style="color: var(--fg-interactive)">remove</button>
+    <button class="icon" style="color: var(--color-green)">check</button>
+  </div>
+</div>
 <div style="min-height: 1em"></div>
 <div>
   tab: {tab}
@@ -121,32 +106,6 @@ function thing(node) {
     </div>
   </div>
 </div>
-<div style="min-height: 1em"></div>
-{#each ["foo", "bar", "baz"] as item}
-<div class="config">
-  <div style="flex: 1">messages continging @{item}</div>
-  <div style="display: flex">
-    <div class="group">
-      <label>
-        <input type="radio" name="foo" />
-        <div>
-          <div class="icon">check</div>
-        <div>
-      </label>
-      <label>
-        <input type="radio" name="foo" />
-        <div>
-        <div>
-      </label>
-      <label>
-        <input type="radio" name="foo" />
-        <div>
-        <div>
-      </label>
-    </div>
-  </div>
-</div>
-{/each}
 <div style="min-height: 1em"></div>
 <Markdown bind:content={input} />
 <div style="min-height: 1em"></div>

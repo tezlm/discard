@@ -2,12 +2,15 @@
 import Avatar from "../atoms/Avatar.svelte";
 import { memberContext, roomContext } from "../../util/context";
 import { fastclick } from "../../util/use";
-import { Room } from "discount";
+import { Room, Member } from "discount";
 export let member;
 let { popup, popout, context } = state;
 $: isRoomPing = member instanceof Room;
 
+// RENAME: Member instead of User
+
 function openMenu(e) {
+  if (!isRoomPing || !member instanceof Member) return;
   $context = { items: isRoomPing ? roomContext(member) : memberContext(member), x: e.clientX, y: e.clientY };
 }
 </script>
@@ -41,6 +44,8 @@ function openMenu(e) {
   font-weight: 500;
   font-family: var(--font-display);
   color: var(--fg-notice);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .popout .id {

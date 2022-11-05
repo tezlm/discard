@@ -33,7 +33,7 @@ function select(option) {
 }
 
 .options {
-  position: fixed;
+  position: absolute;
   border-radius: 3px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;

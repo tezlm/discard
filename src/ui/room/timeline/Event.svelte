@@ -137,7 +137,7 @@ function showReactionPicker(overrideRect) {
             event_id: event.id,
           },
         };
-				event.room.send("m.reaction", reaction);
+				event.room.sendState("m.reaction", reaction);
       }
       if (!keepOpen) $popout = {}
     },

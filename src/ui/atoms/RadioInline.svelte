@@ -1,7 +1,8 @@
 <script>
 export let group;
 export let value;
-export let disabled;
+export let disabled = false;
+export let clicked;
 </script>
 <style>
 .radio input {
@@ -14,7 +15,6 @@ export let disabled;
   justify-content: center;
   height: 24px;
   width: 24px;
-  margin-right: 16px;
   border: solid var(--fg-interactive) 1px;
   border-radius: 50%;
   cursor: pointer;
@@ -32,10 +32,10 @@ export let disabled;
 }
 </style>
 <label class="radio">
-  <input type="radio" bind:group {value} {disabled} />
+  <input type="radio" bind:group {value} {disabled} on:input={() => clicked?.(value)} />
   <div class="dot" class:selected={group === value}>
     {#if group === value}
     <div class="icon">check</div>
     {/if}
-  </div>
+  </div>  
 </label>

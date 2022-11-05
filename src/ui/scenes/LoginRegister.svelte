@@ -16,8 +16,8 @@ async function handleSubmit() {
 
   loading = true;
   actions.client.login({ localpart, homeserver, password })
-    .then(() => loading = false)
-    .catch(err => error = err);
+    .catch(err => error = err)
+    .finally(() => loading = false)
 }
 </script>
 <style>

@@ -293,7 +293,7 @@ export function memberContext(member: Member): Array<ContextMenuOption> {
 export function homeContext() {
   const goto = (where: string) => () => actions.to(`/user-settings/${where}`);
 	return [
-	  { label: "Mark As Read",  clicked: markEverythingRead, icon: "done" },
+	  { label: "Mark As Read",  clicked: markEverythingRead, icon: "done_all" },
 	  { label: "Create Room",  clicked: () => state.popup.set({ id: "create", type: "room" }),  icon: "tag" },
 	  { label: "Create Space", clicked: () => state.popup.set({ id: "create", type: "space" }), icon: "folder" },
 	  { label: "Join",         clicked: () => state.popup.set({ id: "join" }), icon: "add" },

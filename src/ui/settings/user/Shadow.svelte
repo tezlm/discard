@@ -31,10 +31,11 @@ h1 {
   <h1>Shadow Settings</h1>
 </div>
 {#each [
-  { id: "shadowdev",  name: "dev mode",         desc: "Shows context menu options useful for matrix/discard development" },
-  { id: "shadowmod",  name: "extra moderation", desc: "Enables extra options somewhat useful for moderation" },
-  { id: "shadowtest", name: "testbed",          desc: "the pit" },
-  { id: "nitor",      name: "nitor",            desc: "Unleash more fun with nitor. Enable nitor to upgrade your emoji, personalize your profile, share bigger files, and so much more." },
+  { id: "shadowsettings", name: "shadow settings",  desc: "Shows these settings! This is for work in progress or development stuff." },
+  { id: "shadowdev",      name: "dev mode",         desc: "Shows context menu options useful for matrix/discard development" },
+  { id: "shadowmod",      name: "extra moderation", desc: "Enables extra options somewhat useful for moderation" },
+  { id: "shadowtest",     name: "testbed",          desc: "the pit" },
+  { id: "nitor",          name: "nitor",            desc: "Unleash more fun with nitor. Enable nitor to upgrade your emoji, personalize your profile, share bigger files, and so much more." },
 ] as option}
   <div class="item">
     <div>

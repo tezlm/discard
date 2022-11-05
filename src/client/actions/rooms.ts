@@ -9,6 +9,7 @@ export function handleAccount(_: void, event: { type: string, content: any }) {
 
 export function handleJoin(room: Room) {
   state.rooms.set(room.id, room);
+  if (state.client.status !== "starting") actions.spaces.update();
 }
 
 export function handleState(_: void) {

@@ -45,8 +45,10 @@ let { settings, popup } = state;
   object-fit: contain;
 }
 </style>
-<p>TODO: use pretty much the same ui as discord</p>
-<p>there are multiple packs, how to do it?</p>
+<p>TODO: upload/edit/rename/delete packs</p>
+<p>TODO: upload/edit/rename/delete emoji and stickers</p>
+<p>TODO: collapsable packs</p>
+<p>TODO: use packs globally</p>
 <br />
 {#each room.getAllState("im.ponies.room_emotes").filter(i => i.content.pack) as event}
 {@const pack = event.content.pack}
@@ -67,7 +69,7 @@ let { settings, popup } = state;
   <table class="emojis">
     <tr>
       <th class="title">Image</th>
-      <th class="title">Shortcode</th>
+      <th class="title" style="width: 100%">Shortcode</th>
     </tr>
   {#each Object.entries(event.content.images ?? {}) as [shortcode, emoji]}
     <tr>

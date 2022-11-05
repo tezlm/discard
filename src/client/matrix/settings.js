@@ -7,9 +7,10 @@ defaultSettings.set("showmemberlist", true);
 defaultSettings.set("namecolors", "always");
 defaultSettings.set("reducemotion", false);
 defaultSettings.set("showjoinleave", "always");
-defaultSettings.set("shownickavatar", "always");
+defaultSettings.set("shownickavatar", "private");
 defaultSettings.set("showmoderation", "always");
-defaultSettings.set("showunknown", "always");
+defaultSettings.set("showmisc", "always");
+defaultSettings.set("showunknown", "never");
 
 // text box
 defaultSettings.set("sendtyping", true);

@@ -9,7 +9,7 @@ $: [added, removed] = getState(event);
 
 function getState(event) {
   const pinned = event.content.pinned;
-  const prev = event.unsigned.prev_content?.pinned ?? [];
+  const prev = event.unsigned?.prev_content?.pinned ?? [];
   const added = pinned.filter(i => !prev.includes(i));
   const removed = prev.filter(i => !pinned.includes(i));
   return [added, removed];

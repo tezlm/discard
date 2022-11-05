@@ -1,6 +1,8 @@
 # wishlist
 
-varying levels of difficulty
+each checkbox requires varying levels of difficulty. an ` ` means
+(essentially) not started, `-` means there is a working basic
+implementation, and `x` means it is done
 
 - [ ] account management
   - [x] login/logout
@@ -29,8 +31,12 @@ varying levels of difficulty
   - [ ] lazy load full member list
 - [ ] settings
   - [x] make them save
+  - [ ] edit basic user info
   - [ ] appearance/theme settings
-  - [ ] room settings
+  - [x] edit basic room info
+  - [x] edit permissions
+  - [ ] join rules settings
+  - [ ] esettings
 - [ ] notifications
   - [ ] show # of unread messages(?)
   - [ ] mentions list/inbox
@@ -50,10 +56,11 @@ varying levels of difficulty
 - [ ] rooms
   - [x] create room
   - [x] leave room
-  - [ ] join room
-  - [x] room invites
+  - [x] join room
+  - [ ] knock room
   - [x] invite people
-- [ ] moderation
+  - [ ] search room directory
+- [x] moderation
   - [x] ban/kick/unban people
   - [x] change power levels
 - [ ] timeline
@@ -62,14 +69,14 @@ varying levels of difficulty
   - [ ] jump to latest
   - [ ] link embeds
   - [ ] room embeds
-  - [ ] show m.room.member change type + reason
+  - [-] show m.room.member change type + reason
   - [-] show other state events (m.*)
   - [ ] (future) use extensible events
-- [ ] qol/misc
+- qol/misc
   - [x] user colors
   - [x] view members by memberships
   - [x] view homeserver stats
-- [-] context menus
+- [x] context menus
 - [ ] search messages
   - [ ] filtering
   - [ ] sorting(?)
@@ -77,12 +84,13 @@ varying levels of difficulty
   - [x] show dms differently
   - [ ] dm-only list
   - [ ] start dms
-- [ ] router (change title/url)
+- [x] router (change title/url)
 - [ ] persist
   - [ ] save state/accountdata
   - [ ] save e2ee keys
   - [ ] save timeline
-  - [ ] resume after disconnect
+  - [ ] resume after restart
+  - [-] resume after disconnect
 - [ ] e2ee (VERY DIFFICULT)
   - [ ] basic implementation
   - [ ] attachments
@@ -91,6 +99,7 @@ varying levels of difficulty
   - [ ] verification
   - [ ] key backup
 - [x] nitor
+  - [ ] is funny
 
 ## extra stuff
 
@@ -98,13 +107,24 @@ after the base stuff is done, i might start looking at other features
 
 - [ ] stickers/saved images
 - [ ] custom emoji
+  - [x] view
+  - [ ] upload/edit/delete packs
+  - [ ] upload/edit/delete emoji
 - [ ] subscribe to policy lists
 - [ ] display for other room types
   - [ ] m.policy
   - [ ] long form
   - [ ] forum
   - [-] media
-  - [ ] documents  
+  - [ ] documents
 - [ ] threads
-- [ ] voice channels
+  - [ ] start thread
+  - [ ] view in sidebar
+  - [ ] view in sub room
+  - [ ] join and leave threads
+- [ ] voip
+  - [ ] 1:1 calls
+  - [ ] voice channels/rooms
+  - [ ] video (camera)
+  - [ ] video (screen share)
 - [ ] index and search encrypted room events
