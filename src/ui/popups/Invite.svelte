@@ -87,7 +87,7 @@ async function invite(userId) {
 .content {
   display: flex;
   flex-direction: column;
-  width: 420px;
+  width: 440px;
   min-height: 200px;
   border-radius: 5px;
   background: var(--bg-content);
@@ -110,6 +110,7 @@ async function invite(userId) {
 
 .userlist .user {
   display: flex;
+  align-items: center;
   padding: 8px 0;
 }
 

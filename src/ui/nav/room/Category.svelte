@@ -4,6 +4,7 @@ import Room from "./Room.svelte";
 // import Room from "./RoomTall.svelte";
 import Category from "./Category.svelte";
 import { roomContext } from "../../../util/context";
+import { getLastMessage } from "../../../util/timeline";
 export let room;
 let expanded = true;
 let { pushRules } = state;
@@ -14,6 +15,16 @@ function isMuted(room) {
 	if (!rule) return false;
 	return rule.actions.includes("dont_notify");
 }
+
+
+function isRead(room) {
+	if (isMuted(room)) return true;
+	
+	const tl = room.events.live;
+	if (!tl) return room.notifications.unread === 0;
+	return getLastMessage(tl, room.readEvent) === getLastMessage(tl);
+}
+
 // TODO: persist `expanded`
 // TODO: subspace-specific menu?
 </script>
@@ -65,12 +76,11 @@ function isMuted(room) {
   <div style="width: 14px"></div>
   {/if}
 </div>
-{#if expanded}
 {#each rooms as room (room.id)}
 {#if room.type === "m.space"}
 <!-- <Category {room} /> -->
-{:else}
+<!-- {:else if expanded || !isRead(room)} -->
+{:else if expanded}
 <Room {room} muted={isMuted(room)} />
 {/if}
 {/each}
-{/if}

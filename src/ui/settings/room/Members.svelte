@@ -9,7 +9,6 @@ export let room, membership;
 
 let { users, popup, context } = state;
 let { power } = room;
-let resets = {};
 
 let allMembers = false;
 let members = false;
@@ -53,7 +52,7 @@ async function getMember(member) {
  |[|,\_,,)
  ((J(=_*/
 
-function changePower(member, pl) {
+function changePower(member, pl, undo) {
   if (pl === member.power) return;
   if (pl === power.me) {
     $popup = {
@@ -63,7 +62,7 @@ function changePower(member, pl) {
       button: "Promote!",
       danger: true,
       clicked: () => member.setPower(pl),
-      cancel: () => resets[member.id]?.(),
+      cancel: () => undo(),
     };
   } else if (member.id === state.userId) {
     $popup = {
@@ -73,7 +72,7 @@ function changePower(member, pl) {
       button: "Demote!",
       danger: true,
       clicked: () => member.setPower(pl),
-      cancel: () => resets[member.id]?.(),
+      cancel: () => undo(),
     };
   } else {
     member.setPower(pl);
@@ -129,19 +128,15 @@ h1 {
 }
 </style>
 {#if room}
+  <div class="header">
+    <h1>{members ? members.length || "No" : "Loading"} {filter ? "Filtered " : ""} {getTitle(membership)}s</h1>
+    <div style:width="220px"><Search placeholder="Filter {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
+  </div>
   {#if members}
     {#await Promise.all(members.map(i => getMember(i)))}
-      <div class="header">
-        <h1>Fetching {getTitle(membership)}s</h1>
-        <div style:width="220px"><Search width={220} placeholder="Filter {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
-      </div>
-      <i style="margin-bottom: 16px">this may take a while - i should redo this!</i>
+      <i style="margin-bottom: 16px">this may take a while</i>
       <Loading color="var(--fg-muted)" />
     {:then memberData}
-      <div class="header">
-        <h1>{members ? members.length || "No" : "Loading"} {filter ? "Filtered " : ""}{getTitle(membership)}{members.length !== 1 ? "s" : ""}</h1>
-        <div style:width="220px"><Search width={220} placeholder="Filter {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
-      </div>
       {#each memberData as data, i (members[i].id)}
         {@const member = members[i]}
         <div class="member" on:contextmenu|preventDefault|stopPropagation={e => $context = { items: memberContext(member), x: e.clientX, y: e.clientY }}>
@@ -164,8 +159,7 @@ h1 {
             value={member.power}
             disabled={(power.me < power.forState("m.room.power_levels") || (power.me <= member.power && member.id !== state.userId))}
             max={power.me}
-            changed={(level) => changePower(member, level)}
-            bind:reset={resets[member.id]}
+            changed={(level, undo) => changePower(member, level, undo)}
           />
           {/if}
           <div class="icon menu" on:click|stopPropagation={e => $context = { items: memberContext(member), x: e.clientX, y: e.clientY }}>more_vert</div>
@@ -175,10 +169,6 @@ h1 {
       {/each}
     {/await}
   {:else}
-    <div class="header">
-      <h1>Loading {getTitle(membership)}s</h1>
-      <div style:width="220px"><Search width={220} placeholder="Filter {getTitle(membership).toLowerCase()}s" bind:value={filter} /></div>
-    </div>
     <Loading color="var(--fg-muted)" />
   {/if}
 {:else}

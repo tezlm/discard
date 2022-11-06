@@ -1,42 +1,36 @@
 <script lang="ts">
-// this code is quite hacky and should be cleaned up someday...
-
 export let disabled = false;
 export let value = 0;
 export let max = 100;
-export let changed = (_: number) => {};
-let newVal = value;
+export let changed = (_power: number, _undo: () => void) => {};
+const originalValue = value;
 let focus = false;
 let inputEl: HTMLInputElement;
 
 function setPower(level: number) {
-  queueMicrotask(() => newVal = level);
-  changed(level);
+  value = level;
+  changed(level, () => value = originalValue);
 }
 
 function handleKeyDown(e: KeyboardEvent) {
   if (e.key === "Escape") {
-    newVal = value;
     focus = false;
+    value = originalValue;
     inputEl.blur();
   } else if (e.key === "Enter") {
-    if (newVal !== value) setPower(newVal);
     focus = false;
+    changed(value, () => value = originalValue);
     inputEl.blur();
   }
 }
 
 function handleBlur() {
-  if (newVal !== value) setPower(newVal);
+  if (value !== originalValue) changed(value, () => value = originalValue);
   focus = false;
 }
 
 function handleFocus() {
   focus = true;
-}
-
-export function reset() {
-  newVal = value;
 }
 </script>
 <style>
@@ -123,7 +117,7 @@ input::-webkit-inner-spin-button {
       {disabled}
       {max}
       type="number"
-      bind:value={newVal}
+      bind:value
       bind:this={inputEl}
       on:focus={handleFocus}
       on:blur={handleBlur}
@@ -131,9 +125,9 @@ input::-webkit-inner-spin-button {
     >
     <div class="options">
       <hr />
-      {#if max >= 0}  <div on:mousedown={() => setPower(0)}    class:selected={newVal === 0}>User - 0</div> {/if}
-      {#if max >= 50} <div on:mousedown={() => setPower(50)}   class:selected={newVal === 50}>Moderator - 50</div> {/if}
-      {#if max >= 100}<div on:mousedown={() => setPower(100)}  class:selected={newVal === 100}>Admin - 100</div> {/if}
+      {#if max >= 0}  <div on:mousedown={() => setPower(0)}    class:selected={value === 0}>User - 0</div> {/if}
+      {#if max >= 50} <div on:mousedown={() => setPower(50)}   class:selected={value === 50}>Moderator - 50</div> {/if}
+      {#if max >= 100}<div on:mousedown={() => setPower(100)}  class:selected={value === 100}>Admin - 100</div> {/if}
     </div>
   </div>
 </div>

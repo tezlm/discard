@@ -4,12 +4,16 @@ export let placeholder = "Search";
 export let autofocus = false;
 export let focus = false;
 export let size: "small" | "input" | "tall" = "small";
-export let submitted: (_: string, _1: KeyboardEvent) => void;
+export let submitted: (_: string, _1: KeyboardEvent) => void | null = null;
 export let escaped: ((_: KeyboardEvent) => void) | null = null;
 
 function handleKeyDown(e: KeyboardEvent) {
   if (e.key === "Enter") {
-    submitted?.(value, e);
+    if (submitted) {
+      submitted(value, e);
+    } else {
+      return;
+    }
   } else if (e.key === "Escape") {
     if (value) {
       value = "";

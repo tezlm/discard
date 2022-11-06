@@ -6,11 +6,7 @@ export let save;
 $: perms = room.power;
 
 let modified = new Map();
-
-// TODO: preserve permissions when someone else updates them
-const updateRoom = () => { modified.clear(); modified = modified; room = room };
-state.client.on("state", updateRoom);
-onDestroy(() => state.client.off("state", updateRoom));
+let items = getItems(room);
 
 const info = {
   message:  { name: "Send Messages",   description: "The minimum power required to send messages." },
@@ -33,7 +29,7 @@ const info = {
 };
 
 function getItems(room) {
-  const power = room.power;
+  const { power } = room;
   const items = [];
   if (room.type === "m.space") {
     items.push(
@@ -84,12 +80,16 @@ function handleChange(item, power) {
 }
 
 export function reset() {
+  items = getItems(room);
   modified.clear();
   modified = modified;
-  room = room;
 }
 
 reset();
+
+// TODO: preserve permissions when someone else updates them
+state.client.on("state", reset);
+onDestroy(() => state.client.off("state", reset));
 
 $: if (modified.size) {
   save = async () => {
@@ -162,7 +162,7 @@ $: if (modified.size) {
 }
 </style>
 {#if perms}
-{#each getItems(room) as item}
+{#each items as item}
 {#if item.category}
   <h3 class="category">{item.category}</h3>
 {:else}
