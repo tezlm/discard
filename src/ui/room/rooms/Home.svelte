@@ -4,11 +4,13 @@ import Button from "../../atoms/Button.svelte";
 import Tooltip from "../../atoms/Tooltip.svelte";
 
 export let selectedTab;
-let invites = state.invites;
+let { invites } = state;
 
 function getInviteSender(invite) {  
   const myMemberEvent = invite.state.find(i => i.type === "m.room.member" && i.state_key === state.userId);
-  return invite.state.find(i => i.type === "m.room.member" && i.state_key === myMemberEvent.sender);
+  const memberEvent = invite.state.find(i => i.type === "m.room.member" && i.state_key === myMemberEvent.sender)?.content;
+  if (!memberEvent) return { id: myMemberEvent.sender, name: myMemberEvent.sender };
+  return { id: myMemberEvent.sender, name: myMemberEvent.content.displayname ?? myMemberEvent.sender };
 }
 
 function join(invite) {
@@ -205,7 +207,7 @@ function join(invite) {
     <Avatar user={{ avatar: invite.avatar, id: invite.id }} size={36} />
     <div class="info">
       <div>{invite.name}{#if invite.topic}<span class="dim">- {invite.topic}</span>{/if}</div>
-      <div class="small"><span class="dim">invited by </span>{sender.content.displayname || sender.state_key} <span class="dim">({sender.state_key})</span></div>
+      <div class="small"><span class="dim">invited by </span>{sender.name} <span class="dim">({sender.id})</span></div>
     </div>
     <Tooltip tip="Accept">
       <button class="icon accept" on:click={() => join(invite)}>check</button>

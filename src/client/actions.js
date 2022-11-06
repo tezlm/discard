@@ -13,7 +13,18 @@ export default {
   slice,
   spaces,
   to(route) {
-    state.pathRef = route;
-    state.path.set(route);
+    if (route === null) {
+      const { focusedRoomId: roomId, focusedSpaceId: spaceId } = state;
+      if (roomId) {
+    		actions.to(`/room/${roomId}`);
+      } else if (spaceId) {
+    		actions.to(`/space/${spaceId}`);
+      } else {
+        actions.to("/home");
+      }
+    } else {
+      state.pathRef = route;
+      state.path.set(route);
+    }
   }
 };

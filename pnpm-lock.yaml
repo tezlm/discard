@@ -15,12 +15,12 @@ specifiers:
   discount: link:../discount
   emojibase: ^6.1.0
   emojibase-data: ^7.0.1
-  fuzzysort: ^2.0.2
+  fuzzysort: ^2.0.3
   highlight.js: ^11.6.0
-  idb: ^7.1.0
+  idb: ^7.1.1
   lexical: ^0.5.0
   linkifyjs: ^3.0.5
-  marked: ^4.2.1
+  marked: ^4.2.2
   sanitize-html: ^2.7.3
   simple-markdown: ^0.7.3
   svelte: ^3.52.0
@@ -40,12 +40,12 @@ dependencies:
   discount: link:../discount
   emojibase: 6.1.0
   emojibase-data: 7.0.1_emojibase@6.1.0
-  fuzzysort: 2.0.2
+  fuzzysort: 2.0.3
   highlight.js: 11.6.0
-  idb: 7.1.0
+  idb: 7.1.1
   lexical: 0.5.0
   linkifyjs: 3.0.5
-  marked: 4.2.1
+  marked: 4.2.2
   sanitize-html: 2.7.3
   simple-markdown: 0.7.3
   twemoji: 14.0.2
@@ -222,8 +222,8 @@ packages:
     resolution: {integrity: sha512-SnHmG9wN1UVmagJOnyo/qkk0Z7gejYxOYYmaAwr5u2yFYfsupN3sg10kyzN8Hep/2zbHxCnsumxOoRIRMBwKCg==}
     dev: true
 
-  /@types/react/18.0.24:
-    resolution: {integrity: sha512-wRJWT6ouziGUy+9uX0aW4YOJxAY0bG6/AOk5AW5QSvZqI7dk6VBIbXvcVgIw/W5Jrl24f77df98GEKTJGOLx7Q==}
+  /@types/react/18.0.25:
+    resolution: {integrity: sha512-xD6c0KDT4m7n9uD4ZHi02lzskaiqcBxf4zi+tXZY98a04wvc0hi/TcCPC2FOESZi51Nd7tlUeOJY8RofL799/g==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
@@ -575,8 +575,8 @@ packages:
     resolution: {integrity: sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==}
     dev: true
 
-  /fuzzysort/2.0.2:
-    resolution: {integrity: sha512-0uB+0kkp89UW1mfB7Z9l0dR6w21CswIoHTPmhi1f/ayRvGeZ1PCOyhRlAbbdPS/MKcQIYT3GAPDtkWaFcPAdzg==}
+  /fuzzysort/2.0.3:
+    resolution: {integrity: sha512-ridbZloOhbVCom7MDF//Blt4N6d6L4uWNEiBuYBx4Qr+G55A9qItgsAqrRZGgs8q+mFpyBbwi5FL+FWUQPJCew==}
     dev: false
 
   /glob/7.2.3:
@@ -614,8 +614,8 @@ packages:
       entities: 2.2.0
     dev: false
 
-  /idb/7.1.0:
-    resolution: {integrity: sha512-Wsk07aAxDsntgYJY4h0knZJuTxM73eQ4reRAO+Z1liOh8eMCJ/MoDS8fCui1vGT9mnjtl1sOu3I2i/W1swPYZg==}
+  /idb/7.1.1:
+    resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
     dev: false
 
   /inflight/1.0.6:
@@ -673,8 +673,8 @@ packages:
       sourcemap-codec: 1.4.8
     dev: true
 
-  /marked/4.2.1:
-    resolution: {integrity: sha512-VK1/jNtwqDLvPktNpL0Fdg3qoeUZhmRsuiIjPEy/lHwXW4ouLoZfO4XoWd4ClDt+hupV1VLpkZhEovjU0W/kqA==}
+  /marked/4.2.2:
+    resolution: {integrity: sha512-JjBTFTAvuTgANXx82a5vzK9JLSMoV6V3LBVn4Uhdso6t7vXrGx7g1Cd2r6NYSsxrYbQGFCMqBDhFHyK5q2UvcQ==}
     engines: {node: '>= 12'}
     hasBin: true
     dev: false
@@ -796,7 +796,7 @@ packages:
   /simple-markdown/0.7.3:
     resolution: {integrity: sha512-uGXIc13NGpqfPeFJIt/7SHHxd6HekEJYtsdoCM06mEBPL9fQH/pSD7LRM6PZ7CKchpSvxKL4tvwMamqAaNDAyg==}
     dependencies:
-      '@types/react': 18.0.24
+      '@types/react': 18.0.25
     dev: false
 
   /sorcery/0.10.0:

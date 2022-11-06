@@ -141,7 +141,7 @@ function findParent(room: Room): Room | null {
       placeholder="Where do you want to go"
       autofocus
       bind:value={search}
-      submitted={() => focusRoom(results[highlighted].room)}
+      submitted={() => focusRoom(results[highlighted]?.room)}
     />
     <div class="rooms">
       {#each results as result, i (result.room.id)}

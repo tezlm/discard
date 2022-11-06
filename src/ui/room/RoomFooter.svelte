@@ -21,6 +21,12 @@ async function sendMessage(content, theRoom = $room) {
   state.log.debug("send event to " + theRoom.id);
 }
 
+function getRoomName(room) {
+	if (room.name) return room.name;
+	const other = state.dms.get(room.id);
+	return other?.name ?? other?.id;
+}
+
 $: if ($input) textarea?.focus();
 $: if ($room) textarea?.focus();
 $: if ($reply || true) textarea?.focus();
@@ -72,7 +78,7 @@ $: if (!$edit) textarea?.focus();
   {:else}
   <RoomInput
     showUpload={true}
-    placeholder={`Message ${$room.name}`}
+    placeholder={`Message ${getRoomName($room)}`}
     onsend={sendMessage}
     bind:input={$input}
     bind:reply={$reply}

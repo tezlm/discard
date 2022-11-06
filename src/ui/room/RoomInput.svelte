@@ -15,11 +15,20 @@ export let input = "";
 export let textarea;
 let showEmoji = false;
 
-let { focusedRoom: room, slice, popup } = state;
+let { focusedRoom: room, focusedSpace, slice, popup } = state;
 let { edit } = state.roomState;
 
 let isDragging = false;
 let isShift = false;
+
+function markRead(room) {
+  actions.rooms.markRead(room);
+  if (room.type === "m.space") {
+    for (let child of state.spaces.get(room.id)) {
+      markRead(child);
+    }
+  }
+}
 
 function handleKeyDown(e) {
   if (e.altKey) return;
@@ -28,8 +37,10 @@ function handleKeyDown(e) {
       showEmoji = false;
     } else if (reply) {
       reply = null;
+    } else if (e.shiftKey) {
+      markRead($focusedSpace);
     } else {
-      actions.rooms.markRead($room);
+      markRead($room);
     }
     e.preventDefault();
     e.stopImmediatePropagation();

@@ -35,7 +35,7 @@ let { settings, popup } = state;
 .emojis {
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  margin: 16px;
 }
 
 .emoji {
@@ -44,34 +44,45 @@ let { settings, popup } = state;
   background: var(--bg-spaces);
   object-fit: contain;
 }
+
+.pack .icon {
+  font-size: 32px;
+  transition: transform .2s;
+}
+
+.pack[open] .icon {
+  transform: rotate(180deg);
+}
 </style>
 <p>TODO: upload/edit/rename/delete packs</p>
 <p>TODO: upload/edit/rename/delete emoji and stickers</p>
-<p>TODO: collapsable packs</p>
 <p>TODO: use packs globally</p>
 <br />
 {#each room.getAllState("im.ponies.room_emotes").filter(i => i.content.pack) as event}
 {@const pack = event.content.pack}
 {@const name = pack.display_name || event.stateKey}
-<div class="pack">
-  <div class="header">
+{@const items = Object.entries(event.content.images ?? {})}
+<details class="pack">
+  <summary class="header">
     <Avatar link user={{ name, id: `${event.room.id}-${event.stateKey}`, avatar: pack.avatar_url }} size={64} />
     <div style="margin-left: 16px; flex: 1">
       <h3>{name}</h3>
       <p>{#if pack.attribution}{pack.attribution}{:else}<i>no attribution</i>{/if}</p>
+      <span style="color: var(--fg-dim)">{items.length || 0} emoji/sticker{items.length === 1 ? "" : "s"}</span>
     </div>
     {#if $settings.get("shadowdev")}
     <div class="toolbar">
       <Toolbar items={[{ clicked: () => $popup = { id: "dev-event", event }, name: "view source", icon: "terminal" }]} />
     </div>
     {/if}
-  </div>
+    <div class="icon">expand_more</div>
+  </summary>
   <table class="emojis">
     <tr>
       <th class="title">Image</th>
       <th class="title" style="width: 100%">Shortcode</th>
     </tr>
-  {#each Object.entries(event.content.images ?? {}) as [shortcode, emoji]}
+  {#each items as [shortcode, emoji]}
     <tr>
       <td>
         <img class="emoji" src={parseMxc(emoji.url)} alt={shortcode} height=64 />
@@ -84,6 +95,6 @@ let { settings, popup } = state;
     <div>pack has no emoji</div>
   {/each}
   </table>
-</div>
+</details>
 {/each}
 <div style="min-height: 64px"></div>

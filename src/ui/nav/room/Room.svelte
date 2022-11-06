@@ -18,8 +18,9 @@ function getName(room) {
 
 function isRead(room) {
 	if (muted) return true;
-
+	
 	const tl = room.events.live;
+	if (!tl) return room.notifications.unread === 0;
 	return getLastMessage(tl, room.readEvent) === getLastMessage(tl);
 }
 
@@ -84,12 +85,13 @@ function getIcon(room) {
 }
 
 .mentions {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	display: inline-block;
 	height: 16px;
 	min-width: 16px;
+	padding: 0 4px;
 	margin-right: 4px;
+
+	text-align: center;
 
 	background: var(--color-red);
 	color: var(--fg-notice);

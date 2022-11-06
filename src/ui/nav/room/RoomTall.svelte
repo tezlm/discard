@@ -26,6 +26,7 @@ function isRead(room) {
 	if (muted) return true;
 
 	const tl = room.events.live;
+	if (!tl) return room.notifications.unread === 0;
 	return getLastMessage(tl, room.readEvent)	=== getLastMessage(tl);
 }
 
@@ -34,21 +35,6 @@ function openSettings(room) {
 		state.selectedRoom.set(room);
 		actions.to(`/room-settings/${room.id}`);
 	};
-}
-
-function getIcon(room) {
-	const type = room.getState("m.room.create")?.content.type;
-	if (type === "org.eu.celery.room.media") return "image";
-	if (type === "org.eu.celery.room.forum") return "message";
-	if (type === "io.element.video") return "volume_up";
-	if (dms.has(room.id)) return "person";
-	if (!type) {
-		// if (room.power.usersDefault < room.power.forEvent("m.room.message")) {
-		// 	return "campaign";
-		// }
-		return "tag";
-	}
-	return "help";
 }
 </script>
 <style>

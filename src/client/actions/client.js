@@ -1,7 +1,7 @@
 import Api from "../matrix/api.js";
 import Settings from "../matrix/settings.js";
 import PushRules from "../../util/push.js";
-import { Client } from "discount";
+import { Client, persist } from "discount";
 
 const defaultFilter = {
   room: {
@@ -12,6 +12,14 @@ const defaultFilter = {
     types: [],
   },
 };
+
+function getPersister() {
+  if (window.indexedDB) {
+    return new persist.IdbDB("discard");
+  } else {
+    return new persist.MemoryDB();
+  }
+}
 
 // try to fetch the current client
 export async function fetch() {
@@ -29,7 +37,7 @@ export async function fetch() {
   const api = new Api(await resolveWellKnown(homeserver), token);
   const filter = await api.postFilter(userId, defaultFilter);
   api.useFilter(filter);
-  const client = new Client({ baseUrl: api.baseUrl, token, userId });
+  const client = new Client({ baseUrl: api.baseUrl, token, userId, persister: getPersister() });
   state.log.matrix("starting sync");  
   client.start();
   return start(api, client, userId);
@@ -49,7 +57,7 @@ export async function login({ localpart, homeserver, password }) {
     localStorage.setItem("userid", userId);
     localStorage.setItem("deviceid", deviceId);
     localStorage.setItem("token", accessToken);
-    const client = new Client({ baseUrl: api.baseUrl, token: accessToken, userId });
+    const client = new Client({ baseUrl: api.baseUrl, token: accessToken, userId, persister: getPersister() });
     state.log.matrix("starting sync");
     actions.to("/loading");
     client.start();
@@ -84,7 +92,7 @@ function start(api, client, userId) {
   client.on("leave", (room) => actions.rooms.handleLeave(room.id));
 
   client.on("invite", () => state.invites.set(client.invites));
-  client.on("leave-invite", () => state.invites.set(client.invites));
+  client.on("inviteLeave", () => state.invites.set(client.invites));
   client.on("join", () => state.invites.set(client.invites));
     
   client.on("state", (state) => actions.rooms.handleState(state));
@@ -142,13 +150,15 @@ function start(api, client, userId) {
 
 export async function logout() {
   state.log.debug("bye!");
-  state.client.stop();
-  state.api.logout();
-  localStorage.clear();
-  actions.to("/auth");
-  state.popup.set({});
+  state.client.logout();
   state.client = null;
+  localStorage.clear();
+  
+  state.popup.set({});
+  actions.to("/auth");
 
+  actions.rooms.focus(null);
+  actions.spaces.focus(null);
 	state.navRooms.set([]);
 	state.navSpaces.set([]);
   

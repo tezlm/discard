@@ -3,15 +3,18 @@ import Slice from "../matrix/slice.js";
 export function get(room) {
   if (state.roomSlices.has(room.id)) {
     return state.roomSlices.get(room.id);
-  } else {
+  } else if (room.events.live) {
     const slice = new Slice(room.events.live);
     state.roomSlices.set(room.id, slice);
     return slice;
+  } else {
+    return null;
   }
 }
 
 export async function backwards() {
   const slice = actions.slice.get(state.rooms.get(state.focusedRoomId));
+  if (!slice) return false;
   const top = slice.events[0]?.id;
   await slice.backwards(Math.floor(window.innerHeight / 32 * 4));
   const success = top !== slice.events[0]?.id;
@@ -21,6 +24,7 @@ export async function backwards() {
 
 export async function forwards() {
   const slice = actions.slice.get(state.rooms.get(state.focusedRoomId));
+  if (!slice) return false;
   const bottom = slice.events.at(-1)?.id;
   await slice.forwards(Math.floor(window.innerHeight / 32 * 4));
   const success = bottom !== slice.events.at(-1)?.id;

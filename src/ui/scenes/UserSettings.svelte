@@ -41,7 +41,7 @@ $: views = [
   { id: "/info", split: true, label: "Info" },
   ...testbed,
   { id: "changelog", view: Changelog,     name: "Changelog",            icon: "assignment" },
-  { id: "help",      view: Help,          name: "Help",                 icon: "help" },
+  { id: "help",      view: Help,          name: "Help",                 icon: "help", raw: true },
   { id: "version",   view: Version,       name: "Credits",              icon: "groups" },
   { id: "/etc", split: true },
   { id: "logout", name: "Log Out", color: "var(--color-red)", clicked: logout, icon: "logout" },

@@ -173,6 +173,7 @@ $: if (showPins) {
 	display: inline-block;
 	height: 16px;
 	min-width: 16px;
+	padding: 0 4px;
   margin-left: 4px;
   text-align: center;
 
@@ -204,8 +205,9 @@ $: if (showPins) {
   {:else if !room && !$space}
   <div class="spacer"></div>
   <div style="flex:1;display:flex">
-    <div class="tab-wrap" class:selected={selectedTab === "home"}    on:click={() => actions.to("/home")}><div class="tab">Dashboard</div></div>
-    <div class="tab-wrap" class:selected={selectedTab === "invites"} on:click={() => actions.to("/invites")}><div class="tab">Invites {#if $invites.size}<span class="ping">{$invites.size}</span>{/if}</div></div>
+    <div class="tab-wrap" class:selected={selectedTab === "home"}     on:click={() => actions.to("/home")}><div class="tab">Dashboard</div></div>
+    <div class="tab-wrap" class:selected={selectedTab === "invites"}  on:click={() => actions.to("/invites")}><div class="tab">Invites {#if $invites.size}<span class="ping">{$invites.size}</span>{/if}</div></div>
+    <!-- <div class="tab-wrap" class:selected={selectedTab === "knocking"} on:click={() => actions.to("/knocking")}><div class="tab">Knocking</div></div> -->
   </div>
   {:else}
   <div style:flex={1}></div>

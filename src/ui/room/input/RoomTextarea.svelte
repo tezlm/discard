@@ -1,4 +1,5 @@
 <script>
+import { tick } from "svelte";
 export let oninput = () => {};
 export let onfile = () => {};
 export let textarea;
@@ -7,6 +8,38 @@ export let input = "";
 $: rows = Math.min(input.split("\n").length, 10);
 
 function handleKeyDown(e) {
+  if (e.ctrlKey) {
+    async function wrapInsert(chars) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const before = input.slice(0, start);
+      const between = input.slice(start, end);
+      const after = input.slice(end);
+      
+      if (before.slice(-chars.length) === chars && after.slice(0, chars.length) === chars) {
+        // unwrap the characters if they already exist
+        input = before.slice(0, -chars.length) + between + after.slice(chars.length);
+        await tick();
+        textarea.selectionStart = before.length - chars.length;
+        textarea.selectionEnd = before.length - chars.length + between.length;
+      } else {
+        // otherwise, wrap/instert the characters
+        input = before + chars + between + chars + after;
+        await tick();
+        textarea.selectionStart = before.length + chars.length;
+        textarea.selectionEnd = before.length + chars.length + between.length;
+      }
+    }
+    
+    switch (e.key) {
+      case "b": return wrapInsert("**");
+      case "i": return wrapInsert("*");
+      // case "u": return wrapInsert("__");
+    }
+  }
   if (e.key !== "Enter" || e.shiftKey) return;
   e.preventDefault();
   e.stopImmediatePropagation();

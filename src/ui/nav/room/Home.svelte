@@ -1,6 +1,5 @@
 <script>
 import Item from "./Item.svelte";
-import Tooltip from "../../atoms/Tooltip.svelte";
 export let room;
 let { focusedRoom, focusedSpace, invites } = state;
 
@@ -29,13 +28,14 @@ function focus() {
 }
 
 .mentions {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	display: inline-block;
 	height: 16px;
 	min-width: 16px;
+	padding: 0 4px;
 	margin-right: 4px;
 	margin-left: auto;
+
+	text-align: center;
 
 	background: var(--color-red);
 	color: var(--fg-notice);
@@ -47,5 +47,5 @@ function focus() {
 <Item focused={!$focusedRoom?.id} clicked={focus}>
 	<div class="icon">home</div>
 	<div class="name">Home</div>
-	{#if $invites.size}<div class="mentions">{$invites.size}</div>{/if}
+	{#if !$focusedSpace && $invites.size}<div class="mentions">{$invites.size}</div>{/if}
 </Item>

@@ -2,7 +2,7 @@ import type { Event } from "discount";
 import type { Room } from "discount";
 
 export function reslice(room: Room, force = false) {
-  if (!room.events.live) throw "this shouldn't happen";
+  if (!room.events.live) return;
   
   const slice = actions.slice.get(room);
   const atEnd = slice.atEnd();

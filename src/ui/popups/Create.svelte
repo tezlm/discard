@@ -102,12 +102,10 @@ async function create() {
     <Input placeholder="awesome-{current.type}" bind:value={config.name} submitted={create} autofocus />
     <h3 class="title" style="margin-top: 1em">{capitalize(current.type)} Topic </h3>
     <Textarea placeholder="optional topic for your {current.type}" bind:value={config.topic} />
-    <div style="border: solid var(--event-ping) 2px; background: var(--event-ping-bg); border-radius: 4px; padding: 8px; margin: 1em 0 8px;">
-    everything below this is not implemented currently
-    </div>
     <h3 class="title" style="margin-top: 1em">Room visibility</h3>
     <Dropdown options={joinRules} bind:selected={config.joinRule} />
     {#if current.type !== "space" && config.joinRule !== "public"}
+    <div class="warning" style="margin-top: 1em; margin-bottom: -4px;">end to end encryption is not implemented yet</div>
     <div style="display:flex; margin-top: 1em; max-width: 440px">
       <div style="flex: 1">
         <div>Enable end to end encryption</div>

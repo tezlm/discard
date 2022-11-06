@@ -13,13 +13,14 @@ function isMuted(room) {
 
 function isRead(room) {
   if (isMuted(room)) return true;
-
+  if (room.type === "m.space") return spaces.get(room.id).every(i => isRead(i));
+  
 	const tl = room.events.live;
-  if (getLastMessage(tl, room.readEvent) === getLastMessage(tl)) {
-    return room.type === "m.space" ? spaces.get(room.id).every(i => isRead(i)) : true;
+	if (!tl) {
+    return room.notifications.unread === 0;
   } else {
-    return false;
-  }  
+    return getLastMessage(tl, room.readEvent) === getLastMessage(tl);
+  }
 }
 
 function allRead(spaceId) {

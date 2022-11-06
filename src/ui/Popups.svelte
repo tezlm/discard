@@ -63,6 +63,7 @@ popups.set("unban", Unban);
 popups.set("deleterecent", DeleteRecent);
 
 let current = state.popup;
+let { path } = state; // TEMP
 
 $: if ($current.id) {
   state.log.ui("open popup " + $current.id);
@@ -80,6 +81,16 @@ function handleKeyDown(e) {
       state.popup.set({ id: "switcher" });
     }
     e.preventDefault();
+    return;
+  }
+  
+  // TEMP: show keybinds
+  if (e.code === "Slash" && e.ctrlKey) {
+    if ($path === "/user-settings/help/keybinds") {
+      actions.to(null);
+    } else {
+      actions.to("/user-settings/help/keybinds");
+    }
     return;
   }
 

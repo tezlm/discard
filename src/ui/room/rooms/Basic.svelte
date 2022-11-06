@@ -117,6 +117,7 @@ $: if($edit) {
 
 function isRead(room) {
 	const tl = room.events.live;
+	if (!tl) return room.notifications.unread === 0;
 	return getLastMessage(tl, room.readEvent)	=== getLastMessage(tl);
 }
 </script>

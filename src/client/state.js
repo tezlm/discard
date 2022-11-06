@@ -2,8 +2,6 @@ import { writable } from "svelte/store";
 import Settings from "./matrix/settings";
 import { getDefaultState } from "./actions/rooms";
 
-// TODO: reset state on logout
-
 const settings = new Settings();
 
 const log = {

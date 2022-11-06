@@ -16,6 +16,7 @@ const someFactsIThinkSomePeopleMightFindInteresting = [
   "It's pronounced GIF",
   "What's the difference between crispy and crunchy?",
   "If you have no goal, you can't fail",
+  "Drink some water!",
 ];
 </script>
 <style>

@@ -32,7 +32,7 @@ export function handleLeave(roomId: string) {
 }
 
 export function markRead(room: Room, eventId?: string) {
-	  const lastId = eventId ?? room.events.live.at(-1)?.id;
+	  const lastId = eventId ?? room.events.live?.at(-1)?.id ?? room.TEMPlastEventId;
     if (!lastId) return;
 	  state.log.debug(`mark ${lastId} as read`);
 	  room.accountData.set("m.fully_read", { event_id: lastId });
@@ -70,7 +70,12 @@ export async function focus(room: Room) {
     }
     
     const timeline = room.events.live;
-    if (!timeline.length) await timeline.fetch("backwards");
+    if (!timeline) {
+      await room.events.fetchTimeline();
+    } else if (!timeline.length) {
+      await timeline.fetch("backwards");
+    }
+    
     state.log.debug("set slice for " + room.id);
     state.slice.set(actions.slice.get(room));
     

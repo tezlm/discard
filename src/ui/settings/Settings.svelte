@@ -15,22 +15,16 @@ function handleClick(view) {
   }
 }
 
-let oldPopup;
+let oldPopup, tab;
 $: setTimeout(() => oldPopup = $popup);
-$: tab = $path.split("/")[options?.room ? 4 : 3];
+$: if ($scene.endsWith("-settings")) tab = $path.split("/")[options?.room ? 4 : 3];
 
 function handleKeyDown(e) {
   if (e.key === "Escape" && !oldPopup?.id) close();
 }
 
 function close() {
-  if ($focusedRoom) {
-		actions.to(`/room/${$focusedRoom.id}`);
-  } else if ($focusedSpace) {
-		actions.to(`/space/${$focusedSpace.id}`);
-  } else {
-    actions.to("/home");
-  }
+	actions.to(null);
 }
 </script>
 <style>
