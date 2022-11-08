@@ -2,5 +2,7 @@
   "extends": "@tsconfig/svelte",
   "include": ["src/**/*"],
   "exclude": ["node_modules/*"],
-  "target": "es2022",
+  "compilerOptions": {
+    "target": "es2022",
+  }
 }

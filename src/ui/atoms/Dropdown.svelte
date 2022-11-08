@@ -74,7 +74,7 @@ function select(option) {
   transform: scale(1.2);
 }
 </style>
-<div class="container">
+<div class="container" role="listbox">
   <!-- FIXME: close on blur -->
   <div class="dropdown" class:show on:click={() => show = !show} bind:clientWidth={width}>
     {options.find(i => i[1] === selected)?.[0]}
@@ -83,12 +83,18 @@ function select(option) {
   {#if show}
   <div class="options" style:width={width + "px"}>
   {#each options as option}
-    <div class="option" class:selected={selected === option[1]} on:click={() => select(option[1])}>
+    <div
+      class="option"
+      role="option"
+      aria-selected={selected === option[1] }
+      class:selected={selected === option[1]}
+      on:click={() => select(option[1])}
+    >
       <div class="label">
         {option[0]}
       </div>
       {#if option[1] === selected}
-      <div class="checkmark icon">check_circle</div>
+      <div class="checkmark icon" aria-hidden="true">check_circle</div>
       {/if}
     </div>
   {/each}

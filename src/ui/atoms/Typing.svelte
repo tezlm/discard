@@ -1,5 +1,5 @@
 <script type="ts">
-import type { Room } from "discount";
+import type { Room } from "discount.js";
 export let room: Room | null = null;
 export let users: Array<string>;
 $: [single, plural, typing] = getType(room?.name);

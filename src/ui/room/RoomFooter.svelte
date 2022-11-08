@@ -1,7 +1,7 @@
 <script>
 import Typing from "../atoms/Typing.svelte";
 import RoomInput from "./RoomInput.svelte";
-let textarea;
+let textareaEl;
 let room = state.focusedRoom;
 let { reply, edit, input, typing } = state.roomState;
 
@@ -27,10 +27,10 @@ function getRoomName(room) {
 	return other?.name ?? other?.id;
 }
 
-$: if ($input) textarea?.focus();
-$: if ($room) textarea?.focus();
-$: if ($reply || true) textarea?.focus();
-$: if (!$edit) textarea?.focus();
+$: if ($input) textareaEl?.focus();
+$: if ($room) textareaEl?.focus();
+$: if ($reply || true) textareaEl?.focus();
+$: if (!$edit) textareaEl?.focus();
 </script>
 <style>
 .container {
@@ -77,12 +77,12 @@ $: if (!$edit) textarea?.focus();
   <div class="input disabled"><div class="center">You can't send messages in a e2ee room yet</div></div>
   {:else}
   <RoomInput
-    showUpload={true}
+    showUpload
     placeholder={`Message ${getRoomName($room)}`}
     onsend={sendMessage}
     bind:input={$input}
     bind:reply={$reply}
-    bind:textarea={textarea}
+    bind:textarea={textareaEl}
   />
   {/if}
   <div class="typing">

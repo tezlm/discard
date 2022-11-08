@@ -102,6 +102,14 @@ function matchesRule(cond, event) {
   return true;
 }
 
+// function matchBuiltinRule(ruleId, event) {
+//   switch (ruleId) {
+//     case ".m.rule.master": return true;
+//     case ".m.rule.suppress_notices": return event.;
+//     default: return null;
+//   }
+// }
+
 export default class PushRules {
   constructor(rules) {
     this.setRules(rules);
@@ -119,7 +127,8 @@ export default class PushRules {
   }
   
   parse(event) {
-    if (event.sender.userId === state.userId) return null;
+    if (event.sender.userId === state.userId) return [];
+    const rules = [];
     for (let rule of this.rules) {
       let passed = true;
       for (let cond of rule.conditions) {
@@ -128,8 +137,8 @@ export default class PushRules {
           break;
         }
       }
-      if (passed) return rule;
+      if (passed) rules.push(rule);
     }
-    return null;
+    return rules;
   }
 }

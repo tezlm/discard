@@ -8,12 +8,15 @@ export const confirm = kick;
 export let current;
 let reason;
 
-const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const placeholders = [
   "they disagree with my opinion",
   "i dont like them",
   "they were acting sussy",
 ];
+
+function getPlaceholder() {
+  return placeholders[Math.floor(Math.random() * placeholders.length)];
+}
 
 const scopes = [];
 if (current.room.type === "m.space") {
@@ -43,7 +46,7 @@ function kick() {
     <Dropdown options={scopes} />
     {/if}
     <div class="title">Reason for Kick</div>
-    <Textarea autofocus placeholder={rnd(placeholders)} bind:value={reason} />
+    <Textarea autofocus placeholder={getPlaceholder()} bind:value={reason} />
   </div>
   <div slot="footer">
     <Button type="link" label="Nevermind!" clicked={() => state.popup.set({ ...current, id: null })} />

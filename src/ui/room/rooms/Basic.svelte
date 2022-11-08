@@ -70,7 +70,7 @@ function checkShift(e) {
 }
 
 function getHighlight(event, reply) {
-	if (reply?.eventId === event.id) return "var(--color-blue)";
+	if (reply?.id === event.id) return "var(--color-blue)";
 }
 
 function shouldRender(_type, _settings) {
@@ -81,12 +81,19 @@ function shouldRender(_type, _settings) {
 }
 
 function shouldPing(event) {
-	// FIXME: doesnt parse pings in muted rooms
 	const parsed = $pushRules.parse(event);
-	if (!parsed) return false;
-	const highlight = parsed.actions.find(i => i.set_tweak === "highlight");
-	if (!highlight) return false;
-	return highlight.value !== false;
+	let highlight = false;
+	parsed.reverse();
+	for (let { actions } of parsed) {
+		const hl = actions.find(a => a.set_tweak === "highlight");
+		if (!hl) continue;
+		if (hl.value === false) {
+			highlight = false;
+		} else {
+			highlight = true;
+		}
+	}
+	return highlight;
 }
 
 onDestroy(state.focusedRoom.subscribe(() => {

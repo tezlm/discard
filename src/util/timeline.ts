@@ -1,5 +1,5 @@
-// import type { Timeline } from "discount";
-// import type { Event } from "discount";
+// import type { Timeline } from "discount.js";
+// import type { Event } from "discount.js";
 
 // export function getLastEvent(timeline: Array<Event>): Event | null {
 //   for (let i = timeline.length - 1; i >= 0; i--) {

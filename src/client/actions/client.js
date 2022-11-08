@@ -1,7 +1,7 @@
 import Api from "../matrix/api.js";
 import Settings from "../matrix/settings.js";
 import PushRules from "../../util/push.js";
-import { Client, persist } from "discount";
+import { Client, persist } from "discount.js";
 
 const defaultFilter = {
   room: {

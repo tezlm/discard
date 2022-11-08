@@ -35,4 +35,9 @@ export default defineConfig({
       commit: execSync("git log -n 1 --oneline HEAD").toString().match(/[a-z0-9]+/)[0],
     }
   },
+  server: {
+    hmr: {
+      
+    }
+  }
 });

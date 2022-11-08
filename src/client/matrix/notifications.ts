@@ -1,4 +1,4 @@
-import type { Room } from "discount";
+import type { Room } from "discount.js";
 
 interface Notifications {
   level: "default" | "all" | "mentions" | "muted",

@@ -44,13 +44,12 @@ const showMemberContext = (member) => (e) => {
   display: flex;
   padding: 2px 72px 4px;
   padding-left: 0;
-  position: relative;
-  color: var(--fg-content);
 }
 
 .content {
   color: var(--fg-content);
   flex: 1;
+  max-width: 100%;
 }
 
 .author {

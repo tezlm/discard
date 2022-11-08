@@ -15,6 +15,8 @@ export let input = "";
 export let textarea;
 let showEmoji = false;
 
+export let asdfasdfasdf = false;
+
 let { focusedRoom: room, focusedSpace, slice, popup } = state;
 let { edit } = state.roomState;
 
@@ -144,6 +146,7 @@ async function handleUpload(file) {
     mimetype: file.type,
     size: file.size,
     ...(["m.image", "m.video"].includes(type) ? await getSize(file, type) : {}),
+    filename: file.name,
   };
 
   onsend({
@@ -237,11 +240,16 @@ function slide() {
   border-top-right-radius: 0;
 }
 
+.input.asdfasdfasdf {
+  border-radius: 4px;
+  background: var(--bg-misc);
+}
+
 .upload {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 0 16px;
+  align-items: start;
+  padding: 8px 16px 0;
   font-size: 24px;
   color: var(--fg-light);
   cursor: pointer;
@@ -310,14 +318,14 @@ function slide() {
       onclose={() => reply = null}
     />
   {/if}
-  <div class="input" class:withreply={reply}>
+  <div class="input" class:asdfasdfasdf class:withreply={reply}>
     {#if showUpload}
     <label class="upload">
       <div class="icon">add_circle</div>
       <input type="file" on:change={e => onfile(e.target.files[0])} />
     </label>
     {/if}
-    <RoomTextarea {placeholder} bind:input={input} bind:textarea={textarea} {onfile} {oninput} />
+    <RoomTextarea {placeholder} {asdfasdfasdf} bind:input={input} bind:textarea={textarea} {onfile} {oninput} />
     <!--
     <div class="icon" style="font-size: 28px; color: var(--fg-light)">gif_box</div>
     <div class="icon" style="font-size: 28px; margin-left: 8px; color: var(--fg-light)">sticky_note_2</div>

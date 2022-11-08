@@ -1,6 +1,6 @@
 <script lang="ts">
 export let checked = false;
-export let toggled = () => {};
+export let toggled = (_checked: boolean) => {};
 </script>
 <style>
 .toggle {

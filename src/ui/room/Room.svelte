@@ -13,6 +13,7 @@ import UnknownRoom from './rooms/Unknown.svelte';
 // hmmm...
 import MediaRoom from './rooms/Media.svelte';
 import ForumRoom from './rooms/Forum.svelte';
+import LongformRoom from './rooms/Longform.svelte';
 
 let { focusedRoom: room, focusedSpace: space, navRooms, roomState, slice, settings } = state;
 let { search } = roomState;
@@ -56,6 +57,8 @@ $: if ($navRooms) room = state.focusedRoom;
 				<MediaRoom room={$room} slice={$slice} />
 			{:else if type === "org.eu.celery.room.forum"}
 				<ForumRoom room={$room} />
+			{:else if type === "org.eu.celery.room.longform"}
+				<LongformRoom room={$room} slice={$slice} />
 			{:else}
 				<UnknownRoom room={$room} />
 			{/if}

@@ -49,7 +49,7 @@ let eventPromise = room.events.fetch(eventId);
 }
 
 .content {
-  max-width: 100%;
+  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;

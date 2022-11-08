@@ -14,5 +14,9 @@ let settings = state.settings;
 </style>
 <div class="setting">
   <div>Automatically join suggested rooms</div>
-  <Toggle checked={$settings.get("autojoin")} toggled={(val) => $settings.put("autojoin", val)} />
+  <Toggle checked={$settings.get("autospace")} toggled={(val) => $settings.put("autospace", val)} />
+</div>
+<div class="setting">
+  <div>Automatically accept dms</div>
+  <Toggle checked={$settings.get("autodm")}    toggled={(val) => $settings.put("autodm", val)} />
 </div>

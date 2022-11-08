@@ -94,8 +94,20 @@ function opacity() {
   transition: color 0.4s;
 }
 </style>
-<div class="background" on:mousedown|stopPropagation={closePopup} transition:opacity on:click|stopPropagation>
-  <div class="card" on:mousedown|stopPropagation class:raw transition:card role="dialog" aria-modal="true">
+<div
+  class="background"
+  on:mousedown|stopPropagation={closePopup}
+  on:click|stopPropagation
+  transition:opacity
+>
+  <div
+    class="card"
+    class:raw
+    on:mousedown|stopPropagation
+    transition:card
+    role="dialog"
+    aria-modal="true"
+  >
     {#if showClose}
       <button class="icon close" on:click={closePopup}>close</button>
     {/if}

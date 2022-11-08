@@ -85,7 +85,7 @@ summary {
   cursor: pointer;
 }
 
-button, input[type=text], input[type=password] {
+button, input[type=text], input[type=password], textarea {
   outline: none;
   border: none;
   background: none;

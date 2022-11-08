@@ -1,5 +1,5 @@
 import { handle } from "../actions/timeline";
-import { Event, StateEvent } from "discount";
+import { Event, StateEvent } from "discount.js";
 
 class Timeline extends Array {
   constructor(roomId, start, end) {

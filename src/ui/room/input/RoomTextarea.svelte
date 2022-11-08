@@ -5,7 +5,8 @@ export let onfile = () => {};
 export let textarea;
 export let placeholder;
 export let input = "";
-$: rows = Math.min(input.split("\n").length, 10);
+export let asdfasdfasdf = false; // i am very good at naming
+$: rows = asdfasdfasdf ? 8 : Math.min(input.split("\n").length, 10);
 
 function handleKeyDown(e) {
   if (e.ctrlKey) {
@@ -40,7 +41,7 @@ function handleKeyDown(e) {
       // case "u": return wrapInsert("__");
     }
   }
-  if (e.key !== "Enter" || e.shiftKey) return;
+  if (e.key !== "Enter" || (asdfasdfasdf ? !e.ctrlKey : e.shiftKey)) return;
   e.preventDefault();
   e.stopImmediatePropagation();
 
@@ -57,13 +58,7 @@ function handlePaste(e) {
 </script>
 <style>
 textarea {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: none;
-  outline: none;
   resize: none;
-
   flex: 1;
   padding: 12px 0;
 }
@@ -71,10 +66,14 @@ textarea {
 textarea::placeholder {
   color: var(--fg-dim);
 }
+
+textarea.asdfasdfasdf {
+}
 </style>
 <textarea
   {placeholder}
   {rows}
+  class:asdfasdfasdf
   bind:this={textarea}
   bind:value={input}
   on:keydown={handleKeyDown}

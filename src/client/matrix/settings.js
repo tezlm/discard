@@ -17,8 +17,11 @@ defaultSettings.set("sendtyping", true);
 defaultSettings.set("autocomplete", true);
 defaultSettings.set("showembeds", "unencrypted");
 
+// rooms and spaces
+defaultSettings.set("autospace", false);
+defaultSettings.set("autodm", false);
+
 // misc
-defaultSettings.set("autojoin", true);
 
 export default class Settings extends Map {
   constructor(data) {
