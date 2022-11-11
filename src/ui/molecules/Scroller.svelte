@@ -1,8 +1,6 @@
 <script>
 // considering there is only one place that uses/needs this (room content), this may just be a useless abstraction
 // this could be combined with room content to make a room timeline scroller instead
-// TODO: redo, instead of rendering a slice render a full array with methods to load more/less
-// plus, this is kind of a mess anyways
 export let fetchBackwards = async () => {};
 export let fetchForwards = async () => {};
 export let getDefault = () => {};

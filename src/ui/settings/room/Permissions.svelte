@@ -30,44 +30,35 @@ const info = {
 
 function getItems(room) {
   const { power } = room;
-  const items = [];
-  if (room.type === "m.space") {
-    items.push(
-        { category: "Room list permissions" },
-        { id: "rooms", power: power.forState("m.space.child") },
-    );
-  } else {
-    items.push(
+  const items = room.type === "m.space" ? [
+      { category: "Room list permissions" },
+      { id: "rooms", power: power.forState("m.space.child") },
+    ] : [
       { category: "Basic permissions" },
       { id: "message",  power: power.eventsDefault ?? 0 },
       { id: "reaction", power: power.forEvent("m.room.reaction") },
       { id: "redact",   power: power.redact ?? 0 },
       { id: "ping",     power: power.notifications?.room ?? power.stateDefault },
-    );
-  }
-  items.push(
-      { category: "Membership permissions" },
-      { id: "invite", power: power.invite },
-      { id: "kick",   power: power.kick },
-      { id: "ban",    power: power.ban },    
-      { category: `${room.type === "m.space" ? "Space" : "Room"} profile permissions` },
-      { id: "name",   power: power.forState("m.room.name") },
-      { id: "topic",  power: power.forState("m.room.topic") },
-  );
-  if (room.type === "m.space") {
-    items.push({ id: "avatar",   power: power.forState("m.room.avatar") });
-  }
-  items.push(
-      { category: "Permission permissions" },
-      { id: "default",  power: power.usersDefault },
-      { id: "power",    power: power.forState("m.room.power_levels") },
-      // { name: "Manage Settings", id: "perms",    power: perms.stateDefault },
-      { category: "random things idk" },
-      { id: "upgrade",  power: power.forState("m.room.tombstone") },
-      { id: "history",  power: power.forState("m.room.history_visibility") },
-      { id: "encrypt",  power: power.forState("m.room.encryption") },
-  );
-  return items;
+    ];
+  return [
+    ...items,
+    { category: "Membership permissions" },
+    { id: "invite", power: power.invite },
+    { id: "kick",   power: power.kick },
+    { id: "ban",    power: power.ban },    
+    { category: `${room.type === "m.space" ? "Space" : "Room"} profile permissions` },
+    { id: "name",   power: power.forState("m.room.name") },
+    { id: "topic",  power: power.forState("m.room.topic") },
+    { id: "avatar",   power: power.forState("m.room.avatar") },
+    { category: "Permission permissions" },
+    { id: "default",  power: power.usersDefault },
+    { id: "power",    power: power.forState("m.room.power_levels") },
+    // { name: "Manage Settings", id: "perms",    power: perms.stateDefault },
+    { category: "random things idk" },
+    { id: "upgrade",  power: power.forState("m.room.tombstone") },
+    { id: "history",  power: power.forState("m.room.history_visibility") },
+    { id: "encrypt",  power: power.forState("m.room.encryption") },
+  ];
 }
 
 function handleChange(item, power) {  

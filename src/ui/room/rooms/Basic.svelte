@@ -43,6 +43,7 @@ $: if ($slice || $navRooms) {
 	}) ?? []
 	tick().then(() => refocus?.());
 	*/
+	refocus?.();
 }
 
 queueMicrotask(() => refocus?.());
