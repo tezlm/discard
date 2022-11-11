@@ -36,6 +36,11 @@ async function create() {
   const { parent } = current;
   const initialState = [], creationContent = {};
   
+  if (config.avatar?.file) {
+    const url = await state.api.uploadFile(config.avatar.file).promise;
+    initialState.push({ content: { url }, type: "m.room.avatar" });
+  }
+  
   if (config.joinRule !== "restricted") {
     initialState.push({ content: { join_rule: config.joinRule }, type: "m.room.join_rules" });
   }
@@ -84,22 +89,17 @@ async function create() {
 <style>
 </style>
 <Popup showClose>
-  <!--<h2 slot="header" style="text-align: center">Customize {capitalize(current.type)}</h2>-->
   <h3 slot="header">Create {capitalize(current.type)}</h3>
   <div slot="content" style="display: flex; flex-direction: column;">
-    <!--
-    <div style="display: flex; margin-bottom: 16px">
-      <div>
-        <AvatarUpload user={{ id: Date.now().toString() }} size={64} />
-      </div>
-      <div style="flex: 1; margin-left: 16px">
+    <div style="display: flex;">
+      <div style="flex: 1; margin-right: 24px">
         <h3 class="title">{capitalize(current.type)} Name</h3>
         <Input placeholder="awesome-{current.type}" bind:value={config.name} submitted={create} autofocus />
       </div>
+      <div style="margin-bottom: -32px">
+        <AvatarUpload user={{ id: Date.now().toString() }} bind:newData={config.avatar} size={64} />
+      </div>
     </div>
-    -->
-    <h3 class="title">{capitalize(current.type)} Name</h3>
-    <Input placeholder="awesome-{current.type}" bind:value={config.name} submitted={create} autofocus />
     <h3 class="title" style="margin-top: 1em">{capitalize(current.type)} Topic </h3>
     <Textarea placeholder="optional topic for your {current.type}" bind:value={config.topic} />
     <h3 class="title" style="margin-top: 1em">Room visibility</h3>

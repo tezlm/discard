@@ -20,6 +20,7 @@ defaultSettings.set("showembeds", "unencrypted");
 // rooms and spaces
 defaultSettings.set("autospace", false);
 defaultSettings.set("autodm", false);
+defaultSettings.set("unknownrooms", false);
 
 // misc
 

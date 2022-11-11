@@ -1,3 +1,5 @@
+// this code is awful and really should be refactored - maybe removed completely
+
 import Slice from "../matrix/slice.js";
 
 export function get(room) {
@@ -23,20 +25,25 @@ export async function backwards() {
 }
 
 export async function forwards() {
-  const slice = actions.slice.get(state.rooms.get(state.focusedRoomId));
+  const room = state.rooms.get(state.focusedRoomId);
+  const slice = actions.slice.get(room);
   if (!slice) return false;
   const bottom = slice.events.at(-1)?.id;
+  if (room.events.live?.find(i => i.id === bottom)) {
+    state.roomSlices.set(get(state.rooms.get(state.focusedRoomId)));
+    state.slice.set(get(state.rooms.get(state.focusedRoomId)));
+  }
   await slice.forwards(Math.floor(window.innerHeight / 32 * 4));
   const success = bottom !== slice.events.at(-1)?.id;
   if (success) state.slice.set(slice);
   return success;
 }
 
-export async function jump(_roomId, eventId) {  
-  // const slice = actions.slice.get(state.focusedRoomId);
-  // if (!slice.events.find(i => i.eventId === eventId)) {
-  //   await slice.jump(eventId);
-  // }
-  
+export async function jump(roomId, eventId) {
+  const room = state.rooms.get(roomId);
+  const timeline = await room.events.fetchTimeline(eventId);
+  const slice = new Slice(timeline);
+  state.roomSlices.set(room.id, slice);
+  state.slice.set(slice);
   state.roomState.focused.set(eventId);
 }

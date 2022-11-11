@@ -1,12 +1,12 @@
 <script>
-import Input from "../../atoms/Input.svelte";
+import Search from "../../atoms/Search.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
 import { parseHtml } from "../../../util/html";
 export let room;
 let members = false;
 
 $: {
-  room.members.fetch().then(() => {
+  room.members.fetchAll("join").then(() => {
     members = room.members.with("join", false);
   });
 }
@@ -88,7 +88,7 @@ function formatJoinRule(rule) {
   <div class="main"> 
     <h3>Rooms</h3>
     <div style="height: 16px"></div>
-    <Input placeholder="Search..." />
+    <Search size="tall" placeholder="Search..." />
     <div style="height: 16px"></div>
     <div class="placeholder">
       <div>// TODO</div>

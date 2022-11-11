@@ -1,7 +1,7 @@
 <script>
 import Emoji from "./molecules/Emoji.svelte";
 import PinnedMessages from "./molecules/PinnedMessages.svelte";
-import User from "./molecules/User.svelte";
+import Member from "./molecules/Member.svelte";
 let { popout, settings } = state;
 let windowHeight, windowWidth;
 let emojiEl, pinnedEl, memberEl;
@@ -119,7 +119,7 @@ $: if ($popout.id === "emoji") {
   on:mousedown|stopPropagation
   bind:this={memberEl}
 >
-  <User member={$popout.member} />
+  <Member member={$popout.member} />
 </div>
 {/key}
 {/if}

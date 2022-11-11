@@ -52,12 +52,12 @@ button {
   border: solid var(--button-outline) 1px;
 }
 
-.normal:not(.hollow) { background: var(--bg-misc) }
-.primary:not(.hollow) { background: var(--color-accent) }
-.gray:not(.hollow) { background: var(--color-gray-light) }
-.good:not(.hollow) { background: var(--color-green) }
-.warn:not(.hollow) { background: var(--color-yellow) }
-.danger:not(.hollow) { background: var(--color-red) }
+.normal.standard { background: var(--bg-misc) }
+.primary.standard { background: var(--color-accent) }
+.gray.standard { background: var(--color-gray-light) }
+.good.standard { background: var(--color-green) }
+.warn.standard { background: var(--color-yellow) }
+.danger.standard { background: var(--color-red) }
 
 .normal.hollow { border-color: var(--bg-misc) }
 .primary.hollow { border-color: var(--color-accent) }
@@ -70,21 +70,21 @@ button {
   background: transparent;
 }
 
-.hollow:hover { background: var(--button-outline) }
-.normal.hollow:hover { background: var(--bg-misc) }
-.primary.hollow:hover { background: var(--color-accent) }
-.gray.hollow:hover { background: var(--color-gray-light) }
-.good.hollow:hover { background: var(--color-green) }
-.warn.hollow:hover { background: var(--color-yellow) }
-.danger.hollow:hover { background: var(--color-red) }
-.standard:hover::after { background: #00000033 }
-.link:hover { text-decoration: underline }
+.hollow:hover, .hollow:focus { background: var(--button-outline) }
+.normal.hollow:hover, .normal.hollow:focus { background: var(--bg-misc) }
+.primary.hollow:hover, .primary.hollow:focus { background: var(--color-accent) }
+.gray.hollow:hover, .gray.hollow:focus { background: var(--color-gray-light) }
+.good.hollow:hover, .good.hollow:focus { background: var(--color-green) }
+.warn.hollow:hover, .warn.hollow:focus { background: var(--color-yellow) }
+.danger.hollow:hover, .danger.hollow:focus { background: var(--color-red) }
+.standard:hover::after, .standard:focus::after { background: #00000033 }
+.link:hover, .link:focus { text-decoration: underline }
 
 .disabled { cursor: not-allowed }
 .loading { cursor: progress }
 .hollow.disabled { border: solid var(--button-outline) 1px; }
-.hollow.disabled:hover { background: none }
-.hollow.loading:hover { background: none }
+.hollow.disabled:hover, .hollow.disabled:focus { background: none }
+.hollow.loading:hover, .hollow.loading:focus { background: none }
 .standard.disabled::after { background: #00000055 }
 .standard.loading::after { background: #00000055 }
 </style>

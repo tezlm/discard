@@ -36,6 +36,8 @@ h1 {
   { id: "shadowmod",      name: "extra moderation", desc: "Enables extra options somewhat useful for moderation" },
   { id: "shadowtest",     name: "testbed",          desc: "the pit" },
   { id: "nitor",          name: "nitor",            desc: "Unleash more fun with nitor. Enable nitor to upgrade your emoji, personalize your profile, share bigger files, and so much more." },
+  { id: "ex-emoji",       name: "custom emoji",     desc: "experimental custom emoji support (both editing and using)" },
+  { id: "ex-input",       name: "rich text input",  desc: "experimental rich text editor (preview markdown, mentions, emoji, etc)" },
 ] as option}
   <div class="item">
     <div>

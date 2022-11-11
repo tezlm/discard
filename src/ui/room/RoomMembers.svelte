@@ -1,7 +1,7 @@
 <script>
-// TODO: automatically load/unload members on scroll
 import Button from "../atoms/Button.svelte";
 import Avatar from "../atoms/Avatar.svelte";
+import VirtualList from "svelte-virtual-scroll-list"
 import { memberContext } from "../../util/context";
 import { fastclick } from "../../util/use";
 export let room;
@@ -10,7 +10,7 @@ let count = 30;
 let { popout, context } = state;
 
 async function fetchList(room) {
-  if (!room.request) await room.members.fetch();
+  if (!room.request) await room.members.fetchAll("join");
   const members = room.members.with("join");
   if (state.dms.has(room.id)) {
     return [{ title: `members: ${members.length}`, id: "members" }, ...members];
@@ -94,6 +94,10 @@ function handleContext(e) {
   cursor: pointer;
 }
 
+.wrapper.last {
+  margin-bottom: 8px;
+}
+
 .member {
   display: flex;
   align-items: center;
@@ -140,20 +144,26 @@ function handleContext(e) {
     </div>
     {/each}
   {:then items}
-    {#each items.slice(0, count) as member (member.id)}
+    <VirtualList
+        data={items}
+        let:data={member}
+        estimateSize={48}
+    >
       {#if member.title}
         <div class="title">{member.title}</div>
       {:else}
-        <div class="wrapper" class:selected={$popout._owner === "memberlist-" + member.id} data-member-id={member.id}>
+        <div
+          class="wrapper"
+          class:selected={$popout._owner === "memberlist-" + member.id}
+          class:last={items.at(-1) === member}
+          data-member-id={member.id}
+        >
           <div class="member">
             <Avatar user={member} size={32} />
             <div class="name">{member.name || member.id}</div>
           </div>
         </div>
       {/if}
-    {/each}
-    {#if count < items.length}
-    <Button label="more" type="link big" clicked={() => count += 20} />
-    {/if}
+    </VirtualList>
   {/await}
 </div>

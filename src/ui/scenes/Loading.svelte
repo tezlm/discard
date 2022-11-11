@@ -17,6 +17,8 @@ const someFactsIThinkSomePeopleMightFindInteresting = [
   "What's the difference between crispy and crunchy?",
   "If you have no goal, you can't fail",
   "Drink some water!",
+  "breathe",
+  "The only app that's rewritten evey 5 days",
 ];
 </script>
 <style>

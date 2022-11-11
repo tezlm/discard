@@ -3,21 +3,20 @@ import Search from "../../atoms/Search.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
 import Power from "../../atoms/Power.svelte";
 import Loading from "../../atoms/Loading.svelte";
+import VirtualScroll from "svelte-virtual-scroll-list"
 import { memberContext } from "../../../util/context";
 
 export let room, membership;
 
-let { users, popup, context } = state;
+let { popup, context } = state;
 let { power } = room;
 
 let allMembers = false;
 let members = false;
 let filter;
 
-$: setTimeout(async () => {
-  await room.members.fetch();
-  allMembers = room.members.with(membership);
-});
+$: room.members.fetchAll()
+  .then(() => allMembers = room.members.with(membership));
 
 $: if (allMembers) {
   members = filter ? allMembers.filter(i => i.name?.includes(filter) || i.id.includes(filter)) : allMembers;
@@ -33,15 +32,8 @@ function getTitle(membership) {
 
 async function getMember(member) {
   if (membership === "join") return member;
-  if (users.has(member.id)) return users.get(member.id);
-  const { displayname, avatar_url } = await state.api.fetchUser(member.id)
-    .catch(() => ({ displayname: member.name, avatar_url: member.avatar }));
-  const data = { avatar: avatar_url, name: displayname || member.id, id: member.id };
-  // mutation isnt that good of an idea, but oh well
-  member.name = data.name;
-  member.avatar = data.avatar;
-  users.set(member.id, data);
-  return data;
+  const { name, avatar } = (await state.client.users.fetch(member.id)) ?? {};
+  return { ...member, name, avatar };
 }
 
  /*_/| 
@@ -137,20 +129,23 @@ h1 {
       <i style="margin-bottom: 16px">this may take a while</i>
       <Loading color="var(--fg-muted)" />
     {:then memberData}
-      {#each memberData as data, i (members[i].id)}
-        {@const member = members[i]}
+      <VirtualScroll 
+        data={memberData}
+        let:data={member}
+        estimateSize={64}
+      >
         <div class="member" on:contextmenu|preventDefault|stopPropagation={e => $context = { items: memberContext(member), x: e.clientX, y: e.clientY }}>
-          <Avatar link user={data} size={40} />
+          <Avatar link user={member} size={40} />
           <div class="name">
             <div>
-              {data.name || data.id}
+              {member.name || member.id}
               <span style="color: var(--fg-muted); font-size: 14px">
               {#if member.event?.content.reason}
                 ({member.event.content.reason})
               {/if}
               </span>
             </div>
-            <span style="color: var(--fg-muted); font-size: 14px">{data.id}</span>
+            <span style="color: var(--fg-muted); font-size: 14px">{member.id}</span>
           </div>
           <div style="margin-left: auto;"></div>
           {#if membership === "join"}
@@ -164,9 +159,10 @@ h1 {
           {/if}
           <div class="icon menu" on:click|stopPropagation={e => $context = { items: memberContext(member), x: e.clientX, y: e.clientY }}>more_vert</div>
         </div>
-      {:else}
-        <i>hmmm, seems like nobody's here?</i>
-      {/each}
+      </VirtualScroll>
+      {#if !memberData.length}
+      <i>hm, it looks like there isn't anyone here</i>
+      {/if}
     {/await}
   {:else}
     <Loading color="var(--fg-muted)" />

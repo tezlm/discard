@@ -53,7 +53,7 @@ let pinned = room.getState("m.room.pinned_events")?.content.pinned ?? [];
     {#await room.events.fetch(eventId)}
     loading {eventId}
     {:then event}
-    <Event noInteract header {room} {event} />
+    <Event noInteract header {event} />
     {:catch error}
     error loading event. {error.error}
     {/await}

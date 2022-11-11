@@ -104,6 +104,10 @@ $: if (showPins) {
   color: var(--fg-content);
 }
 
+.icon:active {
+  transform: translateY(1px);
+}
+
 .icon.active {
   color: var(--fg-content);
 }
@@ -234,6 +238,8 @@ $: if (showPins) {
   </div>
   <div class="spacer"></div>
   {/if}
+  <!-- TODO: inbox to show notifications -->
+  <!-- TODO: search messages -->
   <!--
   <div class="roomsearch" class:focus={searchfocus || !!search}>
     <Search bind:focus={searchfocus} bind:value={search} />

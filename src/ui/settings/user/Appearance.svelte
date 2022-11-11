@@ -3,10 +3,10 @@ import Radio from "../../atoms/Radio.svelte";
 import Toggle from "../../atoms/Toggle.svelte";
 import RadioInline from "../../atoms/RadioInline.svelte";
 import Event from "../../room/timeline/Event.svelte";
-const { settings } = state;
+const { settings, client } = state;
 
 function makeMockEvent(body) {
-  const me = state.users.get(state.userId);
+  const me = client.users.get(state.userId);
   const room = { power: {} };
   const member = { ...(me ?? { id: state.userId }), power: 9001, room };
   return {
@@ -59,10 +59,6 @@ const eventOptions = [
 .events > div {
   display: flex;
   margin-top: 8px;
-}
-
-.events > .title {
-  text-align: center;
 }
 
 .events > div > div {
@@ -118,6 +114,12 @@ const eventOptions = [
   <b>Reduce motion</b>
   <Toggle checked={$settings.get("reducemotion")} toggled={(val) => $settings.put("reducemotion", val)}/>
 </div>
+<!-- TODO: compact/tall rooms (compact are discord guild channel style, tall have icon and recent message)
+<div class="option">
+  <b>Display compact rooms</b>
+  <Toggle checked={$settings.get("compactrooms")} toggled={(val) => $settings.put("compactrooms", val)}/>
+</div>
+-->
 <!-- spice up someone's day by showing them development settings -->
 {#if Math.random() > .99 && !$settings.get("shadowsettings")}
 <div class="option">

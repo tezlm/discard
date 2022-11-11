@@ -2,7 +2,7 @@
 import Avatar from "../atoms/Avatar.svelte";
 import { memberContext, roomContext } from "../../util/context";
 import { fastclick } from "../../util/use";
-import { Room, Member } from "discount.js";
+import { Room, Member } from "discount.ts";
 export let member;
 let { popup, popout, context } = state;
 $: isRoomPing = member instanceof Room;

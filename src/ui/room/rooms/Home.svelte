@@ -4,7 +4,7 @@ import Button from "../../atoms/Button.svelte";
 import Tooltip from "../../atoms/Tooltip.svelte";
 
 export let selectedTab;
-let { invites } = state;
+let { invites, popup } = state;
 
 function getInviteSender(invite) {  
   const myMemberEvent = invite.state.find(i => i.type === "m.room.member" && i.state_key === state.userId);
@@ -37,14 +37,6 @@ function join(invite) {
 
 .center h1 {
   text-align: center;
-}
-
-.center .warning {  
-  padding: 8px;
-  margin: 1em 0 8px;
-  border: solid var(--event-ping) 2px;
-  background: var(--event-ping-bg);
-  border-radius: 4px;
 }
 
 .buttons {
@@ -137,11 +129,9 @@ function join(invite) {
 <div class="center">
   <div style="display: flex; flex-direction: column">
     <h1>welcome to discard!</h1>
-    <div class="warning">
-      discard is pre-alpha, expect things to break!
-    </div>
+    <div class="warning">discard is pre-alpha, expect things to break!</div>
     <div class="buttons">
-      <Button clicked={() => state.popup.set({ id: "create", type: "room" })}>
+      <Button clicked={() => $popup = { id: "create", type: "room" }}>
         <div class="button">
           <div class="icon">tag</div>
           <div style="flex: 1">
@@ -150,7 +140,7 @@ function join(invite) {
           </div>
         </div>
       </Button>
-      <Button clicked={() => state.popup.set({ id: "create", type: "space" })}>
+      <Button clicked={() => $popup = { id: "create", type: "space" }}>
         <div class="button">
           <div class="icon">folder</div>
           <div style="flex: 1">
@@ -195,6 +185,9 @@ function join(invite) {
           </div>
         </div>
       </Button>
+    </div>
+    <div style="text-align: center; margin-top: 16px; color: var(--fg-light)">
+      <b style="color: var(--color-green)">Pro Tip:</b> click the <span class="icon" style="cursor: pointer; position: relative; bottom: -2px" on:click={() => actions.to("/user-settings/help")}>help</span> icon in the upper right corner for help!
     </div>
   </div>
 </div>

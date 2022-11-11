@@ -2,7 +2,7 @@
 const placeholders = [];
 
 // i just picked whatever numbers looked good lol
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 10; i++) {
   const holder = {
     header: Math.random() > .5,
     attachment: Math.random() > .8,
@@ -14,7 +14,7 @@ for (let i = 0; i < 20; i++) {
     holder.author.push({ width: Math.random() * 50 + 30 });
   }
 
-  for (let i = 0; i < Math.random() * 10 + 5; i++) {
+  for (let i = 0; i < Math.random() * 8 + 5; i++) {
     holder.content.push({ width: Math.random() * 100 + 50 });
   }
   
@@ -76,23 +76,23 @@ for (let i = 0; i < 20; i++) {
 }
 </style>
 <div>
-  {#each placeholders as holder}
-  <div class="placeholder" class:header={holder.header}>
-    <div class="avatar"></div>
-    <div class="content">
-      {#if holder.header}
-        {#each holder.author as author}
-        <div class="block author" style:width={author.width + "px"}></div>
-        {/each}
-        <div style="margin-top: 8px"></div>
-      {/if}
-      {#each holder.content as content}
-      <div class="block" style:width={content.width + "px"}></div>
+{#each placeholders as holder}
+<div class="placeholder" class:header={holder.header}>
+  <div class="avatar"></div>
+  <div class="content">
+    {#if holder.header}
+      {#each holder.author as author}
+      <div class="block author" style:width={author.width + "px"}></div>
       {/each}
-      {#if holder.attachment}
-      <div class="attachment" style:width={holder.attachment.width + "px"} style:height={holder.attachment.height + "px"}></div>
-      {/if}
-    </div>
-    </div>
-  {/each}
+      <div style="margin-top: 8px"></div>
+    {/if}
+    {#each holder.content as content}
+    <div class="block" style:width={content.width + "px"}></div>
+    {/each}
+    {#if holder.attachment}
+    <div class="attachment" style:width={holder.attachment.width + "px"} style:height={holder.attachment.height + "px"}></div>
+    {/if}
+  </div>
+  </div>
+{/each}
 </div>

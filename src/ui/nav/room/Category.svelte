@@ -2,7 +2,6 @@
 import Tooltip from "../../atoms/Tooltip.svelte";
 import Room from "./Room.svelte";
 // import Room from "./RoomTall.svelte";
-import Category from "./Category.svelte";
 import { roomContext } from "../../../util/context";
 import { getLastMessage } from "../../../util/timeline";
 export let room;

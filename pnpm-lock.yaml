@@ -12,8 +12,7 @@ specifiers:
   '@tsconfig/svelte': ^3.0.0
   '@types/better-sqlite3': ^7.6.2
   '@types/marked': ^4.0.7
-  discount: link:../discount
-  discount.js: link:../discount
+  discount.ts: link:../discount
   emojibase: ^6.1.0
   emojibase-data: ^7.0.1
   fuzzysort: ^2.0.3
@@ -26,6 +25,7 @@ specifiers:
   simple-markdown: ^0.7.3
   svelte: ^3.52.0
   svelte-preprocess: ^4.10.7
+  svelte-virtual-scroll-list: ^1.1.0
   twemoji: ^14.0.2
   typescript: ^4.8.4
   vite: ^2.9.15
@@ -38,8 +38,7 @@ dependencies:
   '@lexical/selection': 0.5.0_lexical@0.5.0
   '@lexical/utils': 0.5.0_lexical@0.5.0
   '@matrix-org/olm': '@gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.8.tgz'
-  discount: link:../discount
-  discount.js: link:../discount
+  discount.ts: link:../discount
   emojibase: 6.1.0
   emojibase-data: 7.0.1_emojibase@6.1.0
   fuzzysort: 2.0.3
@@ -50,6 +49,7 @@ dependencies:
   marked: 4.2.2
   sanitize-html: 2.7.3
   simple-markdown: 0.7.3
+  svelte-virtual-scroll-list: 1.1.0_svelte@3.52.0
   twemoji: 14.0.2
 
 devDependencies:
@@ -891,10 +891,17 @@ packages:
       typescript: 4.8.4
     dev: true
 
+  /svelte-virtual-scroll-list/1.1.0_svelte@3.52.0:
+    resolution: {integrity: sha512-GFaBhD9izv77xgJTyFMD1MP+ElGMUGMC9CDCM+uX9hkZIYipNS6u8oDMYDGwCXUw7QGEihU4yLmBvBSeBp78uw==}
+    peerDependencies:
+      svelte: ^3.0.0
+    dependencies:
+      svelte: 3.52.0
+    dev: false
+
   /svelte/3.52.0:
     resolution: {integrity: sha512-FxcnEUOAVfr10vDU5dVgJN19IvqeHQCS1zfe8vayTfis9A2t5Fhx+JDe5uv/C3j//bB1umpLJ6quhgs9xyUbCQ==}
     engines: {node: '>= 8'}
-    dev: true
 
   /twemoji-parser/14.0.0:
     resolution: {integrity: sha512-9DUOTGLOWs0pFWnh1p6NF+C3CkQ96PWmEFwhOVmT3WbecRC+68AIqpsnJXygfkFcp4aXbOp8Dwbhh/HQgvoRxA==}

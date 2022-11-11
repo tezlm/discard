@@ -3,7 +3,7 @@ import Tooltip from "../atoms/Tooltip.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 import { homeContext } from "../../util/context.ts";
 import { onDestroy } from "svelte";
-let { userId, users } = state;
+let { userId } = state;
 let copyCount = 0, copyText = getCopyText();
 
 function getCopyText() {
@@ -38,11 +38,8 @@ function resetCopy() {
 }
 
 async function getProfile() {
-  if (users.has(userId)) return users.get(userId);
-	const { avatar_url, displayname } = await state.api.fetchUser(userId);
-	const data = { avatar: avatar_url, name: displayname || userId, id: userId };
-	users.set(userId, data);
-	return data;
+	const fetched = await state.client.users.fetch(userId);
+	return fetched ?? {};
 }
 
 

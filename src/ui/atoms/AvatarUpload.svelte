@@ -2,9 +2,10 @@
 import Avatar from "./Avatar.svelte";
 export let user;
 export let size;
-export let changed;
 export let newData;
-reset();
+export let changed = null;
+
+$: reset(user);
 
 export function reset() {
   newData = {

@@ -1,5 +1,5 @@
 import { writable, get } from "svelte/store";
-import type { Room } from "discount.js";
+import type { Room } from "discount.ts";
 
 export function handleAccount(_: void, event: { type: string, content: any }) {
   if (event.type === "m.fully_read") {

@@ -111,7 +111,7 @@ function matchesRule(cond, event) {
 // }
 
 export default class PushRules {
-  constructor(rules) {
+  constructor(rules = []) {
     this.setRules(rules);
   }
   

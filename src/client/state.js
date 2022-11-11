@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
 import Settings from "./matrix/settings";
+import PushRules from "../util/push";
 import { getDefaultState } from "./actions/rooms";
 
 const settings = new Settings();
@@ -46,7 +47,7 @@ const state = {
   settingsRef: settings,
   accountData: writable(new Map()),
   accountDataRef: new Map(),
-  pushRules: writable({ parse: () => false }),
+  pushRules: writable(new PushRules()),
   
   //nav
   navRooms: writable([]),

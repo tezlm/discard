@@ -5,8 +5,7 @@ import { roomContext } from "../../../util/context";
 import { getLastMessage } from "../../../util/timeline";
 export let room;
 export let muted = false;
-let { focusedRoom, popup } = state;
-let dms = state.dms;
+let { focusedRoom, popup, dms } = state;
 $: focused= $focusedRoom?.id === room.id;
 
 // move dm status into the room object?

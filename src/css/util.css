@@ -22,12 +22,16 @@ span.icon {
 
 .scroll {
   overflow: hidden auto;
-  scrollbar-color: var(--bg-spaces) var(--bg-rooms-members);
-  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
 }
 
 .scroll.thin {
   scrollbar-width: thin;
+}
+
+* {
+  scrollbar-color: var(--bg-spaces) var(--bg-rooms-members);
+  scrollbar-gutter: stable;
 }
 
 ::-webkit-scrollbar {

@@ -1,4 +1,4 @@
-import type { Event, Room, Member } from "discount.js";
+import type { Event, Room, Member } from "discount.ts";
 import { getRoomNotifRule, putRoomNotifRule } from "../client/matrix/notifications";
 import { get } from "svelte/store";
 import * as notif from "../client/matrix/notifications";

@@ -3,7 +3,7 @@ import Tooltip from "../atoms/Tooltip.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 import { roomContext, homeContext } from "../../util/context";
 import { getLastMessage } from "../../util/timeline";
-let { focusedSpace, navSpaces, spaces, context, pushRules } = state;
+let { focusedSpace, focusedRoom, navSpaces, spaces, context, pushRules } = state;
 
 function isMuted(room) {
 	const rule = $pushRules.rules.find(i => i.id === room.id);
@@ -150,7 +150,7 @@ function getPings(space, _) {
     class="space"
     class:focused={$focusedSpace?.id === space.id}
     class:unread={!allRead(space.id)}
-    on:click={() => actions.spaces.focus(space)}
+    on:click={() => $focusedRoom ? actions.spaces.focus(space) : actions.to(`/space/${space.id}`)}
     on:contextmenu|preventDefault|stopPropagation={e => $context = { items: roomContext(space), x: e.clientX, y: e.clientY }}
   >
     <Tooltip position="right" tip="arst">

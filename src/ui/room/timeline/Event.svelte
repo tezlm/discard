@@ -104,9 +104,10 @@ function handleContext(e) {
 	if (noInteract) return;
 	if (["A", "IMG", "VIDEO"].includes(e.target.tagName)) return;
 	e.preventDefault();
+	const rect = toolbarEl.getBoundingClientRect();
 	$context = {
 		items: eventContext(event, {
-			showEmoji: () => showReactionPicker(),
+			showEmoji: () => showReactionPicker(rect),
 		}),
 		x: e.clientX,
 		y: e.clientY,
@@ -137,7 +138,7 @@ function showReactionPicker(overrideRect) {
             event_id: event.id,
           },
         };
-				event.room.sendState("m.reaction", reaction);
+				event.room.sendEvent("m.reaction", reaction);
       }
       if (!keepOpen) $popout = {}
     },

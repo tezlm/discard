@@ -50,6 +50,20 @@ a {
     <tr><td><kbd>Alt + Down</kbd></td>  <td>in a chat</td>     <td>view next room</td></tr>
     <tr><td><kbd>Esc</kbd></td>         <td>in a room</td>     <td>mark room as read</td></tr>
     <tr><td><kbd>Shift + Esc</kbd></td> <td>in a space</td>    <td>mark space as read</td></tr>
+    <tr><td><kbd>PgUp</kbd></td>        <td>in a room</td>     <td>scroll up</td></tr>
+    <tr><td><kbd>PgDown</kbd></td>      <td>in a room</td>     <td>scroll down</td></tr>
+  </table>
+  <h3 style="margin-top: 16px; margin-bottom: 8px">Planned</h3>
+  <table>
+    <tr><td><kbd>Shift + PgUp</kbd></td>     <td>in a room</td>            <td>scroll to unread</td></tr>
+    <tr><td><kbd>Shift + PgDown</kbd></td>   <td>in a room</td>            <td>scroll to end of chat</td></tr>
+    <tr><td><kbd>Esc</kbd></td>              <td>in a room</td>            <td>scroll to end of chat</td></tr>
+    <tr><td><kbd>Ctrl + P</kbd></td>         <td>in a room</td>            <td>open pins popout</td></tr>
+    <tr><td><kbd>Ctrl + [unknown]</kbd></td> <td>anywhere</td>             <td>open inbox - discord uses ctrl-i but italics</td></tr>
+    <tr><td><kbd>Ctrl + [unknown]</kbd></td> <td>anywhere</td>             <td>toggle members- discord uses ctrl-u but is this necessary?</td></tr>
+    <tr><td><kbd>Ctrl + [unknown]</kbd></td> <td>open inbox</td>           <td>open pins popout</td></tr>
+    <tr><td><kbd>*</kbd></td>                <td>focused on a message</td> <td>the message commands (e: edit, del/backspace: delete, r: reply, +: react, p: pin, alt+enter: mark unread)</td></tr>
+    <tr><td><kbd>*</kbd></td>                <td>misc</td>                 <td>yeah just copy the other discord shortcuts if they make sense</td></tr>
   </table>
 {/if}
 {:else}

@@ -1,7 +1,8 @@
 <script>
 import Button from "../../atoms/Button.svelte";
 import AvatarUpload from "../../atoms/AvatarUpload.svelte";
-let { userId, users } = state;
+let { userId, client } = state;
+let user = client.users.get(userId) ?? {};
 </script>
 <style>
 .account {
@@ -53,10 +54,10 @@ let { userId, users } = state;
 </style>
 <div class="account">
   <div style="display: flex; flex-direction: row">
-    <AvatarUpload user={users.get(userId)} size={72} />
+    <AvatarUpload {user} size={72} />
     <div style="margin-left: 1em"></div>
     <div class="details">
-      <span class="big">{users.get(userId).name || userId}</span>
+      <span class="big">{user.name || userId}</span>
       <span>{userId}</span>
     </div>
   </div>
@@ -75,7 +76,7 @@ let { userId, users } = state;
     <div>
       <div class="info">
         <h3 class="title">Display Name</h3>
-        <div style="color: var(--fg-notice)">{users.get(userId).name || userId}</div>
+        <div style="color: var(--fg-notice)">{user.name || userId}</div>
       </div>
       <Button type="gray small" label="Edit" clicked={todo} />
     </div>

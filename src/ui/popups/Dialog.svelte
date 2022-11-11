@@ -19,12 +19,12 @@ export function confirm() {
 }
 </script>
 <Popup>
-  <h2 slot="header">{current.title}</h2>
+  <h2 slot="header">{current.title ?? ""}</h2>
   <div slot="content" style="max-width: 440px">
     {#if current.html}
       {@html current.html}
     {:else}
-      {current.body}
+      {current.body ?? ""}
     {/if}
   </div>
   <div slot="footer">

@@ -1,25 +1,56 @@
 <script>
-import { onDestroy } from "svelte";
-import Scroller from '../../molecules/Scroller.svelte';
+import { tick, onDestroy } from "svelte";
+import Scroller from "../../molecules/Scroller.svelte"
 import Divider from '../timeline/Divider.svelte';
 import Upload from '../timeline/Upload.svelte';
 import Placeholder from '../timeline/Placeholder.svelte';
 import Event from "../timeline/Event.svelte";
+import Loading from "../../atoms/Loading.svelte";
 import { getLastMessage } from "../../../util/timeline";
 export let room;
-export let slice;
-let { focused, reply, edit, upload } = state.roomState;
-let { settings, pushRules } = state;
+let { focused, navRooms, reply, edit, upload } = state.roomState;
+let { slice, settings, pushRules } = state;
 let shiftKey = false;
-let scrollTop, scrollMax, scrollTo, reset;
+let scroller, scrollTop, scrollMax, scrollTo, reset;
 
-$: if (slice) refocus();
+let refresh;
+let list;
+
+$: if ($slice || $navRooms) {
+	refresh?.();
+	/*
+	timeline = room.events.live?.filter((ev) => {
+		// todo
+		if (ev.content["m.new_content"]) return false;
+		if (ev.type === "m.room.message") return true;
+		// if (ev.type === "m.room.member") {
+		// };
+		
+		if ($settings.get("showmisc") && ["m.room.name", "m.room.avatar", "m.room.topic", "m.room.pinned_messages"].includes(ev.type)) return true;
+		if ($settings.get("showmoderation") && ["m.room.power_levels", "m.room.acl", "m.room.history_visibility"].includes(ev.type)) return true;
+		return $settings.get("showunknown") !== "never";
+		// if ($settings.get("showunknown") && !ev.isState()) return false;
+
+// function shouldRender(_type, _settings) {
+	// TODO: render wanted events
+	// TODO: should i move "what type of membership event is this" into a helper function?
+	/*
+	"showjoinleave" ["m.room.membership"]
+	"shownickavatar" ["m.room.membership"]
+	"showunknown" not ["m.room.messages"]
+	// return true;
+// }
+	}) ?? []
+	tick().then(() => refocus?.());
+	*/
+}
+
+queueMicrotask(() => refocus?.());
 
 function shouldSplit(prev, ev) {
 	if (!prev) return true;
 	if (ev.type !== "m.room.message" && prev.type !== "m.room.message") return false;
-	if (ev.type !== "m.room.message" && prev.type === "m.room.message") return true;
-	if (ev.type === "m.room.message" && prev.type !== "m.room.message") return true;
+	if (ev.type !== "m.room.message" || prev.type !== "m.room.message") return true;
 	if (prev.sender.id !== ev.sender.id) return true;
 	if (ev.content["m.relates_to"]?.["m.in_reply_to"]) return true;
 	if (ev.date - prev.date > 1000 * 60 * 10) return true;
@@ -38,20 +69,15 @@ function dividerProps(prev, ev) {
 	};
 }
 
-async function fetchBackwards() {
-	const success = await actions.slice.backwards();
-	return [!success || slice.events[0]?.type === "m.room.create", slice.atEnd()];
-}
-
-async function fetchForwards() {
-	const success = await actions.slice.forwards();
-	return [!success || slice.events[0]?.type === "m.room.create", slice.atEnd()];
-}
-
 function refocus() {
-	if (scrollTo && scrollTop > scrollMax - 16) {
-		queueMicrotask(() => scrollTo(-1));
+	if (scrollTop > scrollMax - 16) {
+		queueMicrotask(() => scrollTo?.(-1));
 	}
+
+	// if (!scroller) return;
+ //  if (scroller.scrollHeight - scroller.offsetHeight < scroller.scrollTop + 50) {
+	// 	scroller.scrollTo(-1);
+	// }
 }
 
 let resizeTimeout;
@@ -71,13 +97,7 @@ function checkShift(e) {
 
 function getHighlight(event, reply) {
 	if (reply?.id === event.id) return "var(--color-blue)";
-}
-
-function shouldRender(_type, _settings) {
-	// TODO:
-	// joinleave, nickavatar
-	// if (["m.room.name", "m.room.topic"].includes(type) && !settings.get("shownametopic")) return false;
-	return true;
+	if (shouldPing(event)) return "var(--event-ping)";
 }
 
 function shouldPing(event) {
@@ -101,17 +121,21 @@ onDestroy(state.focusedRoom.subscribe(() => {
 	queueMicrotask(() => console.timeEnd("focus room"));
 }));
 
-onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => reset && reset())));
+// onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => refresh?.())));
 onDestroy(upload.subscribe(refocus));
 onDestroy(reply.subscribe(refocus));
 onDestroy(edit.subscribe(refocus));
-$: if($focused) {
+$: if ($focused) {
 	const id = $focused;
 	const element = document.querySelector(`[data-event-id="${id}"]`);
-	if (element) {
-		queueMicrotask(() => element.scrollIntoView({ behavior: "smooth", block: "center" }));
+	if (!element) list?.scrollToIndex(room.events.live.findIndex(i => i.id === id));
+	tick().then(() => {
+		const element = document.querySelector(`[data-event-id="${id}"]`);
+		if (element) {
+			queueMicrotask(() => element.scrollIntoView({ behavior: "smooth", block: "center" }));
+		}
 		setTimeout(() => id === $focused && focused.set(null), 2000);
-	}
+	});
 }
 
 $: if($edit) {
@@ -121,11 +145,26 @@ $: if($edit) {
 	}
 }
 
-
 function isRead(room) {
 	const tl = room.events.live;
 	if (!tl) return room.notifications.unread === 0;
-	return getLastMessage(tl, room.readEvent)	=== getLastMessage(tl);
+	return getLastMessage(tl, room.readEvent) === getLastMessage(tl);
+}
+
+function getPrev(event) {
+	const timeline = room.events.live;
+	const index = timeline.lastIndexOf(event);
+	return timeline[index - 1];
+}
+
+async function fetchBackwards() {
+	const success = await actions.slice.backwards();
+	return [!success || $slice.events[0]?.type === "m.room.create", $slice.atEnd()];
+}
+
+async function fetchForwards() {
+	const success = await actions.slice.forwards();
+	return [!success || $slice.events[0]?.type === "m.room.create", $slice.atEnd()];
 }
 </script>
 <style>
@@ -139,7 +178,7 @@ function isRead(room) {
 }
 
 .spacer {
-	margin: 10px 0;
+	margin: 8px 0;
 }
 
 .tall {
@@ -170,37 +209,12 @@ function isRead(room) {
 
 .highlight::before {
 	width: 100%;
-	opacity: .2;
-}
-
-.ping {
-	position: relative;
+	opacity: .1;
 }
 
 .editing {
 	position: relative;
-  background: rgba(4,4,5,0.07);
-}
-
-.focused {
-	position: relative;
-}
-
-.ping::before, .ping::after {
-	content: "";
-	position: absolute;
-	top: 0;
-	height: 100%;
-	background: var(--event-ping);
-}
-
-.ping::before {
-	width: 100%;
-	opacity: .1;
-}
-
-.ping::after {
-	width: 2px;
+	background: rgba(4,4,5,0.07);
 }
 
 .focused {
@@ -234,54 +248,61 @@ function isRead(room) {
 }
 </style>
 <div class="content">
-	{#if false && !isRead(room)}
-	<div class="unread" on:click={() => actions.slice.jump(room.id, room.readEvent)}>
-		<div style="flex: 1;">
-		{room.notifications.unread} new messages
+	{#if room.events.live}
+		{#if false && !isRead(room)}
+		<div class="unread" on:click={() => actions.slice.jump(room.id, room.readEvent)}>
+			<div style="flex: 1;">
+			{room.notifications.unread} new messages
+			</div>
+			<div style="display: flex; font-weight: 700" on:click|stopPropagation={() => actions.rooms.markRead(room)}>
+				Mark As Read <div class="icon" style="margin-left: 4px">mark_chat_read</div>
+			</div>
 		</div>
-		<div style="display: flex; font-weight: 700" on:click|stopPropagation={() => actions.rooms.markRead(room)}>
-			Mark As Read <div class="icon" style="margin-left: 4px">mark_chat_read</div>
-		</div>
-	</div>
-	{/if}
-	<Scroller
-		items={slice.events}
-		itemKey="id"
-		direction="up"
-		bind:scrollTop={scrollTop}
-		bind:scrollMax={scrollMax}
-		bind:scrollTo={scrollTo}
-		bind:reset={reset}
-		let:data={event}
-		let:index={index}
-		{fetchBackwards}
-		{fetchForwards}
-		getDefault={() => [slice.events[0]?.type === "m.room.create", slice.atEnd()]}
-	>
-		<div slot="top" style="margin-top: auto"></div>
-		<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
-		<div>
-			{#if shouldRender(event.type, $settings)}
+		{/if}
+		<Scroller
+			items={$slice.events}
+			direction="up"
+			bind:scrollTop={scrollTop}
+			bind:scrollMax={scrollMax}
+			bind:scrollTo={scrollTo}
+			bind:reset={reset}
+			let:data={event}
+			let:index={index}
+			{fetchBackwards}
+			{fetchForwards}
+			getDefault={() => [$slice.events[0]?.type === "m.room.create", $slice.atEnd()]}
+		>
+			{@const prev = getPrev(event)}
+			{@const highlight = getHighlight(event, $reply)}
+			{@const header = shouldSplit(prev, event)}
+			<div slot="top" style="flex: 1"></div>
+			<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
+			<div>
+				{#if prev}
+				<Divider {...dividerProps(prev, event)} />
+				{/if}
 				<div
-					class:header={shouldSplit(slice.events[index - 1], event)}
-					class:ping={shouldPing(event)}
+					class:header
+					class:highlight={!!highlight}
 					class:focused={$focused === event.id}
 					class:editing={$edit === event.id}
 					data-event-id={event.id}
-					class:highlight={getHighlight(event, $reply)}
-					style:--color={getHighlight(event, $reply)}
+					style:--color={highlight}
 				>
-				  <Event {shiftKey} {event} header={shouldSplit(slice.events[index - 1], event)} />
+				  <Event {shiftKey} {event} {header} />
 				</div>
-			{/if}
-			{#if index < slice.events.length - 1}
-				<Divider {...dividerProps(event, slice.events[index + 1])} />
-			{/if}
+			</div>
+			<div slot="placeholder-end" class="placeholder-bottom">
+				<Placeholder />
+			</div>
+			<div slot="bottom" class="spacer">
+				{#if $upload}<Upload upload={$upload} />{/if}
+			</div>
+		</Scroller>
+	{:else}
+		<div style="padding: 16px">
+			<Loading color="var(--fg-content)" />
 		</div>
-		<div slot="placeholder-end" class="tall"><Placeholder /></div>
-		<div slot="bottom" class="spacer">
-		{#if $upload}<Upload upload={$upload} />{/if}
-		</div>
-	</Scroller>
+	{/if}
 </div>
 <svelte:window on:resize={handleResize} on:keydown={handleKeyDown} on:keyup={handleKeyDown} on:mousemove={checkShift} />

@@ -11,6 +11,9 @@ import Members from "../settings/room/Members.svelte";
 
 export let tab;
 let room = state.selectedRoom;
+let { settings } = state;
+
+$: emoji = $settings.get("ex-emoji") ? [{ id: "emoji", view: Emoji, name: "Emoji and Stickers", icon: "emoji_emotions" }] : [];
 
 $: views = [
   { id: "home/", label: `${$room.name}` },
@@ -19,7 +22,7 @@ $: views = [
   { id: "security",    view: Security,    name: "Security",           icon: "security" },
   { id: "rooms",       view: Rooms,       name: "Rooms",              icon:"tag" },
   { id: "audit",       view: Audit,       name: "Audit Log",          icon: "assignment" },
-  { id: "emoji",       view: Emoji,       name: "Emoji and Stickers", icon: "emoji_emotions" },
+  ...emoji,
   { id: "usr/", split: true, label: "users" },
   { id: "members", view: Members,     name: "Members",     icon: "people",           raw: true, props: { membership: "join" }},
   { id: "bans",    view: Members,     name: "Bans",        icon: "person_remove",    raw: true, props: { membership: "ban" }},

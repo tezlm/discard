@@ -3,7 +3,7 @@ import fuzzysort from "fuzzysort";
 import Search from "../atoms/Search.svelte";
 import Popup from "../atoms/Popup.svelte";
 import { getLastMessage } from "../../util/timeline";
-import type { Room } from "discount.js";
+import type { Room } from "discount.ts";
 let search = "";
 let highlighted = 0;
 $: results = getRooms(search);

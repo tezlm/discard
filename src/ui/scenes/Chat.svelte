@@ -4,6 +4,7 @@ import RoomNav from '../nav/RoomNav.svelte';
 import SpaceNav from '../nav/SpaceNav.svelte';
 import SpaceHeader from '../space/SpaceHeader.svelte';
 import UserMenu from '../user/UserMenu.svelte';
+let { focusedRoom: room } = state;
 </script>
 <style>
 .wrapper {
@@ -52,7 +53,7 @@ import UserMenu from '../user/UserMenu.svelte';
         <RoomNav />
         <UserMenu />
       </div>
-      <Room />
+      <Room room={$room} />
     </div>
   </div>
 </div>

@@ -17,7 +17,7 @@ implementation, and `x` means it is done
   - [x] reply to message
   - [x] emoji picker
   - [x] markdown
-- [ ] attachments
+- [x] attachments
   - [x] send files
   - [x] paste in files
   - [x] open attachments in popup
@@ -25,10 +25,10 @@ implementation, and `x` means it is done
   - [ ] file too big warning
   - [x] drag and drop to upload file
 - [x] reactions
-- [-] members
+- [x] members
   - [x] member popout
   - [x] members list
-  - [ ] lazy load full member list
+  - [x] lazy load full member list
 - [ ] settings
   - [x] make them save
   - [ ] edit basic user info
@@ -36,11 +36,12 @@ implementation, and `x` means it is done
   - [x] edit basic room info
   - [x] edit permissions
   - [ ] join rules settings
-  - [ ] esettings
 - [ ] notifications
   - [ ] show # of unread messages(?)
   - [ ] mentions list/inbox
   - [x] highlight mentions
+  - [ ] play sounds
+  - [ ] desktop notifications
   - [ ] change favicon based on notifs
 - [ ] rich input
   - [ ] markdown preview
@@ -49,7 +50,7 @@ implementation, and `x` means it is done
   - [ ] room autocomplete?
 - [ ] spaces
   - [-] space home
-  - [ ] add/remove rooms from spaces
+  - [-] add/remove rooms from spaces
   - [x] show correct order of rooms
   - [ ] order top level spaces
   - [x] display sub-spaces
@@ -86,10 +87,9 @@ implementation, and `x` means it is done
   - [ ] start dms
 - [x] router (change title/url)
 - [ ] persist
-  - [ ] save state/accountdata
+  - [x] save state/accountdata
   - [ ] save e2ee keys
-  - [ ] save timeline
-  - [ ] resume after restart
+  - [x] resume after restart
   - [-] resume after disconnect
 - [ ] e2ee (VERY DIFFICULT)
   - [ ] basic implementation
@@ -99,24 +99,24 @@ implementation, and `x` means it is done
   - [ ] verification
   - [ ] key backup
 - [x] nitor
-  - [ ] is funny
 
 ## extra stuff
 
 after the base stuff is done, i might start looking at other features
 
-- [ ] stickers/saved images
-- [ ] custom emoji
+- [ ] custom emoji/stickers
   - [x] view
   - [ ] upload/edit/delete packs
   - [ ] upload/edit/delete emoji
+  - [ ] use packs globally
+  - [ ] edit per-user pack
 - [ ] subscribe to policy lists
 - [ ] display for other room types
   - [ ] m.policy
   - [ ] long form
   - [ ] forum
   - [-] media
-  - [ ] documents
+  - [~] documents (cancelled, no good way to implement this + dubious necessity)
 - [ ] threads
   - [ ] start thread
   - [ ] view in sidebar
@@ -127,4 +127,20 @@ after the base stuff is done, i might start looking at other features
   - [ ] voice channels/rooms
   - [ ] video (camera)
   - [ ] video (screen share)
+- [ ] presence
+  - [ ] set online/offline
+  - [ ] custom presence
+- [ ] (internal) move most stuff to discount
 - [ ] index and search encrypted room events
+
+## not planned
+
+i mean, *maybe* they'll be implemented, but they're so low priority
+assume they won't be
+
+- [~] stories (simply doesn't make sense for this)
+- [~] push notifications (this isn't a mobile app, sorry)
+- [~] room favorite/low priority (spaces exist)
+- [~] server administration (this is a chat app, not a server admin interface)
+- [~] sso login (will be replaced with oidc)
+- [~] reporting content (current reporting system sucks, if a better method is merged into spec (eg. report to room moderators) i **aboslutely** will implement it)

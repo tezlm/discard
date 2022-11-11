@@ -1,5 +1,6 @@
 <script>
 import Avatar from "../../atoms/Avatar.svelte";
+import Input from "../../atoms/Input.svelte";
 import Button from "../../atoms/Button.svelte";
 import Toolbar from "../../atoms/Toolbar.svelte";
 import { parseMxc } from "../../../util/content.ts";
@@ -53,11 +54,23 @@ let { settings, popup } = state;
 .pack[open] .icon {
   transform: rotate(180deg);
 }
+
+.create {
+  border: dashed var(--bg-spaces) 2px;
+  padding: 16px;
+  min-height: 96px;
+}
 </style>
 <p>TODO: upload/edit/rename/delete packs</p>
 <p>TODO: upload/edit/rename/delete emoji and stickers</p>
 <p>TODO: use packs globally</p>
 <br />
+{#if room.power.me > room.power.forState("im.ponies.room_emotes")}
+<div class="create pack" style="display: flex;justify-content:space-between;align-items: center">
+  create pack thing here
+  <Input placeholder="pack name" /><Button type="primary" label="Create" disabled clicked={todo} />
+</div>
+{/if}
 {#each room.getAllState("im.ponies.room_emotes").filter(i => i.content.pack) as event}
 {@const pack = event.content.pack}
 {@const name = pack.display_name || event.stateKey}
@@ -96,5 +109,9 @@ let { settings, popup } = state;
   {/each}
   </table>
 </details>
+{:else}
+<div style="text-align: center; padding: 64px;">
+  <i>no packs, make one?</i>
+</div>
 {/each}
 <div style="min-height: 64px"></div>

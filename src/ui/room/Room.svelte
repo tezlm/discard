@@ -13,14 +13,15 @@ import UnknownRoom from './rooms/Unknown.svelte';
 // hmmm...
 import MediaRoom from './rooms/Media.svelte';
 import ForumRoom from './rooms/Forum.svelte';
-import LongformRoom from './rooms/Longform.svelte';
+// import LongformRoom from './rooms/Longform.svelte';
 
-let { focusedRoom: room, focusedSpace: space, navRooms, roomState, slice, settings } = state;
+export let room;
+
+let { focusedSpace: space, navRooms, roomState, slice, settings } = state;
 let { search } = roomState;
 
 let selectedTab;
-$: type = $room?.getState("m.room.create")?.content.type;
-$: if ($navRooms) room = state.focusedRoom;
+$: type = room?.getState("m.room.create")?.content.type;
 </script>
 <style>
 .room {
@@ -40,32 +41,34 @@ $: if ($navRooms) room = state.focusedRoom;
 }
 </style>
 <div class="room">
-  <RoomHeader room={$room} bind:selectedTab />
-  {#if $room && $slice}
+  <RoomHeader {room} bind:selectedTab />
+  {#if room}
 		<div class="content" style:flex-direction="row">
-			{#if $room.getState("m.room.encryption") && false}
-				<Unverified room={$room} />
+			{#if room.getState("m.room.encryption") && false}
+				<Unverified {room} />
 			{:else if !type}
 				<div class="content">
-				  <BasicRoom room={$room} slice={$slice} />
+				  <BasicRoom {room} />
 				  <RoomFooter />
 				</div>
 			{:else if type === "m.space"}
 			  <SpaceRoom room={$space} />
 			<!-- {:else if type === "m.policy"} -->
 			{:else if type === "org.eu.celery.room.media"}
-				<MediaRoom room={$room} slice={$slice} />
+				<MediaRoom {room} />
 			{:else if type === "org.eu.celery.room.forum"}
-				<ForumRoom room={$room} />
+				<ForumRoom {room} />
+			<!--
 			{:else if type === "org.eu.celery.room.longform"}
-				<LongformRoom room={$room} slice={$slice} />
+				<LongformRoom {room} />
+			-->
 			{:else}
-				<UnknownRoom room={$room} />
+				<UnknownRoom {room} />
 			{/if}
 			{#if $search}
-			<RoomSearch room={$room} search={$search} />
+			<RoomSearch {room} search={$search} />
 			{:else if $settings.get("showmemberlist")}
-			<RoomMembers room={$room} />
+			<RoomMembers {room} />
 			{/if}
 		</div>
   {:else if $space}

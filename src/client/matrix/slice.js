@@ -16,14 +16,16 @@ export default class Slice {
     const endIdx = timeline.length - 1;
     this.start = timeline[startIdx];
     this.end = timeline[endIdx];
-    this.events = timeline.slice(startIdx, endIdx + 1);
+    this.events = timeline.slice(startIdx, endIdx + 1)
+      .filter((ev) => !ev.content["m.new_content"] && ev.type !== "m.reaction");
   }
     
   reslice() {
     const timeline = this.timeline;
     const startIdx = timeline.lastIndexOf(this.start);
     const endIdx = timeline.lastIndexOf(this.end);
-    this.events = timeline.slice(startIdx, endIdx + 1);
+    this.events = timeline.slice(startIdx, endIdx + 1)
+      .filter((ev) => !ev.content["m.new_content"] && ev.type !== "m.reaction");
   }
   
   async backwards(count = 50) {
@@ -45,7 +47,8 @@ export default class Slice {
     
     this.start = timeline[newStart];
     this.end = timeline[newEnd];
-    this.events = timeline.slice(newStart, newEnd + 1);
+    this.events = timeline.slice(newStart, newEnd + 1)
+      .filter((ev) => !ev.content["m.new_content"] && ev.type !== "m.reaction");
     if (this.events.indexOf(undefined) >= 0) state.log.error("missing event!")
   }
   
@@ -64,7 +67,8 @@ export default class Slice {
     
     this.start = timeline[newStart];
     this.end = timeline[newEnd];
-    this.events = timeline.slice(newStart, newEnd + 1);
+    this.events = timeline.slice(newStart, newEnd + 1)
+      .filter((ev) => !ev.content["m.new_content"] && ev.type !== "m.reaction");
   }
   
   async jump(eventId, count = 50) {
@@ -79,6 +83,7 @@ export default class Slice {
     
     this.start = timeline[newStart];
     this.end = timeline[newEnd];
-    this.events = timeline.slice(newStart, newEnd + 1);
+    this.events = timeline.slice(newStart, newEnd + 1)
+      .filter((ev) => !ev.content["m.new_content"] && ev.type !== "m.reaction");
   }
 }

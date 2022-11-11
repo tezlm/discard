@@ -4,7 +4,7 @@ import Button from "../atoms/Button.svelte";
 import Popup from "../atoms/Popup.svelte";
 import Search from "../atoms/Search.svelte";
 import Checkbox from "../atoms/Checkbox.svelte";
-import type { Room } from "discount.js";
+import type { Room } from "discount.ts";
 // export const confirm = () => {};
 export let current;
 let checked = {};

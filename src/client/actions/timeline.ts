@@ -1,4 +1,4 @@
-import type { Room, Event } from "discount.js";
+import type { Room, Event } from "discount.ts";
 
 export function reslice(room: Room, force = false) {
   if (!room.events.live) return;
