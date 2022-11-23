@@ -53,8 +53,8 @@ function select(option) {
 }
 
 .dot > div {
-  height: 10px;
-  width: 10px;
+  min-height: 10px;
+  min-width: 10px;
   background: var(--fg-light);
   border-radius: 50%;
 }

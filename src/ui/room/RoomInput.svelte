@@ -349,7 +349,7 @@ function slide() {
 </div>
 <svelte:window
   on:dragover|preventDefault={(e) => { isShift = e.shiftKey }}
-  on:dragstart|preventDefault={(e) => { isShift = e.shiftKey }}
+  on:dragstart={(e) => { isShift = e.shiftKey }}
   on:dragenter|preventDefault={(e) => { isDragging = true; isShift = e.shiftKey && false }}
   on:drop|preventDefault={handleDrop}
 />

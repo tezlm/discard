@@ -5,7 +5,6 @@ import VirtualList from "svelte-virtual-scroll-list"
 import { memberContext } from "../../util/context";
 import { fastclick } from "../../util/use";
 export let room;
-let count = 30;
 
 let { popout, context } = state;
 
@@ -42,7 +41,6 @@ async function fetchList(room) {
 
 let oldId = null;
 $: if (room.id !== oldId) {
-  count = 20;
   oldId = room.id;
 }
 
@@ -134,7 +132,7 @@ function handleContext(e) {
 >
   {#await fetchList(room)}
     <div class="title">Loading...</div>
-    {#each Array(count) as _}
+    {#each Array(10) as _}
     <!-- TODO: cleanup -->
     <div class="wrapper" style="cursor: initial; background: transparent !important">
       <div class="member">

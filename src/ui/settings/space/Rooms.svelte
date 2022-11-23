@@ -2,7 +2,7 @@
 export let room;
 const children = room.state
   .filter(i => i.type === "m.space.child")
-  .filter(i => Object.keys(i.content).length);
+  .filter(i => i.content.via?.length);
 </script>
 <p>todo: list rooms, create rooms, remove rooms</p>
 <div style="height: 1em"></div>

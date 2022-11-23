@@ -38,6 +38,17 @@ input {
   background: var(--bg-spaces);
 }
 
+/* old discord style input:
+input {
+  background: var(--bg-rooms-members);
+  border: solid var(--bg-spaces) 1px;
+}
+
+input:focus {
+  border: solid var(--color-accent) 1px;
+}
+*/
+
 .small {
   height: 20px;
   font-size: 14px;

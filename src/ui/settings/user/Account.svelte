@@ -2,7 +2,7 @@
 import Button from "../../atoms/Button.svelte";
 import AvatarUpload from "../../atoms/AvatarUpload.svelte";
 let { userId, client } = state;
-let user = client.users.get(userId) ?? {};
+let user = client.users.get(userId) ?? { id: userId };
 </script>
 <style>
 .account {

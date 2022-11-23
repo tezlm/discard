@@ -30,6 +30,8 @@ $: selected = [...reacts.keys()][0];
 }
 
 .reaction {
+  display: flex;
+  align-items: center;
   padding: 4px 8px;
   border-radius: 2px;
   margin-bottom: 1px;
@@ -37,7 +39,7 @@ $: selected = [...reacts.keys()][0];
 }
 
 .reaction .emoji {
-  margin: 0 4px;
+  margin-right: 8px;
   height: 1em;
 }
 

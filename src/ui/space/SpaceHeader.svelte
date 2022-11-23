@@ -102,6 +102,11 @@ function showPopup(id, opts) {
   width: 32px;
   transition: all 150ms;
 }
+
+.item .icon {
+  float: right;
+  font-size: 16px;
+}
 </style>
 <div
   class="header"
@@ -119,25 +124,25 @@ function showPopup(id, opts) {
   <div class="menu" transition:zoomIn>
   {#if $focusedSpace}
       {#if $focusedSpace.power.me >= ($focusedSpace.power.invite ?? 0) || $focusedSpace.joinRule === "public"}
-      <div class="item" on:click={() => showPopup("invite", { room: $focusedSpace })}><span class="color-accent">Invite People</span></div>
+      <div class="item" on:click={() => showPopup("invite", { room: $focusedSpace })}><span class="color-accent">Invite People</span><span class="color-accent icon">person_add</span></div>
       <div class="spacer"></div>
       {/if}
-      <div class="item" on:click={() => { state.selectedRoom.set($focusedSpace); actions.to(`/space-settings/${$focusedSpace.id}`) }}>Space Settings</div>
-      <div class="item" on:click={todo}>Notification Settings</div>
+      <div class="item" on:click={() => { state.selectedRoom.set($focusedSpace); actions.to(`/space-settings/${$focusedSpace.id}`) }}>Space Settings<span class="icon">settings</span></div>
+      <div class="item" on:click={todo}>Notification Settings<span class="icon">notifications</span></div>
       <div class="spacer"></div>
       {#if $focusedSpace.power.me >= $focusedSpace.power.forState("m.space.child")}
-      <div class="item" on:click={() => showPopup("create", { type: "room", parent: $focusedSpace })}>Create Room</div>
-      <div class="item" on:click={() => showPopup("create", { type: "space", parent: $focusedSpace })}>Create Subspace</div>
-      <div class="item" on:click={() => showPopup("addexisting", { parent: $focusedSpace })}>Add Existing Room</div>
+      <div class="item" on:click={() => showPopup("create", { type: "room", parent: $focusedSpace })}>Create Room<span class="icon">tag</span></div>
+      <div class="item" on:click={() => showPopup("create", { type: "space", parent: $focusedSpace })}>Create Subspace<span class="icon">folder</span></div>
+      <div class="item" on:click={() => showPopup("addexisting", { parent: $focusedSpace })}>Add Existing Room<span class="icon">add</span></div>
       <div class="spacer"></div>
       {/if}
-      <div class="item" on:click={() => showPopup("leave", { room: $focusedSpace })}><span class="color-red">Leave Space</span></div>
+      <div class="item" on:click={() => showPopup("leave", { room: $focusedSpace })}><span class="color-red">Leave Space</span><span class="color-red icon">logout</span></div>
   {:else}
-      <div class="item" on:click={() => showPopup("create", { type: "room" })}>Create Room</div>
-      <div class="item" on:click={() => showPopup("create", { type: "space" })}>Create Space</div>
-      <div class="item" on:click={() => showPopup("join")}>Join</div>
+      <div class="item" on:click={() => showPopup("create", { type: "room" })}>Create Room<span class="icon">tag</span></div>
+      <div class="item" on:click={() => showPopup("create", { type: "space" })}>Create Space<span class="icon">folder</span></div>
+      <div class="item" on:click={() => showPopup("join")}>Join<span class="icon">add</span></div>
       <div class="spacer"></div>
-      <div class="item" on:click={() => actions.to("/user-settings") }>Settings</div>
+      <div class="item" on:click={() => actions.to("/user-settings") }>Settings<span class="icon">settings</span></div>
   {/if}
   </div>
   {/if}

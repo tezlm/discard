@@ -179,7 +179,7 @@ async function fetchForwards() {
 }
 
 .spacer {
-	margin: 8px 0;
+	margin: 12px 0;
 }
 
 .tall {
