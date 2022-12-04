@@ -11,7 +11,7 @@ ul, ol {
   list-style-position: inside;
 }
 
-:is(ul, ol) > :is(ul, ol) {
+:is(ul, ol) > li :is(ul, ol) {
   margin-left: 1em;
 }
 
@@ -127,4 +127,4 @@ button {
 
 [data-mx-ping]:hover::after {
   opacity: .2;
-}
+} 

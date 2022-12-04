@@ -50,7 +50,7 @@ function ease() {
 }
 
 function handleClick(e) {
-  const ping = e.target.dataset.mxPing;
+  const ping = e.target.dataset?.mxPing;
   if ($context.items) {
     $context = {};
   } else if (ping) {

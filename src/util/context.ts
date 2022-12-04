@@ -44,7 +44,7 @@ export function eventContext(event: Event, config: { showEmoji: () => {} }): Arr
         event.room.sendState("m.room.pinned_events", { pinned: events });
         return;
       }
-      if (e.detail.shiftKey) {
+      if (e.detail.shift) {
         event.room.sendState("m.room.pinned_events", { pinned: [event.id, ...events] });
       } else {
         state.popup.set({ id: "pin", event });
@@ -56,7 +56,7 @@ export function eventContext(event: Event, config: { showEmoji: () => {} }): Arr
   menu.push({ label: "Copy Link",   icon: "link", clicked: () => navigator.clipboard.writeText(`https://matrix.to/#/${event.room.id}/${event.id}`) });
   if (!event.isState() && ((power.me >= power.forEvent("m.room.redaction") && event.sender.id === state.id) || power.me >= (power.redact ?? 50))) {
     function redact(e) {
-      if (e.detail.shiftKey) {
+      if (e.detail.shift) {
         event.flags.add("redacted");
         event.redact();
       } else {
@@ -313,8 +313,21 @@ export function homeContext() {
       { label: "Changelog", clicked: goto("changelog"), icon: "assignment" },
       { label: "Help",      clicked: goto("help"),      icon: "help" },
       { label: "Credits",   clicked: goto("version"),   icon: "groups" },
+      null,
+      { label: "Logout", clicked: logout, icon: "logout", color: "var(--color-red)" },
 	  ] },
 	];
+
+  function logout() {
+    state.popup.set({
+      id: "dialog",
+      title: "Log Out",
+      body: "Are you sure you want to logout?",
+      button: "Log Out",
+      danger: true,
+      clicked: actions.client.logout,
+    });
+  }
   
   function markEverythingRead() {
     state.popup.set({

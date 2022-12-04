@@ -1,4 +1,5 @@
 <script>
+import { fastclick } from "../../../util/use";
 export let focused = false;
 export let unread = false;
 export let muted = false;
@@ -68,7 +69,15 @@ function handleContextMenu(e) {
 	display: block;
 }
 </style>
-<div class="item" class:focused class:unread class:muted on:click={clicked} on:contextmenu={handleContextMenu}>
+<div
+	class="item"
+	class:focused
+	class:unread
+	class:muted
+	use:fastclick
+	on:fastclick={clicked}
+	on:contextmenu|preventDefault|stopPropagation={handleContextMenu}
+>
   <div class="content">
     <slot></slot>
   </div>

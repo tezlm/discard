@@ -31,7 +31,6 @@ span.icon {
 
 * {
   scrollbar-color: var(--bg-spaces) var(--bg-rooms-members);
-  scrollbar-gutter: stable;
 }
 
 ::-webkit-scrollbar {

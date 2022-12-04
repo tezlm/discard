@@ -1,14 +1,22 @@
-<script>
+<script lang="ts">
 import Search from "../atoms/Search.svelte";
 import { parseHtml } from "../../util/html";
 import { roomContext } from "../../util/context";
-export let room;
+import type { Room } from "discount.ts";
+export let room: Room;
 let { focusedSpace: space, settings, scene } = state;
 $: dark = $space && !room;
 
 let { popout, invites, dms } = state;
 
-function getName(room) {
+function sanitize(str: string): string {
+  return str
+    ?.replace(/&amp;/g, "&")
+    .replace(/>/g, "&gt;")
+    .replace(/</g, "&lt;");
+}
+
+function getName(room: Room): string {
 	if (!dms.has(room.id)) return room.name;
 	const other = dms.get(room.id);
 	return other.name ?? other.id;
@@ -35,7 +43,7 @@ function showHeader() {
     head: room.name,
     body: html
       ? parseHtml(html, { sanitize: true, linkify: true, twemojify: true })
-      : parseHtml(room.topic, { linkify: true, twemojify: true }),
+      : parseHtml(sanitize(room.topic), { linkify: true, twemojify: true }),
     html: true,
   });
 }
@@ -199,12 +207,12 @@ $: if (showPins) {
     <span class="roomicon icon">home</span>
   {/if}
   <span class="name">
-  {#if room}{@html parseHtml(getName(room) ?? "null", { twemojify: true })}{:else}Home{/if}
+  {#if room}{@html parseHtml(sanitize(getName(room) ?? "null"), { twemojify: true })}{:else}Home{/if}
   </span>
   {#if room?.topic}
   <div class="spacer"></div>
   <div class="topic" on:click={showHeader}>
-    {@html parseHtml(room.topic, { linkify: true, twemojify: true })}
+    {@html parseHtml(sanitize(room.topic), { linkify: true, twemojify: true })}
   </div>
   {:else if !room && !$space}
   <div class="spacer"></div>

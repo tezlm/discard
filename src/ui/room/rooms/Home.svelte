@@ -8,9 +8,9 @@ let { invites, popup } = state;
 
 function getInviteSender(invite) {  
   const myMemberEvent = invite.state.find(i => i.type === "m.room.member" && i.state_key === state.userId);
-  const memberEvent = invite.state.find(i => i.type === "m.room.member" && i.state_key === myMemberEvent.sender)?.content;
+  const memberEvent = invite.state.find(i => i.type === "m.room.member" && i.state_key === myMemberEvent.sender);
   if (!memberEvent) return { id: myMemberEvent.sender, name: myMemberEvent.sender };
-  return { id: myMemberEvent.sender, name: myMemberEvent.content.displayname ?? myMemberEvent.sender };
+  return { id: myMemberEvent.sender, name: memberEvent.content?.displayname ?? memberEvent.stateKey };
 }
 
 function join(invite) {
@@ -25,6 +25,14 @@ function join(invite) {
     }
     clearInterval(interval);
   }, 10);
+}
+
+function acceptAll() {
+  for (let [_, invite] of $invites) invite.join();
+}
+
+function rejectAll() {
+  for (let [_, invite] of $invites) invite.leave();
 }
 </script>
 <style>
@@ -193,13 +201,17 @@ function join(invite) {
 </div>
 {:else if selectedTab === "invites"}
 <div class="invites scroll">
-  <h2>Invites - {$invites.size}</h2>
+  <div style="display: flex; align-items: center; gap: 4px">
+    <h2 style="flex: 1">Invites - {$invites.size}</h2>
+    <Button type="small primary" label="Accept all" clicked={acceptAll} />
+    <Button type="small gray" label="Reject all" clicked={rejectAll} />
+  </div>
   {#each [...$invites.values()] as invite (invite.id)}
   {@const sender = getInviteSender(invite)}
   <div class="invite">
     <Avatar user={{ avatar: invite.avatar, id: invite.id }} size={36} />
     <div class="info">
-      <div>{invite.name}{#if invite.topic}<span class="dim">- {invite.topic}</span>{/if}</div>
+      <div>{invite.name ?? sender.name}{#if invite.topic}<span class="dim">- {invite.topic}</span>{/if}</div>
       <div class="small"><span class="dim">invited by </span>{sender.name} <span class="dim">({sender.id})</span></div>
     </div>
     <Tooltip tip="Accept">

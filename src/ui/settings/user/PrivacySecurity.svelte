@@ -37,11 +37,14 @@ h3 {
 <p>Loading sessions...</p>
 {:then res}
 <div class="devices">
-{#each res.devices as device}
+{#each res.devices as device (device.device_id)}
 <!-- TODO: rename and log out sessions -->
 <div class="device">
   <div>
     <span class="big" class:dim={!device.display_name}>{device.display_name}</span>
+    {#if device.device_id === localStorage.getItem("deviceid")}
+    <span class="small dim">(current)</span>
+    {/if}
     <span class="small dim">({device.device_id})</span>
   </div>
   <span class="small">

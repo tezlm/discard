@@ -117,7 +117,9 @@ function twemojifyHtml(html: string): string {
   });
 }
 
-export function parseHtml(html: string, opts = { linkify: true, sanitize: true, inline: false, twemojify: true }) {
+const defaultParseOpts = { linkify: true, sanitize: true, inline: false, twemojify: true };
+
+export function parseHtml(html: string, opts: Partial<typeof defaultParseOpts> = defaultParseOpts) {
 	html = html.replace(/@room/g, "<span data-mx-ping='room'>@room</span>"); // this *may* break
 	if (opts.sanitize)  html = sanitizeHtml(html, opts.inline ? sanitizeOptsInline : sanitizeOpts);
 	if (opts.linkify)   html = linkifyHtml(html, { ignoreTags: ["pre", "code"] });

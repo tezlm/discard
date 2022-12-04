@@ -1,22 +1,30 @@
-<script>
+<script lang="ts">
+import { fastclick } from "../../../util/use";
 import Tooltip from "../../atoms/Tooltip.svelte";
 import Room from "./Room.svelte";
 // import Room from "./RoomTall.svelte";
 import { roomContext } from "../../../util/context";
 import { getLastMessage } from "../../../util/timeline";
-export let room;
+import { parseHtml } from "../../../util/html";
+export let room: Room;
 let expanded = true;
-let { pushRules } = state;
+let { pushRules, context, popup } = state;
 $: rooms = state.spaces.get(room.id);
 
-function isMuted(room) {
+function sanitize(str: string): string {
+  return str
+    ?.replace(/&amp;/g, "&")
+    .replace(/>/g, "&gt;")
+    .replace(/</g, "&lt;");
+}
+
+function isMuted(room: Room): boolean {
 	const rule = $pushRules.rules.find(i => i.id === room.id);
 	if (!rule) return false;
 	return rule.actions.includes("dont_notify");
 }
 
-
-function isRead(room) {
+function isRead(room: Room): boolean {
 	if (isMuted(room)) return true;
 	
 	const tl = room.events.live;
@@ -62,15 +70,28 @@ function isRead(room) {
 .add:hover {
   color: var(--fg-content);
 }
+
+.add:active {
+  transform: translateY(1px);
+}
 </style>
 <div style="min-height: 14px"></div>
-<div class="category" on:click={() => expanded = !expanded} on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: roomContext(room), x: e.clientX, y: e.clientY })}>
+<div
+  class="category"
+  use:fastclick
+  on:fastclick={() => expanded = !expanded}
+  on:contextmenu|preventDefault|stopPropagation={e => $context = { items: roomContext(room), x: e.clientX, y: e.clientY }}
+>
   <div class="icon chevron" class:expanded>chevron_right</div>
-  <div class="title">{room.name}</div>
+  <div class="title">{@html parseHtml(sanitize(room.name ?? "null"), { twemojify: true })}</div>
   {#if room.power.me >= room.power.forState("m.space.child")}
   <div style="flex: 1"></div>
   <Tooltip tip="Create Room">
-    <div class="icon add" on:click|stopPropagation={() => state.popup.set({ id: "create", type: "room", parent: room })}>add</div>
+    <div
+      class="icon add"
+      use:fastclick
+      on:fastclick={() => $popup = { id: "create", type: "room", parent: room }}
+    >add</div>
   </Tooltip>
   <div style="width: 14px"></div>
   {/if}

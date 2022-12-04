@@ -7,7 +7,7 @@ import Text from "../../molecules/files/Text.svelte";
 import MessageReactions from '../message/MessageReactions.svelte';
 import { parseMxc } from "../../../util/content";
 export let room;
-export let slice;
+let { slice } = state;
 
 async function onfile(file) {
   if (!file) return;
@@ -44,7 +44,7 @@ async function handleUpload(file) {
     ...(["m.image", "m.video"].includes(type) ? await getSize(file, type) : {}),
   };
 
-  actions.timeline.send(room.id, "m.room.message", {
+  room.sendEvent("m.room.message", {
     url,
     body: file.name,
     msgtype: type,
@@ -119,12 +119,12 @@ async function paginate() {
 
 async function fetchBackwards() { 
 	const success = await actions.slice.backwards();
-	return [!success || slice.events[0]?.type === "m.room.create", slice.atEnd()];
+	return [!success || $slice.events[0]?.type === "m.room.create", $slice.atEnd()];
 }
 
 async function fetchForwards() {
 	const success = await actions.slice.forwards();
-	return [!success || slice.events[0]?.type === "m.room.create", slice.atEnd()];
+	return [!success || $slice.events[0]?.type === "m.room.create", $slice.atEnd()];
 }
 
 function getContextMenu(event) {
@@ -215,7 +215,7 @@ onMount(paginate);
 }
 </style>
 <div class="content scroll" bind:this={scrollEl} on:scroll={handleScroll}>
-  {#if slice.atEnd()}
+  {#if $slice?.atEnd()}
   <label class="item upload">
     <div class="icon">
         add_circle
@@ -226,7 +226,7 @@ onMount(paginate);
     </div>
   </label>
   {/if}
-  {#each [...slice.events].reverse() as event (event.id)}
+  {#each [...($slice?.events || [])].reverse() as event (event.id)}
   {#if event.type === "m.room.message"}
     {@const type = event.content.msgtype ?? event.type}
     {@const content= event.content}

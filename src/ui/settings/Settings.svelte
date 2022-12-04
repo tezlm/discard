@@ -1,5 +1,6 @@
 <script>
 import Confirm from "./Confirm.svelte";
+import { fastclick } from "../../util/use";
 export let views, options;
 let { path, popup, scene, focusedRoom, focusedSpace } = state;
 let focused = views.find(i => options.tab ? i.id === options.tab : i.view) ?? views.find(i => i.view);
@@ -166,7 +167,7 @@ h1 {
           {#if view.split}<div class="separator"></div>{/if}
           {#if view.label}<div class="title">{view.label}</div>{/if}
         {:else}
-        <button on:click={() => handleClick(view)} class="item" class:selected={view.id === focused.id} style:color={view.color} role="tab">
+        <button use:fastclick on:fastclick={() => handleClick(view)} class="item" class:selected={view.id === focused.id} style:color={view.color} role="tab">
           {view.name}
           {#if view.icon}
           <div class="icon">{view.icon}</div>
@@ -183,11 +184,11 @@ h1 {
       {/if}
       <svelte:component this={focused.view} {...options} {...focused.props} {tab} bind:save bind:reset />
       {#if save}
-      <Confirm {save} reset={() => reset ? reset() : todo} />
+      <Confirm {save} reset={reset ?? todo} />
       {/if}
     </div>
     <div class="exit">
-      <button class="close icon" on:click={() => close()}>close</button>
+      <button class="close icon" use:fastclick on:fastclick={close}>close</button>
       <div class="keybind">ESC</div>
     </div>
   </div>

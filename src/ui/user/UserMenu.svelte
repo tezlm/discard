@@ -2,8 +2,9 @@
 import Tooltip from "../atoms/Tooltip.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 import { homeContext } from "../../util/context.ts";
+import { fastclick } from "../../util/use.ts";
 import { onDestroy } from "svelte";
-let { userId } = state;
+let { userId, context } = state;
 let copyCount = 0, copyText = getCopyText();
 
 function getCopyText() {
@@ -184,8 +185,9 @@ onDestroy(() => state.client?.off("status", onStatus));
 		<Tooltip tip="User Settings" style="height: 30px">
 			<button
 				class="icon"
-				on:click={() => actions.to("/user-settings")}
-				on:contextmenu|preventDefault|stopPropagation={e => state.context.set({ items: homeContext(), x: e.clientX, y: e.clientY })}
+				use:fastclick 
+				on:fastclick={() => actions.to("/user-settings")}
+				on:contextmenu|preventDefault|stopPropagation={e => $context = { items: homeContext(), x: e.clientX, y: e.clientY }}
 				tabindex="0"
 			>settings</button>
 		</Tooltip>

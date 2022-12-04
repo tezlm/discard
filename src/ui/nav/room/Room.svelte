@@ -1,21 +1,31 @@
-<script>
+<script lang="ts">
 import Item from "./Item.svelte";
 import Tooltip from "../../atoms/Tooltip.svelte";
 import { roomContext } from "../../../util/context";
 import { getLastMessage } from "../../../util/timeline";
-export let room;
+import { parseHtml } from "../../../util/html";
+import type { Room } from "discount.ts";
+
+export let room: Room;
 export let muted = false;
 let { focusedRoom, popup, dms } = state;
 $: focused= $focusedRoom?.id === room.id;
 
 // move dm status into the room object?
-function getName(room) {
+function getName(room: Room): string {
 	if (!dms.has(room.id)) return room.name;
 	const other = dms.get(room.id);
 	return other.name ?? other.id;
 }
 
-function isRead(room) {
+function sanitize(str: string): string {
+  return str
+    ?.replace(/&amp;/g, "&")
+    .replace(/>/g, "&gt;")
+    .replace(/</g, "&lt;");
+}
+
+function isRead(room: Room): boolean {
 	if (muted) return true;
 	
 	const tl = room.events.live;
@@ -23,14 +33,14 @@ function isRead(room) {
 	return getLastMessage(tl, room.readEvent) === getLastMessage(tl);
 }
 
-function openSettings(room) {
+function openSettings(room: Room) {
 	return () => {
 		state.selectedRoom.set(room);
 		actions.to(`/room-settings/${room.id}`);
 	};
 }
 
-function getIcon(room) {
+function getIcon(room: Room): string {
 	const type = room.getState("m.room.create")?.content.type;
 	if (type === "org.eu.celery.room.media") return "image";
 	if (type === "org.eu.celery.room.forum") return "message";
@@ -111,7 +121,7 @@ function getIcon(room) {
 	getContext={() => roomContext(room)}
 >
 	<div class="icon room-icon">{getIcon(room)}</div>
-	<div class="name">{getName(room)}</div>
+	<div class="name">{@html parseHtml(sanitize(getName(room) ?? "null"), { twemojify: true })}</div>
 	<div class="spacer"></div>
 	{#if room.notifications.highlight}<div class="mentions">{room.notifications.highlight}</div>{/if}
 	{#if room.power.me >= room.power.invite || room.joinRule === "public"}

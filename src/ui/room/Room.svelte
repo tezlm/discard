@@ -17,7 +17,7 @@ import ForumRoom from './rooms/Forum.svelte';
 
 export let room;
 
-let { focusedSpace: space, navRooms, roomState, slice, settings } = state;
+let { focusedSpace: space, navRooms, roomState, settings } = state;
 let { search } = roomState;
 
 let selectedTab;

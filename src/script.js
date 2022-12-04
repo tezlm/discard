@@ -6,7 +6,7 @@ globalThis.state = state;
 globalThis.actions = actions;
 globalThis.todo = () => state.popup.set({ id: "todo" });
 
-await actions.client.fetch();
+actions.client.fetch().then(() => {
+  new App({ target: document.body });
+});
 
-const app = new App({ target: document.body });
-export default app;

@@ -1,5 +1,6 @@
 <script>
 import Popup from "../atoms/Popup.svelte";
+import RoomTextarea from "../room/input/RoomTextarea.svelte";
 import Button from "../atoms/Button.svelte";
 import Video from "../molecules/files/Video.svelte";
 import Audio from "../molecules/files/Audio.svelte";
@@ -43,6 +44,15 @@ img {
   object-fit: cover;
   border-radius: 3px;
 }
+
+.input {
+  display: flex;
+  min-height: 44px;
+  border-radius: 8px;
+  padding: 0 8px;
+  margin-top: 8px;
+  background: #40444b;
+}
 </style>
 <Popup>
   <h2 slot="header">Upload file</h2>
@@ -62,6 +72,14 @@ img {
       <pre>{#await getText(current.file) then text}{@html text}{/await}</pre>
       {/if}
     </div>
+    <!--
+    <div class="title" style="margin-top: 16px">
+    Add a comment
+    </div>
+    <div class="input">
+      <RoomTextarea placeholder="Add a comment..." />
+    </div>
+    -->
   </div>
   <div slot="footer">
     <Button type="link" label="Nevermind" clicked={closePopup} />

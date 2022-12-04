@@ -37,7 +37,7 @@ export function confirm() {
   <div slot="content" style="max-width: 440px">
     <div style="margin-bottom: 16px;">Do you really want to delete this {event.type === "m.room.message" ? "message" : "event"}?</div>
     <div class="event">
-      <Event noInteract header {event} room={event.room} />
+      <Event noInteract header {event} />
     </div>
     <div class="tip">(hold shift to bypass this dialog)</div>
   </div>
