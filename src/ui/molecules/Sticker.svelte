@@ -1,5 +1,6 @@
 <script>
 import Button from "../../atoms/Button.svelte";
+let { popup } = state;
 </script>
 <style>
 .sticker-popout {
@@ -30,7 +31,7 @@ import Button from "../../atoms/Button.svelte";
     alt={content.body}
     title={content.body}
     style={dimensions.css}
-    on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) })}
+    on:click={() => $popup = { id: "attachment", url: parseMxc(content.url) + "/" + (content.filename ?? content.body) }}
   />
   <div>
     <b>{content.body}</b>

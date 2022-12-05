@@ -2,9 +2,10 @@
 import MessageReply from "./MessageReply.svelte";
 import MessageContent from "./MessageContent.svelte";
 import MessageEdit from "./MessageEdit.svelte";
-import { formatDate, formatTime } from "../../../util/format.ts";
 import Avatar from "../../atoms/Avatar.svelte";
 import Name from "../../atoms/Name.svelte";
+import Tooltip from "../../atoms/Tooltip.svelte";
+import { formatDate, formatTime } from "../../../util/format.ts";
 import { memberContext } from "../../../util/context";
 import { fastclick } from "../../../util/use";
 
@@ -130,7 +131,9 @@ time {
       <Avatar user={event.sender} size={40} />
     </div>
     {:else}
-    <time datetime={event.date.toISOString()}>{formatTime(event.date)}</time>
+    <Tooltip tip={event.date.toLocaleString()}>
+      <time datetime={event.date.toISOString()}>{formatTime(event.date)}</time>
+    </Tooltip>
     {/if}
   </div>
   <div class="content">
@@ -144,7 +147,9 @@ time {
       <div class="badge">bot</div>
       {/if}
       <span style="margin-right: 0.25rem;"></span>
-      <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
+      <Tooltip tip={event.date.toLocaleString()}>
+        <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
+      </Tooltip>
     </div>
     {/if}
     {#if event.id === $edit}

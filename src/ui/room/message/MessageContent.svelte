@@ -1,13 +1,16 @@
 <script>
-import { parseHtml } from "../../../util/html";
-import { parseMxc } from "../../../util/content.ts";
 import hljs from "highlight.js";
 import File from "../../molecules/files/File.svelte";
 import Audio from "../../molecules/files/Audio.svelte";
 import Video from "../../molecules/files/Video.svelte";
 import Text from "../../molecules/files/Text.svelte";
+import Tooltip from "../../atoms/Tooltip.svelte";
+import { parseHtml } from "../../../util/html";
+import { parseMxc } from "../../../util/content";
+import { fastclick } from "../../../util/use";
 export let event;
 let wrapper;
+let { popup } = state;
 
 // TODO: make emoji only messages bigger
 
@@ -113,7 +116,8 @@ img {
     alt={name}
     title={name}
     style={dimensions.css}
-    on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + name, alt: name })}
+    use:fastclick 
+    on:fastclick={() => $popup = { id: "attachment", url: parseMxc(content.url) + "/" + name, alt: name }}
   />
   {:else if type === "m.sticker"}
   <!-- note that this will fetch the full res sticker, which might not be ideal -->
@@ -123,7 +127,8 @@ img {
     alt={name}
     title={name}
     style="height: 128px"
-    on:click={() => state.popup.set({ id: "attachment", url: parseMxc(content.url) + "/" + name, alt: name })}
+    use:fastclick 
+    on:fastclick={() => $popup = { id: "attachment", url: parseMxc(content.url) + "/" + name, alt: name }}
   />
   {:else if type === "m.video"}
   <Video src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
@@ -147,21 +152,21 @@ img {
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}
     {@html parseHtml(content.formatted_body.trim()).trim()}
-    {#if event.flags?.has("edited")}
-    <span class="edited">(edited)</span>
-    {/if}
   </div>
   {:else if content.body}
   <div class="text" class:emote={type === "m.emote"}>
     {#if type === "m.emote"}*{/if}
     {@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/\n/g, "<br />"))}
-    {#if event.flags?.has("edited")}
-    <span class="edited">(edited)</span>
-    {/if}
   </div>
   {:else}
   <div class="text">
     <i style:color="var(--fg-dim)">no content</i>
   </div>
+  {/if}
+  {#if event.flags?.has("edited")}
+  {@const replace = event.relationsIn.find(i => i.relType === "m.replace").event}
+  <Tooltip tip="Edited at {replace.date.toLocaleString()}">
+    <span class="edited" style="cursor: default">(edited)</span>
+  </Tooltip>
   {/if}
 </div>

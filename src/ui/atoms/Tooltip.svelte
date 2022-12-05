@@ -45,6 +45,7 @@ onMount(setPos);
 
   z-index: 9999;
   pointer-events: none;
+  user-select: none;
   transition: transform 50ms;
 }
 

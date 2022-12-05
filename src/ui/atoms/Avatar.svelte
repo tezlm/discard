@@ -1,5 +1,5 @@
 <script>
-import { parseMxc, generateAvatar } from "../../util/content.ts";
+import { parseMxc, generateAvatar } from "../../util/content";
 export let user;
 export let size;
 export let link = false;

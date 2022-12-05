@@ -9,7 +9,7 @@ let name, topic, avatar, aliases = [];
 export function reset() {
   name = room?.name ?? "";
   topic = room?.topic ?? "";
-  avatar = { avatar: room?.avatar, id: room.id };
+  avatar = { avatar: room?.avatar, name: room?.name, id: room.id };
 }
 
 $: {

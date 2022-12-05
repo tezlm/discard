@@ -24,7 +24,7 @@ async function handleSubmit() {
 <style>
 .wrapper {
   background-color: var(--bg-spaces);
-  background-position: center;
+  background-position: top left;
   width: 100%;
 }
 

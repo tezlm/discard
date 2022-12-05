@@ -1,5 +1,6 @@
 <script>
 import Tooltip from "./Tooltip.svelte";
+import { fastclick } from "../../util/use";
 export let options;
 export let selected;
 export let changed = () => {};
@@ -27,8 +28,13 @@ function select(option) {
   border-left: solid transparent 3px;
 }
 
-.option:hover {
+.option:hover,
+.option:focus {
   background: rgba(4,4,5,0.07);
+}
+
+.option:focus {
+  outline: solid var(--color-accent) 3px;
 }
 
 .option.selected {
@@ -85,11 +91,13 @@ function select(option) {
     {#if option.disabled && typeof option.disabled === "string"}
       <Tooltip tip={option.disabled} position="right">
         <div
+          tabindex="0"
           class="option"
           class:selected={selected === option.id}
           class:disabled={option.disabled}
           style:border-left-color={option.color}
-          on:click={() => !option.disabled && select(option.id)}
+          use:fastclick
+          on:fastclick={() => !option.disabled && select(option.id)}
         >
           <div class="dot">
             {#if selected === option.id}<div></div>{/if}
@@ -104,11 +112,13 @@ function select(option) {
       </Tooltip>
       {:else}
       <div
+        tabindex="0"
         class="option"
         class:selected={selected === option.id}
         class:disabled={option.disabled}
         style:border-left-color={option.color}
-        on:click={() => !option.disabled && select(option.id)}
+        use:fastclick
+        on:fastclick={() => !option.disabled && select(option.id)}
       >
         <div class="dot">
           {#if selected === option.id}<div></div>{/if}

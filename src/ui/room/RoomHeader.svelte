@@ -1,10 +1,13 @@
 <script lang="ts">
+import Tooltip from "../atoms/Tooltip.svelte";
 import Search from "../atoms/Search.svelte";
 import { parseHtml } from "../../util/html";
 import { roomContext } from "../../util/context";
+import { fastclick } from "../../util/use";
 import type { Room } from "discount.ts";
 export let room: Room;
 let { focusedSpace: space, settings, scene } = state;
+let copyCount = 0;
 $: dark = $space && !room;
 
 let { popout, invites, dms } = state;
@@ -20,6 +23,29 @@ function getName(room: Room): string {
 	if (!dms.has(room.id)) return room.name;
 	const other = dms.get(room.id);
 	return other.name ?? other.id;
+}
+
+function getCopyText(count) {
+	switch(count) {
+		case 0: return "Click to copy user id";
+		case 1: return "Copied!";
+		case 2: return "Double Copy!";
+		case 3: return "Triple Copy!";
+		case 4: return "Dominating!!";
+		case 5: return "Rampage!!";
+		case 6: return "Mega Copy!!";
+		case 7: return "Unstoppable!!";
+		case 8: return "Wicked Sick!!";
+		case 9: return "Monster Copy!!!";
+//		case 10: return "GODLIKE!!!";
+//		default: return "BEYOND GODLIKE!!!";
+		default: return "good jbo you copied it";
+	}
+}
+
+function copy(text: string) {
+  copyCount++;
+  navigator.clipboard.writeText(text);
 }
 
 export let selectedTab = "home";
@@ -164,6 +190,10 @@ $: if (showPins) {
   cursor: pointer;
 }
 
+.tab-wrap:focus {
+  outline: none;
+}
+
 .tab {
   display: flex;
   align-items: center;
@@ -172,8 +202,13 @@ $: if (showPins) {
   font-weight: 500;
 }
 
-.tab-wrap:hover .tab {
+.tab-wrap:hover .tab,
+.tab-wrap:focus .tab {
   background: var(--mod-lighten);
+}
+
+.tab-wrap:focus .tab {
+  outline: solid var(--color-accent) 3px;
 }
 
 .tab-wrap.selected .tab {
@@ -207,7 +242,23 @@ $: if (showPins) {
     <span class="roomicon icon">home</span>
   {/if}
   <span class="name">
-  {#if room}{@html parseHtml(sanitize(getName(room) ?? "null"), { twemojify: true })}{:else}Home{/if}
+  {#if room}
+    {#if dms.has(room?.id)}
+    {@const member = dms.get(room.id)}
+    <Tooltip position="down" color={copyCount === 0 ? null : "var(--color-green)"}>
+      <span slot="tip" style="font-family: var(--font-primary); color: var(--fg-light); font-size: .9rem;">
+        {copyCount === 0 ? member.id : getCopyText(copyCount)}
+      </span>
+      <span style="cursor: pointer" use:fastclick on:fastclick={() => copy(member.id)} on:mouseleave={() => setTimeout(() => copyCount = 0, 50)}>
+        {@html parseHtml(sanitize(getName(room) ?? "null"), { twemojify: true })}
+      </span>
+    </Tooltip>
+    {:else}
+    {@html parseHtml(sanitize(getName(room) ?? "null"), { twemojify: true })}
+    {/if}
+  {:else}
+    Home
+  {/if}
   </span>
   {#if room?.topic}
   <div class="spacer"></div>
@@ -217,8 +268,8 @@ $: if (showPins) {
   {:else if !room && !$space}
   <div class="spacer"></div>
   <div style="flex:1;display:flex">
-    <div class="tab-wrap" class:selected={selectedTab === "home"}     on:click={() => actions.to("/home")}><div class="tab">Dashboard</div></div>
-    <div class="tab-wrap" class:selected={selectedTab === "invites"}  on:click={() => actions.to("/invites")}><div class="tab">Invites {#if $invites.size}<span class="ping">{$invites.size}</span>{/if}</div></div>
+    <div tabindex="0" class="tab-wrap" class:selected={selectedTab === "home"}     use:fastclick on:fastclick={() => actions.to("/home")}><div class="tab">Dashboard</div></div>
+    <div tabindex="0" class="tab-wrap" class:selected={selectedTab === "invites"}  use:fastclick on:fastclick={() => actions.to("/invites")}><div class="tab">Invites {#if $invites.size}<span class="ping">{$invites.size}</span>{/if}</div></div>
     <!-- <div class="tab-wrap" class:selected={selectedTab === "knocking"} on:click={() => actions.to("/knocking")}><div class="tab">Knocking</div></div> -->
   </div>
   {:else}

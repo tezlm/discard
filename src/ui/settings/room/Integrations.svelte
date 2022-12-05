@@ -105,8 +105,52 @@ h4 {
 {:else}
 <i style="margin-top: 12px">There are no bridges here!</i>
 {/each}
-<!--
-<div style="height: 18px"></div>
-<h3>Bots</h3>
-[waiting on msc - please hold...]
--->
+<div style="min-height: 16px"></div>
+<h3>Widgets</h3>
+{#each room.getAllState("im.vector.modular.widgets") as event}
+  <div class="bridge">
+    {#if $settings.get("shadowdev")}
+    <div class="toolbar">
+      <Toolbar items={[{ clicked: () => $popup = { id: "dev-event", event }, name: "view source", icon: "terminal" }]} />
+    </div>
+    {/if}
+    <div class="info">
+      <div class="card">
+        <div class="type">Name:</div>
+        <div class="value">{event.content.name}</div>
+      </div>
+      <div class="card">
+        <div class="type">Type:</div>
+        <div class="value">{event.content.type}</div>
+      </div>
+      <div class="card">
+        <div class="type">Url:</div>
+        <div class="value">{event.content.url}</div>
+      </div>
+    </div>
+    <!--
+    <Avatar link user={{ id: bridge.protocol.id, avatar: bridge.protocol.avatar_url }} size={64} />
+    <div class="info">
+      <h4>{bridge.protocol?.displayname ?? bridge.protocol?.id}</h4>
+      This room is currently being bridged to: 
+      {#if bridge.channel}
+      <div class="card">
+        <div class="type">Channel:</div>
+        <div class="value">{bridge.channel.displayname ?? bridge.channel.id}</div>
+      </div>
+      {/if}
+      <hr />
+      This bridge is managed by
+      <span data-mx-ping={bridge.bridgebot}>
+        {#await botPromise}
+        {bridge.bridgebot}
+        {:then bot}
+        {bot?.name ? ("@" + bot.name) : bridge.bridgebot}
+        {/await}
+      </span>
+    </div>
+    -->
+  </div>
+{:else}
+<i style="margin-top: 12px">There are no widgets here!</i>
+{/each}

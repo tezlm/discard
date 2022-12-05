@@ -129,7 +129,7 @@ h1 {
       <i style="margin-bottom: 16px">this may take a while</i>
       <Loading color="var(--fg-muted)" />
     {:then memberData}
-      <VirtualScroll 
+      <VirtualScroll
         data={memberData}
         let:data={member}
         estimateSize={64}
@@ -149,7 +149,6 @@ h1 {
           </div>
           <div style="margin-left: auto;"></div>
           {#if membership === "join"}
-          <!-- FIXME: this is very broken in general and doesn't update power levels -->
           <Power
             value={member.power}
             disabled={(power.me < power.forState("m.room.power_levels") || (power.me <= member.power && member.id !== state.userId))}

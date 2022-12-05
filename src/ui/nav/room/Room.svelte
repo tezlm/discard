@@ -4,6 +4,7 @@ import Tooltip from "../../atoms/Tooltip.svelte";
 import { roomContext } from "../../../util/context";
 import { getLastMessage } from "../../../util/timeline";
 import { parseHtml } from "../../../util/html";
+import { fastclick } from "../../../util/use";
 import type { Room } from "discount.ts";
 
 export let room: Room;
@@ -125,13 +126,13 @@ function getIcon(room: Room): string {
 	<div class="spacer"></div>
 	{#if room.notifications.highlight}<div class="mentions">{room.notifications.highlight}</div>{/if}
 	{#if room.power.me >= room.power.invite || room.joinRule === "public"}
-	<div class="settings hover" class:focused on:click|stopPropagation={(e) => $popup = { id: "invite", type: "room", room }}>
+	<div class="settings hover" class:focused use:fastclick on:fastclick={(e) => $popup = { id: "invite", type: "room", room }}>
 		<Tooltip tip="Send Invite">
 			<span class="icon">person_add</span>
 		</Tooltip>
 	</div>
 	{/if}
-	<div class="settings hover" class:focused on:click|stopPropagation={openSettings(room)}>
+	<div class="settings hover" class:focused use:fastclick on:fastclick={openSettings(room)}>
 		<Tooltip tip="Edit Room">
 			<span class="icon">settings</span>
 		</Tooltip>

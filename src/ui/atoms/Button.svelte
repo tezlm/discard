@@ -19,6 +19,10 @@ button {
   transition: all 170ms;
 }
 
+button:focus {
+  outline: solid var(--color-accent) 3px;
+}
+
 :not(.link) {
   min-width: 5rem;
 }

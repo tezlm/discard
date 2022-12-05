@@ -1,5 +1,4 @@
 <script>
-import Button from "../atoms/Button.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 import VirtualList from "svelte-virtual-scroll-list"
 import { memberContext } from "../../util/context";
@@ -7,10 +6,28 @@ import { fastclick } from "../../util/use";
 export let room;
 
 let { popout, context } = state;
+let members = [];
+
+$: if (room) {
+  members = generatePlaceholders(room);
+  fetchList(room).then(list => members = list);
+}
 
 async function fetchList(room) {
   if (!room.request) await room.members.fetchAll("join");
-  const members = room.members.with("join");
+  return parseList(room, room.members.with("join"));
+}
+
+function generatePlaceholders(room) {
+  const { levels } = room.power;
+  const withPl = Object.values(levels.users).map(power => ({ power }));
+  const len = Math.max((room.summary.joined ?? 0) - withPl.length, 0);
+  const normal = new Array(len).fill(null).map(() => ({ power: levels.usersDefault }));
+  const parsed = parseList(room, withPl.concat(normal).sort((a, b) => b - a));
+  return parsed.map((obj, id) => (obj.title ? obj : { power: obj.power, id }));
+}
+
+function parseList(room, members) {
   if (state.dms.has(room.id)) {
     return [{ title: `members: ${members.length}`, id: "members" }, ...members];
   }
@@ -46,7 +63,7 @@ $: if (room.id !== oldId) {
 
 function handleClick(e) {
   const target = e.explicitOriginalTarget;
-  const memberId = target?.dataset.memberId;
+  const memberId = target?.dataset?.memberId;
   if (!memberId) return;
   const rect = target.getBoundingClientRect();
   const _owner = `memberlist-${memberId}`;
@@ -106,20 +123,50 @@ function handleContext(e) {
 }
 
 .wrapper:hover > .member {
+  color: var(--fg-content);
   background: var(--mod-lighten);
 }
 
 .wrapper:active > .member, .wrapper.selected > .member {
+  color: var(--fg-notice);
   background: var(--mod-lightener);
+}
+
+.member {
+  color: var(--fg-dim);  
+  font-weight: 500;
 }
 
 .member .name {
   margin: 0 16px;
-  color: var(--fg-dim);
-  font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.wrapper.placeholder {
+  cursor: initial;
+  background: transparent;
+}
+
+.placeholder .avatar {
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.placeholder .name {
+  height: 16px;
+  width: 120px;
+  border-radius: 8px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%   { background: var(--bg-misc) }
+  50%  { background: var(--bg-spaces) }
+  100% { background: var(--bg-misc) }
 }
 </style>
 <div
@@ -130,38 +177,32 @@ function handleContext(e) {
   on:contextmenu|preventDefault|stopPropagation={handleContext}
   on:click={e => e.explicitOriginalTarget?.dataset.memberId && e.stopPropagation()}
 >
-  {#await fetchList(room)}
-    <div class="title">Loading...</div>
-    {#each Array(10) as _}
-    <!-- TODO: cleanup -->
-    <div class="wrapper" style="cursor: initial; background: transparent !important">
-      <div class="member">
-        <div style="height:32px;width:32px;border-radius:50%;background:var(--bg-spaces)"></div>
-        <div style="height:16px;width:120px;border-radius:8px;background:var(--bg-misc); margin-left: 16px"></div>
-      </div>
-    </div>
-    {/each}
-  {:then items}
-    <VirtualList
-        data={items}
-        let:data={member}
-        estimateSize={48}
-    >
-      {#if member.title}
-        <div class="title">{member.title}</div>
-      {:else}
-        <div
-          class="wrapper"
-          class:selected={$popout._owner === "memberlist-" + member.id}
-          class:last={items.at(-1) === member}
-          data-member-id={member.id}
-        >
-          <div class="member">
-            <Avatar user={member} size={32} />
-            <div class="name">{member.name || member.id}</div>
-          </div>
+  <VirtualList
+      data={members}
+      let:data={member}
+      estimateSize={48}
+  >
+    {#if member.title}
+      <div class="title">{member.title}</div>
+    {:else if member.room}
+      <div
+        class="wrapper"
+        class:selected={$popout._owner === "memberlist-" + member.id}
+        class:last={members.at(-1) === member}
+        data-member-id={member.id}
+      >
+        <div class="member">
+          <Avatar user={member} size={32} />
+          <div class="name">{member.name || member.id}</div>
         </div>
-      {/if}
-    </VirtualList>
-  {/await}
+      </div>
+    {:else}
+      <div class="wrapper placeholder">
+        <div class="member">
+          <div class="avatar" style:animation-delay="{member.id * -50}ms"></div>
+          <div class="name" style:animation-delay="{member.id * -50}ms"></div>
+        </div>
+      </div>
+    {/if}
+  </VirtualList>
 </div>

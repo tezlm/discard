@@ -1,5 +1,6 @@
 <script>
 import { formatDate } from "../../../util/format.ts";
+import Tooltip from "../../atoms/Tooltip.svelte";
 </script>
 <style>
 h3 {
@@ -8,6 +9,7 @@ h3 {
 }
 
 .device {
+  display: flex;
   border-top: solid var(--color-gray) 1px;
   padding: 6px 0;
 }
@@ -23,6 +25,16 @@ h3 {
 
 .dim {
   color: var(--fg-light);
+}
+
+button.icon {
+  font-size: 22px;
+  color: var(--fg-interactive);
+  padding: 4px;
+}
+
+button.icon:hover {
+  color: var(--fg-notice);
 }
 </style>
 <h3>Encryption</h3>
@@ -40,19 +52,29 @@ h3 {
 {#each res.devices as device (device.device_id)}
 <!-- TODO: rename and log out sessions -->
 <div class="device">
-  <div>
-    <span class="big" class:dim={!device.display_name}>{device.display_name}</span>
-    {#if device.device_id === localStorage.getItem("deviceid")}
-    <span class="small dim">(current)</span>
-    {/if}
-    <span class="small dim">({device.device_id})</span>
+  <div style="flex: 1">
+    <div>
+      <span class="big" class:dim={!device.display_name}>{device.display_name}</span>
+      {#if device.device_id === localStorage.getItem("deviceid")}
+      <span class="small dim">(current)</span>
+      {/if}
+      <span class="small dim">({device.device_id})</span>
+    </div>
+    <span class="small">
+      <span class="dim">Last seen</span>
+      <Tooltip tip={new Date(device.last_seen_ts).toLocaleString()}>
+        <time datetime={new Date(device.last_seen_ts).toISOString()}>{formatDate(new Date(device.last_seen_ts))}</time>
+      </Tooltip>
+      {#if device.last_seen_ip}
+      <span class="dim">at</span>
+      {device.last_seen_ip}
+      {/if}
+    </span>
   </div>
-  <span class="small">
-    <span class="dim">Last seen</span>
-    {formatDate(new Date(device.last_seen_ts))}
-    <span class="dim">at</span>
-    {device.last_seen_ip}
-  </span>
+  <!--
+  <Tooltip tip="Rename"><button class="icon" on:click={todo}>edit</button></Tooltip>
+  <Tooltip tip="Logout"><button class="icon" on:click={todo}>delete</button></Tooltip>
+  -->
 </div>
 {/each}
 </div>

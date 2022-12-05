@@ -1,6 +1,7 @@
 <script>
 import { quadOut } from "svelte/easing";
 import { roomContext, homeContext } from "../../util/context";
+import { fastclick } from "../../util/use";
 let { focusedSpace, context, popup } = state;
 let showMenu = false;
 
@@ -13,6 +14,7 @@ function zoomIn() {
 }
 
 function showPopup(id, opts) {
+  showMenu = false;
   $popup = { id, type: "space", ...opts }; 
 }
 </script>
@@ -38,7 +40,7 @@ function showPopup(id, opts) {
   text-overflow: ellipsis;
 }
 
-.header:hover, .header.showMenu {
+.header:hover, .header:focus, .header.showMenu {
   background: var(--mod-lighten);
 }
 
@@ -111,7 +113,8 @@ function showPopup(id, opts) {
 <div
   class="header"
   class:showMenu
-  on:click={() => showMenu = !showMenu}
+  use:fastclick
+  on:fastclick={() => showMenu = !showMenu}
   on:contextmenu|preventDefault|stopPropagation={e => $context = { items: $focusedSpace ? roomContext($focusedSpace) : homeContext(), x: e.clientX, y: e.clientY }}
 >
   {#if $focusedSpace}
@@ -124,25 +127,25 @@ function showPopup(id, opts) {
   <div class="menu" transition:zoomIn>
   {#if $focusedSpace}
       {#if $focusedSpace.power.me >= ($focusedSpace.power.invite ?? 0) || $focusedSpace.joinRule === "public"}
-      <div class="item" on:click={() => showPopup("invite", { room: $focusedSpace })}><span class="color-accent">Invite People</span><span class="color-accent icon">person_add</span></div>
+      <div class="item" use:fastclick on:fastclick={() => showPopup("invite", { room: $focusedSpace })}><span class="color-accent">Invite People</span><span class="color-accent icon">person_add</span></div>
       <div class="spacer"></div>
       {/if}
-      <div class="item" on:click={() => { state.selectedRoom.set($focusedSpace); actions.to(`/space-settings/${$focusedSpace.id}`) }}>Space Settings<span class="icon">settings</span></div>
-      <div class="item" on:click={todo}>Notification Settings<span class="icon">notifications</span></div>
+      <div class="item" use:fastclick on:fastclick={() => { showMenu = false; state.selectedRoom.set($focusedSpace); actions.to(`/space-settings/${$focusedSpace.id}`) }}>Space Settings<span class="icon">settings</span></div>
+      <div class="item" use:fastclick on:fastclick={() => { showMenu = false; todo() }}>Notification Settings<span class="icon">notifications</span></div>
       <div class="spacer"></div>
       {#if $focusedSpace.power.me >= $focusedSpace.power.forState("m.space.child")}
-      <div class="item" on:click={() => showPopup("create", { type: "room", parent: $focusedSpace })}>Create Room<span class="icon">tag</span></div>
-      <div class="item" on:click={() => showPopup("create", { type: "space", parent: $focusedSpace })}>Create Subspace<span class="icon">folder</span></div>
-      <div class="item" on:click={() => showPopup("addexisting", { parent: $focusedSpace })}>Add Existing Room<span class="icon">add</span></div>
+      <div class="item" use:fastclick on:fastclick={() => showPopup("create", { type: "room", parent: $focusedSpace })}>Create Room<span class="icon">tag</span></div>
+      <div class="item" use:fastclick on:fastclick={() => showPopup("create", { type: "space", parent: $focusedSpace })}>Create Subspace<span class="icon">folder</span></div>
+      <div class="item" use:fastclick on:fastclick={() => showPopup("addexisting", { parent: $focusedSpace })}>Add Existing Room<span class="icon">add</span></div>
       <div class="spacer"></div>
       {/if}
-      <div class="item" on:click={() => showPopup("leave", { room: $focusedSpace })}><span class="color-red">Leave Space</span><span class="color-red icon">logout</span></div>
+      <div class="item" use:fastclick on:fastclick={() => showPopup("leave", { room: $focusedSpace })}><span class="color-red">Leave Space</span><span class="color-red icon">logout</span></div>
   {:else}
-      <div class="item" on:click={() => showPopup("create", { type: "room" })}>Create Room<span class="icon">tag</span></div>
-      <div class="item" on:click={() => showPopup("create", { type: "space" })}>Create Space<span class="icon">folder</span></div>
-      <div class="item" on:click={() => showPopup("join")}>Join<span class="icon">add</span></div>
+      <div class="item" use:fastclick on:fastclick={() => showPopup("create", { type: "room" })}>Create Room<span class="icon">tag</span></div>
+      <div class="item" use:fastclick on:fastclick={() => showPopup("create", { type: "space" })}>Create Space<span class="icon">folder</span></div>
+      <div class="item" use:fastclick on:fastclick={() => showPopup("join")}>Join<span class="icon">add</span></div>
       <div class="spacer"></div>
-      <div class="item" on:click={() => actions.to("/user-settings") }>Settings<span class="icon">settings</span></div>
+      <div class="item" use:fastclick on:fastclick={() => { showMenu = false; actions.to("/user-settings") }}>Settings<span class="icon">settings</span></div>
   {/if}
   </div>
   {/if}

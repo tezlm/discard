@@ -38,7 +38,7 @@ export async function fetch() {
   const filter = await api.postFilter(userId, defaultFilter);
   api.useFilter(filter);
   const client = new Client({ baseUrl: api.baseUrl, token, userId, persister: getPersister() });
-  state.log.matrix("starting sync");  
+  state.log.matrix("starting sync");
   client.start();
   return start(api, client, userId);
 }

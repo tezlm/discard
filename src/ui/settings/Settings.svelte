@@ -60,9 +60,14 @@ nav {
 	cursor: pointer;
 }
 
-.item:hover {
+.item:hover,
+.item:focus {
 	background: rgba(79,84,92,0.4);
   color: var(--fg-light);
+}
+
+.item:focus {
+  outline: solid var(--color-accent) 3px;
 }
 
 .item.selected {
@@ -122,7 +127,8 @@ nav {
   color: var(--fg-notice);
 }
 
-.exit .close:hover {
+.exit .close:hover,
+.exit .close:focus {
   background: var(--mod-lighten);
 }
 
@@ -177,7 +183,7 @@ h1 {
       {/each}
     </nav>
   </div>
-  <div class="main scroll">
+  <div class="main scroll" tabindex="-1">
     <div class="wrapper" role="tabpanel">
       {#if !focused.raw}
       <h1>{focused.name}</h1>

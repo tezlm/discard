@@ -3,10 +3,24 @@ export let group;
 export let value;
 export let disabled = false;
 export let clicked;
+
+function handleKeyDown(e) {
+  if (e.key !== "Enter" && e.key !== " ") return;
+  group = value;
+  clicked?.(value);
+}
 </script>
 <style>
 .radio input {
   display: none;
+}
+
+.radio:focus {
+  outline: none;
+}
+
+.radio:focus .dot {
+  outline: solid var(--color-accent) 3px;
 }
 
 .radio .dot {
@@ -31,7 +45,7 @@ export let clicked;
   color: var(--fg-notice);
 }
 </style>
-<label class="radio">
+<label tabindex="0" class="radio" on:keydown={handleKeyDown}>
   <input type="radio" bind:group {value} {disabled} on:input={() => clicked?.(value)} />
   <div class="dot" class:selected={group === value}>
     {#if group === value}

@@ -1,6 +1,7 @@
 <script>
 // should only be used in src/Popups.svelte
-import { quadOut } from 'svelte/easing';
+import { quadIn as ease } from "svelte/easing";
+import { bezier } from "../../util/bezier";
 export let raw = false;
 export let showClose = false;
 let current = state.popup;
@@ -12,17 +13,17 @@ function closePopup() {
   state.popup.set({ ...$current, id: null });
 }
 
-function card() {
+function card(_, { easing, duration }) {
   return {
-    duration: 200,
-    easing: quadOut,
-    css: t => $settings.get("reducemotion") ? `opacity: ${t}` : `opacity: ${t}; transform: scale(${Math.min(t * 1.1, 1.01)})`,
+    duration,
+    easing,
+    css: t => $settings.get("reducemotion") ? `opacity: ${t}` : `opacity: ${t}; transform: scale(${t})`,
   }
 }
 
 function opacity() {
   return {
-    duration: 250,
+    duration: 300,
     css: t => `opacity: ${t}`,
   }
 }
@@ -104,7 +105,8 @@ function opacity() {
     class="card"
     class:raw
     on:mousedown|stopPropagation
-    transition:card
+    in:card={{ easing: bezier(.25, .05, .16, 1.27), duration: 250 }}
+    out:card={{ easing: bezier(.17,.41,.39,.84), duration: 200 }}
     role="dialog"
     aria-modal="true"
   >

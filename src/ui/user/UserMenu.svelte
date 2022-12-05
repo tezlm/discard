@@ -79,9 +79,14 @@ onDestroy(() => state.client?.off("status", onStatus));
 	border-radius: 4px;
 }
 
-.user .icon:hover {
+.user .icon:hover,
+.user .icon:focus {
 	color: var(--fg-notice);
 	background: #ffffff33;
+}
+
+.user .icon:focus {
+  outline: solid var(--color-accent) 3px;
 }
 
 .user .avatar {

@@ -1,6 +1,12 @@
 <script lang="ts">
 export let checked = false;
 export let toggled = (_checked: boolean) => {};
+
+function handleKeyDown(e) {
+  if (e.key !== "Enter" && e.key !== " ") return;
+  checked = !checked;
+  toggled(checked);
+}
 </script>
 <style>
 .toggle {
@@ -11,6 +17,10 @@ export let toggled = (_checked: boolean) => {};
   background: var(--fg-dim);
   border-radius: 16px;
   cursor: pointer;
+}
+
+.toggle:focus {
+  outline: solid var(--color-accent) 3px;
 }
 
 .toggle input {
@@ -36,7 +46,7 @@ export let toggled = (_checked: boolean) => {};
   left: calc(100% - 18px - 3px);
 }
 </style>
-<label class="toggle" class:checked>
+<label tabindex="0" class="toggle" class:checked on:keydown={handleKeyDown}>
   <input type="checkbox" bind:checked on:change={() => toggled(checked)}>
   <div class="slider" class:checked></div>
 </label>
