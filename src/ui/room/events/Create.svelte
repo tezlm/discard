@@ -65,15 +65,20 @@ button:focus {
 </style>
 <div class="top">
   {#if dms.has(room.id)}
-  <Avatar user={dms.get(room.id)} size=72 link />
-  <h1>{getName(room)}</h1>
-  <div class="info">This is the beginning of your {words[calculateHash(event.id) % words.length]} conversation with <b>{getName(room)}</b>. {#if topic}{topic}{/if}</div>
-  {:else if event.content.predecessor}
-  <h1>Welcome back to {getName(room)}!</h1>
-  <div class="info">This is a <a use:fastclick on:fastclick={() => actions.to(`/room/${event.content.predecessor.room_id}`)} style="cursor: pointer">continuation</a> of the {getName(room)} room. {#if topic}{topic}{/if}</div>
+    <Avatar user={dms.get(room.id)} size=72 link />
+    <h1>{getName(room)}</h1>
+    <div class="info">This is the beginning of your {words[calculateHash(event.id) % words.length]} conversation with <b>{getName(room)}</b>. {#if topic}{topic}{/if}</div>
   {:else}
-  <h1>Welcome to {getName(room)}!</h1>
-  <div class="info">This is the start of the <b>{getName(room)}</b> room. {#if topic}{topic}{/if}</div>
+    {#if room.avatar}
+    <Avatar user={room} size=72 link />
+    {/if}
+    {#if event.content.predecessor}
+      <h1>Welcome back to {getName(room)}!</h1>
+      <div class="info">This is a <a use:fastclick on:fastclick={() => actions.to(`/room/${event.content.predecessor.room_id}`)} style="cursor: pointer">continuation</a> of the {getName(room)} room. {#if topic}{topic}{/if}</div>
+    {:else}
+      <h1>Welcome to {getName(room)}!</h1>
+      <div class="info">This is the start of the <b>{getName(room)}</b> room. {#if topic}{topic}{/if}</div>
+    {/if}
   {/if}
   {#if !room.tombstone && !dms.has(room.id)}
     {#if room.power.me >= (room.power.invite ?? 0) || room.joinRule === "public"}
