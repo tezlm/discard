@@ -28,6 +28,7 @@ export function formatDate(date: Date, lowercase = false) {
 }
 
 export function formatSize(size: number): string {
+  if (size < 0) return "??? kb";
   if (size === 0) return "0 kb";
   let max = 1024;
   for (let unit of ["bytes", "KiB", "MiB", "GiB", "TiB"]) {

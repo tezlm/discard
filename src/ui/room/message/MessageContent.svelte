@@ -131,15 +131,15 @@ img {
     on:fastclick={() => $popup = { id: "attachment", url: parseMxc(content.url) + "/" + name, alt: name }}
   />
   {:else if type === "m.video"}
-  <Video src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
+  <Video src={parseMxc(content.url)} name={content.filename ?? content.body} info={content.info} />
   {:else if type === "m.audio"}
   <div style="display: inline-block">
-    <Audio src={parseMxc(content.url)} name={content.filename ?? content.body} size={content.info?.size} />
+    <Audio src={parseMxc(content.url)} name={content.filename ?? content.body} info={content.info} />
   </div>
   {:else if type === "m.file"}
   {@const mime = content.info?.mimetype}
   <div style="display: inline-block">
-    <File src={parseMxc(content.url)} size={content.info?.size ?? null} name={content.filename ?? content.body} />
+    <File src={parseMxc(content.url)} name={content.filename ?? content.body} info={content.info} />
     <!--
     {#if (/text\//.test(mime) || mime === "application/json" || mime === "application/x-javascript") && content.info.size < 1024 * 1024}
       <Text src={parseMxc(content.url)} size={content.info?.size ?? null} name={content.filename ?? content.body} {mime} />

@@ -100,7 +100,7 @@ export default class Api {
       }
     });
     const { count, highlights, next_batch, results } = res.search_categories.room_events;
-    return { count, highlights, next_batch: next_batch, results: results.map(i => i.result) };
+    return { count, highlights, next_batch, results: results.map(i => i.result) };
   }
   
   // sending content

@@ -145,7 +145,7 @@ async function handleUpload(file) {
   const info = {
     mimetype: file.type,
     size: file.size,
-    ...(["m.image", "m.video"].includes(type) ? await getSize(file, type) : {}),
+    ...(["m.image", "m.video", "m.audio"].includes(type) ? await getSize(file, type) : {}),
     filename: file.name,
   };
 
@@ -176,10 +176,12 @@ async function handleUpload(file) {
         img.src = URL.createObjectURL(file);
       } else if (type === "m.video") {
         const vid = document.createElement("video");
-        // info.d doesnt officially exist, but makes implementing extensible events easier
-        // vid.onloadedmetadata = () => res({ w: vid.videoWidth, h: vid.videoHeight, d: vid.duration });
-        vid.onloadedmetadata = () => res({ w: vid.videoWidth, h: vid.videoHeight });
+        vid.onloadedmetadata = () => res({ w: vid.videoWidth, h: vid.videoHeight, duration: Math.floor(vid.duration * 1000) });
         vid.src = URL.createObjectURL(file);
+      } else if (type === "m.audio") {
+        const aud = document.createElement("audio");
+        aud.onloadedmetadata = () => res({ duration: Math.floor(aud.duration * 1000) });
+        aud.src = URL.createObjectURL(file);
       } else {
         throw "unreachable?";
       }

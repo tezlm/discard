@@ -4,10 +4,10 @@ import Slider from "./Slider.svelte";
 import Volume from "./Volume.svelte";
 import { formatDuration } from "../../../util/format.ts";
 export let src;
+export let info;
 export let name = "title";
-export let size = 0;
 let audioEl;
-let duration = -1, currentTime = 0;
+let duration = info?.duration ? (info.duration / 1000) : -1, currentTime = 0;
 let paused = true;
 let muted = false;
 let volume = 1;
@@ -66,7 +66,7 @@ function handleScrub(t) {
   font-weight: 500;
 }
 </style>
-<File {name} {size} {src}>
+<File {name} {info} {src}>
   <div class="controls">
     <div class="icon playpause" on:click={togglePlayPause}>
       {#if currentTime > duration - .05 && duration !== -1}

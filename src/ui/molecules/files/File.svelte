@@ -4,7 +4,7 @@ import fileIcon from "../../../assets/file.svg";
 import downloadIcon from "../../../assets/icons/download.svg";
 export let src;
 export let name = "title";
-export let size = 0;
+export let info;
 </script>
 <style>
 .file {
@@ -64,11 +64,7 @@ export let size = 0;
     <img src={fileIcon} alt="file icon" />
     <div class="info">
       <a class="name" href={src} title={name}>{name}</a>
-      {#if size === null}
-      <span class="size">??? kb</span>
-      {:else}
-      <span class="size">{formatSize(size)}</span>
-      {/if}
+      <span class="size">{formatSize(info?.size ?? -1)}</span>
     </div>
     <a class="download" href={src} download={name}>
       <img src={downloadIcon} alt="download" />

@@ -143,7 +143,7 @@ function getContextMenu(event) {
   }
   menu.push({ label: "Copy Link",   icon: "link", clicked: () => navigator.clipboard.writeText(`https://matrix.to/#/${room.id}/${event.id}`) });
   if ((event.room.power.me >= event.room.power.forEvent("m.room.redaction") && event.sender.id === state.userId) || (event.room.power.me >= event.room.power.redact)) {
-    menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; state.api.redactEvent(event.room.id, event.id) } });
+    menu.push({ label: "Delete Message", icon: "delete", color: "var(--color-red)", clicked: () => { event.special = "redacted"; event.redact() } });
   }
   menu.push(null);
   menu.push({ label: "View Source", icon: "terminal", clicked: () => state.popup.set({ id: "dev-event", event }) });

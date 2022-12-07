@@ -6,7 +6,7 @@ import { formatSize, formatDuration } from "../../../util/format.ts";
 import downloadIcon from "../../../assets/icons/download.svg";
 export let src;
 export let name = "title";
-export let size;
+export let info;
 let started = false;
 let paused = true;
 let duration = -1, currentTime = 0;
@@ -223,7 +223,7 @@ video {
   <div class="header" class:show={paused || !started}>
     <div class="info">
       <a class="name" href={src}>{name}</a>
-      <span class="size">{formatSize(size)}</span>
+      <span class="size">{formatSize(info?.size ?? -1)}</span>
     </div>
     <a class="download" href={src} download={name}>
       <img src={downloadIcon} alt="download" />
