@@ -46,7 +46,7 @@ async function create() {
   }
   
   if (parent) {
-    initialState.push({ content: { canonical: true }, type: "m.space.parent", state_key: parent.id });
+    initialState.push({ content: { canonical: true }, type: "m.space.parent", stateKey: parent.id });
     if (config.joinRule === "restricted") {
       initialState.push({ content: { join_rule: "restricted", allow: [{ room_id: parent.id, type: "m.room_membership" }] }, type: "m.room.join_rules" });
     }
@@ -59,31 +59,31 @@ async function create() {
   if (current.type === "space") {
     creationContent.type = "m.space";
   }
-  
-  const { room_id } = await state.api.createRoom({
-    name: config.name,
-    topic: config.topic,
-    creator: state.userId,
-    state: initialState,
-    creationContent,
+
+  const room = await state.client.rooms.create({
+      name: config.name,
+      topic: config.topic,
+      creator: state.userId,
+      initialState,
+      powerLevelOverrides: { users: { [state.userId]: 101 } },
+      creationContent,
   });
 
+  console.log(room)
+
   if (parent) {
-    parent.sendState("m.space.child", { suggested: false, via: [room_id.match(/:.+/)[0].slice(1)] }, room_id);
+    parent.sendState("m.space.child", { suggested: false, via: [room.id.match(/:.+/)[0].slice(1)] }, room.id);
   }
 
-  const interval = setInterval(() => {
-    if (!state.rooms.has(room_id)) return;
-    if (current.type === "space") {
-      if (!current.parent) {
-        actions.to(`/space/${room_id}`);
-      }
-    } else {
-      actions.to(`/room/${room_id}`);
+  if (current.type === "space") {
+    if (!current.parent) {
+      actions.to(`/space/${room.id}`);
     }
-    state.popup.set({ type: current.type });
-    clearInterval(interval);
-  }, 10);
+  } else {
+    actions.to(`/room/${room.id}`);
+  }
+  
+  state.popup.set({ type: current.type });
 }
 </script>
 <style>
