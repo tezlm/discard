@@ -257,8 +257,12 @@ function slide() {
   cursor: pointer;
 }
 
-.upload:hover {
+.upload:hover, .upload:focus {
   color: var(--fg-notice);
+}
+
+.upload:focus {
+  outline: solid var(--color-accent) 3px;
 }
 
 .upload input {
@@ -322,7 +326,7 @@ function slide() {
   {/if}
   <div class="input" class:asdfasdfasdf class:withreply={reply}>
     {#if showUpload}
-    <label class="upload">
+    <label class="upload" tabindex="0" on:keydown={e => e.key === "Enter" && e.target.click()}>
       <div class="icon">add_circle</div>
       <input type="file" on:change={e => onfile(e.target.files[0])} />
     </label>
