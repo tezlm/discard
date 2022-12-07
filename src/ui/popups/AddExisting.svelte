@@ -138,7 +138,7 @@ async function add() {
             {result.name}
           {/if}
           {#if parent}
-            <span class="dim">- {parent.name}</span>
+            <span class="dim"> - {parent.name}</span>
           {/if}
           </div>
           <Checkbox bind:checked={checked[room.id]} />
