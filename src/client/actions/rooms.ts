@@ -1,5 +1,5 @@
 import { writable, get } from "svelte/store";
-import type { Room } from "discount.ts";
+import type { Room, StateEvent } from "discount.ts";
 
 export function handleAccount(_: void, event: { type: string, content: any }) {
   if (event.type === "m.fully_read") {
@@ -12,7 +12,10 @@ export function handleJoin(room: Room) {
   if (state.client.status !== "starting") actions.spaces.update();
 }
 
-export function handleState(_: void) {
+export function handleState(state: StateEvent) {
+  if (state.type === "m.space.child") {
+    actions.spaces.update();
+  }
   actions.spaces.refresh();
 }
 
