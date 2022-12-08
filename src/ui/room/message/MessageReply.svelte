@@ -1,7 +1,8 @@
 <script>
-import { parseHtml } from "../../../util/html";
 import Name from "../../atoms/Name.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
+import { parseHtml } from "../../../util/html";
+import { fastclick } from "../../../util/use";
 export let room, eventId;
 let eventPromise = room.events.fetch(eventId);
 </script>
@@ -118,15 +119,20 @@ let eventPromise = room.events.fetch(eventId);
   <span class="author">
     <Name light member={event.sender} />
   </span>
-  <div class="content" on:click={() => actions.slice.jump(event.room.id, event.id)}>
-    {#if !event.content}empty event?{:else}
-    {#if event.content.format === "org.matrix.custom.html"}
-      {@html parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n|<br.*?>/g, " ")}
+  <div class="content" use:fastclick on:fastclick={() => actions.slice.jump(event.room.id, event.id)}>
+    {#if !event.content?.body.trim()}
+      <i style="color: var(--fg-muted)">no content?</i>
+    {:else if event.content.format === "org.matrix.custom.html"}
+      {@const html = parseHtml(event.content.formatted_body, { linkify: true, sanitize: true, inline: true }).replace(/\n|<br.*?>/g, " ")}
+      {#if html}
+        {@html html}
+      {:else}
+        <i style="color: var(--fg-muted)">no content?</i>
+      {/if}
     {:else if event.content.body}
       {event.content.body.replace(/\n/g, " ")}
     {:else}
       <i style="color: var(--fg-muted)">failed to render {event.type} event</i>
-    {/if}
     {/if}
   </div>
 </div>
