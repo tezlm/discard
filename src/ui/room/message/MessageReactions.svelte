@@ -1,8 +1,9 @@
 <script>
+import Tooltip from "../../atoms/Tooltip.svelte";
 import twemoji from "twemoji";
 import { backOut } from "svelte/easing";
 import { parseMxc } from "../../../util/content";
-import Tooltip from "../../atoms/Tooltip.svelte";
+import { fastclick } from "../../../util/use";
 export let event;
 
 // TODO: make the number animate in reverse when the count goes down
@@ -204,7 +205,7 @@ $: if (showPicker) {
         {key}
       {/if}
     </span>
-    <div class="reaction" class:self={getMine(events)} on:click={() => handleClick(getMine(events), key)}>
+    <div class="reaction" class:self={getMine(events)} use:fastclick on:fastclick={() => handleClick(getMine(events), key)} tabindex="0">
       <div class="key">
         {#if key.startsWith("mxc://")}
           <img src={parseMxc(key)} alt={shortcode}>
