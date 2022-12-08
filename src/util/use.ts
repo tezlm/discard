@@ -1,10 +1,10 @@
-export function fastclick(node: Node) {
+export function fastclick(node: Node, config?: { stop: boolean }) {
   function handle(e) {
     const validMouseDown = e.type === "mousedown" && e.buttons === 1;
     const validKeyDown = e.type === "keydown" && (e.key === " " || e.key === "Enter");
     if (validMouseDown || validKeyDown) {
       e.stopPropagation();
-      e.preventDefault();
+      if (config?.stop !== false) e.preventDefault();
       node.dispatchEvent(new CustomEvent(e.buttons === 2 ? "fastcontext" : "fastclick", {
         detail: {
           x: e.clientX,

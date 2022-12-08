@@ -36,6 +36,16 @@ function parseDimensions(info) {
   return { width, height, css: `width: ${width}px; height: ${height}px` };
 }
 
+function handleImgClick(e) {
+  const tg = e.explicitOriginalTarget;
+  if (tg.tagName !== "IMG") return;
+  $popup = {
+    id: "attachment",
+    url: tg.src,
+    alt: tg.alt ?? `An image with the id ${tg.src.split("/").at(-1)}`,
+  };
+}
+
 $: if (wrapper) {
   for (let el of wrapper.querySelectorAll("code[class^=language-]")) { 
     hljs.highlightElement(el);
@@ -101,6 +111,12 @@ img {
 .text :global(blockquote), .text :global(ol), .text :global(ul), .text :global(li), .text :global(details) {
   white-space: normal;
 }
+
+.text :global(img) {
+  max-height: 300px;
+  max-width: 400px;
+  cursor: pointer;
+}
 </style>
 <div
   class="content"
@@ -149,7 +165,7 @@ img {
     -->
   </div>
   {:else if content.format === "org.matrix.custom.html"}
-  <div class="text" class:emote={type === "m.emote"}>
+  <div class="text" class:emote={type === "m.emote"} use:fastclick={{ stop: false }} on:fastclick={handleImgClick}>
     {#if type === "m.emote"}*{/if}
     {@html parseHtml(content.formatted_body.trim()).trim()}
   </div>
