@@ -167,7 +167,7 @@ img {
   {:else if content.format === "org.matrix.custom.html"}
   <div class="text" class:emote={type === "m.emote"} use:fastclick={{ stop: false }} on:fastclick={handleImgClick}>
     {#if type === "m.emote"}*{/if}
-    {@html parseHtml(content.formatted_body.trim()).trim()}
+    {@html parseHtml(content.formatted_body?.trim() || content.body.trim()).trim()}
   </div>
   {:else if content.body}
   <div class="text" class:emote={type === "m.emote"}>
