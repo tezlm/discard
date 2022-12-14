@@ -115,7 +115,7 @@ time {
 </style>
 <div
   class="message"
-  on:contextmenu={e => { const memberId = e.target.dataset.mxPing; if (memberId && room.members.has(memberId)) { e.preventDefault(); e.stopPropagation(); showMemberContext(room.members.get(memberId)) }}}
+  on:contextmenu={e => { const memberId = e.target.dataset.mxPing; if (memberId && room.members.has(memberId)) { e.preventDefault(); e.stopPropagation(); showMemberContext(room.members.get(memberId))(e) }}}
 >
   <div class="side">
     {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
