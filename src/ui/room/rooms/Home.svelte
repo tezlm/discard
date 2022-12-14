@@ -13,8 +13,10 @@ function getInviteSender(invite) {
   return { id: myMemberEvent.sender, name: memberEvent.content?.displayname ?? memberEvent.stateKey };
 }
 
-function join(invite) {
+function join(invite, nojoin = false) {
   invite.join();
+
+  if (nojoin) return;
   
   const interval = setInterval(() => {
     if (!state.rooms.has(invite.id)) return;
@@ -215,7 +217,7 @@ function rejectAll() {
       <div class="small"><span class="dim">invited by </span>{sender.name} <span class="dim">({sender.id})</span></div>
     </div>
     <Tooltip tip="Accept">
-      <button class="icon accept" on:click={() => join(invite)}>check</button>
+      <button class="icon accept" on:click={(e) => join(invite, e.shiftKey)}>check</button>
     </Tooltip>
     <Tooltip tip="Reject">
       <button class="icon reject" on:click={() => invite.leave()}>close</button>
