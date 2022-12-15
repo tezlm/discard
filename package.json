@@ -13,11 +13,11 @@
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "next",
 		"@tsconfig/svelte": "^3.0.0",
-		"@types/better-sqlite3": "^7.6.2",
-		"@types/marked": "^4.0.7",
-		"svelte": "^3.52.0",
+		"@types/better-sqlite3": "^7.6.3",
+		"@types/marked": "^4.0.8",
+		"svelte": "^3.55.0",
 		"svelte-preprocess": "^4.10.7",
-		"typescript": "^4.8.3",
+		"typescript": "^4.9.4",
 		"vite": "^2.9.15"
 	},
 	"dependencies": {
@@ -31,14 +31,14 @@
 		"discount.ts": "link:../discount",
 		"emojibase": "^6.1.0",
 		"emojibase-data": "^7.0.1",
-		"fuzzysort": "^2.0.3",
-		"highlight.js": "^11.6.0",
+		"fuzzysort": "^2.0.4",
+		"highlight.js": "^11.7.0",
 		"idb": "^7.1.1",
 		"lexical": "^0.5.0",
 		"linkifyjs": "^3.0.5",
-		"marked": "^4.2.2",
-		"sanitize-html": "^2.7.3",
-		"simple-markdown": "^0.7.3",
+		"marked": "^4.2.4",
+		"marked-katex-extension": "^1.0.2",
+		"sanitize-html": "^2.8.0",
 		"svelte-virtual-scroll-list": "^1.1.0",
 		"twemoji": "^14.0.2"
 	}
