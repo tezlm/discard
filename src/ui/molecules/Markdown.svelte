@@ -4,7 +4,7 @@ import { registerPlainText } from "@lexical/plain-text";
 import { createEmptyHistoryState, registerHistory } from "@lexical/history";
 // import { $generateHtmlFromNodes as renderHTML } from '@lexical/html';
 import { onMount } from "svelte";
-import md from "simple-markdown";
+// import md from "simple-markdown";
 import Autocomplete from "./Autocomplete.svelte";
 
 // import {
@@ -22,7 +22,7 @@ import Autocomplete from "./Autocomplete.svelte";
 //   $convertFromMarkdownString(markdown, TRANSFORMERS);
 // });
 
-let editorEl;
+// let editorEl;
 const { createEditor } = lexical;
 /*
 const rules = {
@@ -95,9 +95,9 @@ class MentionNode extends lexical.TextNode {
 const editor = createEditor({ namespace: "editor", nodes: [MentionNode] });
 
 onMount(() => {
-  editor.setRootElement(editorEl);
-  registerPlainText(editor);
-  registerHistory(editor, createEmptyHistoryState(), 1000);
+  // editor.setRootElement(editorEl);
+  // registerPlainText(editor);
+  // registerHistory(editor, createEmptyHistoryState(), 1000);
   
   // editor.registerNodeTransform(lexical.TextNode, (node) => {
     // console.log(renderHTML(node));
@@ -154,6 +154,6 @@ function mention(id) {
   color: var(--color-link);
 }
 </style>
-<div class="editor" contenteditable bind:this={editorEl}></div>
+<!-- <div class="editor" contenteditable bind:this={editorEl}></div> -->
 <div style="min-height: 1em"></div>
 <Autocomplete type="user" selected={mention} options={users} />

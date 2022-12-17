@@ -1,6 +1,5 @@
 <script>
-import { marked } from "marked";
-
+import { render } from "../../../util/markdown"; 
 export let event;
 let textarea;
 let rows = 1;
@@ -8,19 +7,6 @@ let input = event.content.body;
 let { edit } = state.roomState;
 let { slice, popup } = state;
 $: rows = Math.min(input.split("\n").length, 10);
-
-function replacePing(input) {
-  function getName(id) {
-    const member = event.room.members.get(id);
-    if (!member) return id;
-    return member.name ? ("@" + member.name) : member.id;
-  }
-
-  return input.replace(
-    /@[a-z0-9-_/]+:[a-z0-9.-]+/ig,
-    (match) => `<a href="https://matrix.to/#/${match}">${getName(match)}</a>`
-  );
-}
 
 async function handleKeyDown(e) {
   if (e.key === "Enter" && !e.shiftKey) {
@@ -86,7 +72,7 @@ async function save() {
     "m.new_content": {
       body: input.trim(),
       format: "org.matrix.custom.html",
-      formatted_body: marked(replacePing(input.trim())).trim(),
+      formatted_body: render(input.trim()),
       msgtype: "m.text",
     },
     body: "* " + input.trim(),

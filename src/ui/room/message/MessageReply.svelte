@@ -4,7 +4,7 @@ import Avatar from "../../atoms/Avatar.svelte";
 import { parseHtml } from "../../../util/html";
 import { fastclick } from "../../../util/use";
 export let room, eventId;
-let eventPromise = room.events.fetch(eventId);
+$: eventPromise = room.events.fetch(eventId);
 </script>
 <style>
 .reply {

@@ -3,7 +3,7 @@ import Reply from "./input/Reply.svelte";
 import Autocomplete from "../molecules/Autocomplete.svelte";
 import RoomTextarea from "./input/RoomTextarea.svelte";
 import EmojiButton from "./input/EmojiButton.svelte";
-import { marked } from "marked";
+import { render } from "../../util/markdown";
 import { quadOut } from "svelte/easing";
 
 export let onsend;
@@ -66,25 +66,12 @@ function handleKeyDown(e) {
 }
 
 function oninput(input) {
-  function replacePing(input) {
-    function getName(id) {
-      const member = $room.members.get(id);
-      if (!member) return id;
-      return member.name ? ("@" + member.name) : member.id;
-    }
-
-    return input.replace(
-      /@[a-z0-9-_/]+:[a-z0-9.-]+/ig,
-      (match) => `<a href="https://matrix.to/#/${match}">${getName(match)}</a>`
-    );
-  }
-
   // bootleg commands ftw!
   if (input === "/shrug") input = "¯\\\\\\_(ツ)\\_/¯";
 
   input = input.trim();
 
-  const html = marked(replacePing(input)).trim();
+  const html = render(input);
   onsend({
     body: input,
     format: "org.matrix.custom.html",
