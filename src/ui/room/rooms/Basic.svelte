@@ -71,12 +71,12 @@ function dividerProps(prev, ev) {
 }
 
 function refocus() {
-	if (scrollTop > scrollMax - 16) {
-		queueMicrotask(() => scrollTo?.(-1));
+	if (scrollTop > scrollMax - 400) {
+		setTimeout(() => scrollTo?.(-1));
 	}
 
 	// if (!scroller) return;
- //  if (scroller.scrollHeight - scroller.offsetHeight < scroller.scrollTop + 50) {
+	// 	if (scroller.scrollHeight - scroller.offsetHeight < scroller.scrollTop + 50) {
 	// 	scroller.scrollTo(-1);
 	// }
 }
