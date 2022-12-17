@@ -33,10 +33,17 @@ export function update() {
     const cmp = (a, b) => a > b ? 1 : a < b ? -1 : 0;
     if (a.room.type === "m.space" && b.room.type !== "m.space") return 1;
     if (a.room.type !== "m.space" && b.room.type === "m.space") return -1;
-    return cmp(a.event.order, b.event.order)
+    return cmpOrder(a.event.content.order, b.event.content.order)
       || cmp(a.room.name, b.room.name)
       || cmp(a.event.date, b.event.date)
       || cmp(a.room.id, b.room.id);
+
+    function cmpOrder(a, b) {
+      if (a === undefined && b === undefined) return 0;
+      if (a === undefined) return 1;
+      if (b === undefined) return -1;
+      return cmp(a, b);
+    }
   }
 }
 
