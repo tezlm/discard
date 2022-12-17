@@ -8,6 +8,8 @@ export let room;
 let { popout, context } = state;
 let members = [];
 
+// FIXME: update members list
+
 $: if (room) {
   members = generatePlaceholders(room);
   fetchList(room).then(list => members = list);

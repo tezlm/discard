@@ -14,8 +14,10 @@ export let room, event, header = false;
 let { popout, context } = state;
 let { edit } = state.roomState;
 
-function getReply(content) {
-  return content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
+$: reply = getReply(event);
+
+function getReply(event) {
+  return event.content["m.relates_to"]?.["m.in_reply_to"]?.event_id;
 }
 
 const showMemberPopout = (e) => { 
@@ -118,7 +120,7 @@ time {
   on:contextmenu={e => { const memberId = e.target.dataset.mxPing; if (memberId && room.members.has(memberId)) { e.preventDefault(); e.stopPropagation(); showMemberContext(room.members.get(memberId))(e) }}}
 >
   <div class="side">
-    {#if getReply(event.content)}<div style="height: 22px"></div>{/if}
+    {#if reply}<div style="height: 22px"></div>{/if}
     {#if header}
     <div
       class="avatar"
@@ -137,7 +139,7 @@ time {
     {/if}
   </div>
   <div class="content">
-    {#if getReply(event.content)}<MessageReply {room} eventId={getReply(event.content)} />{/if}
+    {#if reply}<MessageReply {room} eventId={reply} />{/if}
     {#if header}
     <div>
       <div class="author">

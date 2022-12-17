@@ -23,7 +23,6 @@ function getType(mime) {
 
 function getLang(mime) {
   const lang = getType(mime);
-  console.log(lang)
   return hljs.getLanguage(lang) ? lang : "text";
 }
 </script>

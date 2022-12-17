@@ -11,7 +11,9 @@ function diff(content, prev) {
   const keys = new Set();
   for (let key of new Set([...Object.keys(content), ...Object.keys(prev)])) {
     if (content[key] && prev[key] && typeof content[key] === "object" && typeof prev[key] === "object") {
-      if (diff(content[key], prev[key]).size) keys.add(key);
+      for (let subkey of diff(content[key], prev[key])) {
+        keys.add(`${key}.${subkey}`);
+      }
     } else if (content[key] !== prev[key]) {
       keys.add(key);
     }

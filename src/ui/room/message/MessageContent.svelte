@@ -98,6 +98,7 @@ img {
 .text {
   display: inline;
   word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .text :global(*) {
@@ -164,20 +165,15 @@ img {
     {/if}
     -->
   </div>
-  {:else if content.format === "org.matrix.custom.html"}
-  <div class="text" class:emote={type === "m.emote"} use:fastclick={{ stop: false }} on:fastclick={handleImgClick}>
-    {#if type === "m.emote"}*{/if}
-    {@html parseHtml(content.formatted_body?.trim() || content.body.trim()).trim()}
-  </div>
-  {:else if content.body}
-  <div class="text" class:emote={type === "m.emote"}>
-    {#if type === "m.emote"}*{/if}
-    {@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/\n/g, "<br />"))}
-  </div>
   {:else}
-  <div class="text">
-    <i style:color="var(--fg-dim)">no content</i>
-  </div>
+    {@const emote = type === "m.emote"}
+    {#if content.format === "org.matrix.custom.html"}
+    <div class="text" class:emote use:fastclick={{ stop: false }} on:fastclick={handleImgClick}>{#if emote}*{/if}{@html parseHtml(content.formatted_body?.trim() || content.body.trim()).trim()}</div>
+    {:else if content.body}
+    <div class="text" class:emote>{#if emote}*{/if}{@html parseHtml(content.body.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/\n/g, "<br />"))}</div>
+    {:else}
+    <div class="text"><i style:color="var(--fg-dim)">no content</i></div>
+    {/if}
   {/if}
   {#if event.flags?.has("edited")}
   {@const replace = event.relationsIn.find(i => i.relType === "m.replace").event}
