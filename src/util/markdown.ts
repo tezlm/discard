@@ -29,11 +29,11 @@ import { marked } from "marked";
   // },
 // };
 
+// TEMP: this is for debugging
 globalThis.marked = marked;
 
 export function render(str: string): string {
   return marked(str)
-    .replace(/<br>/g, "\n")
-    .replace(/<\/p><p>/g, "\n\n")
-    .replace(/<\/?p>/g, "");
+    .trim()
+    .replace(/\n/g, "<br>");
 }
