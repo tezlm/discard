@@ -11,7 +11,7 @@
 		"preview": "vite preview"
 	},
 	"devDependencies": {
-		"@sveltejs/vite-plugin-svelte": "next",
+		"@sveltejs/vite-plugin-svelte": "1.0.0-next.29",
 		"@tsconfig/svelte": "^3.0.0",
 		"@types/better-sqlite3": "^7.6.3",
 		"@types/marked": "^4.0.8",
