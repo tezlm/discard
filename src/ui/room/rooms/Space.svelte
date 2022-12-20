@@ -1,9 +1,13 @@
 <script>
 import Search from "../../atoms/Search.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
+import Loading from "../../atoms/Loading.svelte";
+import Hierarchy from "../space/Hierarchy.svelte";
 import { parseHtml } from "../../../util/html";
 export let room;
 let members = false;
+
+$: hierarchy = room.hierarchy().then(res => res.all());
 
 $: {
   room.members.fetchAll("join").then(() => {
@@ -17,6 +21,25 @@ function formatJoinRule(rule) {
     case "invite": return "Private space";
     case "restricted": return "Subspace";
   }
+}
+
+function buildTree(rooms, top = rooms[0], topEvent = null) {
+  const item = { room: top, event: topEvent, children: [] };
+  for (let event of top.childrenState) {
+    if (!event.content.via?.length) continue;
+    
+    const room = rooms.find(i => i.id === event.state_key);
+    if (!room) continue;
+    if (room.type === "m.space") {
+      item.children.push(buildTree(rooms, room, event));
+    } else {
+      item.children.push({ room, event });
+    }
+  }
+
+  item.children.sort(actions.spaces.orderSpaceRooms);
+  
+  return item;
 }
 </script>
 <style>
@@ -32,13 +55,13 @@ function formatJoinRule(rule) {
 .main {
   max-width: 600px;
   width: 100%;
-  margin: 0 16px;
+  margin: 0 8px;
 }
 
 .side {
   width: 100%;
   max-width: 320px;
-  margin: 36px 16px;
+  margin: 36px 8px;
 }
 
 .side > div {
@@ -76,10 +99,17 @@ function formatJoinRule(rule) {
   line-height: 1.3;
 }
 
-.placeholder {
+.rooms {
   background: var(--bg-rooms-members);
+  min-height: 400px;
+  padding: 8px;
+  margin-bottom: 16px;
+}
+
+.loading {
   height: 400px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -90,8 +120,15 @@ function formatJoinRule(rule) {
     <div style="height: 16px"></div>
     <Search size="tall" placeholder="Search..." />
     <div style="height: 16px"></div>
-    <div class="placeholder">
-      <div>// TODO</div>
+    <div class="rooms">
+    {#await hierarchy}
+    <div class="loading">
+      <Loading />
+      <i style="margin-top: 8px; color: var(--fg-light)">Loading rooms...</i>
+    </div>
+    {:then rooms}
+      <Hierarchy item={buildTree(rooms)} />
+    {/await}
     </div>
   </div>
   <div class="side">

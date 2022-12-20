@@ -41,7 +41,7 @@ i {
 }
 </style>
 <div class="wrapper">
-  <Loading color="var(--fg-dim)" />
+  <Loading />
   <div class="title">syncing...</div>
   <i>{rnd(someFactsIThinkSomePeopleMightFindInteresting)}</i>
 </div>
