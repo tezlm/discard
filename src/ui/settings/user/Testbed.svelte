@@ -102,7 +102,7 @@ function thing(node) {
         <b>Room name</b>
         <p>details here - maybe the room topic, or the member count?</p>
       </div>
-      <Button label="Join" type="good" clicked={todo} />
+      <Button label="Join" type="good" on:click={todo} />
     </div>
   </div>
 </div>

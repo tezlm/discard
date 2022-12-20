@@ -102,9 +102,9 @@ const eventOptions = [
   {#each eventOptions as option}
     <div class="row">
       <div>{option.name}</div>
-      <div><RadioInline bind:group={option.value} value="never"   clicked={() => $settings.put(option.id, "never")} /></div>
-      <div><RadioInline bind:group={option.value} value="private" clicked={() => $settings.put(option.id, "private")} /></div>
-      <div><RadioInline bind:group={option.value} value="always"  clicked={() => $settings.put(option.id, "always")} /></div>
+      <div><RadioInline bind:group={option.value} value="never"   on:click={() => $settings.put(option.id, "never")} /></div>
+      <div><RadioInline bind:group={option.value} value="private" on:click={() => $settings.put(option.id, "private")} /></div>
+      <div><RadioInline bind:group={option.value} value="always"  on:click={() => $settings.put(option.id, "always")} /></div>
     </div>
   {/each}
 </div>

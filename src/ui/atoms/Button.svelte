@@ -1,11 +1,14 @@
 <script lang="ts">
+import { createEventDispatcher } from 'svelte';
 import { fastclick } from "../../util/use";
 export let label: string | undefined;
 export let type = "normal";
-export let clicked = () => {};
+export let clicked = () => {}; // TODO: remove (use dispatcher)
 export let disabled = false;
 export let loading = false;
 $: standard = ["normal", "primary", "gray", "good", "warn", "danger"].some(i => type.split(" ").includes(i)) && !type.includes("hollow");
+
+const dispatch = createEventDispatcher();
 </script>
 <style>
 button {
@@ -100,6 +103,7 @@ button:focus {
   class:loading
   use:fastclick
   on:fastclick={clicked}
+  on:fastclick={() => dispatch("click")}
 >
   {#if label}
   {label}

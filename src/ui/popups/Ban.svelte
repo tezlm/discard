@@ -50,7 +50,7 @@ function ban() {
     <Textarea autofocus placeholder={rnd(placeholders)} bind:value={reason} />
   </div>
   <div slot="footer">
-    <Button type="link" label="Nevermind!" clicked={() => state.popup.set({ ...current, id: null })} />
-    <Button type="danger" label="Do it!" clicked={ban} />
+    <Button type="link" label="Nevermind!" on:click={() => state.popup.set({ ...current, id: null })} />
+    <Button type="danger" label="Do it!" on:click={ban} />
   </div>
 </Popup>

@@ -26,13 +26,13 @@ async function join() {
     <IdInput kind="alias" bind:localpart={localpart} bind:homeserver={homeserver} autofocus />
   </div>
   <div slot="footer">
-    <Button type="link" label="Cancel" clicked={() => state.popup.set({ ...current, id: null })} />
+    <Button type="link" label="Cancel" on:click={() => state.popup.set({ ...current, id: null })} />
     <Button
       type="primary"
       disabled={!(localpart && homeserver)}
       label="Join"
       {loading}
-      clicked={join}
+      on:click={join}
     />
   </div>
 </Popup>

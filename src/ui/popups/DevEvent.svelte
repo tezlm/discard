@@ -27,7 +27,7 @@ pre {
     <pre><code>{@html hljs.highlight("json", JSON.stringify(current.event.raw, null, 4)).value}</code></pre>
   </div>
   <div slot="footer">
-    <Button label="copy event id" type="primary" clicked={() => copy(current.event.id)} />
-    <Button label="copy room id"  type="primary" clicked={() => copy(current.event.room.id)} />
+    <Button label="copy event id" type="primary" on:click={() => copy(current.event.id)} />
+    <Button label="copy room id"  type="primary" on:click={() => copy(current.event.room.id)} />
   </div>
 </Popup>

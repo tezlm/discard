@@ -88,9 +88,9 @@ const options = {
     {#each options[category] as option}
       <div class="row">
         <div>{option.name}</div>
-        <div><RadioInline bind:group={option.value} value="off"   clicked={() => config(option.id, "off")} /></div>
-        <div><RadioInline bind:group={option.value} value="on"    clicked={() => config(option.id, "on")} /></div>
-        <div><RadioInline bind:group={option.value} value="noisy" clicked={() => config(option.id, "noisy")} /></div>
+        <div><RadioInline bind:group={option.value} value="off"   on:click={() => config(option.id, "off")} /></div>
+        <div><RadioInline bind:group={option.value} value="on"    on:click={() => config(option.id, "on")} /></div>
+        <div><RadioInline bind:group={option.value} value="noisy" on:click={() => config(option.id, "noisy")} /></div>
       </div>
     {/each}
   </div>

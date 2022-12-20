@@ -83,7 +83,7 @@ export function reset() {
 </p>
 <div style="margin: 12px"></div>
 <div>
-  <Button type="hollow" label="Enable e2ee" clicked={todo} />
+  <Button type="hollow" label="Enable e2ee" on:click={todo} />
 </div>
 <div style="margin: 1em"></div>
 <div class="title">Access</div>

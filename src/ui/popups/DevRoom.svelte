@@ -30,14 +30,14 @@ console.log(current.room);
       {/each}
     {:else}
       <div>room id: <code style="user-select: all">{current.room.id}</code></div><br />
-      <Button label="Room State" clicked={() => view = "state"}/>
-      <Button label="Room Members" clicked={() => view = "members"}/>
-      <Button label="Account Data" clicked={() => view = "account"}/>
+      <Button label="Room State" on:click={() => view = "state"}/>
+      <Button label="Room Members" on:click={() => view = "members"}/>
+      <Button label="Account Data" on:click={() => view = "account"}/>
     {/if}
   </div>
   <div slot="footer">
     {#if view}
-    <Button label="back" clicked={() => view = null}/>
+    <Button label="back" on:click={() => view = null}/>
     {/if}
   </div>
 </Popup>

@@ -157,7 +157,7 @@ h2.title {
               label={formatState(inviteStates.get(user.id))}
               disabled={inviteStates.get(user.id)}
               loading={inviteStates.get(user.id) === "inviting"}
-              clicked={() => invite(user.id)}
+              on:click={() => invite(user.id)}
             />
           </div>
         </div>

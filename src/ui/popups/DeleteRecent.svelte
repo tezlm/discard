@@ -47,7 +47,7 @@ let selected = "1h";
     <Textarea placeholder="they disagree with my opinion" />
   </div>
   <div slot="footer">
-    <Button type="link" label="Nevermind!" clicked={() => state.popup.set({ ...current, id: null })} />
-    <Button type="danger" label={selected === "what" ? "????" : "Do it!"} clicked={() => selected === "what" ? window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ") : todo()} />
+    <Button type="link" label="Nevermind!" on:click={() => state.popup.set({ ...current, id: null })} />
+    <Button type="danger" label={selected === "what" ? "????" : "Do it!"} on:click={() => selected === "what" ? window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ") : todo()} />
   </div>
 </Popup>

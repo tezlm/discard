@@ -29,10 +29,10 @@ export function confirm() {
   </div>
   <div slot="footer">
     {#if current.button}
-      <Button type="link" label="Nevermind" clicked={cancel} />
-      <Button type={current.danger ? "danger" : "primary"} label={current.button} clicked={confirm} />
+      <Button type="link" label="Nevermind" on:click={cancel} />
+      <Button type={current.danger ? "danger" : "primary"} label={current.button} on:click={confirm} />
     {:else}
-      <Button type="primary" label="Alright" clicked={confirm} />
+      <Button type="primary" label="Alright" on:click={confirm} />
     {/if}
   </div>
 </Popup>

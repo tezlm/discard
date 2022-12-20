@@ -141,7 +141,7 @@ function rejectAll() {
     <h1>welcome to discard!</h1>
     <div class="warning">discard is pre-alpha, expect things to break!</div>
     <div class="buttons">
-      <Button clicked={() => $popup = { id: "create", type: "room" }}>
+      <Button on:click={() => $popup = { id: "create", type: "room" }}>
         <div class="button">
           <div class="icon">tag</div>
           <div style="flex: 1">
@@ -150,7 +150,7 @@ function rejectAll() {
           </div>
         </div>
       </Button>
-      <Button clicked={() => $popup = { id: "create", type: "space" }}>
+      <Button on:click={() => $popup = { id: "create", type: "space" }}>
         <div class="button">
           <div class="icon">folder</div>
           <div style="flex: 1">
@@ -159,7 +159,7 @@ function rejectAll() {
           </div>
         </div>
       </Button>
-      <Button clicked={todo}>
+      <Button on:click={todo}>
         <div class="button">
           <div class="icon">person</div>
           <div style="flex: 1">
@@ -168,7 +168,7 @@ function rejectAll() {
           </div>
         </div>
       </Button>
-      <Button clicked={todo}>
+      <Button on:click={todo}>
         <div class="button">
           <div class="icon">explore</div>
           <div style="flex: 1">
@@ -177,7 +177,7 @@ function rejectAll() {
           </div>
         </div>
       </Button>
-      <Button clicked={() => actions.to("/user-settings")}>
+      <Button on:click={() => actions.to("/user-settings")}>
         <div class="button">
           <div class="icon">settings</div>
           <div style="flex: 1">
@@ -186,7 +186,7 @@ function rejectAll() {
           </div>
         </div>
       </Button>
-      <Button clicked={() => window.open("https://git.celery.eu.org/tezlm/discard")}>
+      <Button on:click={() => window.open("https://git.celery.eu.org/tezlm/discard")}>
         <div class="button">
           <div class="icon">code</div>
           <div style="flex: 1">
@@ -205,8 +205,8 @@ function rejectAll() {
 <div class="invites scroll">
   <div style="display: flex; align-items: center; gap: 4px">
     <h2 style="flex: 1">Invites - {$invites.size}</h2>
-    <Button type="small primary" label="Accept all" clicked={acceptAll} />
-    <Button type="small gray" label="Reject all" clicked={rejectAll} />
+    <Button type="small primary" label="Accept all" on:click={acceptAll} />
+    <Button type="small gray" label="Reject all" on:click={rejectAll} />
   </div>
   {#each [...$invites.values()] as invite (invite.id)}
   {@const sender = getInviteSender(invite)}

@@ -34,7 +34,7 @@ async function leave() {
     {/if}
   </p>
   <div slot="footer">
-    <Button type="link" label="Cancel" clicked={() => state.popup.set({ ...current, id: null })} />
-    <Button type="danger" label="Leave {capitalize(current.type)}" clicked={leave} />
+    <Button type="link" label="Cancel" on:click={() => state.popup.set({ ...current, id: null })} />
+    <Button type="danger" label="Leave {capitalize(current.type)}" on:click={leave} />
   </div>
 </Popup>

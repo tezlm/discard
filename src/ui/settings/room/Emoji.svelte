@@ -68,7 +68,7 @@ let { settings, popup } = state;
 {#if room.power.me > room.power.forState("im.ponies.room_emotes")}
 <div class="create pack" style="display: flex;justify-content:space-between;align-items: center">
   create pack thing here
-  <Input placeholder="pack name" /><Button type="primary" label="Create" disabled clicked={todo} />
+  <Input placeholder="pack name" /><Button type="primary" label="Create" disabled on:click={todo} />
 </div>
 {/if}
 {#each room.getAllState("im.ponies.room_emotes").filter(i => i.content.pack) as event}

@@ -129,13 +129,13 @@ async function create() {
     </div>
   </div>
   <div slot="footer">
-    <Button type="link" label="Cancel" clicked={() => state.popup.set({ ...current, id: null })} />
+    <Button type="link" label="Cancel" on:click={() => state.popup.set({ ...current, id: null })} />
     <Button
       type="primary"
       disabled={!config.name.length}
       loading={creating}
       label={creating ? `Creating ${capitalize(current.type)}...` : `Create ${capitalize(current.type)}`}
-      clicked={create}
+      on:click={create}
     />
   </div>
 </Popup>

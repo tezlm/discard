@@ -46,7 +46,7 @@ function unban() {
     <Textarea autofocus placeholder={rnd(placeholders)} bind:value={reason} />
   </div>
   <div slot="footer">
-    <Button type="link" label="Nevermind!" clicked={() => state.popup.set({ ...current, id: null })} />
-    <Button type="danger" label="Do it!" clicked={unban} />
+    <Button type="link" label="Nevermind!" on:click={() => state.popup.set({ ...current, id: null })} />
+    <Button type="danger" label="Do it!" on:click={unban} />
   </div>
 </Popup>

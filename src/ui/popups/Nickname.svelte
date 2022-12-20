@@ -17,7 +17,7 @@ function closePopup() {
     <Input optional />
   </div>
   <div slot="footer">
-    <Button type="link" label="Cancel" clicked={closePopup} />
-    <Button type="primary" label="Save" clicked={() => state.popup.set({ id: "todo" })} />
+    <Button type="link" label="Cancel" on:click={closePopup} />
+    <Button type="primary" label="Save" on:click={() => state.popup.set({ id: "todo" })} />
   </div>
 </Popup>

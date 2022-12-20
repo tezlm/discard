@@ -82,8 +82,8 @@ img {
     -->
   </div>
   <div slot="footer">
-    <Button type="link" label="Nevermind" clicked={closePopup} />
-    <Button type="primary" label="Upload!" clicked={() => { current.confirm(); closePopup() }} />
+    <Button type="link" label="Nevermind" on:click={closePopup} />
+    <Button type="primary" label="Upload!" on:click={() => { current.confirm(); closePopup() }} />
   </div>
 </Popup>
 

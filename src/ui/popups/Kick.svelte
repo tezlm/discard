@@ -49,7 +49,7 @@ function kick() {
     <Textarea autofocus placeholder={getPlaceholder()} bind:value={reason} />
   </div>
   <div slot="footer">
-    <Button type="link" label="Nevermind!" clicked={() => state.popup.set({ ...current, id: null })} />
-    <Button type="danger" label="Do it!" clicked={kick} />
+    <Button type="link" label="Nevermind!" on:click={() => state.popup.set({ ...current, id: null })} />
+    <Button type="danger" label="Do it!" on:click={kick} />
   </div>
 </Popup>

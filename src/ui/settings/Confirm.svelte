@@ -44,7 +44,7 @@ function fly() {
     <div class="label">
       Careful, you have unsaved changes!
     </div>
-    <Button type="link small" label="Reset" clicked={reset} />
-    <Button type="good small" label="Save Changes" clicked={() => { saving = true; save().then(() => saving = false) }} loading={saving} />
+    <Button type="link small" label="Reset" on:click={reset} />
+    <Button type="good small" label="Save Changes" on:click={() => { saving = true; save().then(() => saving = false) }} loading={saving} />
   </div>
 </div>

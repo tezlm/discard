@@ -42,7 +42,7 @@ export function confirm() {
     <div class="tip">(hold shift to bypass this dialog)</div>
   </div>
   <div slot="footer">
-    <Button type="link" label="Nevermind" clicked={close} />
-    <Button type="danger" label="Yeah!" clicked={confirm} />
+    <Button type="link" label="Nevermind" on:click={close} />
+    <Button type="danger" label="Yeah!" on:click={confirm} />
   </div>
 </Popup>

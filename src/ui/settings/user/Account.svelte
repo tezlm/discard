@@ -68,9 +68,9 @@ let user = client.users.get(userId) ?? { id: userId };
         <h3 class="title">Avatar</h3>
         <div style="color: var(--fg-notice)">idk what to put here</div>
       </div>
-      <Button type="small primary" label="Upload" clicked={todo} />
-      <Button type="small primary" label="Change" clicked={todo} />
-      <Button type="small hollow" label="Remove" clicked={todo} />
+      <Button type="small primary" label="Upload" on:click={todo} />
+      <Button type="small primary" label="Change" on:click={todo} />
+      <Button type="small hollow" label="Remove" on:click={todo} />
     </div>
     -->
     <div>
@@ -78,21 +78,21 @@ let user = client.users.get(userId) ?? { id: userId };
         <h3 class="title">Display Name</h3>
         <div style="color: var(--fg-notice)">{user.name || userId}</div>
       </div>
-      <Button type="gray small" label="Edit" clicked={todo} />
+      <Button type="gray small" label="Edit" on:click={todo} />
     </div>
     <div>
       <div class="info">
         <h3 class="title">Email</h3>
         <div style="color: var(--fg-notice)">todo</div>
       </div>
-      <Button type="gray small" label="Edit" clicked={todo} />
+      <Button type="gray small" label="Edit" on:click={todo} />
     </div>
     <div>
       <div class="info">
         <h3 class="title">Phone Number</h3>
         <div style="color: var(--fg-notice)">todo</div>
       </div>
-      <Button type="gray small" label="Edit" clicked={todo} />
+      <Button type="gray small" label="Edit" on:click={todo} />
     </div>
   </div>
 </div>
@@ -101,7 +101,7 @@ let user = client.users.get(userId) ?? { id: userId };
 <fieldset class="danger">
   <h3>danger zone</h3>
   <div style="height: 1em"></div>
-  <Button type="danger" label="Change password" clicked={todo} />
-  <Button type="danger" label="Disable account" clicked={todo} />
+  <Button type="danger" label="Change password" on:click={todo} />
+  <Button type="danger" label="Disable account" on:click={todo} />
 </fieldset>
 <div style="min-height: 64px"></div>

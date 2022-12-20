@@ -37,7 +37,7 @@ let { popup } = state;
     <b>{content.body}</b>
     <span>maybe some additional metadata or info can be here...</span>
     <div style="height:16px"></div>
-    <Button label="steal" type="primary" clicked={todo} />
+    <Button label="steal" type="primary" on:click={todo} />
   </div>
 </div>
 

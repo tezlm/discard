@@ -24,5 +24,5 @@ export let room;
   <h1>Encrypted Room</h1>
   <p style="margin-top: 16px">Verify your current session to read encrypted messages!</p>
   <br />
-  <Button type="primary" label="Verify Session" clicked={todo} />
+  <Button type="primary" label="Verify Session" on:click={todo} />
 </div>

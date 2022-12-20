@@ -152,7 +152,7 @@ async function add() {
     {/each}
   </div>
   <div slot="footer">
-    <Button type="link" label="Cancel" clicked={close} />
-    <Button type="primary" label="Add" disabled={!Object.values(checked).some((i) => i)} {loading} clicked={add} />
+    <Button type="link" label="Cancel" on:click={close} />
+    <Button type="primary" label="Add" disabled={!Object.values(checked).some((i) => i)} {loading} on:click={add} />
   </div>
 </Popup>
