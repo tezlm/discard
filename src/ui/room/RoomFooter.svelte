@@ -12,6 +12,13 @@ async function sendMessage(content, theRoom = $room) {
     content["m.relates_to"] = {};
     content["m.relates_to"]["m.in_reply_to"] = {};
     content["m.relates_to"]["m.in_reply_to"]["event_id"] = $reply.id;
+    const body = $reply.content.body
+      .split("\n")
+      .map(i => "&gt; " + i)
+      .join("\n");
+    const sender = $reply.sender.name ?? $reply.sender.id;
+    content.body = `${body}\n${sender} ${content.body}`;
+    content.formatted_body = `<mx-reply>${body}\n${sender}</mx-reply>${content.formatted_body}`;
     reply.set(null);
   }
 
