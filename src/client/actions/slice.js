@@ -1,6 +1,6 @@
 // this code is awful and really should be refactored - maybe removed completely
 
-import Slice from "../matrix/slice.js";
+import Slice from "../matrix/slice";
 
 export function get(room) {
   if (state.roomSlices.has(room.id)) {
