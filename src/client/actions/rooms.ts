@@ -40,7 +40,7 @@ export function markRead(room: Room, eventId?: string) {
 	  state.log.debug(`mark ${lastId} as read`);
 	  room.accountData.set("m.fully_read", { event_id: lastId });
     state.api.sendReceipt(room.id, lastId);
-    if (!eventId) state.api.fetch("POST", `/rooms/${encodeURIComponent(room.id)}/receipt/m.read.private/${encodeURIComponent(lastId)}`, { thread_id: "main" });
+    if (!eventId) state.api.sendReceipt(room.id, lastId);
     if (state.focusedRoomId === room.id) state.slice.set(state.roomSlices.get(room.id));
 }
 

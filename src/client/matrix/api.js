@@ -113,7 +113,10 @@ export default class Api {
   }
 
   sendReceipt(roomId, eventId) {
-    return this.fetch("POST", `/rooms/${encode(roomId)}/read_markers`, { "m.fully_read": eventId });
+    return this.fetch("POST", `/rooms/${encode(roomId)}/read_markers`, {
+      "m.fully_read": eventId,
+      "m.read.private": eventId,
+    });
   }
   
   sendTyping(roomId, userId, content) {
