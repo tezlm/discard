@@ -69,6 +69,7 @@ implementation, and `x` means it is done
   - [ ] jump to unread
   - [ ] jump to latest
   - [ ] link embeds
+  - [ ] group events together? (eg. multiple m.room.member -> one entry)
   - [ ] room embeds
   - [-] show m.room.member change type + reason
   - [-] show other state events (m.*)
