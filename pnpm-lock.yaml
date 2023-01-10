@@ -20,9 +20,9 @@ specifiers:
   idb: ^7.1.1
   lexical: ^0.5.0
   linkifyjs: ^3.0.5
-  marked: ^4.2.4
+  marked: ^4.2.5
   marked-katex-extension: ^1.0.2
-  sanitize-html: ^2.8.0
+  sanitize-html: ^2.8.1
   svelte: ^3.55.0
   svelte-preprocess: ^4.10.7
   svelte-virtual-scroll-list: ^1.1.0
@@ -46,9 +46,9 @@ dependencies:
   idb: 7.1.1
   lexical: 0.5.0
   linkifyjs: 3.0.5
-  marked: 4.2.4
-  marked-katex-extension: 1.0.2_marked@4.2.4
-  sanitize-html: 2.8.0
+  marked: 4.2.5
+  marked-katex-extension: 1.0.2_marked@4.2.5
+  sanitize-html: 2.8.1
   svelte-virtual-scroll-list: 1.1.0_svelte@3.55.0
   twemoji: 14.0.2
 
@@ -668,17 +668,17 @@ packages:
       sourcemap-codec: 1.4.8
     dev: true
 
-  /marked-katex-extension/1.0.2_marked@4.2.4:
+  /marked-katex-extension/1.0.2_marked@4.2.5:
     resolution: {integrity: sha512-u1CZeGzH0loLPgrp/QgNNREJsJMHIixGLh5uALbBOkG7PpT7Ro8QmM3gZL4JxVz6JnkuVWwQQK2wNQqJxUnsZw==}
     peerDependencies:
       marked: ^4.2.4
     dependencies:
       katex: 0.16.4
-      marked: 4.2.4
+      marked: 4.2.5
     dev: false
 
-  /marked/4.2.4:
-    resolution: {integrity: sha512-Wcc9ikX7Q5E4BYDPvh1C6QNSxrjC9tBgz+A/vAhp59KXUgachw++uMvMKiSW8oA85nopmPZcEvBoex/YLMsiyA==}
+  /marked/4.2.5:
+    resolution: {integrity: sha512-jPueVhumq7idETHkb203WDD4fMA3yV9emQ5vLwop58lu8bTclMghBWcYAavlDqIEMaisADinV1TooIFCfqOsYQ==}
     engines: {node: '>= 12'}
     hasBin: true
     dev: false
@@ -786,8 +786,8 @@ packages:
       rimraf: 2.7.1
     dev: true
 
-  /sanitize-html/2.8.0:
-    resolution: {integrity: sha512-ZsGyc6avnqgvEm3eMKrcy8xa7WM1MrGrfkGsUgQee2CU+vg3PCfNCexXwBDF/6dEPvaQ4k/QqRjnYKHL8xgNjg==}
+  /sanitize-html/2.8.1:
+    resolution: {integrity: sha512-qK5neD0SaMxGwVv5txOYv05huC3o6ZAA4h5+7nJJgWMNFUNRjcjLO6FpwAtKzfKCZ0jrG6xTk6eVFskbvOGblg==}
     dependencies:
       deepmerge: 4.2.2
       escape-string-regexp: 4.0.0

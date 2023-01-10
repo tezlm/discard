@@ -36,9 +36,9 @@
 		"idb": "^7.1.1",
 		"lexical": "^0.5.0",
 		"linkifyjs": "^3.0.5",
-		"marked": "^4.2.4",
+		"marked": "^4.2.5",
 		"marked-katex-extension": "^1.0.2",
-		"sanitize-html": "^2.8.0",
+		"sanitize-html": "^2.8.1",
 		"svelte-virtual-scroll-list": "^1.1.0",
 		"twemoji": "^14.0.2"
 	}
