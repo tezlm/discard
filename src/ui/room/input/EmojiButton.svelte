@@ -64,6 +64,7 @@ $: if (show) {
   <div class="button" bind:this={wrapperEl} on:click={handleClick} class:shown={show}>
     <div class="icon">
       {@html twemoji.parse(emoji, {
+        base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
         folder: "svg",
         ext: ".svg",
       })}

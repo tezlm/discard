@@ -55,6 +55,7 @@ function getShortcode(hex) {
 
 function getTwemoji(unicode) {
   return twemoji.parse(unicode, {
+    base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
     attributes: () => ({ loading: 'lazy' }),
     folder: "svg",
     ext: ".svg",
