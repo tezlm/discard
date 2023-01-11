@@ -98,7 +98,6 @@ img {
 .text {
   display: inline;
   word-break: break-word;
-  white-space: pre-wrap;
 }
 
 .text :global(*) {
@@ -111,6 +110,10 @@ img {
 
 .text :global(blockquote), .text :global(ol), .text :global(ul), .text :global(li), .text :global(details) {
   white-space: normal;
+}
+
+:global(blockquote + blockquote) {
+  margin-top: 4px;
 }
 
 .text :global(img) {
@@ -127,25 +130,25 @@ img {
   bind:this={wrapper}
 >
   {#if type === "m.image"}
-  {@const name = content.filename ?? content.body}
+  {@const name = content.filename}
   <img
     src={parseMxc(content.url, dimensions.width, dimensions.height)}
     alt={name}
     title={name}
     style={dimensions.css}
     use:fastclick 
-    on:fastclick={() => $popup = { id: "attachment", url: parseMxc(content.url) + "/" + name, alt: name }}
+    on:fastclick={() => $popup = { id: "attachment", url: parseMxc(content.url) + (name ? "/" + name : ""), alt: name }}
   />
   {:else if type === "m.sticker"}
   <!-- note that this will fetch the full res sticker, which might not be ideal -->
-  {@const name = content.filename ?? content.body}
+  {@const name = content.filename}
   <img
     src={parseMxc(content.url)}
     alt={name}
     title={name}
     style="height: 128px"
     use:fastclick 
-    on:fastclick={() => $popup = { id: "attachment", url: parseMxc(content.url) + "/" + name, alt: name }}
+    on:fastclick={() => $popup = { id: "attachment", url: parseMxc(content.url) + (name ? "/" + name : ""), alt: name }}
   />
   {:else if type === "m.video"}
   <Video src={parseMxc(content.url)} name={content.filename ?? content.body} info={content.info} />

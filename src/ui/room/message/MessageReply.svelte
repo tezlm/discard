@@ -129,7 +129,7 @@ $: eventPromise = room.events.fetch(eventId);
       {:else}
         <i style="color: var(--fg-muted)">no content?</i>
       {/if}
-    {:else if event.content.body}
+    {:else if event.content?.body}
       {event.content.body.replace(/\n/g, " ")}
     {:else}
       <i style="color: var(--fg-muted)">failed to render {event.type} event</i>

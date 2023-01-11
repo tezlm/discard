@@ -53,6 +53,7 @@ const showMemberContext = (member) => (e) => {
   color: var(--fg-content);
   flex: 1;
   max-width: 100%;
+  padding-right: 16px;
 }
 
 .author {
