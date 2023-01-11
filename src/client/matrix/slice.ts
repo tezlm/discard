@@ -1,17 +1,17 @@
 export default class Slice {
   constructor(timeline) {
-    // this assumes that there's at least some events in the timeline    
-    this.timeline = timeline;    
+    this.timeline = timeline;
     this.reset();
   }
   
   atEnd() {
+    if (this.timeline !== this.timeline.room.events.live) return false;
     return this.end === this.timeline.at(-1)
       || this.end === this.timeline.at(-2);
   }
   
   reset(count = 50) {
-    const timeline = this.timeline;
+    const { timeline } = this;
     const startIdx = Math.max(timeline.length - (count * 2) - 1, 0);
     const endIdx = timeline.length - 1;
     this.start = timeline[startIdx];
@@ -21,23 +21,23 @@ export default class Slice {
   }
     
   reslice() {
-    const timeline = this.timeline;
-    const startIdx = timeline.lastIndexOf(this.start);
-    const endIdx = timeline.lastIndexOf(this.end);
+    const { timeline, start, end } = this;
+    const startIdx = timeline.lastIndexOf(start);
+    const endIdx = timeline.lastIndexOf(end);
     this.events = timeline.slice(startIdx, endIdx + 1)
       .filter((ev) => !ev.content["m.new_content"] && ev.type !== "m.reaction");
   }
   
   async backwards(count = 50) {
-    const timeline = this.timeline;
-    const oldStart = timeline.indexOf(this.start);
+    const { timeline, start, end } = this;
+    const oldStart = timeline.indexOf(start);
     if (oldStart - count < 0) {
-      state.log.matrix(`fetching backwards in ${this.timeline.room.id}`);
+      state.log.matrix(`fetching backwards in ${timeline.room.id}`);
       if (!await timeline.fetch("backwards")) return; // no new events
     }
     
-    const startIdx = this.start ? timeline.indexOf(this.start) : Math.max(timeline.length - count, 0);
-    if (startIdx < 0) this.reset();
+    const startIdx = start ? timeline.indexOf(start) : Math.max(timeline.length - count, 0);
+    if (startIdx === -1) this.reset();
     
     const eventCount = count * 2;
     const newStart = Math.max(startIdx - count, 0);
@@ -53,11 +53,15 @@ export default class Slice {
   }
   
   async forwards(count = 50) {
-    // TODO: fetch events
+    const { timeline, start, end } = this;
+    const oldEnd = timeline.indexOf(end);
+    if (oldEnd + count > timeline.length) {
+      state.log.matrix(`fetching forwards in ${timeline.room.id}`);
+      if (!await timeline.fetch("forwards")) return; // no new events
+    }
     
-    const timeline = this.timeline;
-    const startIdx = timeline.lastIndexOf(this.start);
-    if (startIdx < 0) this.reset();
+    const startIdx = timeline.lastIndexOf(start);
+    if (startIdx === -1) this.reset();
     
     const eventCount = count * 2;
     const newStart = Math.max(Math.min(startIdx + count, timeline.length - count - 1), 0);

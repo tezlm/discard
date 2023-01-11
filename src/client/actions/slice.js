@@ -18,7 +18,8 @@ export async function backwards() {
   const slice = actions.slice.get(state.rooms.get(state.focusedRoomId));
   if (!slice) return false;
   const top = slice.events[0]?.id;
-  await slice.backwards(Math.floor(window.innerHeight / 32 * 4));
+  // await slice.backwards(Math.floor(window.innerHeight / 32 * 4));
+  await slice.backwards(100); // TODO: calculate exactly how many events to rewind
   const success = top !== slice.events[0]?.id;
   if (success) state.slice.set(slice);
   return success;
@@ -33,7 +34,8 @@ export async function forwards() {
     state.roomSlices.set(get(state.rooms.get(state.focusedRoomId)));
     state.slice.set(get(state.rooms.get(state.focusedRoomId)));
   }
-  await slice.forwards(Math.floor(window.innerHeight / 32 * 4));
+  // await slice.forwards(Math.floor(window.innerHeight / 32 * 4));
+  await slice.forwards(100);
   const success = bottom !== slice.events.at(-1)?.id;
   if (success) state.slice.set(slice);
   return success;
