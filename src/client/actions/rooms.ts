@@ -44,7 +44,7 @@ export function markRead(room: Room, eventId?: string) {
     if (state.focusedRoomId === room.id) state.slice.set(state.roomSlices.get(room.id));
 }
 
-export async function focus(room: Room) {
+export function focus(room: Room) {
   state.log.ui("set focused room to " + room?.id);
   const states = state.roomStates;
   if (!state.roomState) {
@@ -60,10 +60,6 @@ export async function focus(room: Room) {
     }
   }
   
-  state.focusedRoomId = room?.id ?? null;
-  state.focusedRoom.set(room);
-  state.log.debug("set room for " + room?.id);
-  
   if (room) {
   	if (!states.has(room.id)) states.set(room.id, getDefaultState());
         
@@ -71,14 +67,7 @@ export async function focus(room: Room) {
     for (let key in newState) {
     	state.roomState[key].set(newState[key]);
     }
-    
-    const timeline = room.events.live;
-    if (!timeline) {
-      await room.events.fetchTimeline();
-    } else if (!timeline.length) {
-      await timeline.fetch("backwards");
-    }
-    
+        
     state.log.debug("set slice for " + room.id);
     state.slice.set(actions.slice.get(room));
     
@@ -88,7 +77,11 @@ export async function focus(room: Room) {
     if (recentIndex >= 0) recent.splice(recentIndex, 1);
     recent.unshift(room);
     if (recent.length > 8) recent.pop();
-  }  
+  }
+  
+  state.focusedRoomId = room?.id ?? null;
+  state.focusedRoom.set(room);
+  state.log.debug("set room for " + room?.id);
 }
 
 export function getDefaultState() {

@@ -5,7 +5,6 @@ import Divider from '../timeline/Divider.svelte';
 import Upload from '../timeline/Upload.svelte';
 import Placeholder from '../timeline/Placeholder.svelte';
 import Event from "../timeline/Event.svelte";
-import Loading from "../../atoms/Loading.svelte";
 import { getLastMessage } from "../../../util/timeline";
 export let room;
 let { focused, navRooms, reply, edit, upload } = state.roomState;
@@ -13,11 +12,11 @@ let { slice, settings, pushRules } = state;
 let shiftKey = false;
 let scroller, scrollTop, scrollMax, scrollTo, reset;
 
-let refresh;
 let list;
+let isRoomRead = false;
 
 $: if ($slice || $navRooms) {
-	refresh?.();
+	isRoomRead = isRead(room);
 	/*
 	timeline = room.events.live?.filter((ev) => {
 		// todo
@@ -41,12 +40,9 @@ $: if ($slice || $navRooms) {
 	// return true;
 // }
 	}) ?? []
-	tick().then(() => refocus?.());
 	*/
-	refocus?.();
+	tick().then(refocus);
 }
-
-queueMicrotask(() => refocus?.());
 
 function shouldSplit(prev, ev) {
 	if (!prev) return true;
@@ -71,14 +67,9 @@ function dividerProps(prev, ev) {
 }
 
 function refocus() {
-	if (scrollTop > scrollMax - 400) {
-		setTimeout(() => scrollTo?.(-1));
+	if (scrollTop > scrollMax - 250) {
+		scrollTo(-1);
 	}
-
-	// if (!scroller) return;
-	// 	if (scroller.scrollHeight - scroller.offsetHeight < scroller.scrollTop + 50) {
-	// 	scroller.scrollTo(-1);
-	// }
 }
 
 let resizeTimeout;
@@ -122,7 +113,6 @@ onDestroy(state.focusedRoom.subscribe(() => {
 	queueMicrotask(() => console.timeEnd("focus room"));
 }));
 
-// onDestroy(state.focusedRoom.subscribe(() => queueMicrotask(() => refresh?.())));
 onDestroy(upload.subscribe(refocus));
 onDestroy(reply.subscribe(refocus));
 onDestroy(edit.subscribe(refocus));
@@ -150,12 +140,6 @@ function isRead(room) {
 	const tl = room.events.live;
 	if (!tl) return room.notifications.unread === 0;
 	return getLastMessage(tl, room.readEvent) === getLastMessage(tl);
-}
-
-function getPrev(event) {
-	const timeline = room.events.live;
-	const index = timeline.lastIndexOf(event);
-	return timeline[index - 1];
 }
 
 async function fetchBackwards() {
@@ -249,61 +233,55 @@ async function fetchForwards() {
 }
 </style>
 <div class="content">
-	{#if room.events.live}
-		{#if false && !isRead(room)}
-		<div class="unread" on:click={() => actions.slice.jump(room.id, room.readEvent)}>
-			<div style="flex: 1;">
-			{room.notifications.unread} new messages
-			</div>
-			<div style="display: flex; font-weight: 700" on:click|stopPropagation={() => actions.rooms.markRead(room)}>
-				Mark As Read <div class="icon" style="margin-left: 4px">mark_chat_read</div>
-			</div>
+	{#if false && !isRoomRead}
+	<div class="unread" on:click={() => actions.slice.jump(room.id, room.readEvent)}>
+		<div style="flex: 1;">
+		{room.notifications.unread} new messages
 		</div>
-		{/if}
-		<Scroller
-			items={$slice.events}
-			direction="up"
-			bind:scrollTop={scrollTop}
-			bind:scrollMax={scrollMax}
-			bind:scrollTo={scrollTo}
-			bind:reset={reset}
-			let:data={event}
-			let:index={index}
-			{fetchBackwards}
-			{fetchForwards}
-			getDefault={() => [$slice.events[0]?.type === "m.room.create", $slice.atEnd()]}
-		>
-			{@const prev = getPrev(event)}
-			{@const highlight = getHighlight(event, $reply)}
-			{@const header = shouldSplit(prev, event)}
-			<div slot="top" style="flex: 1"></div>
-			<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
-			<div>
-				{#if prev}
-				<Divider {...dividerProps(prev, event)} />
-				{/if}
-				<div
-					class:header
-					class:highlight={!!highlight}
-					class:focused={$focused === event.id}
-					class:editing={$edit === event.id}
-					data-event-id={event.id}
-					style:--color={highlight}
-				>
-				  <Event {shiftKey} {event} {header} />
-				</div>
-			</div>
-			<div slot="placeholder-end" class="placeholder-bottom">
-				<Placeholder />
-			</div>
-			<div slot="bottom" class="spacer">
-				{#if $upload}<Upload upload={$upload} />{/if}
-			</div>
-		</Scroller>
-	{:else}
-		<div style="padding: 16px">
-			<Loading color="var(--fg-content)" />
+		<div style="display: flex; font-weight: 700" on:click|stopPropagation={() => actions.rooms.markRead(room)}>
+			Mark As Read <div class="icon" style="margin-left: 4px">mark_chat_read</div>
 		</div>
+	</div>
 	{/if}
+	<Scroller
+		items={$slice.events}
+		direction="up"
+		bind:scrollTop={scrollTop}
+		bind:scrollMax={scrollMax}
+		bind:scrollTo={scrollTo}
+		bind:reset={reset}
+		let:data={event}
+		let:index={index}
+		{fetchBackwards}
+		{fetchForwards}
+		getDefault={() => [$slice.events[0]?.type === "m.room.create", $slice.atEnd()]}
+	>
+		{@const prev = $slice.events[index - 1]}
+		{@const highlight = getHighlight(event, $reply)}
+		{@const header = shouldSplit(prev, event)}
+		<div slot="top" style="flex: 1"></div>
+		<div slot="placeholder-start" class="tall" style="align-items: end"><Placeholder /></div>
+		<div>
+			{#if prev}
+			<Divider {...dividerProps(prev, event)} />
+			{/if}
+			<div
+				class:header
+				class:highlight={!!highlight}
+				class:focused={$focused === event.id}
+				class:editing={$edit === event.id}
+				data-event-id={event.id}
+				style:--color={highlight}
+			>
+			  <Event {shiftKey} {event} {header} />
+			</div>
+		</div>
+		<div slot="placeholder-end" class="placeholder-bottom">
+			<Placeholder />
+		</div>
+		<div slot="bottom" class="spacer">
+			{#if $upload}<Upload upload={$upload} />{/if}
+		</div>
+	</Scroller>
 </div>
 <svelte:window on:resize={handleResize} on:keydown={handleKeyDown} on:keyup={handleKeyDown} on:mousemove={checkShift} />

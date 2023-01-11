@@ -1,6 +1,7 @@
 <script>
 // considering there is only one place that uses/needs this (room content), this may just be a useless abstraction
 // this could be combined with room content to make a room timeline scroller instead
+// import { afterUpdate, beforeUpdate, onMount, onDestroy } from "svelte";
 export let fetchBackwards = async () => {};
 export let fetchForwards = async () => {};
 export let getDefault = () => {};
@@ -16,13 +17,15 @@ let paginating = false;
 
 export function reset() {
   [atItemsTop, atItemsBottom] = getDefault();
-  if (direction === "up") {
-    queueMicrotask(() => scrollEl && (scrollEl.scrollTop = scrollEl.scrollHeight));
-  }
+  if (direction === "up") scrollTo(-1);
 }
 
 export function scrollTo(pos) {
-  if (scrollEl) scrollEl.scrollTop = pos === -1 ? scrollEl.scrollHeight : pos;
+  if (scrollEl) {
+    scrollEl.scrollTop = pos === -1 ? scrollEl.scrollHeight : pos;
+  } else {
+    console.warn("couldn't find scrollEl", scrollEl);
+  }
 }
 
 function handleScroll() {
