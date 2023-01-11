@@ -11,6 +11,11 @@ function getName(room) {
 	const other = dms.get(room.id);
 	return other.name ?? other.id;
 }
+
+function getAvatar(room) {
+	if (!dms.has(room.id)) return room;
+	return { ...room, avatar: room.avatar ?? dms.get(room.id).avatar };
+}
 </script>
 <style>
 .expander {
@@ -19,12 +24,15 @@ function getName(room) {
   margin-top: 8px;
   gap: 4px;
   align-items: end;
-  font-weight: bold;
-  color: var(--fg-muted);
   cursor: pointer;
 }
 
-.expander:hover {
+.expander .name {
+  font-weight: bold;
+  color: var(--fg-muted);
+}
+
+.expander:hover .name {
   color: var(--fg-notice);
 }
 
@@ -67,9 +75,9 @@ function getName(room) {
       on:click={() => collapsed[room.id] = !collapsed[room.id]}
     >
       <div class="icon">chevron_right</div>
-      <div>{getName(room)}</div>
+      <div class="name">{getName(room)}</div>
       {#if room.topic}
-      <div style="color: var(--fg-muted)">{@html parseHtml(room.topic, { linkify: true, twemojify: true, sanitize: true, inline: true })}</div>
+      <div style="color: var(--fg-muted)">- {@html parseHtml(room.topic, { linkify: true, twemojify: true, sanitize: true, inline: true })}</div>
       {/if}
     </div>
     {#if !collapsed[room.id]}
@@ -83,7 +91,7 @@ function getName(room) {
     {/if}
   {:else}
     <div style="display: flex; margin: 8px 0">
-      <Avatar user={room} size={36} link />
+      <Avatar user={getAvatar(room)} size={36} link />
       <div style="margin-left: 12px">
         <div style="font-weight: bold">{getName(room)}</div>
         {#if room.topic}

@@ -135,7 +135,7 @@ function getPings(space, _) {
   <div
     class="space"
     class:focused={$focusedSpace === null}
-    on:click={() => actions.to("/home")}
+    on:click={() => state.focusedRoomId ? actions.spaces.focus(null) : actions.to("/home")}
   >
     <Tooltip position="right" tip="Home">
       <div class="avatar" style="height: 48px; width: 48px">
@@ -172,6 +172,8 @@ function getPings(space, _) {
 	const newSpace = $navSpaces[(idx + (e.key === "ArrowUp" ? -1 : 1) + $navSpaces.length + 1) % ($navSpaces.length + 1)];
   if (newSpace) {
   	actions.spaces.focus(newSpace);
+  } else if (state.focusedRoomId) {
+  	actions.spaces.focus(null);
   } else {
   	actions.to("/home");
   }

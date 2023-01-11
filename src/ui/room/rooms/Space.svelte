@@ -128,6 +128,10 @@ function buildTree(rooms, top = rooms[0], topEvent = null) {
     </div>
     {:then rooms}
       <Hierarchy item={buildTree(rooms)} />
+    {:catch}
+    <div class="loading">
+      <i style="margin-top: 8px; color: var(--fg-light)">Failed to load rooms!</i>
+    </div>
     {/await}
     </div>
   </div>
@@ -141,7 +145,7 @@ function buildTree(rooms, top = rooms[0], topEvent = null) {
       <div class="info">
         {formatJoinRule(room.joinRule)} ·
         {members?.length ?? "???"} {members?.length === 1 ? "member" : "members"} ·
-        <a href="#" on:click={(e) => { e.preventDefault(); state.selectedRoom.set(room); actions.to(`/space-settings/${room.id}`) }}>edit</a>
+        <a href="/space-settings/{room.id}" on:click|preventDefault={() => { state.selectedRoom.set(room); actions.to(`/space-settings/${room.id}`) }}>edit</a>
       </div>
       <div class="topic">{@html room.topic ? parseHtml(room.topic, { linkify: true }) : "<i>no topic</i>"}</div>
     </div>
