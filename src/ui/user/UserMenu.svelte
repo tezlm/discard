@@ -1,4 +1,5 @@
 <script>
+import Loading from "../atoms/Loading.svelte";
 import Tooltip from "../atoms/Tooltip.svelte";
 import Avatar from "../atoms/Avatar.svelte";
 import { homeContext } from "../../util/context.ts";

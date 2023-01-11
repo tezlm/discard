@@ -1,5 +1,6 @@
 <script>
-export let color;
+export let color = "var(--fg-muted)";
+export let size = 32;
 </script>
 <style>
 @keyframes hover {
@@ -9,10 +10,8 @@ export let color;
 }
 
 .spinner {
-  width: 32px;
-  height: 32px;
   /* background: conic-gradient(var(--mxid-2), var(--mxid-3), var(--mxid-4), var(--mxid-5), var(--mxid-2)); */
-  border: solid var(--bg-spaces) 4px;
+  border: solid var(--fg-muted) 4px;
   border-top-color: transparent;
   border-bottom-color: transparent;
   border-radius: 50%;
@@ -26,6 +25,8 @@ export let color;
 </style>
 <div
   class="spinner"
+  style:width="{size}px"
+  style:height="{size}px"
   style:border-left-color={color}
   style:border-right-color={color}
 ></div>

@@ -127,7 +127,7 @@ h1 {
   {#if members}
     {#await Promise.all(members.map(i => getMember(i)))}
       <i style="margin-bottom: 16px">this may take a while</i>
-      <Loading color="var(--fg-muted)" />
+      <Loading />
     {:then memberData}
       <VirtualScroll
         data={memberData}
@@ -164,7 +164,7 @@ h1 {
       {/if}
     {/await}
   {:else}
-    <Loading color="var(--fg-muted)" />
+    <Loading />
   {/if}
 {:else}
 <i>something really wrong happened, try again?</i>
