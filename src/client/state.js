@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
 import Settings from "./matrix/settings";
 import PushRules from "../util/push";
+import Emitter from "../util/emitter";
 import { getDefaultState } from "./actions/rooms";
 
 const settings = new Settings();
@@ -26,6 +27,7 @@ const state = {
   client: null,
   userId: null,
   log: log,
+  events: new Emitter(),
   
   // routing
   pathRef: p,

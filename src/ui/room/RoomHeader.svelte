@@ -1,4 +1,5 @@
 <script lang="ts">
+import { onDestroy } from "svelte";
 import Tooltip from "../atoms/Tooltip.svelte";
 import Search from "../atoms/Search.svelte";
 import { parseHtml } from "../../util/html";
@@ -6,7 +7,7 @@ import { roomContext } from "../../util/context";
 import { fastclick } from "../../util/use";
 import type { Room } from "discount.ts";
 export let room: Room;
-let { focusedSpace: space, settings, scene } = state;
+let { focusedSpace: space, settings, scene, events } = state;
 let copyCount = 0;
 $: dark = $space && !room;
 
@@ -58,7 +59,7 @@ $: if ($scene === "home") {
 let search;
 let searchfocus = false;
 
-let showPins = false;
+let pinsShown = false;
 let pinButtonEl;
 
 function showHeader() {
@@ -74,8 +75,9 @@ function showHeader() {
   });
 }
 
-$: if (showPins) {
-  queueMicrotask(() => {
+function togglePins() {
+  pinsShown = !pinsShown;
+  if (pinsShown) {
     const rect = pinButtonEl.getBoundingClientRect();
     $popout = {
       id: "pinned",
@@ -84,10 +86,13 @@ $: if (showPins) {
       right: window.innerWidth - rect.right,
       room
     };
-  });
-} else {
-  $popout = {};
+  } else {
+    $popout = {};
+  }
 }
+
+events.on("ui.header.pins.toggle", togglePins);
+onDestroy(() => events.off("ui.header.pins.toggle", togglePins));
 </script>
 <style>
 .header {
@@ -287,7 +292,7 @@ $: if (showPins) {
   {/if}
   -->
   {#if room}
-  <div class="icon" class:active={showPins} bind:this={pinButtonEl} on:click|stopPropagation={() => showPins = !showPins}>push_pin</div>
+  <div class="icon" class:active={pinsShown} bind:this={pinButtonEl} on:click|stopPropagation={() => state.events.emit("ui.header.pins.toggle")}>push_pin</div>
   <div
     class="icon"
     style:color={$settings.get("showmemberlist") ? "var(--fg-notice)" : null}
@@ -320,4 +325,4 @@ $: if (showPins) {
   <!-- TODO: if i have time, i should write in-app help -->
   <div class="icon" on:click={() => actions.to("/user-settings/help")}>help</div>
 </div>
-<svelte:window on:click={() => { showPins = false }} />
+<svelte:window on:click={() => { pinsShown = false }} />
