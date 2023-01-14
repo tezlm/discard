@@ -30,10 +30,6 @@ export async function forwards() {
   const slice = actions.slice.get(room);
   if (!slice) return false;
   const bottom = slice.events.at(-1)?.id;
-  if (room.events.live?.find(i => i.id === bottom)) {
-    state.roomSlices.set(get(state.rooms.get(state.focusedRoomId)));
-    state.slice.set(get(state.rooms.get(state.focusedRoomId)));
-  }
   // await slice.forwards(Math.floor(window.innerHeight / 32 * 4));
   await slice.forwards(100);
   const success = bottom !== slice.events.at(-1)?.id;

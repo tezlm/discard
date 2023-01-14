@@ -1,7 +1,14 @@
 export default class Slice {
+  private foundStart = false;
+  private foundEnd = false;
+
   constructor(timeline) {
     this.timeline = timeline;
     this.reset();
+
+    if (timeline === timeline.room.events.live) {
+      this.foundEnd = true;
+    }
   }
   
   atEnd() {
@@ -31,9 +38,9 @@ export default class Slice {
   async backwards(count = 50) {
     const { timeline, start, end } = this;
     const oldStart = timeline.indexOf(start);
-    if (oldStart - count < 0) {
+    if (oldStart - count < 0 && !this.foundStart) {
       state.log.matrix(`fetching backwards in ${timeline.room.id}`);
-      if (!await timeline.fetch("backwards")) return; // no new events
+      if (!await timeline.fetch("backwards")) this.foundStart = true;
     }
     
     const startIdx = start ? timeline.indexOf(start) : Math.max(timeline.length - count, 0);
@@ -55,9 +62,9 @@ export default class Slice {
   async forwards(count = 50) {
     const { timeline, start, end } = this;
     const oldEnd = timeline.indexOf(end);
-    if (oldEnd + count > timeline.length) {
+    if (oldEnd + count > timeline.length && !this.foundEnd) {
       state.log.matrix(`fetching forwards in ${timeline.room.id}`);
-      if (!await timeline.fetch("forwards")) return; // no new events
+      if (!await timeline.fetch("forwards")) this.foundEnd = true;
     }
     
     const startIdx = timeline.lastIndexOf(start);
