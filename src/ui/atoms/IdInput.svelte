@@ -13,6 +13,8 @@ const symbols = {
 };
 
 function update() {
+  return;
+  
   if (homeserver?.startsWith(symbols[kind])) {
     const [newLocal, newServer] = homeserver.slice(1).split(":");
     if (newLocal) localpart = newLocal;
