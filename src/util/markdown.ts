@@ -33,7 +33,9 @@ import { marked } from "marked";
 globalThis.marked = marked;
 
 export function render(str: string): string {
+  console.log(str);
+  console.log(marked(str).trim());
   return marked(str)
-    .trim()
-    .replace(/\n/g, "<br>");
+    // .trim()
+    // .replace(/\n/g, "<br>");
 }
