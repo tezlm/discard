@@ -1,6 +1,5 @@
 <svelte:options immutable />
 <script lang="ts">
-import { onMount } from "svelte";
 export let tip = "";
 export let position: "up" | "down" | "left" | "right" = "up";
 export let style = "";
@@ -19,8 +18,6 @@ function setPos() {
   tooltipEl.style.top = (rect.top + offsetY) + "px";
   tooltipEl.style.left = (rect.left + offsetX) + "px";
 }
-
-onMount(setPos);
 </script>
 <style>
 .wrapper {
