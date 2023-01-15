@@ -44,7 +44,7 @@ const handleEvent = (item) => (e) => {
 }
 </style>
 <div class="toolbar">
-  {#each items as item}
+  {#each items as item (item)}
   <Tooltip tip={item.name}>
     {#if item.color}
       <div class="button icon" style:color={item.color} on:click={handleEvent(item)}>{item.icon}</div>
