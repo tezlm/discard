@@ -1,5 +1,6 @@
 <script>
 import { formatSize } from "../../../util/format.ts";
+import Button from "../../atoms/Button.svelte";
 </script>
 <style>
 .homeserver {
@@ -26,7 +27,12 @@ h3 {
   You are {#if navigator.onLine}connected to{:else}<span class="ohno">disconnected</span> from{/if}<br>
   <span class="big">{localStorage.getItem("homeserver")}</span>
 </div>
-<br />
+<div style="margin-top: 8px">
+  <Button label="Clear cache and reload" type="danger hollow small" on:click={() => {
+      state.client.persister.clear();
+      queueMicrotask(() => location.reload());
+  }} />
+</div>
 
 {#if navigator.onLine}
   <h3>Capabilities</h3>
