@@ -65,9 +65,9 @@ img {
       {#if type === "image"}
       <img src={URL.createObjectURL(current.file)} alt={current.file.name} />
       {:else if type === "video"}
-      <Video src={URL.createObjectURL(current.file)} name={current.file.name} size={current.file.size} />
+      <Video src={URL.createObjectURL(current.file)} name={current.file.name} info={{ size: current.file.size }} />
       {:else if type === "audio"}
-      <Audio src={URL.createObjectURL(current.file)} name={current.file.name} size={current.file.size} />
+      <Audio src={URL.createObjectURL(current.file)} name={current.file.name} info={{ size: current.file.size }} />
       {:else if type === "text" || current.file.type === "application/json"}
       <pre>{#await getText(current.file) then text}{@html text}{/await}</pre>
       {/if}
