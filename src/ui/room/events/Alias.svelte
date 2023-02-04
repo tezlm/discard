@@ -38,6 +38,6 @@ time {
     {:else}
     unset the room's main alias
     {/if}
-    <time datetime={event.date.toISOString()}>{formatDate(event.date)}</time>
+    <time datetime={event.timestamp.toISOString()}>{formatDate(event.timestamp)}</time>
   </div>
 </div>

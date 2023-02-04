@@ -69,7 +69,7 @@ time {
     modified the pinned messages in this room.
     {/if}
     See all <b class="link" on:click|stopPropagation={() => state.events.emit("ui.header.pins.toggle")}>pinned messages</b>.
-    <time datetime={event.date.toISOString()}>{formatDate(event.date)}</time>
+    <time datetime={event.timestamp.toISOString()}>{formatDate(event.timestamp)}</time>
   </div>
 </div>
 

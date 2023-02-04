@@ -43,6 +43,6 @@ time {
     {:else if event.type === "m.room.topic"}
     changed the room topic
     {/if}
-    <time datetime={event.date.toISOString()}>{formatDate(event.date)}</time>
+    <time datetime={event.timestamp.toISOString()}>{formatDate(event.timestamp)}</time>
   </div>
 </div>

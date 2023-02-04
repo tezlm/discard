@@ -127,6 +127,6 @@ time {
     {#if event.content.reason}
     <span>{event.content.reason}</span>
     {/if}
-    <time datetime={event.date.toISOString()}>{formatDate(event.date)}</time>
+    <time datetime={event.timestamp.toISOString()}>{formatDate(event.timestamp)}</time>
   </div>
 </div>

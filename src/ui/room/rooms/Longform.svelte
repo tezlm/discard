@@ -329,7 +329,7 @@ time {
 					      <div class="badge">bot</div>
 					      {/if}
 				      </div>
-				      <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
+				      <time datetime={event.timestamp.toISOString()} style="display: inline">{formatDate(event.timestamp)}</time>
 					  </div>
 				  </div>
 				  <div class="message-content">

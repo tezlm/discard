@@ -134,8 +134,8 @@ time {
       <Avatar user={event.sender} size={40} />
     </div>
     {:else}
-    <Tooltip tip={event.date.toLocaleString()}>
-      <time datetime={event.date.toISOString()}>{formatTime(event.date)}</time>
+    <Tooltip tip={event.timestamp.toLocaleString()}>
+      <time datetime={event.timestamp.toISOString()}>{formatTime(event.timestamp)}</time>
     </Tooltip>
     {/if}
   </div>
@@ -150,8 +150,8 @@ time {
       <div class="badge">bot</div>
       {/if}
       <span style="margin-right: 0.25rem;"></span>
-      <Tooltip tip={event.date.toLocaleString()}>
-        <time datetime={event.date.toISOString()} style="display: inline">{formatDate(event.date)}</time>
+      <Tooltip tip={event.timestamp.toLocaleString()}>
+        <time datetime={event.timestamp.toISOString()} style="display: inline">{formatDate(event.timestamp)}</time>
       </Tooltip>
     </div>
     {/if}

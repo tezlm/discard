@@ -4,7 +4,7 @@ export function orderSpaceRooms(a, b) {
     if (a.room.type !== "m.space" && b.room.type === "m.space") return -1;
     return cmpOrder(a.event.content.order, b.event.content.order)
       || cmp(a.room.name, b.room.name)
-      || cmp(a.event.date, b.event.date)
+      || cmp(a.event.timestamp, b.event.timestamp)
       || cmp(a.room.id, b.room.id);
 
     function cmpOrder(a, b) {

@@ -34,6 +34,6 @@ time {
   <div class="text">
     unknown event type <b>{event.type}</b> from
     <Name bold member={event.sender} />
-    <time datetime={event.date.toISOString()}>{formatDate(event.date)}</time>
+    <time datetime={event.timestamp.toISOString()}>{formatDate(event.timestamp)}</time>
   </div>
 </div>

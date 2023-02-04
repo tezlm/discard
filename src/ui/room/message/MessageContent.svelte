@@ -180,7 +180,7 @@ img {
   {/if}
   {#if event.flags?.has("edited")}
   {@const replace = event.relationsIn.find(i => i.relType === "m.replace").event}
-  <Tooltip tip="Edited at {replace.date.toLocaleString()}">
+  <Tooltip tip="Edited at {replace.timestamp.toLocaleString()}">
     <span class="edited" style="cursor: default">(edited)</span>
   </Tooltip>
   {/if}

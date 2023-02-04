@@ -50,8 +50,8 @@ function shouldSplit(prev, ev) {
 	if (ev.type !== "m.room.message" || prev.type !== "m.room.message") return true;
 	if (prev.sender.id !== ev.sender.id) return true;
 	if (ev.content["m.relates_to"]?.["m.in_reply_to"]) return true;
-	if (ev.date - prev.date > 1000 * 60 * 10) return true;
-	if (ev.date.getDay() !== prev.date.getDay()) return true;
+	if (ev.timestamp - prev.timestamp > 1000 * 60 * 10) return true;
+	if (ev.timestamp.getDay() !== prev.timestamp.getDay()) return true;
 	return false;
 }
 
@@ -60,8 +60,8 @@ function dividerProps(prev, ev) {
 	return {
 		unpad: shouldSplit(prev, ev),
 		unread: room.readEvent === prev.id,
-		newdate: prev.date.getDay() !== ev.date.getDay() ? ev.date
-			: prev.type === "m.room.create" ? ev.date
+		newdate: prev.timestamp.getDay() !== ev.timestamp.getDay() ? ev.timestamp
+			: prev.type === "m.room.create" ? ev.timestamp
 			: null,
 	};
 }
@@ -110,7 +110,7 @@ function shouldPing(event) {
 
 onDestroy(state.focusedRoom.subscribe(() => {
 	console.time("focus room")
-	queueMicrotask(() => console.timeEnd("focus room"));
+	tick().then(() => console.timeEnd("focus room"));
 }));
 
 onDestroy(upload.subscribe(refocus));
