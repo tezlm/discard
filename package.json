@@ -39,7 +39,7 @@
 		"marked": "^4.2.5",
 		"marked-katex-extension": "^1.0.2",
 		"sanitize-html": "^2.8.1",
-		"svelte-virtual-scroll-list": "^1.1.0",
+		"svelte-tiny-virtual-list": "^2.0.5",
 		"twemoji": "^14.0.2"
 	}
 }

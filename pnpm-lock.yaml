@@ -25,7 +25,7 @@ specifiers:
   sanitize-html: ^2.8.1
   svelte: ^3.55.0
   svelte-preprocess: ^4.10.7
-  svelte-virtual-scroll-list: ^1.1.0
+  svelte-tiny-virtual-list: ^2.0.5
   twemoji: ^14.0.2
   typescript: ^4.9.4
   vite: ^2.9.15
@@ -49,7 +49,7 @@ dependencies:
   marked: 4.2.5
   marked-katex-extension: 1.0.2_marked@4.2.5
   sanitize-html: 2.8.1
-  svelte-virtual-scroll-list: 1.1.0_svelte@3.55.0
+  svelte-tiny-virtual-list: 2.0.5
   twemoji: 14.0.2
 
 devDependencies:
@@ -888,17 +888,14 @@ packages:
       typescript: 4.9.4
     dev: true
 
-  /svelte-virtual-scroll-list/1.1.0_svelte@3.55.0:
-    resolution: {integrity: sha512-GFaBhD9izv77xgJTyFMD1MP+ElGMUGMC9CDCM+uX9hkZIYipNS6u8oDMYDGwCXUw7QGEihU4yLmBvBSeBp78uw==}
-    peerDependencies:
-      svelte: ^3.0.0
-    dependencies:
-      svelte: 3.55.0
+  /svelte-tiny-virtual-list/2.0.5:
+    resolution: {integrity: sha512-xg9ckb8UeeIme4/5qlwCrl2QNmUZ8SCQYZn3Ji83cUsoASqRNy3KWjpmNmzYvPDqCHSZjruBBsoB7t5hwuzw5g==}
     dev: false
 
   /svelte/3.55.0:
     resolution: {integrity: sha512-uGu2FVMlOuey4JoKHKrpZFkoYyj0VLjJdz47zX5+gVK5odxHM40RVhar9/iK2YFRVxvfg9FkhfVlR0sjeIrOiA==}
     engines: {node: '>= 8'}
+    dev: true
 
   /twemoji-parser/14.0.0:
     resolution: {integrity: sha512-9DUOTGLOWs0pFWnh1p6NF+C3CkQ96PWmEFwhOVmT3WbecRC+68AIqpsnJXygfkFcp4aXbOp8Dwbhh/HQgvoRxA==}
