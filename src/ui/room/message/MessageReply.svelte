@@ -108,9 +108,23 @@ $: eventPromise = room.events.fetch(eventId);
 .content :global([data-mx-ping]:hover::after) {
   opacity: .2;
 }
+
+.loading::after {
+  content: "";
+  animation: dots 1s infinite;
+}
+
+@keyframes dots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+}
 </style>
 {#await eventPromise}
-<div class="reply">loading</div>
+<div class="reply">
+  <div class="loading">loading</div>
+</div>
 {:then event}
 <div class="reply">
   <div class="avatar">
