@@ -1,9 +1,7 @@
 <script>
-import bgsrc from "/tmp/test.png";
 import Input from "../atoms/Input.svelte";
 import Button from "../atoms/Button.svelte";
 import IdInput from "../atoms/IdInput.svelte";
-import shrekImg from "../../assets/shrek.jpg";
 let type = "login";
 let localpart, homeserver, password;
 let form;
@@ -41,22 +39,12 @@ async function handleSubmit() {
   box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
 }
 
-.main, .side {
+.main {
   padding: 32px;
 }
 
 .main {
   min-width: 440px;
-}
-
-.side {
-  text-align: center;
-  width: 240px;
-}
-
-.side img {
-  width: 176px;
-  border-radius: 4px;
 }
 
 .header {
@@ -80,7 +68,7 @@ h5, .spacer {
   color: var(--color-red);
 }
 </style>
-<div class="wrapper" style:background-image="url({bgsrc})">
+<div class="wrapper">
   <div class="card">
     <div class="main">
       <div class="header">
@@ -99,14 +87,5 @@ h5, .spacer {
         {/if}
       </form>
     </div>
-    <!--
-    <div class="side">
-      <img src={shrekImg} alt="the wonderful shrek wazowski" />
-      <div style="height: 18px"></div>
-      <h2>Shrek Wazowski</h2>
-      <div style="height:8px"></div>
-      <div>i dont know what to put here so enjoy the Him</div>
-    </div>
-    -->
   </div>
 </div>
