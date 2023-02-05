@@ -55,6 +55,7 @@ function rejectAll() {
   max-width: 50vw;
   grid-gap: 8px;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-auto-rows: 1fr;
   margin-top: 1em;
 }
 
