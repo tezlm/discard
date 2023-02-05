@@ -1,7 +1,7 @@
 <script>
 import lexical from "lexical";
-import { registerPlainText } from "@lexical/plain-text";
-import { createEmptyHistoryState, registerHistory } from "@lexical/history";
+// import { registerPlainText } from "@lexical/plain-text";
+// import { createEmptyHistoryState, registerHistory } from "@lexical/history";
 // import { $generateHtmlFromNodes as renderHTML } from '@lexical/html';
 import { onMount } from "svelte";
 // import md from "simple-markdown";

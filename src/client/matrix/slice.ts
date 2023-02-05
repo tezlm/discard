@@ -56,7 +56,7 @@ export default class Slice {
     this.end = timeline[newEnd];
     this.events = timeline.slice(newStart, newEnd + 1)
       .filter((ev) => !ev.content["m.new_content"] && ev.type !== "m.reaction");
-    if (this.events.indexOf(undefined) >= 0) state.log.error("missing event!")
+    if (this.events.indexOf(undefined) >= 0) state.log.error("missing event!");
   }
   
   async forwards(count = 50) {
