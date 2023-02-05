@@ -203,11 +203,19 @@ export function memberContext(member: Member): Array<ContextMenuOption> {
   }
 
   const menu = [];
+  const ignored = state.client.accountData.get("m.ignored_user_list");
   menu.push(
     { label: "Profile", icon: "person",        clicked: () => { state.popout.set({}); state.popup.set({ id: "user", userId: member.id }) } },
     { label: "Mention", icon: "notifications", clicked: () => { const { input } = state.roomState; input.set(get(input) + member.id); close() } },
     { label: "Message", icon: "message",       clicked: todo },
-    { label: "Block",   icon: "block",         clicked: todo },
+    { label: ignored.ignored_users[member.id] ? "Unblock": "Block", icon: "block", clicked: () => {
+      if (ignored.ignored_users[member.id]) {
+        delete ignored.ignored_users[member.id];
+      } else {
+        ignored.ignored_users[member.id] = {};
+      }
+      state.api.sendAccountData(state.userId, "m.ignored_user_list", ignored);
+    } },
     null,
   );
   

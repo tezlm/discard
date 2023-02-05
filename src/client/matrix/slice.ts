@@ -1,3 +1,10 @@
+function shouldFilter(ev) {
+  const { ignored_users: ignored } = state.client.accountData.get("m.ignored_user_list");
+  return !ev.content["m.new_content"]
+    && ev.type !== "m.reaction"
+    && !ignored[ev.sender.id];
+}
+
 export default class Slice {
   private foundStart = false;
   private foundEnd = false;
@@ -23,16 +30,14 @@ export default class Slice {
     const endIdx = timeline.length - 1;
     this.start = timeline[startIdx];
     this.end = timeline[endIdx];
-    this.events = timeline.slice(startIdx, endIdx + 1)
-      .filter((ev) => !ev.content["m.new_content"] && ev.type !== "m.reaction");
+    this.events = timeline.slice(startIdx, endIdx + 1).filter(shouldFilter);
   }
     
   reslice() {
     const { timeline, start, end } = this;
     const startIdx = timeline.lastIndexOf(start);
     const endIdx = timeline.lastIndexOf(end);
-    this.events = timeline.slice(startIdx, endIdx + 1)
-      .filter((ev) => !ev.content["m.new_content"] && ev.type !== "m.reaction");
+    this.events = timeline.slice(startIdx, endIdx + 1).filter(shouldFilter);
   }
   
   async backwards(count = 50) {
@@ -54,8 +59,7 @@ export default class Slice {
     
     this.start = timeline[newStart];
     this.end = timeline[newEnd];
-    this.events = timeline.slice(newStart, newEnd + 1)
-      .filter((ev) => !ev.content["m.new_content"] && ev.type !== "m.reaction");
+    this.events = timeline.slice(newStart, newEnd + 1).filter(shouldFilter);
     if (this.events.indexOf(undefined) >= 0) state.log.error("missing event!");
   }
   
@@ -78,8 +82,7 @@ export default class Slice {
     
     this.start = timeline[newStart];
     this.end = timeline[newEnd];
-    this.events = timeline.slice(newStart, newEnd + 1)
-      .filter((ev) => !ev.content["m.new_content"] && ev.type !== "m.reaction");
+    this.events = timeline.slice(newStart, newEnd + 1).filter(shouldFilter);
   }
   
   async jump(eventId, count = 50) {
@@ -94,7 +97,6 @@ export default class Slice {
     
     this.start = timeline[newStart];
     this.end = timeline[newEnd];
-    this.events = timeline.slice(newStart, newEnd + 1)
-      .filter((ev) => !ev.content["m.new_content"] && ev.type !== "m.reaction");
+    this.events = timeline.slice(newStart, newEnd + 1).filter(shouldFilter);
   }
 }
