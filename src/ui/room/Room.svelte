@@ -7,6 +7,7 @@ import RoomSearch from './RoomSearch.svelte';
 import BasicRoom from './rooms/Basic.svelte';
 import SpaceRoom from './rooms/Space.svelte';
 import HomeRoom from './rooms/Home.svelte';
+import DatabaseRoom from './rooms/Database.svelte';
 import Unverified from "./rooms/Unverified.svelte";
 import UnknownRoom from './rooms/Unknown.svelte';
 
@@ -58,6 +59,8 @@ $: type = room?.getState("m.room.create")?.content.type;
 				<MediaRoom {room} />
 			{:else if type === "org.eu.celery.room.forum"}
 				<ForumRoom {room} />
+			{:else if type === "org.eu.celery.room.database"}
+				<DatabaseRoom {room} />
 			<!--
 			{:else if type === "org.eu.celery.room.longform"}
 				<LongformRoom {room} />
