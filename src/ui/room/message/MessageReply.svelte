@@ -4,7 +4,9 @@ import Avatar from "../../atoms/Avatar.svelte";
 import { parseHtml } from "../../../util/html";
 import { fastclick } from "../../../util/use";
 export let room, eventId;
+const { accountData } = state;
 $: eventPromise = room.events.fetch(eventId);
+$: ignored = $accountData.get("m.ignored_user_list");
 </script>
 <style>
 .reply {
@@ -114,6 +116,10 @@ $: eventPromise = room.events.fetch(eventId);
   animation: dots 1s infinite;
 }
 
+.blocked ~ * { visibility: hidden; }
+.reply:hover > * { visibility: visible; }
+.reply:hover > .blocked { display: none; }
+
 @keyframes dots {
   0% { content: ""; }
   25% { content: "."; }
@@ -127,6 +133,11 @@ $: eventPromise = room.events.fetch(eventId);
 </div>
 {:then event}
 <div class="reply">
+  {#if ignored.ignored_users[event.sender.id]}
+  <div class="blocked">
+  Sender blocked, hover to view
+  </div>
+  {/if}
   <div class="avatar">
     <Avatar user={event.sender} size={16} />
   </div>
