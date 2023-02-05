@@ -1,12 +1,13 @@
 <script>
 import Avatar from "../atoms/Avatar.svelte";
-import VirtualList from "svelte-virtual-scroll-list"
+import VirtualList from "svelte-tiny-virtual-list"
 import { memberContext } from "../../util/context";
 import { fastclick } from "../../util/use";
 export let room;
 
 let { popout, context } = state;
 let members = [];
+let height;
 
 // FIXME: update members list
 
@@ -174,37 +175,42 @@ function handleContext(e) {
 <div
   class="members scroll"
   tabindex="-1"
+  bind:clientHeight={height}
   use:fastclick
   on:fastclick={handleClick}
   on:contextmenu|preventDefault|stopPropagation={handleContext}
   on:click={e => e.explicitOriginalTarget?.dataset.memberId && e.stopPropagation()}
 >
   <VirtualList
-      data={members}
-      let:data={member}
-      estimateSize={48}
+      height={height}
+      width="auto"
+      itemCount={members.length}
+      itemSize={members.map(i => i.title ? 33 : 44)}
   >
-    {#if member.title}
-      <div class="title">{member.title}</div>
-    {:else if member.room}
-      <div
-        class="wrapper"
-        class:selected={$popout._owner === "memberlist-" + member.id}
-        class:last={members.at(-1) === member}
-        data-member-id={member.id}
-      >
-        <div class="member">
-          <Avatar user={member} size={32} />
-          <div class="name">{member.name || member.id}</div>
+    <div slot="item" let:index let:style {style}>
+      {@const member = members[index]}
+      {#if member.title}
+        <div class="title">{member.title}</div>
+      {:else if member.room}
+        <div
+          class="wrapper"
+          class:selected={$popout._owner === "memberlist-" + member.id}
+          class:last={members.at(-1) === member}
+          data-member-id={member.id}
+        >
+          <div class="member">
+            <Avatar user={member} size={32} />
+            <div class="name">{member.name || member.id}</div>
+          </div>
         </div>
-      </div>
-    {:else}
-      <div class="wrapper placeholder">
-        <div class="member">
-          <div class="avatar" style:animation-delay="{member.id * -50}ms"></div>
-          <div class="name" style:animation-delay="{member.id * -50}ms"></div>
+      {:else}
+        <div class="wrapper placeholder">
+          <div class="member">
+            <div class="avatar" style:animation-delay="{member.id * -50}ms"></div>
+            <div class="name" style:animation-delay="{member.id * -50}ms"></div>
+          </div>
         </div>
-      </div>
-    {/if}
+      {/if}
+    </div>
   </VirtualList>
 </div>

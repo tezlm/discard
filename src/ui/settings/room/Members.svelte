@@ -3,7 +3,7 @@ import Search from "../../atoms/Search.svelte";
 import Avatar from "../../atoms/Avatar.svelte";
 import Power from "../../atoms/Power.svelte";
 import Loading from "../../atoms/Loading.svelte";
-import VirtualScroll from "svelte-virtual-scroll-list"
+import VirtualList from "svelte-tiny-virtual-list";
 import { memberContext } from "../../../util/context";
 
 export let room, membership;
@@ -13,6 +13,7 @@ let { power } = room;
 
 let allMembers = false;
 let members = false;
+let height;
 let filter;
 
 $: room.members.fetchAll()
@@ -72,6 +73,12 @@ function changePower(member, pl, undo) {
 }
 </script>
 <style>
+.wrapper {
+  flex: 1;
+  /* padding: 4em 2em 0; */
+  user-select: text;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -119,6 +126,7 @@ h1 {
   color: var(--fg-notice);
 }
 </style>
+<div class="wrapper" bind:clientHeight={height} style="height: 100%; width: 100%">
 {#if room}
   <div class="header">
     <h1>{members ? members.length || "No" : "Loading"} {filter ? "Filtered " : ""} {getTitle(membership)}s</h1>
@@ -129,12 +137,21 @@ h1 {
       <i style="margin-bottom: 16px">this may take a while</i>
       <Loading />
     {:then memberData}
-      <VirtualScroll
-        data={memberData}
-        let:data={member}
-        estimateSize={64}
+      <VirtualList
+        height={height}
+        width="100%"
+        itemCount={memberData.length}
+        itemSize={64}
       >
-        <div class="member" on:contextmenu|preventDefault|stopPropagation={e => $context = { items: memberContext(member), x: e.clientX, y: e.clientY }}>
+        <div
+          slot="item"
+          class="member"
+          let:index
+          let:style
+          {style}
+          on:contextmenu|preventDefault|stopPropagation={e => $context = { items: memberContext(member), x: e.clientX, y: e.clientY }}
+        >
+          {@const member = memberData[index]}
           <Avatar link user={member} size={40} />
           <div class="name">
             <div>
@@ -158,7 +175,7 @@ h1 {
           {/if}
           <div class="icon menu" on:click|stopPropagation={e => $context = { items: memberContext(member), x: e.clientX, y: e.clientY }}>more_vert</div>
         </div>
-      </VirtualScroll>
+      </VirtualList>
       {#if !memberData.length}
       <i>hm, it looks like there isn't anyone here</i>
       {/if}
@@ -169,3 +186,4 @@ h1 {
 {:else}
 <i>something really wrong happened, try again?</i>
 {/if}
+</div>
