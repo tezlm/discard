@@ -11,7 +11,7 @@ function makeMockEvent(body) {
   const member = { ...(me ?? { id: state.userId }), power: 9001, room };
   return {
     sender: member,
-    date: new Date(),
+    timestamp: new Date(),
     id: "$" + Math.random(),
     type: "m.room.message",
     content: { body },
