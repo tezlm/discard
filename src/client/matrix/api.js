@@ -219,7 +219,7 @@ export default class Api {
   }
   
   fetchUrlPreview(url, ts) {
-  	return this.fetch("GET", `/preview_url?url=${encode(url)}&ts=${encode(ts)}`);
+  	return this.fetchAuth("GET", `/_matrix/media/v3/preview_url?url=${encode(url)}&ts=${encode(ts)}`);
   }
   
   roomDirVisibility(roomId) {
